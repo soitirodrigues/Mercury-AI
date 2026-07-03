@@ -1,0 +1,9 @@
+ASSET = "BTC-USD"
+
+TIMEFRAME = "5m"
+
+PERIOD = "5d"
+
+MIN_CONFIDENCE = 70
+
+VERSION = "0.1"

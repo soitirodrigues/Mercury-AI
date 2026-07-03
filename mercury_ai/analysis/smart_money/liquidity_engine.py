@@ -1,0 +1,2 @@
+class BOSEngine:
+    pass
