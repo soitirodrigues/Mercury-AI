@@ -1,8 +1,9 @@
 from dataclasses import dataclass, field
 from typing import List
+from mercury_ai.config.timeframes import DEFAULT_TIMEFRAME
 
 
-@dataclass
+@dataclass(frozen=True)
 class Signal:
     """
     Representa a decisão final da Mercury AI.
@@ -22,12 +23,10 @@ class Signal:
 
     take_profit: float | None = None
 
-    timeframe: str = "M5"
+    timeframe: str = DEFAULT_TIMEFRAME
 
     strategy: str = ""
 
     evidences: List[str] = field(default_factory=list)
 
     explanation: str = ""
-
-    recommendation: str = ""

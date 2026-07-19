@@ -1,26 +1,7 @@
 from dataclasses import dataclass
+from mercury_ai.models.market_state_enum import MarketStateEnum
 
-
-@dataclass
-class MarketData:
-    symbol: str
-    timeframe: str
-
-    close: float
-
-    ema9: float
-    ema21: float
-    ema50: float
-
-    rsi: float
-
-    atr: float
-    adx: float
-
-    macd: float
-    macd_signal: float
-
-    bollinger_upper: float
-    bollinger_lower: float
-
-    volume: float
+@dataclass(frozen=True)
+class MarketState:
+    state: MarketStateEnum
+    explanation: str

@@ -1,0 +1,2 @@
+class InvalidWeightConfiguration(Exception):
+    pass

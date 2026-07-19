@@ -1,65 +1,173 @@
 import pandas as pd
-from ta.trend import EMAIndicator, MACD, ADXIndicator
-from ta.momentum import RSIIndicator
-from ta.volatility import AverageTrueRange, BollingerBands
+import numpy as np
 
 
 class IndicatorEngine:
     """
-    Calcula os principais indicadores técnicos da Mercury AI.
+    Motor de indicadores técnicos do Mercury AI.
+    Trabalha com padrão OHLCV:
+    open, high, low, close, volume
     """
 
-    def calculate(self, df: pd.DataFrame) -> dict:
 
-        close = df["Close"]
-        high = df["High"]
-        low = df["Low"]
+    def calculate(self, df: pd.DataFrame):
 
-        ema9 = EMAIndicator(close, window=9).ema_indicator().iloc[-1]
-        ema21 = EMAIndicator(close, window=21).ema_indicator().iloc[-1]
-        ema50 = EMAIndicator(close, window=50).ema_indicator().iloc[-1]
+        data = df.copy()
 
-        rsi = RSIIndicator(close, window=14).rsi().iloc[-1]
 
-        atr = AverageTrueRange(
-            high,
-            low,
-            close,
-            window=14
-        ).average_true_range().iloc[-1]
+        close = data["close"]
+        high = data["high"]
+        low = data["low"]
 
-        adx = ADXIndicator(
-            high,
-            low,
-            close,
-            window=14
-        ).adx().iloc[-1]
 
-        macd = MACD(close)
+        # EMA
 
-        bb = BollingerBands(close)
+        ema9 = (
+            close
+            .ewm(span=9)
+            .mean()
+        )
+
+        ema21 = (
+            close
+            .ewm(span=21)
+            .mean()
+        )
+
+        ema50 = (
+            close
+            .ewm(span=50)
+            .mean()
+        )
+
+
+        # RSI 14
+
+        delta = close.diff()
+
+        gain = (
+            delta
+            .clip(lower=0)
+            .rolling(14)
+            .mean()
+        )
+
+        loss = (
+            -delta
+            .clip(upper=0)
+            .rolling(14)
+            .mean()
+        )
+
+
+        rs = gain / loss
+
+        rsi = (
+            100 -
+            (100 / (1 + rs))
+        )
+
+
+        # ATR
+
+        tr1 = high - low
+
+        tr2 = abs(high - close.shift())
+
+        tr3 = abs(low - close.shift())
+
+
+        true_range = pd.concat(
+            [
+                tr1,
+                tr2,
+                tr3
+            ],
+            axis=1
+        ).max(axis=1)
+
+
+        atr = (
+            true_range
+            .rolling(14)
+            .mean()
+        )
+
+
+        # ADX simplificado (V1)
+
+        adx = pd.Series(
+            0.0,
+            index=data.index
+        )
+
+
+
+        # MACD
+
+        ema12 = close.ewm(span=12).mean()
+
+        ema26 = close.ewm(span=26).mean()
+
+
+        macd = ema12 - ema26
+
+        macd_signal = (
+            macd
+            .ewm(span=9)
+            .mean()
+        )
+
+
+        # Bollinger Bands
+
+        middle = (
+            close
+            .rolling(14)
+            .mean()
+        )
+
+
+        std = (
+            close
+            .rolling(14)
+            .std()
+        )
+
+
+        bollinger_upper = middle + (2 * std)
+
+        bollinger_lower = middle - (2 * std)
+
+
 
         return {
 
             "close": float(close.iloc[-1]),
 
-            "ema9": float(ema9),
-            "ema21": float(ema21),
-            "ema50": float(ema50),
+            "ema9": float(ema9.iloc[-1]),
 
-            "rsi": float(rsi),
+            "ema21": float(ema21.iloc[-1]),
 
-            "atr": float(atr),
+            "ema50": float(ema50.iloc[-1]),
 
-            "adx": float(adx),
+            "rsi": float(rsi.iloc[-1]),
 
-            "macd": float(macd.macd().iloc[-1]),
+            "atr": float(atr.iloc[-1]),
 
-            "macd_signal": float(macd.macd_signal().iloc[-1]),
+            "adx": float(adx.iloc[-1]),
 
-            "bollinger_upper": float(bb.bollinger_hband().iloc[-1]),
+            "macd": float(macd.iloc[-1]),
 
-            "bollinger_lower": float(bb.bollinger_lband().iloc[-1]),
+            "macd_signal": float(macd_signal.iloc[-1]),
 
-            "volume": float(df["Volume"].iloc[-1])
+            "bollinger_upper": float(bollinger_upper.iloc[-1]),
+
+            "bollinger_lower": float(bollinger_lower.iloc[-1]),
+
+            "volume": float(
+                data["volume"].iloc[-1]
+                if "volume" in data.columns
+                else 0
+            )
         }

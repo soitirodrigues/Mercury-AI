@@ -1,15 +1,15 @@
 from mercury_ai.core.banner import show_banner
 from mercury_ai.config import settings
 from mercury_ai.providers.provider import MarketProvider
-from mercury_ai.data.market_data import MarketData
+
 def start():
     show_banner()
 
     provider = MarketProvider()
-    market = MarketData()
-
-    print(f"Ativo: {market.get_symbol()}")
-    print(f"Timeframe: {market.get_timeframe()}")
+    
+    # MarketData is a model, typically created by a service. 
+    # For startup verification, we can use a dummy or just skip.
+    # Removing the direct instantiation of MarketData as it's a frozen dataclass.
 
     print()
 

@@ -1,0 +1,12 @@
+# Default Risk Management Configuration
+
+# Risk Management
+DEFAULT_RISK_PER_TRADE = 0.01  # 1%
+DEFAULT_REWARD_RATIO = 2.0  # 2:1
+DEFAULT_STOP_LOSS_PERCENT = 0.005  # 0.5%
+DEFAULT_TAKE_PROFIT_PERCENT = 0.010  # 1.0%
+
+# Portfolio/Daily Limits
+MAX_DAILY_LOSS = 0.03  # 3%
+MAX_DAILY_GAIN = 0.06  # 6%
+POSITION_SIZE_MULTIPLIER = 1.0

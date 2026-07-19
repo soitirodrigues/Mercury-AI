@@ -1,0 +1,51 @@
+{
+    "PROVIDERS": {
+        "active": [],
+        "all": []
+    },
+    "SCANNER": {
+        "auto_run": false,
+        "interval": 60
+    },
+    "DASHBOARD": {
+        "refresh": true,
+        "theme": "default"
+    },
+    "REPLAY": {
+        "enabled": false,
+        "path": "data/replay"
+    },
+    "DEMO": {
+        "enabled": true
+    },
+    "ASSET_REGISTRY": {},
+    "BROKER_PROFILE": {},
+    "SNAPSHOTS": {
+        "path": "data/snapshots",
+        "enabled": true
+    },
+    "LOGS": {
+        "path": "logs",
+        "level": "INFO"
+    },
+    "GENERAL": {
+        "read_only": true
+    },
+    "HEALTH": {
+        "check_interval": 300
+    },
+    "MONITORING": {
+        "enabled": true
+    },
+    "UPDATE": {
+        "auto_update": false
+    },
+    "EXPORT": {
+        "path": "data/exports",
+        "format": "csv"
+    },
+    "OPERATIONAL_PROFILE": {
+        "active": "Demo",
+        "broker": "XP"
+    }
+}
