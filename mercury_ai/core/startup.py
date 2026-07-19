@@ -1,29 +1,29 @@
 from mercury_ai.core.banner import show_banner
 from mercury_ai.config import settings
 from mercury_ai.providers.provider import MarketProvider
-from mercury_ai.data.market_data import MarketData
+
 def start():
-    show_banner()
+    banner = show_banner()
 
     provider = MarketProvider()
-    market = MarketData()
+    
+    # MarketData is a model, typically created by a service. 
+    # For startup verification, we can use a dummy or just skip.
+    # Removing the direct instantiation of MarketData as it's a frozen dataclass.
 
-    print(f"Ativo: {market.get_symbol()}")
-    print(f"Timeframe: {market.get_timeframe()}")
-
-    print()
-
-    print(f"Provider: {provider.get_name()}")
-    print(f"Mercado: {provider.get_market_status()}")
-    print()
-
-    print("Status:")
-    print("✓ Core iniciado")
-    print("✓ Configurações carregadas")
-    print()
-
-    print(f"Aplicação: {settings.APP_NAME}")
-    print(f"Versão: {settings.VERSION}")
-    print()
-
-    print("Mercury AI iniciado com sucesso!")
+    lines = [
+        banner,
+        "",
+        f"Provider: {provider.get_name()}",
+        f"Mercado: {provider.get_market_status()}",
+        "",
+        "Status:",
+        "✓ Core iniciado",
+        "✓ Configurações carregadas",
+        "",
+        f"Aplicação: {settings.APP_NAME}",
+        f"Versão: {settings.VERSION}",
+        "",
+        "Mercury AI iniciado com sucesso!",
+    ]
+    return "\n".join(lines)

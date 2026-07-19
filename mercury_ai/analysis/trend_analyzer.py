@@ -1,72 +1,30 @@
-from dataclasses import dataclass
-
+from mercury_ai.models.evidence import Evidence
 from mercury_ai.models.market_data import MarketData
-
-
-@dataclass
-class TrendAnalysis:
-    trend: str
-    confidence: int
-    explanation: list[str]
-
+from typing import List
 
 class TrendAnalyzer:
+    """
+    Analisa a tendência do mercado de forma granular.
+    """
 
-    def analyze(self, market: MarketData) -> TrendAnalysis:
+    def analyze(self, market: MarketData) -> List[Evidence]:
+        evidences = []
 
-        score = 0
-        reasons = []
-
-        # Alinhamento das médias
+        # EMA Alignment
         if market.ema9 > market.ema21 > market.ema50:
-            score += 40
-            reasons.append("EMA 9 > EMA 21 > EMA 50")
-
+            evidences.append(Evidence("Trend", "EMA Alignment", "BULLISH", 90.0, 90.0, "EMA 9 > EMA 21 > EMA 50", 30.0))
         elif market.ema9 < market.ema21 < market.ema50:
-            score -= 40
-            reasons.append("EMA 9 < EMA 21 < EMA 50")
+            evidences.append(Evidence("Trend", "EMA Alignment", "BEARISH", 90.0, 90.0, "EMA 9 < EMA 21 < EMA 50", 30.0))
 
-        # ADX
+        # ADX Strength
         if market.adx >= 30:
-            score += 20 if score > 0 else -20
-            reasons.append("ADX acima de 30")
+            evidences.append(Evidence("Trend", "ADX Strength", "NEUTRAL", float(market.adx), 80.0, f"ADX: {market.adx}", 20.0))
 
-        elif market.adx >= 20:
-            score += 10 if score > 0 else -10
-            reasons.append("ADX entre 20 e 30")
-
-        else:
-            reasons.append("Mercado lateral")
-
-        # Preço
+        # Price Position
         if market.close > market.ema9:
-            score += 10
-            reasons.append("Preço acima da EMA9")
-
+            evidences.append(Evidence("Trend", "Price vs EMA9", "BULLISH", 80.0, 80.0, "Preço acima da EMA9", 10.0))
         else:
-            score -= 10
-            reasons.append("Preço abaixo da EMA9")
+            evidences.append(Evidence("Trend", "Price vs EMA9", "BEARISH", 80.0, 80.0, "Preço abaixo da EMA9", 10.0))
 
-        # Classificação
-        if score >= 50:
-            trend = "STRONG_UP"
+        return evidences
 
-        elif score >= 20:
-            trend = "UP"
-
-        elif score <= -50:
-            trend = "STRONG_DOWN"
-
-        elif score <= -20:
-            trend = "DOWN"
-
-        else:
-            trend = "SIDEWAYS"
-
-        confidence = min(abs(score), 100)
-
-        return TrendAnalysis(
-            trend=trend,
-            confidence=confidence,
-            explanation=reasons
-        )

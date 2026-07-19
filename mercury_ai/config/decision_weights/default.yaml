@@ -1,0 +1,11 @@
+# Default decision weights
+evidence_weights:
+  trend: 0.2
+  liquidity: 0.2
+  order_block: 0.2
+  fvg: 0.1
+  price_action: 0.1
+  vwap: 0.05
+  momentum: 0.05
+  volume: 0.05
+  session: 0.05

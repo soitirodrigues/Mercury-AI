@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from mercury_ai.models.market_structure import MarketStructure
 
 
-@dataclass
+@dataclass(frozen=True)
 class BOSResult:
     detected: bool
     direction: str

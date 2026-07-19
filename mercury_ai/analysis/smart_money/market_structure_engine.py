@@ -7,8 +7,21 @@ class MarketStructureEngine:
 
     def analyze(self, df: pd.DataFrame) -> MarketStructure:
 
-        highs = df["High"].tolist()
-        lows = df["Low"].tolist()
+        if df.empty:
+            return MarketStructure(
+                trend="RANGE",
+                higher_high=False,
+                higher_low=False,
+                lower_high=False,
+                lower_low=False,
+                swing_highs=0,
+                swing_lows=0,
+                confidence=0,
+                explanation=["DataFrame vazio"]
+            )
+
+        highs = df["high"].tolist()
+        lows = df["low"].tolist()
 
         swing_highs = 0
         swing_lows = 0
@@ -22,7 +35,7 @@ class MarketStructureEngine:
         explanation = []
 
         # -----------------------------
-        # Contagem simples de Swings
+        # Contagem simples de swings
         # -----------------------------
 
         for i in range(1, len(highs) - 1):
@@ -37,7 +50,7 @@ class MarketStructureEngine:
         # Estrutura recente
         # -----------------------------
 
-        if len(highs) >= 3:
+        if len(highs) >= 2:
 
             if highs[-1] > highs[-2]:
                 higher_high = True
@@ -47,7 +60,7 @@ class MarketStructureEngine:
                 lower_high = True
                 explanation.append("Último topo é mais baixo")
 
-        if len(lows) >= 3:
+        if len(lows) >= 2:
 
             if lows[-1] > lows[-2]:
                 higher_low = True
@@ -68,14 +81,12 @@ class MarketStructureEngine:
 
             trend = "BULLISH"
             confidence = 85
-
             explanation.append("Sequência HH + HL")
 
         elif lower_high and lower_low:
 
             trend = "BEARISH"
             confidence = 85
-
             explanation.append("Sequência LH + LL")
 
         return MarketStructure(

@@ -4,6 +4,13 @@ from mercury_ai.models.price_action import PriceActionAnalysis
 class PriceActionAnalyzer:
 
     def analyze(self, df):
+        if len(df) < 2:
+            return PriceActionAnalysis(
+                trend_structure="UNKNOWN",
+                last_event="UNKNOWN",
+                confidence=0,
+                explanation=["Dados insuficientes"]
+            )
 
         highs = df["High"]
         lows = df["Low"]
@@ -41,7 +48,7 @@ class PriceActionAnalyzer:
 
             last_event=structure,
 
-            confidence=60,
+            confidence=0, # Neutral value as it's not a confidence engine
 
             explanation=explanation
         )

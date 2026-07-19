@@ -1,0 +1,5698 @@
+[
+    {
+        "module": "calculate_institutional_stats",
+        "import": "json"
+    },
+    {
+        "module": "calculate_institutional_stats",
+        "import": "os"
+    },
+    {
+        "module": "calculate_institutional_stats",
+        "import": "pandas"
+    },
+    {
+        "module": "main",
+        "import": "mercury_ai.brain.scanner.MercuryScanner"
+    },
+    {
+        "module": "run_deterministic_replay_scenarios",
+        "import": "pandas"
+    },
+    {
+        "module": "run_deterministic_replay_scenarios",
+        "import": "numpy"
+    },
+    {
+        "module": "run_deterministic_replay_scenarios",
+        "import": "mercury_ai.analysis.historical_replay_engine.HistoricalReplayEngine"
+    },
+    {
+        "module": "run_institutional_replay",
+        "import": "pandas"
+    },
+    {
+        "module": "run_institutional_replay",
+        "import": "os"
+    },
+    {
+        "module": "run_institutional_replay",
+        "import": "mercury_ai.analysis.historical_replay_engine.HistoricalReplayEngine"
+    },
+    {
+        "module": "run_instrumented",
+        "import": "mercury_ai.core.analysis_pipeline.AnalysisPipeline"
+    },
+    {
+        "module": "run_instrumented",
+        "import": "mercury_ai.data.market_data.MarketDataService"
+    },
+    {
+        "module": "run_instrumented",
+        "import": "pandas"
+    },
+    {
+        "module": "stress_test_replay",
+        "import": "pandas"
+    },
+    {
+        "module": "stress_test_replay",
+        "import": "numpy"
+    },
+    {
+        "module": "stress_test_replay",
+        "import": "time"
+    },
+    {
+        "module": "stress_test_replay",
+        "import": "tracemalloc"
+    },
+    {
+        "module": "stress_test_replay",
+        "import": "mercury_ai.analysis.historical_replay_engine.HistoricalReplayEngine"
+    },
+    {
+        "module": "stress_test_replay",
+        "import": "shutil"
+    },
+    {
+        "module": "stress_test_replay",
+        "import": "os"
+    },
+    {
+        "module": "teste_gemini",
+        "import": "os"
+    },
+    {
+        "module": "teste_gemini",
+        "import": "google.genai"
+    },
+    {
+        "module": "teste_llm",
+        "import": "os"
+    },
+    {
+        "module": "teste_llm",
+        "import": "openai.OpenAI"
+    },
+    {
+        "module": "teste_openrouter",
+        "import": "os"
+    },
+    {
+        "module": "teste_openrouter",
+        "import": "openai.OpenAI"
+    },
+    {
+        "module": "test_mercury_signal",
+        "import": "mercury_ai.core.analysis_pipeline.AnalysisPipeline"
+    },
+    {
+        "module": "test_mercury_signal",
+        "import": "mercury_ai.data.market_data.MarketDataService"
+    },
+    {
+        "module": "test_mercury_signal",
+        "import": "mercury_ai.providers.mercury_data_provider.MercuryDataProvider"
+    },
+    {
+        "module": "test_mercury_signal",
+        "import": "mercury_ai.presentation.signal_formatter.SignalFormatter"
+    },
+    {
+        "module": "verify_assets",
+        "import": "mercury_ai.core.analysis_pipeline.AnalysisPipeline"
+    },
+    {
+        "module": "verify_assets",
+        "import": "mercury_ai.data.market_data.MarketDataService"
+    },
+    {
+        "module": "verify_assets",
+        "import": "mercury_ai.providers.yahoo_finance_provider.YahooFinanceProvider"
+    },
+    {
+        "module": "app.launcher",
+        "import": "streamlit"
+    },
+    {
+        "module": "app.launcher",
+        "import": "sys"
+    },
+    {
+        "module": "app.launcher",
+        "import": "os"
+    },
+    {
+        "module": "app.launcher",
+        "import": "mercury_ai.analysis.health_checker.HealthChecker"
+    },
+    {
+        "module": "app.ui_utils",
+        "import": "streamlit"
+    },
+    {
+        "module": "app.dashboard.asset_registry_panel",
+        "import": "pandas"
+    },
+    {
+        "module": "app.dashboard.asset_registry_panel",
+        "import": "mercury_ai.core.asset_registry.AssetRegistry"
+    },
+    {
+        "module": "app.dashboard.asset_registry_panel",
+        "import": "mercury_ai.providers.mercury_data_provider.MercuryDataProvider"
+    },
+    {
+        "module": "app.dashboard.asset_registry_panel",
+        "import": "streamlit"
+    },
+    {
+        "module": "app.dashboard.dashboard",
+        "import": "sys"
+    },
+    {
+        "module": "app.dashboard.dashboard",
+        "import": "pathlib.Path"
+    },
+    {
+        "module": "app.dashboard.dashboard",
+        "import": "streamlit"
+    },
+    {
+        "module": "app.dashboard.dashboard",
+        "import": "pandas"
+    },
+    {
+        "module": "app.dashboard.dashboard",
+        "import": "mercury_ai.brain.scanner.Scanner"
+    },
+    {
+        "module": "app.dashboard.dashboard",
+        "import": "mercury_ai.analysis.performance_statistics.PerformanceStatistics"
+    },
+    {
+        "module": "app.dashboard.dashboard",
+        "import": "mercury_ai.analysis.engine_performance_auditor.EnginePerformanceAuditor"
+    },
+    {
+        "module": "app.dashboard.dashboard",
+        "import": "mercury_ai.analysis.institutional_report_generator.InstitutionalReportGenerator"
+    },
+    {
+        "module": "app.dashboard.dashboard",
+        "import": "mercury_ai.analysis.notification_center.NotificationCenter"
+    },
+    {
+        "module": "app.dashboard.dashboard",
+        "import": "app.ui_utils.apply_design_system"
+    },
+    {
+        "module": "app.dashboard.dashboard",
+        "import": "app.ui_utils.display_metric"
+    },
+    {
+        "module": "app.dashboard.dashboard",
+        "import": "mercury_ai.analysis.health_checker.HealthChecker"
+    },
+    {
+        "module": "app.dashboard.dashboard",
+        "import": "mercury_ai.config.settings"
+    },
+    {
+        "module": "app.dashboard.dashboard",
+        "import": "time"
+    },
+    {
+        "module": "app.dashboard.dashboard",
+        "import": "mercury_ai.analysis.operational_history.OperationalHistory"
+    },
+    {
+        "module": "app.dashboard.dashboard",
+        "import": "mercury_ai.analysis.operational_history.OperationalHistory"
+    },
+    {
+        "module": "app.dashboard.dashboard",
+        "import": "mercury_ai.analysis.data_exporter.DataExporter"
+    },
+    {
+        "module": "app.dashboard.dashboard",
+        "import": "mercury_ai.config.configuration_center.MercuryConfigCenter"
+    },
+    {
+        "module": "app.dashboard.health_center_panel",
+        "import": "mercury_ai.core.health_center.HealthCenter"
+    },
+    {
+        "module": "app.dashboard.health_center_panel",
+        "import": "streamlit"
+    },
+    {
+        "module": "app.dashboard.main_dashboard",
+        "import": "mercury_ai.core.asset_registry.AssetRegistry"
+    },
+    {
+        "module": "app.dashboard.main_dashboard",
+        "import": "mercury_ai.providers.mercury_data_provider.MercuryDataProvider"
+    },
+    {
+        "module": "app.dashboard.main_dashboard",
+        "import": "mercury_ai.core.health_center.HealthCenter"
+    },
+    {
+        "module": "app.dashboard.main_dashboard",
+        "import": "app.dashboard.asset_registry_panel.render_asset_registry_dashboard"
+    },
+    {
+        "module": "app.dashboard.main_dashboard",
+        "import": "app.dashboard.provider_health_panel.render_provider_health_dashboard"
+    },
+    {
+        "module": "app.dashboard.main_dashboard",
+        "import": "app.dashboard.observability_panel.render_observability_dashboard"
+    },
+    {
+        "module": "app.dashboard.main_dashboard",
+        "import": "app.dashboard.health_center_panel.render_health_center_panel"
+    },
+    {
+        "module": "app.dashboard.main_dashboard",
+        "import": "app.dashboard.market_map_panel.render_market_map_panel"
+    },
+    {
+        "module": "app.dashboard.main_dashboard",
+        "import": "streamlit"
+    },
+    {
+        "module": "app.dashboard.market_map_panel",
+        "import": "pandas"
+    },
+    {
+        "module": "app.dashboard.market_map_panel",
+        "import": "mercury_ai.core.asset_registry.AssetRegistry"
+    },
+    {
+        "module": "app.dashboard.market_map_panel",
+        "import": "streamlit"
+    },
+    {
+        "module": "app.dashboard.market_map_panel",
+        "import": "plotly.express"
+    },
+    {
+        "module": "app.dashboard.observability_panel",
+        "import": "psutil"
+    },
+    {
+        "module": "app.dashboard.observability_panel",
+        "import": "time"
+    },
+    {
+        "module": "app.dashboard.observability_panel",
+        "import": "mercury_ai.providers.manager.MercuryProviderManager"
+    },
+    {
+        "module": "app.dashboard.observability_panel",
+        "import": "streamlit"
+    },
+    {
+        "module": "app.dashboard.operation_center",
+        "import": "sys"
+    },
+    {
+        "module": "app.dashboard.operation_center",
+        "import": "pathlib.Path"
+    },
+    {
+        "module": "app.dashboard.operation_center",
+        "import": "streamlit"
+    },
+    {
+        "module": "app.dashboard.operation_center",
+        "import": "pandas"
+    },
+    {
+        "module": "app.dashboard.operation_center",
+        "import": "mercury_ai.brain.scanner.Scanner"
+    },
+    {
+        "module": "app.dashboard.operation_center",
+        "import": "mercury_ai.analysis.operational_history.OperationalHistory"
+    },
+    {
+        "module": "app.dashboard.operation_center",
+        "import": "mercury_ai.analysis.performance_statistics.PerformanceStatistics"
+    },
+    {
+        "module": "app.dashboard.operation_center",
+        "import": "mercury_ai.analysis.integrity_checker.IntegrityChecker"
+    },
+    {
+        "module": "app.dashboard.operation_center",
+        "import": "mercury_ai.analysis.health_checker.HealthChecker"
+    },
+    {
+        "module": "app.dashboard.operation_center",
+        "import": "mercury_ai.config.settings"
+    },
+    {
+        "module": "app.dashboard.provider_health_panel",
+        "import": "mercury_ai.providers.mercury_data_provider.MercuryDataProvider"
+    },
+    {
+        "module": "app.dashboard.provider_health_panel",
+        "import": "streamlit"
+    },
+    {
+        "module": "app.terminal.terminal",
+        "import": "streamlit"
+    },
+    {
+        "module": "app.terminal.terminal",
+        "import": "app.ui_utils.apply_design_system"
+    },
+    {
+        "module": "app.terminal.terminal",
+        "import": "app.ui_utils.display_status"
+    },
+    {
+        "module": "app.terminal.terminal",
+        "import": "app.ui_utils.display_card"
+    },
+    {
+        "module": "app.terminal.terminal",
+        "import": "mercury_ai.config.settings"
+    },
+    {
+        "module": "app.terminal.terminal",
+        "import": "mercury_ai.analysis.health_checker.HealthChecker"
+    },
+    {
+        "module": "app.terminal.pages.01_Scanner",
+        "import": "sys"
+    },
+    {
+        "module": "app.terminal.pages.01_Scanner",
+        "import": "pathlib.Path"
+    },
+    {
+        "module": "app.terminal.pages.01_Scanner",
+        "import": "streamlit"
+    },
+    {
+        "module": "app.terminal.pages.01_Scanner",
+        "import": "pandas"
+    },
+    {
+        "module": "app.terminal.pages.01_Scanner",
+        "import": "time"
+    },
+    {
+        "module": "app.terminal.pages.01_Scanner",
+        "import": "mercury_ai.brain.scanner.MercuryScanner"
+    },
+    {
+        "module": "app.terminal.pages.01_Scanner",
+        "import": "mercury_ai.config.settings"
+    },
+    {
+        "module": "app.terminal.pages.02_Dashboard",
+        "import": "sys"
+    },
+    {
+        "module": "app.terminal.pages.02_Dashboard",
+        "import": "pathlib.Path"
+    },
+    {
+        "module": "app.terminal.pages.02_Dashboard",
+        "import": "streamlit"
+    },
+    {
+        "module": "app.terminal.pages.02_Dashboard",
+        "import": "pandas"
+    },
+    {
+        "module": "app.terminal.pages.02_Dashboard",
+        "import": "mercury_ai.brain.scanner.Scanner"
+    },
+    {
+        "module": "app.terminal.pages.03_Historico_Estatisticas",
+        "import": "sys"
+    },
+    {
+        "module": "app.terminal.pages.03_Historico_Estatisticas",
+        "import": "pathlib.Path"
+    },
+    {
+        "module": "app.terminal.pages.03_Historico_Estatisticas",
+        "import": "streamlit"
+    },
+    {
+        "module": "app.terminal.pages.03_Historico_Estatisticas",
+        "import": "pandas"
+    },
+    {
+        "module": "app.terminal.pages.03_Historico_Estatisticas",
+        "import": "mercury_ai.analysis.operational_history.OperationalHistory"
+    },
+    {
+        "module": "app.terminal.pages.03_Historico_Estatisticas",
+        "import": "mercury_ai.analysis.performance_statistics.PerformanceStatistics"
+    },
+    {
+        "module": "app.terminal.pages.04_Auditoria_Configuracoes",
+        "import": "sys"
+    },
+    {
+        "module": "app.terminal.pages.04_Auditoria_Configuracoes",
+        "import": "pathlib.Path"
+    },
+    {
+        "module": "app.terminal.pages.04_Auditoria_Configuracoes",
+        "import": "streamlit"
+    },
+    {
+        "module": "app.terminal.pages.04_Auditoria_Configuracoes",
+        "import": "mercury_ai.analysis.integrity_checker.IntegrityChecker"
+    },
+    {
+        "module": "app.terminal.pages.04_Auditoria_Configuracoes",
+        "import": "mercury_ai.analysis.health_checker.HealthChecker"
+    },
+    {
+        "module": "app.terminal.pages.04_Auditoria_Configuracoes",
+        "import": "mercury_ai.config.settings"
+    },
+    {
+        "module": "app.terminal.pages.05_Replay",
+        "import": "sys"
+    },
+    {
+        "module": "app.terminal.pages.05_Replay",
+        "import": "pathlib.Path"
+    },
+    {
+        "module": "app.terminal.pages.05_Replay",
+        "import": "streamlit"
+    },
+    {
+        "module": "app.terminal.pages.05_Replay",
+        "import": "pandas"
+    },
+    {
+        "module": "app.terminal.pages.05_Replay",
+        "import": "mercury_ai.database.snapshot_logger.DecisionSnapshotLogger"
+    },
+    {
+        "module": "app.terminal.pages.06_Demo",
+        "import": "sys"
+    },
+    {
+        "module": "app.terminal.pages.06_Demo",
+        "import": "pathlib.Path"
+    },
+    {
+        "module": "app.terminal.pages.06_Demo",
+        "import": "streamlit"
+    },
+    {
+        "module": "app.terminal.pages.06_Demo",
+        "import": "pandas"
+    },
+    {
+        "module": "app.terminal.pages.06_Demo",
+        "import": "mercury_ai.core.analysis_pipeline.AnalysisPipeline"
+    },
+    {
+        "module": "app.terminal.pages.06_Demo",
+        "import": "mercury_ai.data.market_data.MarketDataService"
+    },
+    {
+        "module": "app.terminal.pages.06_Demo",
+        "import": "mercury_ai.providers.yahoo_finance_provider.YahooFinanceProvider"
+    },
+    {
+        "module": "app.terminal.pages.06_Demo",
+        "import": "mercury_ai.config.assets.SUPPORTED_ASSETS"
+    },
+    {
+        "module": "app.terminal.pages.06_Demo",
+        "import": "mercury_ai.analysis.operational_history.OperationalHistory"
+    },
+    {
+        "module": "app.terminal.pages.06_Demo",
+        "import": "mercury_ai.analysis.performance_statistics.PerformanceStatistics"
+    },
+    {
+        "module": "app.terminal.pages.07_Observabilidade",
+        "import": "streamlit"
+    },
+    {
+        "module": "app.terminal.pages.07_Observabilidade",
+        "import": "pandas"
+    },
+    {
+        "module": "app.terminal.pages.07_Observabilidade",
+        "import": "mercury_ai.utils.system_monitor.SystemMonitor"
+    },
+    {
+        "module": "app.terminal.pages.07_Observabilidade",
+        "import": "mercury_ai.analysis.performance_statistics.PerformanceStatistics"
+    },
+    {
+        "module": "app.terminal.pages.07_Observabilidade",
+        "import": "mercury_ai.analysis.health_checker.HealthChecker"
+    },
+    {
+        "module": "app.terminal.pages.07_Observabilidade",
+        "import": "mercury_ai.database.snapshot_logger.DecisionSnapshotLogger"
+    },
+    {
+        "module": "app.terminal.pages.07_Observabilidade",
+        "import": "time"
+    },
+    {
+        "module": "mercury_ai.main",
+        "import": "mercury_ai.brain.scanner.MercuryScanner"
+    },
+    {
+        "module": "mercury_ai.ai.llm",
+        "import": "os"
+    },
+    {
+        "module": "mercury_ai.ai.llm",
+        "import": "openai.OpenAI"
+    },
+    {
+        "module": "mercury_ai.analysis.adaptive_weight_engine",
+        "import": "typing.Dict"
+    },
+    {
+        "module": "mercury_ai.analysis.adaptive_weight_engine",
+        "import": "mercury_ai.models.market_context.MarketContext"
+    },
+    {
+        "module": "mercury_ai.analysis.adaptive_weight_engine",
+        "import": "mercury_ai.models.market_regime_enum.MarketRegimeEnum"
+    },
+    {
+        "module": "mercury_ai.analysis.benchmark_framework",
+        "import": "time"
+    },
+    {
+        "module": "mercury_ai.analysis.benchmark_framework",
+        "import": "tracemalloc"
+    },
+    {
+        "module": "mercury_ai.analysis.benchmark_framework",
+        "import": "os"
+    },
+    {
+        "module": "mercury_ai.analysis.benchmark_framework",
+        "import": "psutil"
+    },
+    {
+        "module": "mercury_ai.analysis.benchmark_framework",
+        "import": "typing.List"
+    },
+    {
+        "module": "mercury_ai.analysis.benchmark_framework",
+        "import": "mercury_ai.core.analysis_pipeline.AnalysisPipeline"
+    },
+    {
+        "module": "mercury_ai.analysis.benchmark_framework",
+        "import": "mercury_ai.models.benchmark_report.BenchmarkRunResult"
+    },
+    {
+        "module": "mercury_ai.analysis.benchmark_framework",
+        "import": "mercury_ai.models.benchmark_report.BenchmarkReport"
+    },
+    {
+        "module": "mercury_ai.analysis.benchmark_framework",
+        "import": "mercury_ai.analysis.metric_calculator.MetricCalculator"
+    },
+    {
+        "module": "mercury_ai.analysis.benchmark_framework",
+        "import": "mercury_ai.utils.deterministic_clock.DeterministicClock"
+    },
+    {
+        "module": "mercury_ai.analysis.benchmark_framework",
+        "import": "mercury_ai.data.market_data.MarketDataService"
+    },
+    {
+        "module": "mercury_ai.analysis.benchmark_framework",
+        "import": "mercury_ai.providers.yahoo_finance_provider.YahooFinanceProvider"
+    },
+    {
+        "module": "mercury_ai.analysis.calibration_analyzer",
+        "import": "json"
+    },
+    {
+        "module": "mercury_ai.analysis.calibration_analyzer",
+        "import": "os"
+    },
+    {
+        "module": "mercury_ai.analysis.calibration_analyzer",
+        "import": "typing.Dict"
+    },
+    {
+        "module": "mercury_ai.analysis.candlestick_engine",
+        "import": "time"
+    },
+    {
+        "module": "mercury_ai.analysis.candlestick_engine",
+        "import": "pandas"
+    },
+    {
+        "module": "mercury_ai.analysis.candlestick_engine",
+        "import": "typing.List"
+    },
+    {
+        "module": "mercury_ai.analysis.candlestick_engine",
+        "import": "typing.Tuple"
+    },
+    {
+        "module": "mercury_ai.analysis.candlestick_engine",
+        "import": "typing.Optional"
+    },
+    {
+        "module": "mercury_ai.analysis.candlestick_engine",
+        "import": "mercury_ai.core.base_engine.BaseEngine"
+    },
+    {
+        "module": "mercury_ai.analysis.candlestick_engine",
+        "import": "mercury_ai.core.base_engine.EngineResult"
+    },
+    {
+        "module": "mercury_ai.analysis.candlestick_engine",
+        "import": "mercury_ai.models.candlestick_analysis.CandlestickAnalysis"
+    },
+    {
+        "module": "mercury_ai.analysis.candlestick_engine",
+        "import": "mercury_ai.models.market_data.MarketData"
+    },
+    {
+        "module": "mercury_ai.analysis.candlestick_engine",
+        "import": "mercury_ai.models.market_condition.MarketCondition"
+    },
+    {
+        "module": "mercury_ai.analysis.candlestick_engine",
+        "import": "mercury_ai.models.evidence.Evidence"
+    },
+    {
+        "module": "mercury_ai.analysis.candlestick_engine",
+        "import": "mercury_ai.analysis.evidence_query.EvidenceQuery"
+    },
+    {
+        "module": "mercury_ai.analysis.confidence_calibration_auditor",
+        "import": "typing.Dict"
+    },
+    {
+        "module": "mercury_ai.analysis.confidence_calibration_auditor",
+        "import": "typing.Any"
+    },
+    {
+        "module": "mercury_ai.analysis.confidence_calibration_auditor",
+        "import": "typing.List"
+    },
+    {
+        "module": "mercury_ai.analysis.confidence_calibration_auditor",
+        "import": "numpy"
+    },
+    {
+        "module": "mercury_ai.analysis.confidence_calibration_auditor",
+        "import": "mercury_ai.database.snapshot_logger.DecisionSnapshotLogger"
+    },
+    {
+        "module": "mercury_ai.analysis.confidence_calibration_auditor",
+        "import": "mercury_ai.analysis.trade_outcome_engine.TradeOutcomeEngine"
+    },
+    {
+        "module": "mercury_ai.analysis.confidence_calibration_auditor",
+        "import": "mercury_ai.data.market_data.MarketDataService"
+    },
+    {
+        "module": "mercury_ai.analysis.confidence_calibration_auditor",
+        "import": "mercury_ai.providers.yahoo_finance_provider.YahooFinanceProvider"
+    },
+    {
+        "module": "mercury_ai.analysis.confidence_engine",
+        "import": "mercury_ai.models.market_context.MarketContext"
+    },
+    {
+        "module": "mercury_ai.analysis.confidence_engine",
+        "import": "mercury_ai.models.market_evidence_bundle.MarketEvidenceBundle"
+    },
+    {
+        "module": "mercury_ai.analysis.confidence_engine",
+        "import": "mercury_ai.models.confidence_result.ConfidenceResult"
+    },
+    {
+        "module": "mercury_ai.analysis.confidence_engine",
+        "import": "mercury_ai.analysis.evidence_query.EvidenceQuery"
+    },
+    {
+        "module": "mercury_ai.analysis.confidence_engine",
+        "import": "mercury_ai.models.market_state_enum.MarketStateEnum"
+    },
+    {
+        "module": "mercury_ai.analysis.confidence_engine",
+        "import": "mercury_ai.analysis.conflict_resolution_engine.ConflictResolutionEngine"
+    },
+    {
+        "module": "mercury_ai.analysis.conflict_resolution_engine",
+        "import": "typing.List"
+    },
+    {
+        "module": "mercury_ai.analysis.conflict_resolution_engine",
+        "import": "typing.Tuple"
+    },
+    {
+        "module": "mercury_ai.analysis.conflict_resolution_engine",
+        "import": "dataclasses.replace"
+    },
+    {
+        "module": "mercury_ai.analysis.conflict_resolution_engine",
+        "import": "mercury_ai.models.evidence.Evidence"
+    },
+    {
+        "module": "mercury_ai.analysis.conflict_resolution_engine",
+        "import": "mercury_ai.models.market_context.MarketContext"
+    },
+    {
+        "module": "mercury_ai.analysis.conflict_resolution_engine",
+        "import": "mercury_ai.analysis.adaptive_weight_engine.AdaptiveWeightEngine"
+    },
+    {
+        "module": "mercury_ai.analysis.confluence_engine",
+        "import": "mercury_ai.models.market_evidence_bundle.MarketEvidenceBundle"
+    },
+    {
+        "module": "mercury_ai.analysis.confluence_engine",
+        "import": "mercury_ai.models.confluence_result.ConfluenceResult"
+    },
+    {
+        "module": "mercury_ai.analysis.confluence_engine",
+        "import": "mercury_ai.models.analysis_result.AnalysisDirection"
+    },
+    {
+        "module": "mercury_ai.analysis.confluence_engine",
+        "import": "mercury_ai.models.market_context.MarketContext"
+    },
+    {
+        "module": "mercury_ai.analysis.confluence_engine",
+        "import": "mercury_ai.analysis.market_thesis_builder.MarketThesisBuilder"
+    },
+    {
+        "module": "mercury_ai.analysis.confluence_engine",
+        "import": "mercury_ai.analysis.decision_trace_engine.DecisionTraceEngine"
+    },
+    {
+        "module": "mercury_ai.analysis.confluence_score_engine",
+        "import": "mercury_ai.models.market_context.MarketContext"
+    },
+    {
+        "module": "mercury_ai.analysis.confluence_score_engine",
+        "import": "mercury_ai.models.confluence_score.ConfluenceScore"
+    },
+    {
+        "module": "mercury_ai.analysis.confluence_score_engine",
+        "import": "mercury_ai.analysis.evidence_query.EvidenceQuery"
+    },
+    {
+        "module": "mercury_ai.analysis.context_engine",
+        "import": "dataclasses.replace"
+    },
+    {
+        "module": "mercury_ai.analysis.context_engine",
+        "import": "typing.List"
+    },
+    {
+        "module": "mercury_ai.analysis.context_engine",
+        "import": "mercury_ai.core.pipeline_executor.PipelineExecutor"
+    },
+    {
+        "module": "mercury_ai.analysis.context_engine",
+        "import": "mercury_ai.core.pipeline_profiler.PipelineProfiler"
+    },
+    {
+        "module": "mercury_ai.analysis.context_engine",
+        "import": "mercury_ai.models.evidence.Evidence"
+    },
+    {
+        "module": "mercury_ai.analysis.context_engine",
+        "import": "mercury_ai.models.market_context.MarketContext"
+    },
+    {
+        "module": "mercury_ai.analysis.context_intelligence_engine",
+        "import": "typing.List"
+    },
+    {
+        "module": "mercury_ai.analysis.context_intelligence_engine",
+        "import": "mercury_ai.models.evidence.Evidence"
+    },
+    {
+        "module": "mercury_ai.analysis.context_intelligence_engine",
+        "import": "mercury_ai.models.market_context.MarketContext"
+    },
+    {
+        "module": "mercury_ai.analysis.data_exporter",
+        "import": "json"
+    },
+    {
+        "module": "mercury_ai.analysis.data_exporter",
+        "import": "pandas"
+    },
+    {
+        "module": "mercury_ai.analysis.data_exporter",
+        "import": "zipfile"
+    },
+    {
+        "module": "mercury_ai.analysis.data_exporter",
+        "import": "pathlib.Path"
+    },
+    {
+        "module": "mercury_ai.analysis.data_exporter",
+        "import": "mercury_ai.analysis.operational_history.OperationalHistory"
+    },
+    {
+        "module": "mercury_ai.analysis.data_exporter",
+        "import": "mercury_ai.database.snapshot_logger.DecisionSnapshotLogger"
+    },
+    {
+        "module": "mercury_ai.analysis.data_exporter",
+        "import": "typing.Dict"
+    },
+    {
+        "module": "mercury_ai.analysis.data_exporter",
+        "import": "typing.Any"
+    },
+    {
+        "module": "mercury_ai.analysis.data_exporter",
+        "import": "typing.List"
+    },
+    {
+        "module": "mercury_ai.analysis.data_quality_engine",
+        "import": "pandas"
+    },
+    {
+        "module": "mercury_ai.analysis.data_quality_engine",
+        "import": "numpy"
+    },
+    {
+        "module": "mercury_ai.analysis.data_quality_engine",
+        "import": "datetime.datetime"
+    },
+    {
+        "module": "mercury_ai.analysis.data_quality_engine",
+        "import": "dataclasses.dataclass"
+    },
+    {
+        "module": "mercury_ai.analysis.data_quality_engine",
+        "import": "dataclasses.field"
+    },
+    {
+        "module": "mercury_ai.analysis.data_quality_engine",
+        "import": "typing.Dict"
+    },
+    {
+        "module": "mercury_ai.analysis.data_quality_engine",
+        "import": "typing.Any"
+    },
+    {
+        "module": "mercury_ai.analysis.decision_trace_engine",
+        "import": "mercury_ai.models.decision_trace.DecisionTrace"
+    },
+    {
+        "module": "mercury_ai.analysis.decision_trace_engine",
+        "import": "mercury_ai.models.decision_trace.DecisionNode"
+    },
+    {
+        "module": "mercury_ai.analysis.decision_trace_engine",
+        "import": "dataclasses.replace"
+    },
+    {
+        "module": "mercury_ai.analysis.engine_performance_auditor",
+        "import": "typing.List"
+    },
+    {
+        "module": "mercury_ai.analysis.engine_performance_auditor",
+        "import": "typing.Dict"
+    },
+    {
+        "module": "mercury_ai.analysis.engine_performance_auditor",
+        "import": "typing.Any"
+    },
+    {
+        "module": "mercury_ai.analysis.engine_performance_auditor",
+        "import": "collections.defaultdict"
+    },
+    {
+        "module": "mercury_ai.analysis.engine_performance_auditor",
+        "import": "mercury_ai.database.snapshot_logger.DecisionSnapshotLogger"
+    },
+    {
+        "module": "mercury_ai.analysis.engine_performance_auditor",
+        "import": "mercury_ai.analysis.performance_analytics.PerformanceAnalytics"
+    },
+    {
+        "module": "mercury_ai.analysis.engine_performance_auditor",
+        "import": "mercury_ai.analysis.trade_outcome_engine.TradeOutcomeEngine"
+    },
+    {
+        "module": "mercury_ai.analysis.evidence_engine",
+        "import": "typing.List"
+    },
+    {
+        "module": "mercury_ai.analysis.evidence_engine",
+        "import": "typing.Optional"
+    },
+    {
+        "module": "mercury_ai.analysis.evidence_engine",
+        "import": "dataclasses.replace"
+    },
+    {
+        "module": "mercury_ai.analysis.evidence_engine",
+        "import": "mercury_ai.models.evidence.Evidence"
+    },
+    {
+        "module": "mercury_ai.analysis.evidence_engine",
+        "import": "mercury_ai.models.market_evidence_bundle.MarketEvidenceBundle"
+    },
+    {
+        "module": "mercury_ai.analysis.evidence_engine",
+        "import": "mercury_ai.models.market_context.MarketContext"
+    },
+    {
+        "module": "mercury_ai.analysis.evidence_engine",
+        "import": "mercury_ai.analysis.evidence_quality_engine.EvidenceQualityEngine"
+    },
+    {
+        "module": "mercury_ai.analysis.evidence_engine",
+        "import": "mercury_ai.analysis.conflict_resolution_engine.ConflictResolutionEngine"
+    },
+    {
+        "module": "mercury_ai.analysis.evidence_engine",
+        "import": "mercury_ai.utils.deterministic_clock.DeterministicClock"
+    },
+    {
+        "module": "mercury_ai.analysis.evidence_quality_engine",
+        "import": "typing.List"
+    },
+    {
+        "module": "mercury_ai.analysis.evidence_quality_engine",
+        "import": "mercury_ai.models.evidence.Evidence"
+    },
+    {
+        "module": "mercury_ai.analysis.evidence_quality_engine",
+        "import": "dataclasses.replace"
+    },
+    {
+        "module": "mercury_ai.analysis.evidence_query",
+        "import": "typing.List"
+    },
+    {
+        "module": "mercury_ai.analysis.evidence_query",
+        "import": "mercury_ai.models.evidence.Evidence"
+    },
+    {
+        "module": "mercury_ai.analysis.evidence_ranking_engine",
+        "import": "typing.List"
+    },
+    {
+        "module": "mercury_ai.analysis.evidence_ranking_engine",
+        "import": "dataclasses.replace"
+    },
+    {
+        "module": "mercury_ai.analysis.evidence_ranking_engine",
+        "import": "mercury_ai.models.evidence.Evidence"
+    },
+    {
+        "module": "mercury_ai.analysis.evidence_ranking_engine",
+        "import": "mercury_ai.models.evidence_ranking.EvidenceRankingResult"
+    },
+    {
+        "module": "mercury_ai.analysis.fair_value_gap_engine",
+        "import": "pandas"
+    },
+    {
+        "module": "mercury_ai.analysis.fair_value_gap_engine",
+        "import": "typing.Optional"
+    },
+    {
+        "module": "mercury_ai.analysis.fair_value_gap_engine",
+        "import": "mercury_ai.models.fair_value_gap_analysis.FairValueGapAnalysis"
+    },
+    {
+        "module": "mercury_ai.analysis.fair_value_gap_engine",
+        "import": "mercury_ai.models.evidence.Evidence"
+    },
+    {
+        "module": "mercury_ai.analysis.fair_value_gap_engine",
+        "import": "mercury_ai.core.pipeline_executor.PipelineExecutor"
+    },
+    {
+        "module": "mercury_ai.analysis.fair_value_gap_engine",
+        "import": "mercury_ai.core.pipeline_profiler.PipelineProfiler"
+    },
+    {
+        "module": "mercury_ai.analysis.health_auditor",
+        "import": "pathlib.Path"
+    },
+    {
+        "module": "mercury_ai.analysis.health_auditor",
+        "import": "mercury_ai.database.snapshot_logger.DecisionSnapshotLogger"
+    },
+    {
+        "module": "mercury_ai.analysis.health_auditor",
+        "import": "mercury_ai.brain.mercury_decision_engine.MercuryDecisionEngine"
+    },
+    {
+        "module": "mercury_ai.analysis.health_auditor",
+        "import": "mercury_ai.analysis.narrative_engine.NarrativeEngine"
+    },
+    {
+        "module": "mercury_ai.analysis.health_auditor",
+        "import": "mercury_ai.brain.probability_engine.ProbabilityEngine"
+    },
+    {
+        "module": "mercury_ai.analysis.health_auditor",
+        "import": "mercury_ai.analysis.confidence_engine.ConfidenceEngine"
+    },
+    {
+        "module": "mercury_ai.analysis.health_auditor",
+        "import": "mercury_ai.core.pipeline_executor.PipelineExecutor"
+    },
+    {
+        "module": "mercury_ai.analysis.health_auditor",
+        "import": "os"
+    },
+    {
+        "module": "mercury_ai.analysis.health_checker",
+        "import": "typing.Dict"
+    },
+    {
+        "module": "mercury_ai.analysis.health_checker",
+        "import": "typing.Any"
+    },
+    {
+        "module": "mercury_ai.analysis.health_checker",
+        "import": "pathlib.Path"
+    },
+    {
+        "module": "mercury_ai.analysis.health_checker",
+        "import": "dataclasses.dataclass"
+    },
+    {
+        "module": "mercury_ai.analysis.health_checker",
+        "import": "dataclasses.asdict"
+    },
+    {
+        "module": "mercury_ai.analysis.health_checker",
+        "import": "mercury_ai.database.snapshot_logger.DecisionSnapshotLogger"
+    },
+    {
+        "module": "mercury_ai.analysis.health_checker",
+        "import": "mercury_ai.brain.mercury_decision_engine.MercuryDecisionEngine"
+    },
+    {
+        "module": "mercury_ai.analysis.health_checker",
+        "import": "mercury_ai.core.pipeline_executor.PipelineExecutor"
+    },
+    {
+        "module": "mercury_ai.analysis.health_checker",
+        "import": "mercury_ai.analysis.narrative_engine.NarrativeEngine"
+    },
+    {
+        "module": "mercury_ai.analysis.health_checker",
+        "import": "mercury_ai.brain.probability_engine.ProbabilityEngine"
+    },
+    {
+        "module": "mercury_ai.analysis.health_checker",
+        "import": "mercury_ai.analysis.confidence_engine.ConfidenceEngine"
+    },
+    {
+        "module": "mercury_ai.analysis.health_checker",
+        "import": "mercury_ai.analysis.statistical_auditor.StatisticalAuditor"
+    },
+    {
+        "module": "mercury_ai.analysis.health_checker",
+        "import": "mercury_ai.analysis.operational_history.OperationalHistory"
+    },
+    {
+        "module": "mercury_ai.analysis.health_checker",
+        "import": "mercury_ai.utils.deterministic_clock.DeterministicClock"
+    },
+    {
+        "module": "mercury_ai.analysis.health_checker",
+        "import": "mercury_ai.config.settings"
+    },
+    {
+        "module": "mercury_ai.analysis.historical_replay_engine",
+        "import": "pandas"
+    },
+    {
+        "module": "mercury_ai.analysis.historical_replay_engine",
+        "import": "mercury_ai.core.analysis_pipeline.AnalysisPipeline"
+    },
+    {
+        "module": "mercury_ai.analysis.historical_replay_engine",
+        "import": "mercury_ai.utils.deterministic_clock.DeterministicClock"
+    },
+    {
+        "module": "mercury_ai.analysis.historical_replay_engine",
+        "import": "mercury_ai.database.replay_storage.ReplayStorage"
+    },
+    {
+        "module": "mercury_ai.analysis.historical_replay_engine",
+        "import": "mercury_ai.database.replay_storage.ReplayMetrics"
+    },
+    {
+        "module": "mercury_ai.analysis.historical_replay_engine",
+        "import": "mercury_ai.data.market_data.MarketDataService"
+    },
+    {
+        "module": "mercury_ai.analysis.historical_replay_engine",
+        "import": "mercury_ai.providers.historical_replay_provider.HistoricalReplayProvider"
+    },
+    {
+        "module": "mercury_ai.analysis.institutional_analytics_engine",
+        "import": "json"
+    },
+    {
+        "module": "mercury_ai.analysis.institutional_analytics_engine",
+        "import": "os"
+    },
+    {
+        "module": "mercury_ai.analysis.institutional_analytics_engine",
+        "import": "typing.Dict"
+    },
+    {
+        "module": "mercury_ai.analysis.institutional_analytics_engine",
+        "import": "typing.Any"
+    },
+    {
+        "module": "mercury_ai.analysis.institutional_analytics_engine",
+        "import": "pandas"
+    },
+    {
+        "module": "mercury_ai.analysis.institutional_context_builder",
+        "import": "dataclasses.dataclass"
+    },
+    {
+        "module": "mercury_ai.analysis.institutional_memory_engine",
+        "import": "json"
+    },
+    {
+        "module": "mercury_ai.analysis.institutional_memory_engine",
+        "import": "os"
+    },
+    {
+        "module": "mercury_ai.analysis.institutional_memory_engine",
+        "import": "hashlib"
+    },
+    {
+        "module": "mercury_ai.analysis.institutional_memory_engine",
+        "import": "mercury_ai.models.decision_snapshot.DecisionSnapshot"
+    },
+    {
+        "module": "mercury_ai.analysis.institutional_report",
+        "import": "mercury_ai.database.snapshot_logger.DecisionSnapshotLogger"
+    },
+    {
+        "module": "mercury_ai.analysis.institutional_report",
+        "import": "pytest"
+    },
+    {
+        "module": "mercury_ai.analysis.institutional_report",
+        "import": "subprocess"
+    },
+    {
+        "module": "mercury_ai.analysis.institutional_report_generator",
+        "import": "typing.Dict"
+    },
+    {
+        "module": "mercury_ai.analysis.institutional_report_generator",
+        "import": "typing.Any"
+    },
+    {
+        "module": "mercury_ai.analysis.institutional_report_generator",
+        "import": "mercury_ai.analysis.performance_analytics.PerformanceAnalytics"
+    },
+    {
+        "module": "mercury_ai.analysis.institutional_report_generator",
+        "import": "mercury_ai.analysis.performance_statistics.PerformanceStatistics"
+    },
+    {
+        "module": "mercury_ai.analysis.institutional_report_generator",
+        "import": "mercury_ai.analysis.engine_performance_auditor.EnginePerformanceAuditor"
+    },
+    {
+        "module": "mercury_ai.analysis.institutional_report_generator",
+        "import": "mercury_ai.analysis.confidence_calibration_auditor.ConfidenceCalibrationAuditor"
+    },
+    {
+        "module": "mercury_ai.analysis.institutional_trade_filter_engine",
+        "import": "typing.List"
+    },
+    {
+        "module": "mercury_ai.analysis.institutional_trade_filter_engine",
+        "import": "typing.Tuple"
+    },
+    {
+        "module": "mercury_ai.analysis.institutional_trade_filter_engine",
+        "import": "mercury_ai.models.market_context.MarketContext"
+    },
+    {
+        "module": "mercury_ai.analysis.institutional_trade_filter_engine",
+        "import": "mercury_ai.models.market_evidence_bundle.MarketEvidenceBundle"
+    },
+    {
+        "module": "mercury_ai.analysis.institutional_trade_filter_engine",
+        "import": "mercury_ai.models.market_regime_enum.MarketRegimeEnum"
+    },
+    {
+        "module": "mercury_ai.analysis.integrity_checker",
+        "import": "typing.List"
+    },
+    {
+        "module": "mercury_ai.analysis.integrity_checker",
+        "import": "typing.Dict"
+    },
+    {
+        "module": "mercury_ai.analysis.integrity_checker",
+        "import": "typing.Any"
+    },
+    {
+        "module": "mercury_ai.analysis.integrity_checker",
+        "import": "mercury_ai.database.snapshot_logger.DecisionSnapshotLogger"
+    },
+    {
+        "module": "mercury_ai.analysis.integrity_checker",
+        "import": "re"
+    },
+    {
+        "module": "mercury_ai.analysis.learning_engine",
+        "import": "json"
+    },
+    {
+        "module": "mercury_ai.analysis.learning_engine",
+        "import": "os"
+    },
+    {
+        "module": "mercury_ai.analysis.learning_engine",
+        "import": "typing.Dict"
+    },
+    {
+        "module": "mercury_ai.analysis.learning_engine",
+        "import": "typing.Any"
+    },
+    {
+        "module": "mercury_ai.analysis.learning_engine",
+        "import": "collections.defaultdict"
+    },
+    {
+        "module": "mercury_ai.analysis.live_monitor",
+        "import": "time"
+    },
+    {
+        "module": "mercury_ai.analysis.live_monitor",
+        "import": "typing.List"
+    },
+    {
+        "module": "mercury_ai.analysis.live_monitor",
+        "import": "mercury_ai.core.analysis_pipeline.AnalysisPipeline"
+    },
+    {
+        "module": "mercury_ai.analysis.live_monitor",
+        "import": "mercury_ai.data.market_data.MarketDataService"
+    },
+    {
+        "module": "mercury_ai.analysis.live_monitor",
+        "import": "mercury_ai.providers.yahoo_finance_provider.YahooFinanceProvider"
+    },
+    {
+        "module": "mercury_ai.analysis.live_monitor",
+        "import": "mercury_ai.config.assets.SUPPORTED_ASSETS"
+    },
+    {
+        "module": "mercury_ai.analysis.market_condition_engine",
+        "import": "typing.List"
+    },
+    {
+        "module": "mercury_ai.analysis.market_condition_engine",
+        "import": "mercury_ai.models.market_data.MarketData"
+    },
+    {
+        "module": "mercury_ai.analysis.market_condition_engine",
+        "import": "mercury_ai.models.market_condition.MarketCondition"
+    },
+    {
+        "module": "mercury_ai.analysis.market_context_builder",
+        "import": "mercury_ai.models.market_context.MarketContext"
+    },
+    {
+        "module": "mercury_ai.analysis.market_context_builder",
+        "import": "mercury_ai.models.risk_assessment.RiskAssessment"
+    },
+    {
+        "module": "mercury_ai.analysis.market_context_builder",
+        "import": "mercury_ai.models.market_state.MarketState"
+    },
+    {
+        "module": "mercury_ai.analysis.market_context_builder",
+        "import": "mercury_ai.models.market_state.MarketStateEnum"
+    },
+    {
+        "module": "mercury_ai.analysis.market_context_builder",
+        "import": "mercury_ai.models.mtf_consensus.MTFConsensus"
+    },
+    {
+        "module": "mercury_ai.analysis.market_regime_engine",
+        "import": "mercury_ai.models.market_regime_enum.MarketRegimeEnum"
+    },
+    {
+        "module": "mercury_ai.analysis.market_state_engine",
+        "import": "typing.Optional"
+    },
+    {
+        "module": "mercury_ai.analysis.market_state_engine",
+        "import": "mercury_ai.models.market_data.MarketData"
+    },
+    {
+        "module": "mercury_ai.analysis.market_state_engine",
+        "import": "mercury_ai.models.market_state.MarketState"
+    },
+    {
+        "module": "mercury_ai.analysis.market_state_engine",
+        "import": "mercury_ai.models.market_state_enum.MarketStateEnum"
+    },
+    {
+        "module": "mercury_ai.analysis.market_state_engine",
+        "import": "mercury_ai.models.session_analysis.SessionAnalysis"
+    },
+    {
+        "module": "mercury_ai.analysis.market_structure_intelligence_engine",
+        "import": "typing.List"
+    },
+    {
+        "module": "mercury_ai.analysis.market_structure_intelligence_engine",
+        "import": "typing.Tuple"
+    },
+    {
+        "module": "mercury_ai.analysis.market_structure_intelligence_engine",
+        "import": "pandas"
+    },
+    {
+        "module": "mercury_ai.analysis.market_structure_intelligence_engine",
+        "import": "mercury_ai.models.evidence.Evidence"
+    },
+    {
+        "module": "mercury_ai.analysis.market_structure_intelligence_engine",
+        "import": "mercury_ai.models.market_structure_profile.MarketStructureProfile"
+    },
+    {
+        "module": "mercury_ai.analysis.market_structure_intelligence_engine",
+        "import": "mercury_ai.analysis.swing_engine.SwingEngine"
+    },
+    {
+        "module": "mercury_ai.analysis.market_thesis_builder",
+        "import": "mercury_ai.models.market_context.MarketContext"
+    },
+    {
+        "module": "mercury_ai.analysis.market_thesis_builder",
+        "import": "mercury_ai.models.market_evidence_bundle.MarketEvidenceBundle"
+    },
+    {
+        "module": "mercury_ai.analysis.market_thesis_builder",
+        "import": "mercury_ai.models.market_thesis.MarketThesis"
+    },
+    {
+        "module": "mercury_ai.analysis.market_thesis_builder",
+        "import": "mercury_ai.analysis.risk_engine.RiskEngine"
+    },
+    {
+        "module": "mercury_ai.analysis.market_thesis_builder",
+        "import": "mercury_ai.analysis.confidence_engine.ConfidenceEngine"
+    },
+    {
+        "module": "mercury_ai.analysis.market_thesis_builder",
+        "import": "mercury_ai.analysis.market_state_engine.MarketStateEngine"
+    },
+    {
+        "module": "mercury_ai.analysis.market_thesis_builder",
+        "import": "mercury_ai.analysis.confluence_score_engine.ConfluenceScoreEngine"
+    },
+    {
+        "module": "mercury_ai.analysis.metric_calculator",
+        "import": "dataclasses.dataclass"
+    },
+    {
+        "module": "mercury_ai.analysis.metric_calculator",
+        "import": "typing.List"
+    },
+    {
+        "module": "mercury_ai.analysis.metric_calculator",
+        "import": "typing.Dict"
+    },
+    {
+        "module": "mercury_ai.analysis.metric_calculator",
+        "import": "numpy"
+    },
+    {
+        "module": "mercury_ai.analysis.momentum_engine",
+        "import": "pandas"
+    },
+    {
+        "module": "mercury_ai.analysis.momentum_engine",
+        "import": "typing.Optional"
+    },
+    {
+        "module": "mercury_ai.analysis.momentum_engine",
+        "import": "mercury_ai.models.momentum_analysis.MomentumAnalysis"
+    },
+    {
+        "module": "mercury_ai.analysis.momentum_engine",
+        "import": "mercury_ai.models.evidence.Evidence"
+    },
+    {
+        "module": "mercury_ai.analysis.momentum_engine",
+        "import": "mercury_ai.core.pipeline_executor.PipelineExecutor"
+    },
+    {
+        "module": "mercury_ai.analysis.momentum_engine",
+        "import": "mercury_ai.core.pipeline_profiler.PipelineProfiler"
+    },
+    {
+        "module": "mercury_ai.analysis.mtf_engine",
+        "import": "typing.List"
+    },
+    {
+        "module": "mercury_ai.analysis.mtf_engine",
+        "import": "typing.Tuple"
+    },
+    {
+        "module": "mercury_ai.analysis.mtf_engine",
+        "import": "mercury_ai.data.market_data.MarketDataService"
+    },
+    {
+        "module": "mercury_ai.analysis.mtf_engine",
+        "import": "mercury_ai.providers.base_provider.MarketDataProvider"
+    },
+    {
+        "module": "mercury_ai.analysis.mtf_engine",
+        "import": "mercury_ai.data.indicator_engine.IndicatorEngine"
+    },
+    {
+        "module": "mercury_ai.analysis.mtf_engine",
+        "import": "mercury_ai.analysis.trend_analyzer.TrendAnalyzer"
+    },
+    {
+        "module": "mercury_ai.analysis.mtf_engine",
+        "import": "mercury_ai.analysis.smart_money.liquidity_engine.LiquidityEngine"
+    },
+    {
+        "module": "mercury_ai.analysis.mtf_engine",
+        "import": "mercury_ai.analysis.volatility_engine.VolatilityEngine"
+    },
+    {
+        "module": "mercury_ai.analysis.mtf_engine",
+        "import": "mercury_ai.analysis.market_structure_intelligence_engine.MarketStructureIntelligenceEngine"
+    },
+    {
+        "module": "mercury_ai.analysis.mtf_engine",
+        "import": "mercury_ai.models.evidence.Evidence"
+    },
+    {
+        "module": "mercury_ai.analysis.mtf_engine",
+        "import": "mercury_ai.models.market_data.MarketData"
+    },
+    {
+        "module": "mercury_ai.analysis.mtf_engine",
+        "import": "mercury_ai.models.mtf_consensus.MTFConsensus"
+    },
+    {
+        "module": "mercury_ai.analysis.mtf_engine",
+        "import": "mercury_ai.config.timeframes.YFINANCE_INTERVALS"
+    },
+    {
+        "module": "mercury_ai.analysis.narrative_engine",
+        "import": "typing.List"
+    },
+    {
+        "module": "mercury_ai.analysis.narrative_engine",
+        "import": "mercury_ai.models.evidence.Evidence"
+    },
+    {
+        "module": "mercury_ai.analysis.narrative_engine",
+        "import": "mercury_ai.models.market_context.MarketContext"
+    },
+    {
+        "module": "mercury_ai.analysis.narrative_engine",
+        "import": "mercury_ai.models.trading_explanation.TradingExplanation"
+    },
+    {
+        "module": "mercury_ai.analysis.notification_center",
+        "import": "json"
+    },
+    {
+        "module": "mercury_ai.analysis.notification_center",
+        "import": "csv"
+    },
+    {
+        "module": "mercury_ai.analysis.notification_center",
+        "import": "dataclasses.dataclass"
+    },
+    {
+        "module": "mercury_ai.analysis.notification_center",
+        "import": "dataclasses.field"
+    },
+    {
+        "module": "mercury_ai.analysis.notification_center",
+        "import": "typing.List"
+    },
+    {
+        "module": "mercury_ai.analysis.notification_center",
+        "import": "typing.Optional"
+    },
+    {
+        "module": "mercury_ai.analysis.notification_center",
+        "import": "mercury_ai.utils.deterministic_clock.DeterministicClock"
+    },
+    {
+        "module": "mercury_ai.analysis.operational_history",
+        "import": "mercury_ai.database.snapshot_logger.DecisionSnapshotLogger"
+    },
+    {
+        "module": "mercury_ai.analysis.operational_history",
+        "import": "mercury_ai.analysis.performance_analytics.PerformanceAnalytics"
+    },
+    {
+        "module": "mercury_ai.analysis.operational_history",
+        "import": "typing.List"
+    },
+    {
+        "module": "mercury_ai.analysis.operational_history",
+        "import": "typing.Dict"
+    },
+    {
+        "module": "mercury_ai.analysis.operational_history",
+        "import": "typing.Any"
+    },
+    {
+        "module": "mercury_ai.analysis.performance_analytics",
+        "import": "typing.List"
+    },
+    {
+        "module": "mercury_ai.analysis.performance_analytics",
+        "import": "typing.Dict"
+    },
+    {
+        "module": "mercury_ai.analysis.performance_analytics",
+        "import": "typing.Any"
+    },
+    {
+        "module": "mercury_ai.analysis.performance_analytics",
+        "import": "pathlib.Path"
+    },
+    {
+        "module": "mercury_ai.analysis.performance_analytics",
+        "import": "mercury_ai.database.snapshot_logger.DecisionSnapshotLogger"
+    },
+    {
+        "module": "mercury_ai.analysis.performance_analytics",
+        "import": "mercury_ai.data.market_data.MarketDataService"
+    },
+    {
+        "module": "mercury_ai.analysis.performance_analytics",
+        "import": "mercury_ai.providers.yahoo_finance_provider.YahooFinanceProvider"
+    },
+    {
+        "module": "mercury_ai.analysis.performance_analytics",
+        "import": "datetime.datetime"
+    },
+    {
+        "module": "mercury_ai.analysis.performance_center",
+        "import": "typing.Dict"
+    },
+    {
+        "module": "mercury_ai.analysis.performance_center",
+        "import": "typing.Any"
+    },
+    {
+        "module": "mercury_ai.analysis.performance_center",
+        "import": "pandas"
+    },
+    {
+        "module": "mercury_ai.analysis.performance_center",
+        "import": "mercury_ai.analysis.performance_analytics.PerformanceAnalytics"
+    },
+    {
+        "module": "mercury_ai.analysis.performance_center",
+        "import": "mercury_ai.analysis.performance_statistics.PerformanceStatistics"
+    },
+    {
+        "module": "mercury_ai.analysis.performance_center",
+        "import": "mercury_ai.database.snapshot_logger.DecisionSnapshotLogger"
+    },
+    {
+        "module": "mercury_ai.analysis.performance_center",
+        "import": "collections.Counter"
+    },
+    {
+        "module": "mercury_ai.analysis.performance_statistics",
+        "import": "typing.List"
+    },
+    {
+        "module": "mercury_ai.analysis.performance_statistics",
+        "import": "typing.Dict"
+    },
+    {
+        "module": "mercury_ai.analysis.performance_statistics",
+        "import": "typing.Any"
+    },
+    {
+        "module": "mercury_ai.analysis.performance_statistics",
+        "import": "mercury_ai.analysis.performance_analytics.PerformanceAnalytics"
+    },
+    {
+        "module": "mercury_ai.analysis.post_decision_evaluation_engine",
+        "import": "typing.List"
+    },
+    {
+        "module": "mercury_ai.analysis.post_decision_evaluation_engine",
+        "import": "typing.Dict"
+    },
+    {
+        "module": "mercury_ai.analysis.post_decision_evaluation_engine",
+        "import": "mercury_ai.models.decision_snapshot.DecisionSnapshot"
+    },
+    {
+        "module": "mercury_ai.analysis.post_decision_evaluation_engine",
+        "import": "mercury_ai.models.performance_metrics.PerformanceMetrics"
+    },
+    {
+        "module": "mercury_ai.analysis.price_action_analyzer",
+        "import": "mercury_ai.models.price_action.PriceActionAnalysis"
+    },
+    {
+        "module": "mercury_ai.analysis.price_action_engine",
+        "import": "typing.Optional"
+    },
+    {
+        "module": "mercury_ai.analysis.price_action_engine",
+        "import": "pandas"
+    },
+    {
+        "module": "mercury_ai.analysis.price_action_engine",
+        "import": "mercury_ai.models.price_action_analysis.PriceActionAnalysis"
+    },
+    {
+        "module": "mercury_ai.analysis.price_action_engine",
+        "import": "mercury_ai.core.pipeline_executor.PipelineExecutor"
+    },
+    {
+        "module": "mercury_ai.analysis.price_action_engine",
+        "import": "mercury_ai.core.pipeline_profiler.PipelineProfiler"
+    },
+    {
+        "module": "mercury_ai.analysis.provider_priority_engine",
+        "import": "logging"
+    },
+    {
+        "module": "mercury_ai.analysis.provider_priority_engine",
+        "import": "typing.Optional"
+    },
+    {
+        "module": "mercury_ai.analysis.provider_priority_engine",
+        "import": "mercury_ai.data.mercury_data_provider.MercuryDataProvider"
+    },
+    {
+        "module": "mercury_ai.analysis.provider_priority_engine",
+        "import": "mercury_ai.data.mercury_data_provider.IMercuryDataProvider"
+    },
+    {
+        "module": "mercury_ai.analysis.ranking_engine",
+        "import": "typing.List"
+    },
+    {
+        "module": "mercury_ai.analysis.ranking_engine",
+        "import": "mercury_ai.models.analysis_result.AnalysisResult"
+    },
+    {
+        "module": "mercury_ai.analysis.risk_engine",
+        "import": "mercury_ai.models.market_context.MarketContext"
+    },
+    {
+        "module": "mercury_ai.analysis.risk_engine",
+        "import": "mercury_ai.models.market_evidence_bundle.MarketEvidenceBundle"
+    },
+    {
+        "module": "mercury_ai.analysis.risk_engine",
+        "import": "mercury_ai.models.risk_assessment.RiskAssessment"
+    },
+    {
+        "module": "mercury_ai.analysis.risk_engine",
+        "import": "mercury_ai.analysis.evidence_quality_engine.EvidenceQualityEngine"
+    },
+    {
+        "module": "mercury_ai.analysis.session_engine",
+        "import": "typing.List"
+    },
+    {
+        "module": "mercury_ai.analysis.session_engine",
+        "import": "mercury_ai.utils.deterministic_clock.DeterministicClock"
+    },
+    {
+        "module": "mercury_ai.analysis.session_engine",
+        "import": "mercury_ai.models.session_analysis.SessionAnalysis"
+    },
+    {
+        "module": "mercury_ai.analysis.session_engine",
+        "import": "mercury_ai.config.sessions"
+    },
+    {
+        "module": "mercury_ai.analysis.statistical_auditor",
+        "import": "typing.List"
+    },
+    {
+        "module": "mercury_ai.analysis.statistical_auditor",
+        "import": "typing.Dict"
+    },
+    {
+        "module": "mercury_ai.analysis.statistical_auditor",
+        "import": "typing.Any"
+    },
+    {
+        "module": "mercury_ai.analysis.statistical_auditor",
+        "import": "collections.Counter"
+    },
+    {
+        "module": "mercury_ai.analysis.statistical_auditor",
+        "import": "mercury_ai.database.snapshot_logger.DecisionSnapshotLogger"
+    },
+    {
+        "module": "mercury_ai.analysis.support_resistance_analyzer",
+        "import": "pandas"
+    },
+    {
+        "module": "mercury_ai.analysis.support_resistance_analyzer",
+        "import": "numpy"
+    },
+    {
+        "module": "mercury_ai.analysis.support_resistance_analyzer",
+        "import": "typing.List"
+    },
+    {
+        "module": "mercury_ai.analysis.support_resistance_analyzer",
+        "import": "typing.Tuple"
+    },
+    {
+        "module": "mercury_ai.analysis.support_resistance_analyzer",
+        "import": "typing.Optional"
+    },
+    {
+        "module": "mercury_ai.analysis.support_resistance_analyzer",
+        "import": "mercury_ai.models.support_resistance_analysis.SupportResistanceAnalysis"
+    },
+    {
+        "module": "mercury_ai.analysis.support_resistance_analyzer",
+        "import": "ta.volatility.AverageTrueRange"
+    },
+    {
+        "module": "mercury_ai.analysis.swing_engine",
+        "import": "pandas"
+    },
+    {
+        "module": "mercury_ai.analysis.swing_engine",
+        "import": "typing.List"
+    },
+    {
+        "module": "mercury_ai.analysis.swing_engine",
+        "import": "typing.Tuple"
+    },
+    {
+        "module": "mercury_ai.analysis.swing_engine",
+        "import": "mercury_ai.models.evidence.Evidence"
+    },
+    {
+        "module": "mercury_ai.analysis.swing_engine",
+        "import": "mercury_ai.models.swing_analysis.Swing"
+    },
+    {
+        "module": "mercury_ai.analysis.swing_engine",
+        "import": "mercury_ai.models.swing_analysis.SwingSequenceResult"
+    },
+    {
+        "module": "mercury_ai.analysis.trade_memory_engine",
+        "import": "pandas"
+    },
+    {
+        "module": "mercury_ai.analysis.trade_memory_engine",
+        "import": "os"
+    },
+    {
+        "module": "mercury_ai.analysis.trade_memory_engine",
+        "import": "typing.Dict"
+    },
+    {
+        "module": "mercury_ai.analysis.trade_memory_engine",
+        "import": "typing.Any"
+    },
+    {
+        "module": "mercury_ai.analysis.trade_memory_engine",
+        "import": "mercury_ai.models.trade_memory.TradeMemory"
+    },
+    {
+        "module": "mercury_ai.analysis.trade_outcome_engine",
+        "import": "typing.Dict"
+    },
+    {
+        "module": "mercury_ai.analysis.trade_outcome_engine",
+        "import": "typing.Any"
+    },
+    {
+        "module": "mercury_ai.analysis.trade_outcome_engine",
+        "import": "mercury_ai.models.decision_snapshot.DecisionSnapshot"
+    },
+    {
+        "module": "mercury_ai.analysis.trend_analyzer",
+        "import": "mercury_ai.models.evidence.Evidence"
+    },
+    {
+        "module": "mercury_ai.analysis.trend_analyzer",
+        "import": "mercury_ai.models.market_data.MarketData"
+    },
+    {
+        "module": "mercury_ai.analysis.trend_analyzer",
+        "import": "typing.List"
+    },
+    {
+        "module": "mercury_ai.analysis.validation_engine",
+        "import": "typing.List"
+    },
+    {
+        "module": "mercury_ai.analysis.validation_engine",
+        "import": "typing.Tuple"
+    },
+    {
+        "module": "mercury_ai.analysis.validation_engine",
+        "import": "pandas"
+    },
+    {
+        "module": "mercury_ai.analysis.validation_engine",
+        "import": "mercury_ai.models.market_context.MarketContext"
+    },
+    {
+        "module": "mercury_ai.analysis.validation_engine",
+        "import": "mercury_ai.models.market_evidence_bundle.MarketEvidenceBundle"
+    },
+    {
+        "module": "mercury_ai.analysis.validation_engine",
+        "import": "mercury_ai.models.evidence.Evidence"
+    },
+    {
+        "module": "mercury_ai.analysis.volatility_engine",
+        "import": "pandas"
+    },
+    {
+        "module": "mercury_ai.analysis.volatility_engine",
+        "import": "typing.List"
+    },
+    {
+        "module": "mercury_ai.analysis.volatility_engine",
+        "import": "mercury_ai.models.volatility_analysis.VolatilityAnalysis"
+    },
+    {
+        "module": "mercury_ai.analysis.volatility_engine",
+        "import": "mercury_ai.models.market_data.MarketData"
+    },
+    {
+        "module": "mercury_ai.analysis.volatility_engine",
+        "import": "mercury_ai.models.evidence.Evidence"
+    },
+    {
+        "module": "mercury_ai.analysis.volatility_engine",
+        "import": "ta.volatility.AverageTrueRange"
+    },
+    {
+        "module": "mercury_ai.analysis.volume_engine",
+        "import": "pandas"
+    },
+    {
+        "module": "mercury_ai.analysis.volume_engine",
+        "import": "typing.Optional"
+    },
+    {
+        "module": "mercury_ai.analysis.volume_engine",
+        "import": "mercury_ai.models.volume_analysis.VolumeAnalysis"
+    },
+    {
+        "module": "mercury_ai.analysis.volume_engine",
+        "import": "mercury_ai.models.evidence.Evidence"
+    },
+    {
+        "module": "mercury_ai.analysis.volume_engine",
+        "import": "mercury_ai.core.pipeline_executor.PipelineExecutor"
+    },
+    {
+        "module": "mercury_ai.analysis.volume_engine",
+        "import": "mercury_ai.core.pipeline_profiler.PipelineProfiler"
+    },
+    {
+        "module": "mercury_ai.analysis.volume_intelligence_engine",
+        "import": "typing.List"
+    },
+    {
+        "module": "mercury_ai.analysis.volume_intelligence_engine",
+        "import": "typing.Tuple"
+    },
+    {
+        "module": "mercury_ai.analysis.volume_intelligence_engine",
+        "import": "pandas"
+    },
+    {
+        "module": "mercury_ai.analysis.volume_intelligence_engine",
+        "import": "mercury_ai.models.evidence.Evidence"
+    },
+    {
+        "module": "mercury_ai.analysis.volume_intelligence_engine",
+        "import": "mercury_ai.models.volume_profile.VolumeProfile"
+    },
+    {
+        "module": "mercury_ai.analysis.vwap_engine",
+        "import": "pandas"
+    },
+    {
+        "module": "mercury_ai.analysis.vwap_engine",
+        "import": "typing.Optional"
+    },
+    {
+        "module": "mercury_ai.analysis.vwap_engine",
+        "import": "mercury_ai.models.vwap_analysis.VWAPAnalysis"
+    },
+    {
+        "module": "mercury_ai.analysis.vwap_engine",
+        "import": "mercury_ai.models.evidence.Evidence"
+    },
+    {
+        "module": "mercury_ai.analysis.vwap_engine",
+        "import": "mercury_ai.core.pipeline_executor.PipelineExecutor"
+    },
+    {
+        "module": "mercury_ai.analysis.vwap_engine",
+        "import": "mercury_ai.core.pipeline_profiler.PipelineProfiler"
+    },
+    {
+        "module": "mercury_ai.analysis.weight_simulator",
+        "import": "typing.Dict"
+    },
+    {
+        "module": "mercury_ai.analysis.weight_simulator",
+        "import": "typing.Any"
+    },
+    {
+        "module": "mercury_ai.analysis.weight_simulator",
+        "import": "mercury_ai.analysis.engine_performance_auditor.EnginePerformanceAuditor"
+    },
+    {
+        "module": "mercury_ai.analysis.smart_money.bos_engine",
+        "import": "dataclasses.dataclass"
+    },
+    {
+        "module": "mercury_ai.analysis.smart_money.bos_engine",
+        "import": "mercury_ai.models.market_structure.MarketStructure"
+    },
+    {
+        "module": "mercury_ai.analysis.smart_money.choch_engine",
+        "import": "dataclasses.dataclass"
+    },
+    {
+        "module": "mercury_ai.analysis.smart_money.choch_engine",
+        "import": "mercury_ai.models.market_structure.MarketStructure"
+    },
+    {
+        "module": "mercury_ai.analysis.smart_money.liquidity_engine",
+        "import": "pandas"
+    },
+    {
+        "module": "mercury_ai.analysis.smart_money.liquidity_engine",
+        "import": "numpy"
+    },
+    {
+        "module": "mercury_ai.analysis.smart_money.liquidity_engine",
+        "import": "typing.List"
+    },
+    {
+        "module": "mercury_ai.analysis.smart_money.liquidity_engine",
+        "import": "typing.Tuple"
+    },
+    {
+        "module": "mercury_ai.analysis.smart_money.liquidity_engine",
+        "import": "typing.Optional"
+    },
+    {
+        "module": "mercury_ai.analysis.smart_money.liquidity_engine",
+        "import": "dataclasses.dataclass"
+    },
+    {
+        "module": "mercury_ai.analysis.smart_money.liquidity_engine",
+        "import": "dataclasses.replace"
+    },
+    {
+        "module": "mercury_ai.analysis.smart_money.liquidity_engine",
+        "import": "mercury_ai.models.evidence.Evidence"
+    },
+    {
+        "module": "mercury_ai.analysis.smart_money.liquidity_engine",
+        "import": "mercury_ai.models.liquidity_analysis.LiquidityAnalysis"
+    },
+    {
+        "module": "mercury_ai.analysis.smart_money.liquidity_engine",
+        "import": "mercury_ai.models.swing_analysis.Swing"
+    },
+    {
+        "module": "mercury_ai.analysis.smart_money.liquidity_engine",
+        "import": "mercury_ai.models.market_structure_profile.MarketStructureProfile"
+    },
+    {
+        "module": "mercury_ai.analysis.smart_money.liquidity_engine",
+        "import": "mercury_ai.models.liquidity_result.LiquidityResult"
+    },
+    {
+        "module": "mercury_ai.analysis.smart_money.liquidity_engine",
+        "import": "mercury_ai.core.pipeline_profiler.PipelineProfiler"
+    },
+    {
+        "module": "mercury_ai.analysis.smart_money.liquidity_engine",
+        "import": "mercury_ai.core.pipeline_executor.PipelineExecutor"
+    },
+    {
+        "module": "mercury_ai.analysis.smart_money.liquidity_engine",
+        "import": "mercury_ai.models.liquidity_analysis.LiquidityAnalysis"
+    },
+    {
+        "module": "mercury_ai.analysis.smart_money.liquidity_event_engine",
+        "import": "typing.List"
+    },
+    {
+        "module": "mercury_ai.analysis.smart_money.liquidity_event_engine",
+        "import": "dataclasses.dataclass"
+    },
+    {
+        "module": "mercury_ai.analysis.smart_money.liquidity_event_engine",
+        "import": "pandas"
+    },
+    {
+        "module": "mercury_ai.analysis.smart_money.liquidity_event_engine",
+        "import": "mercury_ai.models.evidence.Evidence"
+    },
+    {
+        "module": "mercury_ai.analysis.smart_money.liquidity_event_engine",
+        "import": "mercury_ai.models.liquidity_event_enum.LiquidityEventType"
+    },
+    {
+        "module": "mercury_ai.analysis.smart_money.market_structure_engine",
+        "import": "pandas"
+    },
+    {
+        "module": "mercury_ai.analysis.smart_money.market_structure_engine",
+        "import": "mercury_ai.models.market_structure.MarketStructure"
+    },
+    {
+        "module": "mercury_ai.analysis.smart_money.order_block_engine",
+        "import": "pandas"
+    },
+    {
+        "module": "mercury_ai.analysis.smart_money.order_block_engine",
+        "import": "typing.Optional"
+    },
+    {
+        "module": "mercury_ai.analysis.smart_money.order_block_engine",
+        "import": "typing.Dict"
+    },
+    {
+        "module": "mercury_ai.analysis.smart_money.smart_money_engine",
+        "import": "typing.List"
+    },
+    {
+        "module": "mercury_ai.analysis.smart_money.smart_money_engine",
+        "import": "typing.Optional"
+    },
+    {
+        "module": "mercury_ai.analysis.smart_money.smart_money_engine",
+        "import": "mercury_ai.models.smart_money.SmartMoneyAnalysis"
+    },
+    {
+        "module": "mercury_ai.analysis.smart_money.smart_money_engine",
+        "import": "mercury_ai.models.evidence.Evidence"
+    },
+    {
+        "module": "mercury_ai.analysis.smart_money.smart_money_engine",
+        "import": "mercury_ai.analysis.smart_money.market_structure_engine.MarketStructureEngine"
+    },
+    {
+        "module": "mercury_ai.analysis.smart_money.smart_money_engine",
+        "import": "mercury_ai.analysis.smart_money.bos_engine.BOSEngine"
+    },
+    {
+        "module": "mercury_ai.analysis.smart_money.smart_money_engine",
+        "import": "mercury_ai.analysis.smart_money.choch_engine.CHOCHEngine"
+    },
+    {
+        "module": "mercury_ai.analysis.smart_money.smart_money_engine",
+        "import": "mercury_ai.analysis.smart_money.order_block_engine.OrderBlockEngine"
+    },
+    {
+        "module": "mercury_ai.analysis.smart_money.smart_money_engine",
+        "import": "mercury_ai.analysis.fair_value_gap_engine.FairValueGapEngine"
+    },
+    {
+        "module": "mercury_ai.analysis.smart_money.smart_money_engine",
+        "import": "mercury_ai.analysis.smart_money.liquidity_engine.LiquidityEngine"
+    },
+    {
+        "module": "mercury_ai.analysis.smart_money.smart_money_engine",
+        "import": "mercury_ai.core.pipeline_executor.PipelineExecutor"
+    },
+    {
+        "module": "mercury_ai.analysis.smart_money.smart_money_engine",
+        "import": "mercury_ai.core.pipeline_profiler.PipelineProfiler"
+    },
+    {
+        "module": "mercury_ai.analysis.smart_money.tests.test_liquidity_edge_cases",
+        "import": "pytest"
+    },
+    {
+        "module": "mercury_ai.analysis.smart_money.tests.test_liquidity_edge_cases",
+        "import": "numpy"
+    },
+    {
+        "module": "mercury_ai.analysis.smart_money.tests.test_liquidity_edge_cases",
+        "import": "mercury_ai.analysis.smart_money.liquidity_engine.LiquidityEngine"
+    },
+    {
+        "module": "mercury_ai.analysis.smart_money.tests.test_liquidity_edge_cases",
+        "import": "mercury_ai.models.swing_analysis.Swing"
+    },
+    {
+        "module": "mercury_ai.analysis.smart_money.tests.test_liquidity_engine",
+        "import": "pytest"
+    },
+    {
+        "module": "mercury_ai.analysis.smart_money.tests.test_liquidity_engine",
+        "import": "pandas"
+    },
+    {
+        "module": "mercury_ai.analysis.smart_money.tests.test_liquidity_engine",
+        "import": "typing.List"
+    },
+    {
+        "module": "mercury_ai.analysis.smart_money.tests.test_liquidity_engine",
+        "import": "mercury_ai.analysis.smart_money.liquidity_engine.LiquidityEngine"
+    },
+    {
+        "module": "mercury_ai.analysis.smart_money.tests.test_liquidity_engine",
+        "import": "mercury_ai.analysis.smart_money.liquidity_engine.EqualHighGroup"
+    },
+    {
+        "module": "mercury_ai.analysis.smart_money.tests.test_liquidity_engine",
+        "import": "mercury_ai.analysis.smart_money.liquidity_engine.EqualHighMetrics"
+    },
+    {
+        "module": "mercury_ai.analysis.smart_money.tests.test_liquidity_engine",
+        "import": "mercury_ai.analysis.smart_money.liquidity_engine.EqualHighScore"
+    },
+    {
+        "module": "mercury_ai.analysis.smart_money.tests.test_liquidity_engine",
+        "import": "mercury_ai.models.swing_analysis.Swing"
+    },
+    {
+        "module": "mercury_ai.analysis.smart_money.tests.test_liquidity_engine",
+        "import": "mercury_ai.models.market_structure_profile.MarketStructureProfile"
+    },
+    {
+        "module": "mercury_ai.analysis.smart_money.tests.test_liquidity_engine",
+        "import": "mercury_ai.models.evidence.Evidence"
+    },
+    {
+        "module": "mercury_ai.analysis.smart_money.tests.test_liquidity_engine",
+        "import": "random"
+    },
+    {
+        "module": "mercury_ai.analysis.smart_money.tests.test_liquidity_stress",
+        "import": "pytest"
+    },
+    {
+        "module": "mercury_ai.analysis.smart_money.tests.test_liquidity_stress",
+        "import": "random"
+    },
+    {
+        "module": "mercury_ai.analysis.smart_money.tests.test_liquidity_stress",
+        "import": "mercury_ai.analysis.smart_money.liquidity_engine.LiquidityEngine"
+    },
+    {
+        "module": "mercury_ai.analysis.smart_money.tests.test_liquidity_stress",
+        "import": "mercury_ai.models.swing_analysis.Swing"
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_benchmark_framework",
+        "import": "mercury_ai.analysis.benchmark_framework.MercuryBenchmarkFramework"
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_candlestick_engine",
+        "import": "pytest"
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_candlestick_engine",
+        "import": "pandas"
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_candlestick_engine",
+        "import": "mercury_ai.analysis.candlestick_engine.CandlestickEngine"
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_candlestick_engine",
+        "import": "mercury_ai.models.market_data.MarketData"
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_candlestick_engine",
+        "import": "mercury_ai.models.market_condition.MarketCondition"
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_context_engine",
+        "import": "unittest.mock.Mock"
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_context_engine",
+        "import": "mercury_ai.analysis.context_engine.ContextEngine"
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_context_engine",
+        "import": "mercury_ai.models.evidence.Evidence"
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_context_engine",
+        "import": "mercury_ai.core.pipeline_executor.PipelineExecutor"
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_context_engine",
+        "import": "mercury_ai.core.pipeline_profiler.PipelineProfiler"
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_context_engine",
+        "import": "mercury_ai.models.market_data.MarketData"
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_fvg_engine",
+        "import": "pytest"
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_fvg_engine",
+        "import": "pandas"
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_fvg_engine",
+        "import": "mercury_ai.analysis.fair_value_gap_engine.FairValueGapEngine"
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_fvg_engine",
+        "import": "mercury_ai.models.fair_value_gap_analysis.FairValueGapAnalysis"
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_fvg_engine",
+        "import": "mercury_ai.core.pipeline_executor.PipelineExecutor"
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_market_regime_engine",
+        "import": "unittest.mock.MagicMock"
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_market_regime_engine",
+        "import": "mercury_ai.analysis.market_regime_engine.MarketRegimeEngine"
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_market_regime_engine",
+        "import": "mercury_ai.models.market_regime_enum.MarketRegimeEnum"
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_market_structure_engine",
+        "import": "pytest"
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_market_structure_engine",
+        "import": "pandas"
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_market_structure_engine",
+        "import": "mercury_ai.analysis.market_structure_intelligence_engine.MarketStructureIntelligenceEngine"
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_market_structure_engine",
+        "import": "mercury_ai.core.pipeline_executor.PipelineExecutor"
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_momentum_engine",
+        "import": "pytest"
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_momentum_engine",
+        "import": "pandas"
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_momentum_engine",
+        "import": "numpy"
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_momentum_engine",
+        "import": "mercury_ai.analysis.momentum_engine.MomentumEngine"
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_momentum_engine",
+        "import": "mercury_ai.models.momentum_analysis.MomentumAnalysis"
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_momentum_engine",
+        "import": "mercury_ai.core.pipeline_executor.PipelineExecutor"
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_price_action_engine",
+        "import": "pytest"
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_price_action_engine",
+        "import": "pandas"
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_price_action_engine",
+        "import": "mercury_ai.analysis.price_action_engine.PriceActionEngine"
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_price_action_engine",
+        "import": "mercury_ai.models.price_action_analysis.PriceActionAnalysis"
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_price_action_engine",
+        "import": "mercury_ai.core.pipeline_executor.PipelineExecutor"
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_trend_engine",
+        "import": "pytest"
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_trend_engine",
+        "import": "mercury_ai.analysis.trend_analyzer.TrendAnalyzer"
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_trend_engine",
+        "import": "mercury_ai.models.market_data.MarketData"
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_trend_engine",
+        "import": "mercury_ai.models.evidence.Evidence"
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_volume_engine",
+        "import": "pytest"
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_volume_engine",
+        "import": "pandas"
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_volume_engine",
+        "import": "mercury_ai.analysis.volume_engine.VolumeEngine"
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_volume_engine",
+        "import": "mercury_ai.models.volume_analysis.VolumeAnalysis"
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_volume_engine",
+        "import": "mercury_ai.core.pipeline_executor.PipelineExecutor"
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_vwap_engine",
+        "import": "pytest"
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_vwap_engine",
+        "import": "pandas"
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_vwap_engine",
+        "import": "mercury_ai.analysis.vwap_engine.VWAPEngine"
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_vwap_engine",
+        "import": "mercury_ai.models.vwap_analysis.VWAPAnalysis"
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_vwap_engine",
+        "import": "mercury_ai.core.pipeline_executor.PipelineExecutor"
+    },
+    {
+        "module": "mercury_ai.brain.explainability_engine",
+        "import": "typing.Tuple"
+    },
+    {
+        "module": "mercury_ai.brain.explainability_engine",
+        "import": "mercury_ai.models.analysis_result.AnalysisResult"
+    },
+    {
+        "module": "mercury_ai.brain.explainability_engine",
+        "import": "mercury_ai.models.analysis_result.AnalysisDirection"
+    },
+    {
+        "module": "mercury_ai.brain.explainability_engine",
+        "import": "mercury_ai.models.confluence_result.ConfluenceResult"
+    },
+    {
+        "module": "mercury_ai.brain.explainability_engine",
+        "import": "mercury_ai.models.probability_result.ProbabilityResult"
+    },
+    {
+        "module": "mercury_ai.brain.explainability_engine",
+        "import": "mercury_ai.models.trading_explanation.TradingExplanation"
+    },
+    {
+        "module": "mercury_ai.brain.institutional_brain",
+        "import": "typing.List"
+    },
+    {
+        "module": "mercury_ai.brain.institutional_brain",
+        "import": "mercury_ai.models.analysis_result.AnalysisResult"
+    },
+    {
+        "module": "mercury_ai.brain.institutional_brain",
+        "import": "mercury_ai.models.evidence.Evidence"
+    },
+    {
+        "module": "mercury_ai.brain.mercury_decision_engine",
+        "import": "typing.Optional"
+    },
+    {
+        "module": "mercury_ai.brain.mercury_decision_engine",
+        "import": "typing.List"
+    },
+    {
+        "module": "mercury_ai.brain.mercury_decision_engine",
+        "import": "mercury_ai.models.market_context.MarketContext"
+    },
+    {
+        "module": "mercury_ai.brain.mercury_decision_engine",
+        "import": "mercury_ai.models.market_evidence_bundle.MarketEvidenceBundle"
+    },
+    {
+        "module": "mercury_ai.brain.mercury_decision_engine",
+        "import": "mercury_ai.models.decision_result.DecisionResult"
+    },
+    {
+        "module": "mercury_ai.brain.mercury_decision_engine",
+        "import": "mercury_ai.models.version_metadata.VersionMetadata"
+    },
+    {
+        "module": "mercury_ai.brain.mercury_decision_engine",
+        "import": "mercury_ai.core.pipeline_executor.PipelineExecutor"
+    },
+    {
+        "module": "mercury_ai.brain.mercury_decision_engine",
+        "import": "mercury_ai.core.pipeline_profiler.PipelineProfiler"
+    },
+    {
+        "module": "mercury_ai.brain.mercury_decision_engine",
+        "import": "mercury_ai.analysis.validation_engine.ValidationEngine"
+    },
+    {
+        "module": "mercury_ai.brain.mercury_decision_engine",
+        "import": "mercury_ai.analysis.evidence_quality_engine.EvidenceQualityEngine"
+    },
+    {
+        "module": "mercury_ai.brain.mercury_decision_engine",
+        "import": "mercury_ai.analysis.evidence_ranking_engine.EvidenceRankingEngine"
+    },
+    {
+        "module": "mercury_ai.brain.mercury_decision_engine",
+        "import": "mercury_ai.analysis.conflict_resolution_engine.ConflictResolutionEngine"
+    },
+    {
+        "module": "mercury_ai.brain.mercury_decision_engine",
+        "import": "mercury_ai.analysis.confidence_engine.ConfidenceEngine"
+    },
+    {
+        "module": "mercury_ai.brain.mercury_decision_engine",
+        "import": "mercury_ai.analysis.confluence_engine.ConfluenceEngine"
+    },
+    {
+        "module": "mercury_ai.brain.mercury_decision_engine",
+        "import": "mercury_ai.analysis.institutional_memory_engine.InstitutionalMemoryEngine"
+    },
+    {
+        "module": "mercury_ai.brain.mercury_decision_engine",
+        "import": "mercury_ai.brain.probability_engine.ProbabilityEngine"
+    },
+    {
+        "module": "mercury_ai.brain.mercury_decision_engine",
+        "import": "mercury_ai.analysis.narrative_engine.NarrativeEngine"
+    },
+    {
+        "module": "mercury_ai.brain.mercury_decision_engine",
+        "import": "mercury_ai.models.market_regime_enum.MarketRegimeEnum"
+    },
+    {
+        "module": "mercury_ai.brain.mercury_decision_engine",
+        "import": "hashlib"
+    },
+    {
+        "module": "mercury_ai.brain.probability_engine",
+        "import": "typing.Dict"
+    },
+    {
+        "module": "mercury_ai.brain.probability_engine",
+        "import": "typing.Any"
+    },
+    {
+        "module": "mercury_ai.brain.probability_engine",
+        "import": "typing.Optional"
+    },
+    {
+        "module": "mercury_ai.brain.probability_engine",
+        "import": "mercury_ai.models.probability_result.ProbabilityResult"
+    },
+    {
+        "module": "mercury_ai.brain.scanner",
+        "import": "mercury_ai.core.analysis_pipeline.AnalysisPipeline"
+    },
+    {
+        "module": "mercury_ai.brain.scanner",
+        "import": "mercury_ai.analysis.evidence_query.EvidenceQuery"
+    },
+    {
+        "module": "mercury_ai.brain.scanner",
+        "import": "mercury_ai.core.asset_registry.AssetRegistry"
+    },
+    {
+        "module": "mercury_ai.brain.scanner",
+        "import": "mercury_ai.config.configuration_center.MercuryConfigCenter"
+    },
+    {
+        "module": "mercury_ai.brain.scanner",
+        "import": "mercury_ai.providers.mercury_data_provider.MercuryDataProvider"
+    },
+    {
+        "module": "mercury_ai.brain.scanner",
+        "import": "mercury_ai.analysis.ranking_engine.RankingEngine"
+    },
+    {
+        "module": "mercury_ai.brain.scanner",
+        "import": "mercury_ai.brain.institutional_brain.InstitutionalBrain"
+    },
+    {
+        "module": "mercury_ai.brain.scanner",
+        "import": "mercury_ai.data.market_data.MarketDataService"
+    },
+    {
+        "module": "mercury_ai.brain.scanner",
+        "import": "mercury_ai.analysis.notification_center.NotificationCenter"
+    },
+    {
+        "module": "mercury_ai.brain.tests.test_explainability_engine",
+        "import": "unittest.mock.MagicMock"
+    },
+    {
+        "module": "mercury_ai.brain.tests.test_explainability_engine",
+        "import": "mercury_ai.brain.explainability_engine.ExplainabilityEngine"
+    },
+    {
+        "module": "mercury_ai.brain.tests.test_explainability_engine",
+        "import": "mercury_ai.models.analysis_result.AnalysisDirection"
+    },
+    {
+        "module": "mercury_ai.brain.tests.test_explainability_engine",
+        "import": "mercury_ai.models.confluence_result.ConfluenceResult"
+    },
+    {
+        "module": "mercury_ai.brain.tests.test_explainability_engine",
+        "import": "mercury_ai.models.probability_result.ProbabilityResult"
+    },
+    {
+        "module": "mercury_ai.brain.tests.test_mercury_decision_benchmark",
+        "import": "time"
+    },
+    {
+        "module": "mercury_ai.brain.tests.test_mercury_decision_benchmark",
+        "import": "unittest.mock.MagicMock"
+    },
+    {
+        "module": "mercury_ai.brain.tests.test_mercury_decision_benchmark",
+        "import": "mercury_ai.brain.mercury_decision_engine.MercuryDecisionEngine"
+    },
+    {
+        "module": "mercury_ai.brain.tests.test_mercury_decision_benchmark",
+        "import": "mercury_ai.models.market_context.MarketContext"
+    },
+    {
+        "module": "mercury_ai.brain.tests.test_mercury_decision_benchmark",
+        "import": "mercury_ai.models.market_evidence_bundle.MarketEvidenceBundle"
+    },
+    {
+        "module": "mercury_ai.brain.tests.test_mercury_decision_benchmark",
+        "import": "mercury_ai.models.evidence.Evidence"
+    },
+    {
+        "module": "mercury_ai.brain.tests.test_mercury_decision_benchmark",
+        "import": "mercury_ai.models.confidence_result.ConfidenceResult"
+    },
+    {
+        "module": "mercury_ai.brain.tests.test_mercury_decision_benchmark",
+        "import": "mercury_ai.models.evidence_ranking.EvidenceRankingResult"
+    },
+    {
+        "module": "mercury_ai.brain.tests.test_mercury_decision_benchmark",
+        "import": "mercury_ai.models.data_quality_result.DataQualityResult"
+    },
+    {
+        "module": "mercury_ai.brain.tests.test_mercury_decision_benchmark",
+        "import": "mercury_ai.core.pipeline_executor.PipelineExecutor"
+    },
+    {
+        "module": "mercury_ai.brain.tests.test_mercury_decision_engine",
+        "import": "pytest"
+    },
+    {
+        "module": "mercury_ai.brain.tests.test_mercury_decision_engine",
+        "import": "unittest.mock.MagicMock"
+    },
+    {
+        "module": "mercury_ai.brain.tests.test_mercury_decision_engine",
+        "import": "mercury_ai.brain.mercury_decision_engine.MercuryDecisionEngine"
+    },
+    {
+        "module": "mercury_ai.brain.tests.test_mercury_decision_engine",
+        "import": "mercury_ai.models.market_context.MarketContext"
+    },
+    {
+        "module": "mercury_ai.brain.tests.test_mercury_decision_engine",
+        "import": "mercury_ai.models.market_evidence_bundle.MarketEvidenceBundle"
+    },
+    {
+        "module": "mercury_ai.brain.tests.test_mercury_decision_engine",
+        "import": "mercury_ai.models.evidence.Evidence"
+    },
+    {
+        "module": "mercury_ai.brain.tests.test_mercury_decision_engine",
+        "import": "mercury_ai.models.confidence_result.ConfidenceResult"
+    },
+    {
+        "module": "mercury_ai.brain.tests.test_mercury_decision_engine",
+        "import": "mercury_ai.models.evidence_ranking.EvidenceRankingResult"
+    },
+    {
+        "module": "mercury_ai.brain.tests.test_mercury_decision_engine",
+        "import": "mercury_ai.models.probability_result.ProbabilityResult"
+    },
+    {
+        "module": "mercury_ai.brain.tests.test_mercury_decision_engine",
+        "import": "mercury_ai.models.trading_explanation.TradingExplanation"
+    },
+    {
+        "module": "mercury_ai.brain.tests.test_mercury_decision_engine",
+        "import": "mercury_ai.core.pipeline_executor.PipelineExecutor"
+    },
+    {
+        "module": "mercury_ai.brain.tests.test_probability_engine",
+        "import": "pytest"
+    },
+    {
+        "module": "mercury_ai.brain.tests.test_probability_engine",
+        "import": "unittest.mock.MagicMock"
+    },
+    {
+        "module": "mercury_ai.brain.tests.test_probability_engine",
+        "import": "mercury_ai.brain.probability_engine.ProbabilityEngine"
+    },
+    {
+        "module": "mercury_ai.brain.tests.test_probability_engine",
+        "import": "mercury_ai.models.market_context.MarketContext"
+    },
+    {
+        "module": "mercury_ai.brain.tests.test_probability_engine",
+        "import": "mercury_ai.models.evidence.Evidence"
+    },
+    {
+        "module": "mercury_ai.brain.tests.test_probability_engine",
+        "import": "mercury_ai.models.market_evidence_bundle.MarketEvidenceBundle"
+    },
+    {
+        "module": "mercury_ai.calendar.economic_calendar",
+        "import": "datetime.datetime"
+    },
+    {
+        "module": "mercury_ai.calendar.tests.test_economic_calendar",
+        "import": "mercury_ai.calendar.economic_calendar.EconomicCalendar"
+    },
+    {
+        "module": "mercury_ai.config.configuration_center",
+        "import": "json"
+    },
+    {
+        "module": "mercury_ai.config.configuration_center",
+        "import": "os"
+    },
+    {
+        "module": "mercury_ai.config.configuration_center",
+        "import": "mercury_ai.config.settings"
+    },
+    {
+        "module": "mercury_ai.core.analysis_pipeline",
+        "import": "typing.List"
+    },
+    {
+        "module": "mercury_ai.core.analysis_pipeline",
+        "import": "typing.Optional"
+    },
+    {
+        "module": "mercury_ai.core.analysis_pipeline",
+        "import": "typing.Dict"
+    },
+    {
+        "module": "mercury_ai.core.analysis_pipeline",
+        "import": "uuid"
+    },
+    {
+        "module": "mercury_ai.core.analysis_pipeline",
+        "import": "dataclasses.replace"
+    },
+    {
+        "module": "mercury_ai.core.analysis_pipeline",
+        "import": "mercury_ai.utils.deterministic_clock.DeterministicClock"
+    },
+    {
+        "module": "mercury_ai.core.analysis_pipeline",
+        "import": "mercury_ai.data.market_data.MarketDataService"
+    },
+    {
+        "module": "mercury_ai.core.analysis_pipeline",
+        "import": "mercury_ai.data.data_quality_engine.DataQualityEngine"
+    },
+    {
+        "module": "mercury_ai.core.analysis_pipeline",
+        "import": "mercury_ai.providers.base_provider.MarketDataProvider"
+    },
+    {
+        "module": "mercury_ai.core.analysis_pipeline",
+        "import": "mercury_ai.data.indicator_engine.IndicatorEngine"
+    },
+    {
+        "module": "mercury_ai.core.analysis_pipeline",
+        "import": "mercury_ai.core.exceptions.MarketClosedException"
+    },
+    {
+        "module": "mercury_ai.core.analysis_pipeline",
+        "import": "mercury_ai.models.market_data.MarketData"
+    },
+    {
+        "module": "mercury_ai.core.analysis_pipeline",
+        "import": "mercury_ai.models.analysis_result.AnalysisResult"
+    },
+    {
+        "module": "mercury_ai.core.analysis_pipeline",
+        "import": "mercury_ai.models.decision_snapshot.DecisionSnapshot"
+    },
+    {
+        "module": "mercury_ai.core.analysis_pipeline",
+        "import": "mercury_ai.models.decision_result.DecisionResult"
+    },
+    {
+        "module": "mercury_ai.core.analysis_pipeline",
+        "import": "mercury_ai.models.version_metadata.VersionMetadata"
+    },
+    {
+        "module": "mercury_ai.core.analysis_pipeline",
+        "import": "mercury_ai.analysis.context_engine.ContextEngine"
+    },
+    {
+        "module": "mercury_ai.core.analysis_pipeline",
+        "import": "mercury_ai.brain.mercury_decision_engine.MercuryDecisionEngine"
+    },
+    {
+        "module": "mercury_ai.core.analysis_pipeline",
+        "import": "mercury_ai.analysis.institutional_memory_engine.InstitutionalMemoryEngine"
+    },
+    {
+        "module": "mercury_ai.core.analysis_pipeline",
+        "import": "mercury_ai.database.snapshot_logger.DecisionSnapshotLogger"
+    },
+    {
+        "module": "mercury_ai.core.analysis_pipeline",
+        "import": "mercury_ai.core.pipeline_executor.PipelineExecutor"
+    },
+    {
+        "module": "mercury_ai.core.analysis_pipeline",
+        "import": "mercury_ai.core.pipeline_profiler.PipelineProfiler"
+    },
+    {
+        "module": "mercury_ai.core.analysis_pipeline",
+        "import": "mercury_ai.analysis.market_context_builder.MarketContextBuilder"
+    },
+    {
+        "module": "mercury_ai.core.analysis_pipeline",
+        "import": "mercury_ai.analysis.confluence_engine.ConfluenceEngine"
+    },
+    {
+        "module": "mercury_ai.core.analysis_pipeline",
+        "import": "mercury_ai.analysis.smart_money.smart_money_engine.SmartMoneyEngine"
+    },
+    {
+        "module": "mercury_ai.core.analysis_pipeline",
+        "import": "mercury_ai.analysis.trend_analyzer.TrendAnalyzer"
+    },
+    {
+        "module": "mercury_ai.core.analysis_pipeline",
+        "import": "mercury_ai.analysis.market_condition_engine.MarketConditionEngine"
+    },
+    {
+        "module": "mercury_ai.core.analysis_pipeline",
+        "import": "mercury_ai.analysis.market_regime_engine.MarketRegimeEngine"
+    },
+    {
+        "module": "mercury_ai.core.analysis_pipeline",
+        "import": "mercury_ai.analysis.mtf_engine.MTFEngine"
+    },
+    {
+        "module": "mercury_ai.core.analysis_pipeline",
+        "import": "mercury_ai.analysis.candlestick_engine.CandlestickEngine"
+    },
+    {
+        "module": "mercury_ai.core.analysis_pipeline",
+        "import": "mercury_ai.analysis.volatility_engine.VolatilityEngine"
+    },
+    {
+        "module": "mercury_ai.core.analysis_pipeline",
+        "import": "mercury_ai.analysis.session_engine.SessionEngine"
+    },
+    {
+        "module": "mercury_ai.core.analysis_pipeline",
+        "import": "mercury_ai.analysis.support_resistance_analyzer.SupportResistanceAnalyzer"
+    },
+    {
+        "module": "mercury_ai.core.analysis_pipeline",
+        "import": "mercury_ai.analysis.smart_money.liquidity_engine.LiquidityEngine"
+    },
+    {
+        "module": "mercury_ai.core.analysis_pipeline",
+        "import": "mercury_ai.analysis.risk_engine.RiskEngine"
+    },
+    {
+        "module": "mercury_ai.core.analysis_pipeline",
+        "import": "mercury_ai.analysis.market_state_engine.MarketStateEngine"
+    },
+    {
+        "module": "mercury_ai.core.analysis_pipeline",
+        "import": "mercury_ai.analysis.evidence_ranking_engine.EvidenceRankingEngine"
+    },
+    {
+        "module": "mercury_ai.core.analysis_pipeline",
+        "import": "mercury_ai.analysis.evidence_quality_engine.EvidenceQualityEngine"
+    },
+    {
+        "module": "mercury_ai.core.analysis_pipeline",
+        "import": "mercury_ai.analysis.evidence_engine.EvidenceEngine"
+    },
+    {
+        "module": "mercury_ai.core.analysis_pipeline",
+        "import": "mercury_ai.analysis.context_intelligence_engine.ContextIntelligenceEngine"
+    },
+    {
+        "module": "mercury_ai.core.analysis_pipeline",
+        "import": "mercury_ai.analysis.volume_intelligence_engine.VolumeIntelligenceEngine"
+    },
+    {
+        "module": "mercury_ai.core.analysis_pipeline",
+        "import": "mercury_ai.analysis.market_structure_intelligence_engine.MarketStructureIntelligenceEngine"
+    },
+    {
+        "module": "mercury_ai.core.analysis_pipeline",
+        "import": "mercury_ai.config.timeframes.DEFAULT_TIMEFRAME"
+    },
+    {
+        "module": "mercury_ai.core.analysis_pipeline",
+        "import": "mercury_ai.analysis.institutional_trade_filter_engine.InstitutionalTradeFilterEngine"
+    },
+    {
+        "module": "mercury_ai.core.analysis_pipeline",
+        "import": "mercury_ai.analysis.price_action_analyzer.PriceActionAnalyzer"
+    },
+    {
+        "module": "mercury_ai.core.analysis_pipeline",
+        "import": "mercury_ai.analysis.fair_value_gap_engine.FairValueGapEngine"
+    },
+    {
+        "module": "mercury_ai.core.analysis_pipeline",
+        "import": "mercury_ai.analysis.smart_money.order_block_engine.OrderBlockEngine"
+    },
+    {
+        "module": "mercury_ai.core.analysis_pipeline",
+        "import": "mercury_ai.core.runtime_report.RuntimeReport"
+    },
+    {
+        "module": "mercury_ai.core.analysis_pipeline",
+        "import": "mercury_ai.core.runtime_report.TelemetryData"
+    },
+    {
+        "module": "mercury_ai.core.analysis_pipeline",
+        "import": "json"
+    },
+    {
+        "module": "mercury_ai.core.asset_registry",
+        "import": "json"
+    },
+    {
+        "module": "mercury_ai.core.asset_registry",
+        "import": "os"
+    },
+    {
+        "module": "mercury_ai.core.asset_registry",
+        "import": "time"
+    },
+    {
+        "module": "mercury_ai.core.asset_registry",
+        "import": "dataclasses.dataclass"
+    },
+    {
+        "module": "mercury_ai.core.asset_registry",
+        "import": "dataclasses.field"
+    },
+    {
+        "module": "mercury_ai.core.asset_registry",
+        "import": "typing.Dict"
+    },
+    {
+        "module": "mercury_ai.core.asset_registry",
+        "import": "typing.List"
+    },
+    {
+        "module": "mercury_ai.core.asset_registry",
+        "import": "typing.Optional"
+    },
+    {
+        "module": "mercury_ai.core.audit_sink",
+        "import": "abc.ABC"
+    },
+    {
+        "module": "mercury_ai.core.audit_sink",
+        "import": "abc.abstractmethod"
+    },
+    {
+        "module": "mercury_ai.core.audit_sink",
+        "import": "typing.List"
+    },
+    {
+        "module": "mercury_ai.core.audit_sink",
+        "import": "dataclasses.dataclass"
+    },
+    {
+        "module": "mercury_ai.core.auto_health",
+        "import": "logging"
+    },
+    {
+        "module": "mercury_ai.core.auto_health",
+        "import": "mercury_ai.providers.mercury_data_provider.MercuryDataProvider"
+    },
+    {
+        "module": "mercury_ai.core.auto_health",
+        "import": "mercury_ai.core.health_center.HealthCenter"
+    },
+    {
+        "module": "mercury_ai.core.auto_health",
+        "import": "mercury_ai.core.asset_registry.AssetRegistry"
+    },
+    {
+        "module": "mercury_ai.core.auto_health",
+        "import": "os"
+    },
+    {
+        "module": "mercury_ai.core.base_engine",
+        "import": "abc.ABC"
+    },
+    {
+        "module": "mercury_ai.core.base_engine",
+        "import": "abc.abstractmethod"
+    },
+    {
+        "module": "mercury_ai.core.base_engine",
+        "import": "typing.Tuple"
+    },
+    {
+        "module": "mercury_ai.core.base_engine",
+        "import": "dataclasses.dataclass"
+    },
+    {
+        "module": "mercury_ai.core.data_quality_gate",
+        "import": "dataclasses.dataclass"
+    },
+    {
+        "module": "mercury_ai.core.export_center",
+        "import": "json"
+    },
+    {
+        "module": "mercury_ai.core.export_center",
+        "import": "pandas"
+    },
+    {
+        "module": "mercury_ai.core.export_center",
+        "import": "zipfile"
+    },
+    {
+        "module": "mercury_ai.core.export_center",
+        "import": "os"
+    },
+    {
+        "module": "mercury_ai.core.export_center",
+        "import": "pathlib.Path"
+    },
+    {
+        "module": "mercury_ai.core.export_center",
+        "import": "typing.Dict"
+    },
+    {
+        "module": "mercury_ai.core.export_center",
+        "import": "typing.Any"
+    },
+    {
+        "module": "mercury_ai.core.export_center",
+        "import": "typing.List"
+    },
+    {
+        "module": "mercury_ai.core.export_center",
+        "import": "typing.Optional"
+    },
+    {
+        "module": "mercury_ai.core.export_center",
+        "import": "typing.Callable"
+    },
+    {
+        "module": "mercury_ai.core.export_center",
+        "import": "mercury_ai.analysis.data_exporter.DataExporter"
+    },
+    {
+        "module": "mercury_ai.core.health_center",
+        "import": "psutil"
+    },
+    {
+        "module": "mercury_ai.core.health_center",
+        "import": "time"
+    },
+    {
+        "module": "mercury_ai.core.health_center",
+        "import": "typing.Dict"
+    },
+    {
+        "module": "mercury_ai.core.health_center",
+        "import": "typing.Any"
+    },
+    {
+        "module": "mercury_ai.core.health_center",
+        "import": "mercury_ai.providers.mercury_data_provider.MercuryDataProvider"
+    },
+    {
+        "module": "mercury_ai.core.job_manager",
+        "import": "time"
+    },
+    {
+        "module": "mercury_ai.core.job_manager",
+        "import": "threading"
+    },
+    {
+        "module": "mercury_ai.core.job_manager",
+        "import": "typing.List"
+    },
+    {
+        "module": "mercury_ai.core.job_manager",
+        "import": "typing.Dict"
+    },
+    {
+        "module": "mercury_ai.core.job_manager",
+        "import": "typing.Any"
+    },
+    {
+        "module": "mercury_ai.core.job_manager",
+        "import": "typing.Optional"
+    },
+    {
+        "module": "mercury_ai.core.job_manager",
+        "import": "mercury_ai.core.analysis_pipeline.AnalysisPipeline"
+    },
+    {
+        "module": "mercury_ai.core.job_manager",
+        "import": "mercury_ai.data.market_data.MarketDataService"
+    },
+    {
+        "module": "mercury_ai.core.job_manager",
+        "import": "mercury_ai.providers.yahoo_finance_provider.YahooFinanceProvider"
+    },
+    {
+        "module": "mercury_ai.core.job_manager",
+        "import": "mercury_ai.config.assets.SUPPORTED_ASSETS"
+    },
+    {
+        "module": "mercury_ai.core.job_manager",
+        "import": "mercury_ai.analysis.health_checker.HealthChecker"
+    },
+    {
+        "module": "mercury_ai.core.job_manager",
+        "import": "mercury_ai.analysis.performance_statistics.PerformanceStatistics"
+    },
+    {
+        "module": "mercury_ai.core.observability_center",
+        "import": "psutil"
+    },
+    {
+        "module": "mercury_ai.core.observability_center",
+        "import": "time"
+    },
+    {
+        "module": "mercury_ai.core.observability_center",
+        "import": "typing.Dict"
+    },
+    {
+        "module": "mercury_ai.core.observability_center",
+        "import": "typing.Any"
+    },
+    {
+        "module": "mercury_ai.core.pipeline_audit_middleware",
+        "import": "typing.Any"
+    },
+    {
+        "module": "mercury_ai.core.pipeline_audit_middleware",
+        "import": "typing.Callable"
+    },
+    {
+        "module": "mercury_ai.core.pipeline_audit_middleware",
+        "import": "mercury_ai.core.pipeline_profiler.PipelineProfiler"
+    },
+    {
+        "module": "mercury_ai.core.pipeline_audit_middleware",
+        "import": "mercury_ai.core.audit_sink.AuditSink"
+    },
+    {
+        "module": "mercury_ai.core.pipeline_audit_middleware",
+        "import": "mercury_ai.core.audit_sink.AuditEvent"
+    },
+    {
+        "module": "mercury_ai.core.pipeline_audit_middleware",
+        "import": "datetime.datetime"
+    },
+    {
+        "module": "mercury_ai.core.pipeline_executor",
+        "import": "typing.Any"
+    },
+    {
+        "module": "mercury_ai.core.pipeline_executor",
+        "import": "typing.Callable"
+    },
+    {
+        "module": "mercury_ai.core.pipeline_executor",
+        "import": "typing.Type"
+    },
+    {
+        "module": "mercury_ai.core.pipeline_executor",
+        "import": "typing.Optional"
+    },
+    {
+        "module": "mercury_ai.core.pipeline_executor",
+        "import": "typing.List"
+    },
+    {
+        "module": "mercury_ai.core.pipeline_executor",
+        "import": "typing.Dict"
+    },
+    {
+        "module": "mercury_ai.core.pipeline_executor",
+        "import": "mercury_ai.core.pipeline_profiler.PipelineProfiler"
+    },
+    {
+        "module": "mercury_ai.core.pipeline_executor",
+        "import": "contextlib.nullcontext"
+    },
+    {
+        "module": "mercury_ai.core.pipeline_profiler",
+        "import": "time"
+    },
+    {
+        "module": "mercury_ai.core.pipeline_profiler",
+        "import": "tracemalloc"
+    },
+    {
+        "module": "mercury_ai.core.pipeline_profiler",
+        "import": "gc"
+    },
+    {
+        "module": "mercury_ai.core.pipeline_profiler",
+        "import": "threading"
+    },
+    {
+        "module": "mercury_ai.core.pipeline_profiler",
+        "import": "contextlib.contextmanager"
+    },
+    {
+        "module": "mercury_ai.core.pipeline_profiler",
+        "import": "typing.List"
+    },
+    {
+        "module": "mercury_ai.core.pipeline_profiler",
+        "import": "mercury_ai.models.profiler_models.StageProfile"
+    },
+    {
+        "module": "mercury_ai.core.pipeline_profiler",
+        "import": "mercury_ai.models.profiler_models.PipelineProfile"
+    },
+    {
+        "module": "mercury_ai.core.pipeline_profiler",
+        "import": "json"
+    },
+    {
+        "module": "mercury_ai.core.pipeline_profiler",
+        "import": "dataclasses.asdict"
+    },
+    {
+        "module": "mercury_ai.core.runtime_report",
+        "import": "dataclasses.dataclass"
+    },
+    {
+        "module": "mercury_ai.core.runtime_report",
+        "import": "dataclasses.field"
+    },
+    {
+        "module": "mercury_ai.core.runtime_report",
+        "import": "typing.List"
+    },
+    {
+        "module": "mercury_ai.core.runtime_report",
+        "import": "typing.Dict"
+    },
+    {
+        "module": "mercury_ai.core.runtime_report",
+        "import": "typing.Any"
+    },
+    {
+        "module": "mercury_ai.core.runtime_report",
+        "import": "typing.Optional"
+    },
+    {
+        "module": "mercury_ai.core.security_center",
+        "import": "json"
+    },
+    {
+        "module": "mercury_ai.core.security_center",
+        "import": "dataclasses.dataclass"
+    },
+    {
+        "module": "mercury_ai.core.security_center",
+        "import": "dataclasses.field"
+    },
+    {
+        "module": "mercury_ai.core.security_center",
+        "import": "typing.List"
+    },
+    {
+        "module": "mercury_ai.core.security_center",
+        "import": "typing.Dict"
+    },
+    {
+        "module": "mercury_ai.core.security_center",
+        "import": "typing.Any"
+    },
+    {
+        "module": "mercury_ai.core.security_center",
+        "import": "mercury_ai.utils.deterministic_clock.DeterministicClock"
+    },
+    {
+        "module": "mercury_ai.core.session_manager",
+        "import": "uuid"
+    },
+    {
+        "module": "mercury_ai.core.session_manager",
+        "import": "mercury_ai.config.settings"
+    },
+    {
+        "module": "mercury_ai.core.session_manager",
+        "import": "mercury_ai.utils.deterministic_clock.DeterministicClock"
+    },
+    {
+        "module": "mercury_ai.core.startup",
+        "import": "mercury_ai.core.banner.show_banner"
+    },
+    {
+        "module": "mercury_ai.core.startup",
+        "import": "mercury_ai.config.settings"
+    },
+    {
+        "module": "mercury_ai.core.startup",
+        "import": "mercury_ai.providers.provider.MarketProvider"
+    },
+    {
+        "module": "mercury_ai.data.data_normalizer",
+        "import": "pandas"
+    },
+    {
+        "module": "mercury_ai.data.data_quality_engine",
+        "import": "pandas"
+    },
+    {
+        "module": "mercury_ai.data.data_quality_engine",
+        "import": "typing.Tuple"
+    },
+    {
+        "module": "mercury_ai.data.indicator_engine",
+        "import": "pandas"
+    },
+    {
+        "module": "mercury_ai.data.indicator_engine",
+        "import": "numpy"
+    },
+    {
+        "module": "mercury_ai.data.market_data",
+        "import": "typing.List"
+    },
+    {
+        "module": "mercury_ai.data.market_data",
+        "import": "pandas"
+    },
+    {
+        "module": "mercury_ai.data.market_data",
+        "import": "mercury_ai.core.exceptions.MarketClosedException"
+    },
+    {
+        "module": "mercury_ai.data.market_data",
+        "import": "mercury_ai.data.data_normalizer.DataNormalizer"
+    },
+    {
+        "module": "mercury_ai.data.market_data_provider",
+        "import": "pandas"
+    },
+    {
+        "module": "mercury_ai.data.market_data_provider",
+        "import": "typing.Protocol"
+    },
+    {
+        "module": "mercury_ai.data.mercury_data_provider",
+        "import": "typing.Protocol"
+    },
+    {
+        "module": "mercury_ai.data.mercury_data_provider",
+        "import": "typing.List"
+    },
+    {
+        "module": "mercury_ai.data.mercury_data_provider",
+        "import": "typing.Dict"
+    },
+    {
+        "module": "mercury_ai.data.mercury_data_provider",
+        "import": "typing.Optional"
+    },
+    {
+        "module": "mercury_ai.data.mercury_data_provider",
+        "import": "typing.Any"
+    },
+    {
+        "module": "mercury_ai.data.mercury_data_provider",
+        "import": "pandas"
+    },
+    {
+        "module": "mercury_ai.data.mercury_data_provider",
+        "import": "time"
+    },
+    {
+        "module": "mercury_ai.data.mercury_data_provider",
+        "import": "logging"
+    },
+    {
+        "module": "mercury_ai.data.mercury_data_provider",
+        "import": "functools.lru_cache"
+    },
+    {
+        "module": "mercury_ai.data.mercury_data_provider",
+        "import": "enum.Enum"
+    },
+    {
+        "module": "mercury_ai.data.mercury_data_provider",
+        "import": "dataclasses.dataclass"
+    },
+    {
+        "module": "mercury_ai.data.mercury_data_provider",
+        "import": "dataclasses.field"
+    },
+    {
+        "module": "mercury_ai.data.replay_data_provider",
+        "import": "pandas"
+    },
+    {
+        "module": "mercury_ai.data.replay_data_provider",
+        "import": "os"
+    },
+    {
+        "module": "mercury_ai.data.providers.historical_data_provider",
+        "import": "pandas"
+    },
+    {
+        "module": "mercury_ai.database.history_logger",
+        "import": "pathlib.Path"
+    },
+    {
+        "module": "mercury_ai.database.history_logger",
+        "import": "csv"
+    },
+    {
+        "module": "mercury_ai.database.history_logger",
+        "import": "datetime.datetime"
+    },
+    {
+        "module": "mercury_ai.database.replay_storage",
+        "import": "dataclasses.dataclass"
+    },
+    {
+        "module": "mercury_ai.database.replay_storage",
+        "import": "typing.Any"
+    },
+    {
+        "module": "mercury_ai.database.replay_storage",
+        "import": "json"
+    },
+    {
+        "module": "mercury_ai.database.replay_storage",
+        "import": "os"
+    },
+    {
+        "module": "mercury_ai.database.snapshot_logger",
+        "import": "json"
+    },
+    {
+        "module": "mercury_ai.database.snapshot_logger",
+        "import": "pathlib.Path"
+    },
+    {
+        "module": "mercury_ai.database.snapshot_logger",
+        "import": "dataclasses.asdict"
+    },
+    {
+        "module": "mercury_ai.database.snapshot_logger",
+        "import": "typing.List"
+    },
+    {
+        "module": "mercury_ai.database.snapshot_logger",
+        "import": "typing.Dict"
+    },
+    {
+        "module": "mercury_ai.database.snapshot_logger",
+        "import": "typing.Any"
+    },
+    {
+        "module": "mercury_ai.database.snapshot_logger",
+        "import": "functools.lru_cache"
+    },
+    {
+        "module": "mercury_ai.database.snapshot_logger",
+        "import": "mercury_ai.models.decision_snapshot.DecisionSnapshot"
+    },
+    {
+        "module": "mercury_ai.market.market_engine",
+        "import": "mercury_ai.providers.market_provider.MarketProvider"
+    },
+    {
+        "module": "mercury_ai.market.market_engine",
+        "import": "mercury_ai.config.settings.ASSET"
+    },
+    {
+        "module": "mercury_ai.models.analysis_result",
+        "import": "dataclasses.dataclass"
+    },
+    {
+        "module": "mercury_ai.models.analysis_result",
+        "import": "dataclasses.field"
+    },
+    {
+        "module": "mercury_ai.models.analysis_result",
+        "import": "typing.Any"
+    },
+    {
+        "module": "mercury_ai.models.analysis_result",
+        "import": "typing.List"
+    },
+    {
+        "module": "mercury_ai.models.analysis_result",
+        "import": "enum.Enum"
+    },
+    {
+        "module": "mercury_ai.models.analysis_result",
+        "import": "mercury_ai.utils.deterministic_clock.DeterministicClock"
+    },
+    {
+        "module": "mercury_ai.models.analysis_result",
+        "import": "mercury_ai.config.settings"
+    },
+    {
+        "module": "mercury_ai.models.analysis_result",
+        "import": "mercury_ai.models.market_data.MarketData"
+    },
+    {
+        "module": "mercury_ai.models.analysis_result",
+        "import": "mercury_ai.models.market_context.MarketContext"
+    },
+    {
+        "module": "mercury_ai.models.analysis_result",
+        "import": "mercury_ai.models.evidence.Evidence"
+    },
+    {
+        "module": "mercury_ai.models.analysis_result",
+        "import": "mercury_ai.models.smart_money.SmartMoneyAnalysis"
+    },
+    {
+        "module": "mercury_ai.models.benchmark_report",
+        "import": "dataclasses.dataclass"
+    },
+    {
+        "module": "mercury_ai.models.benchmark_report",
+        "import": "typing.Tuple"
+    },
+    {
+        "module": "mercury_ai.models.benchmark_report",
+        "import": "mercury_ai.models.decision_result.DecisionResult"
+    },
+    {
+        "module": "mercury_ai.models.benchmark_report",
+        "import": "mercury_ai.analysis.metric_calculator.PerformanceMetrics"
+    },
+    {
+        "module": "mercury_ai.models.candlestick_analysis",
+        "import": "dataclasses.dataclass"
+    },
+    {
+        "module": "mercury_ai.models.candlestick_analysis",
+        "import": "dataclasses.field"
+    },
+    {
+        "module": "mercury_ai.models.candlestick_analysis",
+        "import": "typing.Optional"
+    },
+    {
+        "module": "mercury_ai.models.candlestick_analysis",
+        "import": "typing.List"
+    },
+    {
+        "module": "mercury_ai.models.confidence_result",
+        "import": "dataclasses.dataclass"
+    },
+    {
+        "module": "mercury_ai.models.confluence_result",
+        "import": "dataclasses.dataclass"
+    },
+    {
+        "module": "mercury_ai.models.confluence_result",
+        "import": "typing.Tuple"
+    },
+    {
+        "module": "mercury_ai.models.confluence_result",
+        "import": "typing.Any"
+    },
+    {
+        "module": "mercury_ai.models.confluence_result",
+        "import": "mercury_ai.models.analysis_result.AnalysisDirection"
+    },
+    {
+        "module": "mercury_ai.models.confluence_score",
+        "import": "dataclasses.dataclass"
+    },
+    {
+        "module": "mercury_ai.models.data_quality_result",
+        "import": "dataclasses.dataclass"
+    },
+    {
+        "module": "mercury_ai.models.data_quality_result",
+        "import": "typing.Tuple"
+    },
+    {
+        "module": "mercury_ai.models.decision_input",
+        "import": "dataclasses.dataclass"
+    },
+    {
+        "module": "mercury_ai.models.decision_input",
+        "import": "dataclasses.field"
+    },
+    {
+        "module": "mercury_ai.models.decision_input",
+        "import": "typing.List"
+    },
+    {
+        "module": "mercury_ai.models.decision_node",
+        "import": "dataclasses.dataclass"
+    },
+    {
+        "module": "mercury_ai.models.decision_node",
+        "import": "typing.Optional"
+    },
+    {
+        "module": "mercury_ai.models.decision_outcome",
+        "import": "dataclasses.dataclass"
+    },
+    {
+        "module": "mercury_ai.models.decision_outcome",
+        "import": "typing.Dict"
+    },
+    {
+        "module": "mercury_ai.models.decision_outcome",
+        "import": "typing.Any"
+    },
+    {
+        "module": "mercury_ai.models.decision_result",
+        "import": "dataclasses.dataclass"
+    },
+    {
+        "module": "mercury_ai.models.decision_result",
+        "import": "dataclasses.field"
+    },
+    {
+        "module": "mercury_ai.models.decision_result",
+        "import": "typing.Tuple"
+    },
+    {
+        "module": "mercury_ai.models.decision_result",
+        "import": "typing.Optional"
+    },
+    {
+        "module": "mercury_ai.models.decision_result",
+        "import": "mercury_ai.models.decision_trace.DecisionTrace"
+    },
+    {
+        "module": "mercury_ai.models.decision_result",
+        "import": "mercury_ai.models.version_metadata.VersionMetadata"
+    },
+    {
+        "module": "mercury_ai.models.decision_result",
+        "import": "mercury_ai.models.trading_explanation.TradingExplanation"
+    },
+    {
+        "module": "mercury_ai.models.decision_result",
+        "import": "mercury_ai.models.market_regime.MarketRegime"
+    },
+    {
+        "module": "mercury_ai.models.decision_result",
+        "import": "mercury_ai.models.mtf_consensus.MTFConsensus"
+    },
+    {
+        "module": "mercury_ai.models.decision_result",
+        "import": "mercury_ai.models.evidence_ranking.EvidenceRankingResult"
+    },
+    {
+        "module": "mercury_ai.models.decision_snapshot",
+        "import": "dataclasses.dataclass"
+    },
+    {
+        "module": "mercury_ai.models.decision_snapshot",
+        "import": "dataclasses.field"
+    },
+    {
+        "module": "mercury_ai.models.decision_snapshot",
+        "import": "typing.Tuple"
+    },
+    {
+        "module": "mercury_ai.models.decision_snapshot",
+        "import": "typing.Optional"
+    },
+    {
+        "module": "mercury_ai.models.decision_snapshot",
+        "import": "mercury_ai.models.market_context.MarketContext"
+    },
+    {
+        "module": "mercury_ai.models.decision_snapshot",
+        "import": "mercury_ai.models.market_evidence_bundle.MarketEvidenceBundle"
+    },
+    {
+        "module": "mercury_ai.models.decision_snapshot",
+        "import": "mercury_ai.models.decision_result.DecisionResult"
+    },
+    {
+        "module": "mercury_ai.models.decision_snapshot",
+        "import": "mercury_ai.models.version_metadata.VersionMetadata"
+    },
+    {
+        "module": "mercury_ai.models.decision_snapshot",
+        "import": "mercury_ai.models.evidence_ranking.EvidenceRankingResult"
+    },
+    {
+        "module": "mercury_ai.models.decision_snapshot",
+        "import": "mercury_ai.config.settings"
+    },
+    {
+        "module": "mercury_ai.models.decision_trace",
+        "import": "dataclasses.dataclass"
+    },
+    {
+        "module": "mercury_ai.models.decision_trace",
+        "import": "dataclasses.field"
+    },
+    {
+        "module": "mercury_ai.models.decision_trace",
+        "import": "typing.Tuple"
+    },
+    {
+        "module": "mercury_ai.models.decision_trace",
+        "import": "mercury_ai.models.decision_node.DecisionNode"
+    },
+    {
+        "module": "mercury_ai.models.evidence",
+        "import": "dataclasses.dataclass"
+    },
+    {
+        "module": "mercury_ai.models.evidence",
+        "import": "dataclasses.field"
+    },
+    {
+        "module": "mercury_ai.models.evidence",
+        "import": "typing.Dict"
+    },
+    {
+        "module": "mercury_ai.models.evidence",
+        "import": "typing.Any"
+    },
+    {
+        "module": "mercury_ai.models.evidence",
+        "import": "mercury_ai.config.timeframes.DEFAULT_TIMEFRAME"
+    },
+    {
+        "module": "mercury_ai.models.evidence",
+        "import": "mercury_ai.utils.deterministic_clock.DeterministicClock"
+    },
+    {
+        "module": "mercury_ai.models.evidence_ranking",
+        "import": "dataclasses.dataclass"
+    },
+    {
+        "module": "mercury_ai.models.evidence_ranking",
+        "import": "typing.List"
+    },
+    {
+        "module": "mercury_ai.models.evidence_ranking",
+        "import": "typing.Optional"
+    },
+    {
+        "module": "mercury_ai.models.evidence_ranking",
+        "import": "mercury_ai.models.evidence.Evidence"
+    },
+    {
+        "module": "mercury_ai.models.fair_value_gap_analysis",
+        "import": "dataclasses.dataclass"
+    },
+    {
+        "module": "mercury_ai.models.fair_value_gap_analysis",
+        "import": "dataclasses.field"
+    },
+    {
+        "module": "mercury_ai.models.fair_value_gap_analysis",
+        "import": "typing.Tuple"
+    },
+    {
+        "module": "mercury_ai.models.fair_value_gap_analysis",
+        "import": "typing.Dict"
+    },
+    {
+        "module": "mercury_ai.models.fair_value_gap_analysis",
+        "import": "typing.Any"
+    },
+    {
+        "module": "mercury_ai.models.fair_value_gap_analysis",
+        "import": "mercury_ai.models.evidence.Evidence"
+    },
+    {
+        "module": "mercury_ai.models.liquidity_analysis",
+        "import": "dataclasses.dataclass"
+    },
+    {
+        "module": "mercury_ai.models.liquidity_analysis",
+        "import": "dataclasses.field"
+    },
+    {
+        "module": "mercury_ai.models.liquidity_analysis",
+        "import": "typing.Tuple"
+    },
+    {
+        "module": "mercury_ai.models.liquidity_analysis",
+        "import": "typing.Dict"
+    },
+    {
+        "module": "mercury_ai.models.liquidity_analysis",
+        "import": "typing.Any"
+    },
+    {
+        "module": "mercury_ai.models.liquidity_analysis",
+        "import": "mercury_ai.models.evidence.Evidence"
+    },
+    {
+        "module": "mercury_ai.models.liquidity_event_enum",
+        "import": "enum.Enum"
+    },
+    {
+        "module": "mercury_ai.models.liquidity_profile",
+        "import": "dataclasses.dataclass"
+    },
+    {
+        "module": "mercury_ai.models.liquidity_result",
+        "import": "dataclasses.dataclass"
+    },
+    {
+        "module": "mercury_ai.models.liquidity_result",
+        "import": "typing.Tuple"
+    },
+    {
+        "module": "mercury_ai.models.liquidity_result",
+        "import": "typing.Any"
+    },
+    {
+        "module": "mercury_ai.models.market_condition",
+        "import": "dataclasses.dataclass"
+    },
+    {
+        "module": "mercury_ai.models.market_condition",
+        "import": "typing.Optional"
+    },
+    {
+        "module": "mercury_ai.models.market_context",
+        "import": "dataclasses.dataclass"
+    },
+    {
+        "module": "mercury_ai.models.market_context",
+        "import": "typing.List"
+    },
+    {
+        "module": "mercury_ai.models.market_context",
+        "import": "typing.Optional"
+    },
+    {
+        "module": "mercury_ai.models.market_context",
+        "import": "mercury_ai.models.market_data.MarketData"
+    },
+    {
+        "module": "mercury_ai.models.market_context",
+        "import": "mercury_ai.models.evidence.Evidence"
+    },
+    {
+        "module": "mercury_ai.models.market_context",
+        "import": "mercury_ai.models.price_action.PriceActionAnalysis"
+    },
+    {
+        "module": "mercury_ai.models.market_context",
+        "import": "mercury_ai.models.support_resistance.SupportResistanceAnalysis"
+    },
+    {
+        "module": "mercury_ai.models.market_context",
+        "import": "mercury_ai.models.smart_money.SmartMoneyAnalysis"
+    },
+    {
+        "module": "mercury_ai.models.market_context",
+        "import": "mercury_ai.models.market_state.MarketState"
+    },
+    {
+        "module": "mercury_ai.models.market_context",
+        "import": "mercury_ai.models.liquidity_profile.LiquidityProfile"
+    },
+    {
+        "module": "mercury_ai.models.market_context",
+        "import": "mercury_ai.models.mtf_consensus.MTFConsensus"
+    },
+    {
+        "module": "mercury_ai.models.market_context",
+        "import": "mercury_ai.models.market_regime.MarketRegime"
+    },
+    {
+        "module": "mercury_ai.models.market_context",
+        "import": "mercury_ai.models.risk_assessment.RiskAssessment"
+    },
+    {
+        "module": "mercury_ai.models.market_data",
+        "import": "dataclasses.dataclass"
+    },
+    {
+        "module": "mercury_ai.models.market_evidence_bundle",
+        "import": "dataclasses.dataclass"
+    },
+    {
+        "module": "mercury_ai.models.market_evidence_bundle",
+        "import": "typing.Tuple"
+    },
+    {
+        "module": "mercury_ai.models.market_evidence_bundle",
+        "import": "mercury_ai.models.evidence.Evidence"
+    },
+    {
+        "module": "mercury_ai.models.market_regime",
+        "import": "dataclasses.dataclass"
+    },
+    {
+        "module": "mercury_ai.models.market_regime",
+        "import": "typing.List"
+    },
+    {
+        "module": "mercury_ai.models.market_regime",
+        "import": "mercury_ai.models.evidence.Evidence"
+    },
+    {
+        "module": "mercury_ai.models.market_regime",
+        "import": "mercury_ai.models.market_regime_enum.MarketRegimeEnum"
+    },
+    {
+        "module": "mercury_ai.models.market_regime_enum",
+        "import": "enum.Enum"
+    },
+    {
+        "module": "mercury_ai.models.market_state",
+        "import": "dataclasses.dataclass"
+    },
+    {
+        "module": "mercury_ai.models.market_state",
+        "import": "mercury_ai.models.market_state_enum.MarketStateEnum"
+    },
+    {
+        "module": "mercury_ai.models.market_state_enum",
+        "import": "enum.Enum"
+    },
+    {
+        "module": "mercury_ai.models.market_structure",
+        "import": "dataclasses.dataclass"
+    },
+    {
+        "module": "mercury_ai.models.market_structure",
+        "import": "dataclasses.field"
+    },
+    {
+        "module": "mercury_ai.models.market_structure_profile",
+        "import": "dataclasses.dataclass"
+    },
+    {
+        "module": "mercury_ai.models.market_structure_profile",
+        "import": "dataclasses.field"
+    },
+    {
+        "module": "mercury_ai.models.market_structure_profile",
+        "import": "typing.List"
+    },
+    {
+        "module": "mercury_ai.models.market_structure_profile",
+        "import": "typing.Optional"
+    },
+    {
+        "module": "mercury_ai.models.market_structure_profile",
+        "import": "mercury_ai.models.swing_analysis.Swing"
+    },
+    {
+        "module": "mercury_ai.models.market_thesis",
+        "import": "dataclasses.dataclass"
+    },
+    {
+        "module": "mercury_ai.models.market_thesis",
+        "import": "dataclasses.field"
+    },
+    {
+        "module": "mercury_ai.models.market_thesis",
+        "import": "typing.List"
+    },
+    {
+        "module": "mercury_ai.models.market_thesis",
+        "import": "mercury_ai.models.risk_assessment.RiskAssessment"
+    },
+    {
+        "module": "mercury_ai.models.market_thesis",
+        "import": "mercury_ai.models.confidence_result.ConfidenceResult"
+    },
+    {
+        "module": "mercury_ai.models.market_thesis",
+        "import": "mercury_ai.models.market_state.MarketState"
+    },
+    {
+        "module": "mercury_ai.models.memory_audit",
+        "import": "dataclasses.dataclass"
+    },
+    {
+        "module": "mercury_ai.models.memory_audit",
+        "import": "dataclasses.field"
+    },
+    {
+        "module": "mercury_ai.models.memory_audit",
+        "import": "typing.List"
+    },
+    {
+        "module": "mercury_ai.models.memory_audit",
+        "import": "tracemalloc"
+    },
+    {
+        "module": "mercury_ai.models.memory_audit",
+        "import": "time"
+    },
+    {
+        "module": "mercury_ai.models.momentum_analysis",
+        "import": "dataclasses.dataclass"
+    },
+    {
+        "module": "mercury_ai.models.momentum_analysis",
+        "import": "dataclasses.field"
+    },
+    {
+        "module": "mercury_ai.models.momentum_analysis",
+        "import": "typing.Tuple"
+    },
+    {
+        "module": "mercury_ai.models.momentum_analysis",
+        "import": "typing.Dict"
+    },
+    {
+        "module": "mercury_ai.models.momentum_analysis",
+        "import": "typing.Any"
+    },
+    {
+        "module": "mercury_ai.models.momentum_analysis",
+        "import": "mercury_ai.models.evidence.Evidence"
+    },
+    {
+        "module": "mercury_ai.models.mtf_consensus",
+        "import": "dataclasses.dataclass"
+    },
+    {
+        "module": "mercury_ai.models.performance",
+        "import": "dataclasses.dataclass"
+    },
+    {
+        "module": "mercury_ai.models.performance",
+        "import": "typing.Tuple"
+    },
+    {
+        "module": "mercury_ai.models.performance_metrics",
+        "import": "dataclasses.dataclass"
+    },
+    {
+        "module": "mercury_ai.models.performance_metrics",
+        "import": "typing.Any"
+    },
+    {
+        "module": "mercury_ai.models.performance_metrics",
+        "import": "typing.Dict"
+    },
+    {
+        "module": "mercury_ai.models.price_action",
+        "import": "dataclasses.dataclass"
+    },
+    {
+        "module": "mercury_ai.models.price_action_analysis",
+        "import": "dataclasses.dataclass"
+    },
+    {
+        "module": "mercury_ai.models.price_action_analysis",
+        "import": "dataclasses.field"
+    },
+    {
+        "module": "mercury_ai.models.price_action_analysis",
+        "import": "typing.Tuple"
+    },
+    {
+        "module": "mercury_ai.models.price_action_analysis",
+        "import": "typing.Dict"
+    },
+    {
+        "module": "mercury_ai.models.price_action_analysis",
+        "import": "typing.Any"
+    },
+    {
+        "module": "mercury_ai.models.probability_result",
+        "import": "dataclasses.dataclass"
+    },
+    {
+        "module": "mercury_ai.models.probability_result",
+        "import": "dataclasses.field"
+    },
+    {
+        "module": "mercury_ai.models.probability_result",
+        "import": "typing.Dict"
+    },
+    {
+        "module": "mercury_ai.models.probability_result",
+        "import": "typing.Any"
+    },
+    {
+        "module": "mercury_ai.models.professional_thesis",
+        "import": "dataclasses.dataclass"
+    },
+    {
+        "module": "mercury_ai.models.professional_thesis",
+        "import": "dataclasses.field"
+    },
+    {
+        "module": "mercury_ai.models.professional_thesis",
+        "import": "typing.List"
+    },
+    {
+        "module": "mercury_ai.models.professional_thesis",
+        "import": "typing.Dict"
+    },
+    {
+        "module": "mercury_ai.models.professional_thesis",
+        "import": "typing.Any"
+    },
+    {
+        "module": "mercury_ai.models.profiler_models",
+        "import": "dataclasses.dataclass"
+    },
+    {
+        "module": "mercury_ai.models.profiler_models",
+        "import": "dataclasses.field"
+    },
+    {
+        "module": "mercury_ai.models.profiler_models",
+        "import": "typing.Tuple"
+    },
+    {
+        "module": "mercury_ai.models.regression",
+        "import": "dataclasses.dataclass"
+    },
+    {
+        "module": "mercury_ai.models.regression",
+        "import": "typing.Any"
+    },
+    {
+        "module": "mercury_ai.models.risk_assessment",
+        "import": "dataclasses.dataclass"
+    },
+    {
+        "module": "mercury_ai.models.session_analysis",
+        "import": "dataclasses.dataclass"
+    },
+    {
+        "module": "mercury_ai.models.session_analysis",
+        "import": "typing.Optional"
+    },
+    {
+        "module": "mercury_ai.models.signal",
+        "import": "dataclasses.dataclass"
+    },
+    {
+        "module": "mercury_ai.models.signal",
+        "import": "dataclasses.field"
+    },
+    {
+        "module": "mercury_ai.models.signal",
+        "import": "typing.List"
+    },
+    {
+        "module": "mercury_ai.models.signal",
+        "import": "mercury_ai.config.timeframes.DEFAULT_TIMEFRAME"
+    },
+    {
+        "module": "mercury_ai.models.smart_money",
+        "import": "dataclasses.dataclass"
+    },
+    {
+        "module": "mercury_ai.models.smart_money",
+        "import": "dataclasses.field"
+    },
+    {
+        "module": "mercury_ai.models.smart_money",
+        "import": "mercury_ai.models.market_structure.MarketStructure"
+    },
+    {
+        "module": "mercury_ai.models.stress_test",
+        "import": "dataclasses.dataclass"
+    },
+    {
+        "module": "mercury_ai.models.stress_test",
+        "import": "typing.List"
+    },
+    {
+        "module": "mercury_ai.models.stress_test",
+        "import": "mercury_ai.models.market_data.MarketData"
+    },
+    {
+        "module": "mercury_ai.models.support_resistance",
+        "import": "dataclasses.dataclass"
+    },
+    {
+        "module": "mercury_ai.models.support_resistance_analysis",
+        "import": "dataclasses.dataclass"
+    },
+    {
+        "module": "mercury_ai.models.support_resistance_analysis",
+        "import": "typing.Optional"
+    },
+    {
+        "module": "mercury_ai.models.swing_analysis",
+        "import": "dataclasses.dataclass"
+    },
+    {
+        "module": "mercury_ai.models.swing_analysis",
+        "import": "dataclasses.field"
+    },
+    {
+        "module": "mercury_ai.models.swing_analysis",
+        "import": "typing.List"
+    },
+    {
+        "module": "mercury_ai.models.swing_analysis",
+        "import": "typing.Optional"
+    },
+    {
+        "module": "mercury_ai.models.trade_memory",
+        "import": "dataclasses.dataclass"
+    },
+    {
+        "module": "mercury_ai.models.trade_memory",
+        "import": "typing.List"
+    },
+    {
+        "module": "mercury_ai.models.trade_memory",
+        "import": "typing.Dict"
+    },
+    {
+        "module": "mercury_ai.models.trade_memory",
+        "import": "typing.Any"
+    },
+    {
+        "module": "mercury_ai.models.trade_memory",
+        "import": "mercury_ai.models.decision_snapshot.DecisionSnapshot"
+    },
+    {
+        "module": "mercury_ai.models.trade_permission",
+        "import": "dataclasses.dataclass"
+    },
+    {
+        "module": "mercury_ai.models.trade_permission",
+        "import": "dataclasses.field"
+    },
+    {
+        "module": "mercury_ai.models.trade_permission",
+        "import": "typing.Optional"
+    },
+    {
+        "module": "mercury_ai.models.trading_explanation",
+        "import": "dataclasses.dataclass"
+    },
+    {
+        "module": "mercury_ai.models.trading_explanation",
+        "import": "dataclasses.field"
+    },
+    {
+        "module": "mercury_ai.models.trading_explanation",
+        "import": "typing.Tuple"
+    },
+    {
+        "module": "mercury_ai.models.trading_explanation",
+        "import": "typing.Dict"
+    },
+    {
+        "module": "mercury_ai.models.trading_explanation",
+        "import": "typing.Any"
+    },
+    {
+        "module": "mercury_ai.models.trading_explanation",
+        "import": "typing.TYPE_CHECKING"
+    },
+    {
+        "module": "mercury_ai.models.trading_explanation",
+        "import": "mercury_ai.models.decision_result.DecisionResult"
+    },
+    {
+        "module": "mercury_ai.models.trend_analysis",
+        "import": "dataclasses.dataclass"
+    },
+    {
+        "module": "mercury_ai.models.trend_analysis",
+        "import": "dataclasses.field"
+    },
+    {
+        "module": "mercury_ai.models.trend_analysis",
+        "import": "typing.Tuple"
+    },
+    {
+        "module": "mercury_ai.models.trend_analysis",
+        "import": "typing.Dict"
+    },
+    {
+        "module": "mercury_ai.models.trend_analysis",
+        "import": "typing.Any"
+    },
+    {
+        "module": "mercury_ai.models.version_metadata",
+        "import": "dataclasses.dataclass"
+    },
+    {
+        "module": "mercury_ai.models.volatility_analysis",
+        "import": "dataclasses.dataclass"
+    },
+    {
+        "module": "mercury_ai.models.volatility_analysis",
+        "import": "typing.Optional"
+    },
+    {
+        "module": "mercury_ai.models.volatility_analysis",
+        "import": "typing.Tuple"
+    },
+    {
+        "module": "mercury_ai.models.volatility_analysis",
+        "import": "mercury_ai.models.evidence.Evidence"
+    },
+    {
+        "module": "mercury_ai.models.volume_analysis",
+        "import": "dataclasses.dataclass"
+    },
+    {
+        "module": "mercury_ai.models.volume_analysis",
+        "import": "dataclasses.field"
+    },
+    {
+        "module": "mercury_ai.models.volume_analysis",
+        "import": "typing.Tuple"
+    },
+    {
+        "module": "mercury_ai.models.volume_analysis",
+        "import": "typing.Dict"
+    },
+    {
+        "module": "mercury_ai.models.volume_analysis",
+        "import": "typing.Any"
+    },
+    {
+        "module": "mercury_ai.models.volume_analysis",
+        "import": "mercury_ai.models.evidence.Evidence"
+    },
+    {
+        "module": "mercury_ai.models.volume_profile",
+        "import": "dataclasses.dataclass"
+    },
+    {
+        "module": "mercury_ai.models.vwap_analysis",
+        "import": "dataclasses.dataclass"
+    },
+    {
+        "module": "mercury_ai.models.vwap_analysis",
+        "import": "dataclasses.field"
+    },
+    {
+        "module": "mercury_ai.models.vwap_analysis",
+        "import": "typing.Tuple"
+    },
+    {
+        "module": "mercury_ai.models.vwap_analysis",
+        "import": "typing.Dict"
+    },
+    {
+        "module": "mercury_ai.models.vwap_analysis",
+        "import": "typing.Any"
+    },
+    {
+        "module": "mercury_ai.models.vwap_analysis",
+        "import": "mercury_ai.models.evidence.Evidence"
+    },
+    {
+        "module": "mercury_ai.news.news_provider",
+        "import": "datetime.datetime"
+    },
+    {
+        "module": "mercury_ai.news.tests.test_news_provider",
+        "import": "mercury_ai.news.news_provider.NewsProvider"
+    },
+    {
+        "module": "mercury_ai.operations.demo_manager",
+        "import": "typing.List"
+    },
+    {
+        "module": "mercury_ai.operations.demo_manager",
+        "import": "typing.Dict"
+    },
+    {
+        "module": "mercury_ai.operations.demo_manager",
+        "import": "typing.Any"
+    },
+    {
+        "module": "mercury_ai.operations.demo_manager",
+        "import": "mercury_ai.core.analysis_pipeline.AnalysisPipeline"
+    },
+    {
+        "module": "mercury_ai.operations.demo_manager",
+        "import": "mercury_ai.data.market_data.MarketDataService"
+    },
+    {
+        "module": "mercury_ai.operations.demo_manager",
+        "import": "mercury_ai.providers.yahoo_finance_provider.YahooFinanceProvider"
+    },
+    {
+        "module": "mercury_ai.operations.demo_manager",
+        "import": "mercury_ai.config.assets.SUPPORTED_ASSETS"
+    },
+    {
+        "module": "mercury_ai.operations.demo_manager",
+        "import": "mercury_ai.utils.deterministic_clock.DeterministicClock"
+    },
+    {
+        "module": "mercury_ai.providers.base_provider",
+        "import": "typing.Protocol"
+    },
+    {
+        "module": "mercury_ai.providers.base_provider",
+        "import": "pandas"
+    },
+    {
+        "module": "mercury_ai.providers.data_adapters",
+        "import": "pandas"
+    },
+    {
+        "module": "mercury_ai.providers.data_adapters",
+        "import": "yfinance"
+    },
+    {
+        "module": "mercury_ai.providers.data_adapters",
+        "import": "mercury_ai.providers.data_interfaces.IDataProvider"
+    },
+    {
+        "module": "mercury_ai.providers.data_interfaces",
+        "import": "typing.Protocol"
+    },
+    {
+        "module": "mercury_ai.providers.data_interfaces",
+        "import": "typing.List"
+    },
+    {
+        "module": "mercury_ai.providers.data_interfaces",
+        "import": "pandas"
+    },
+    {
+        "module": "mercury_ai.providers.historical_replay_provider",
+        "import": "pandas"
+    },
+    {
+        "module": "mercury_ai.providers.historical_replay_provider",
+        "import": "os"
+    },
+    {
+        "module": "mercury_ai.providers.historical_replay_provider",
+        "import": "mercury_ai.providers.base_provider.MarketDataProvider"
+    },
+    {
+        "module": "mercury_ai.providers.market_provider",
+        "import": "typing.Dict"
+    },
+    {
+        "module": "mercury_ai.providers.market_provider",
+        "import": "pandas"
+    },
+    {
+        "module": "mercury_ai.providers.market_provider",
+        "import": "time"
+    },
+    {
+        "module": "mercury_ai.providers.market_provider",
+        "import": "logging"
+    },
+    {
+        "module": "mercury_ai.providers.market_provider",
+        "import": "functools.lru_cache"
+    },
+    {
+        "module": "mercury_ai.providers.market_provider",
+        "import": "mercury_ai.providers.data_interfaces.IDataProvider"
+    },
+    {
+        "module": "mercury_ai.providers.market_provider",
+        "import": "mercury_ai.providers.data_adapters.YahooAdapter"
+    },
+    {
+        "module": "mercury_ai.providers.market_provider",
+        "import": "mercury_ai.providers.data_adapters.PolygonAdapter"
+    },
+    {
+        "module": "mercury_ai.providers.market_provider",
+        "import": "mercury_ai.providers.data_adapters.TwelveDataAdapter"
+    },
+    {
+        "module": "mercury_ai.providers.market_provider",
+        "import": "mercury_ai.providers.data_adapters.AlphaVantageAdapter"
+    },
+    {
+        "module": "mercury_ai.providers.market_provider",
+        "import": "mercury_ai.providers.data_adapters.BinanceAdapter"
+    },
+    {
+        "module": "mercury_ai.providers.market_provider",
+        "import": "mercury_ai.providers.data_adapters.MetaTrader5Adapter"
+    },
+    {
+        "module": "mercury_ai.providers.mercury_data_provider",
+        "import": "typing.Dict"
+    },
+    {
+        "module": "mercury_ai.providers.mercury_data_provider",
+        "import": "pandas"
+    },
+    {
+        "module": "mercury_ai.providers.mercury_data_provider",
+        "import": "time"
+    },
+    {
+        "module": "mercury_ai.providers.mercury_data_provider",
+        "import": "logging"
+    },
+    {
+        "module": "mercury_ai.providers.mercury_data_provider",
+        "import": "functools.lru_cache"
+    },
+    {
+        "module": "mercury_ai.providers.mercury_data_provider",
+        "import": "mercury_ai.providers.data_interfaces.IDataProvider"
+    },
+    {
+        "module": "mercury_ai.providers.mercury_data_provider",
+        "import": "mercury_ai.providers.data_adapters.YahooAdapter"
+    },
+    {
+        "module": "mercury_ai.providers.mercury_data_provider",
+        "import": "mercury_ai.providers.data_adapters.PolygonAdapter"
+    },
+    {
+        "module": "mercury_ai.providers.mercury_data_provider",
+        "import": "mercury_ai.providers.data_adapters.TwelveDataAdapter"
+    },
+    {
+        "module": "mercury_ai.providers.mercury_data_provider",
+        "import": "mercury_ai.providers.data_adapters.AlphaVantageAdapter"
+    },
+    {
+        "module": "mercury_ai.providers.mercury_data_provider",
+        "import": "mercury_ai.providers.data_adapters.BinanceAdapter"
+    },
+    {
+        "module": "mercury_ai.providers.mercury_data_provider",
+        "import": "mercury_ai.providers.data_adapters.MetaTrader5Adapter"
+    },
+    {
+        "module": "mercury_ai.providers.yahoo_finance_provider",
+        "import": "yfinance"
+    },
+    {
+        "module": "mercury_ai.providers.yahoo_finance_provider",
+        "import": "pandas"
+    },
+    {
+        "module": "mercury_ai.providers.yahoo_finance_provider",
+        "import": "mercury_ai.providers.base_provider.MarketDataProvider"
+    },
+    {
+        "module": "mercury_ai.providers.yahoo_finance_provider",
+        "import": "mercury_ai.core.exceptions.MarketClosedException"
+    },
+    {
+        "module": "mercury_ai.providers.tests.test_market_provider",
+        "import": "mercury_ai.providers.market_provider.MarketProvider"
+    },
+    {
+        "module": "mercury_ai.sessions.market_sessions",
+        "import": "datetime.datetime"
+    },
+    {
+        "module": "mercury_ai.sessions.market_sessions",
+        "import": "mercury_ai.config.sessions"
+    },
+    {
+        "module": "mercury_ai.sessions.tests.test_market_sessions",
+        "import": "mercury_ai.sessions.market_sessions.MarketSessions"
+    },
+    {
+        "module": "mercury_ai.utils.deterministic_clock",
+        "import": "datetime.datetime"
+    },
+    {
+        "module": "mercury_ai.utils.deterministic_clock",
+        "import": "datetime.timezone"
+    },
+    {
+        "module": "mercury_ai.utils.memory_auditor",
+        "import": "tracemalloc"
+    },
+    {
+        "module": "mercury_ai.utils.memory_auditor",
+        "import": "gc"
+    },
+    {
+        "module": "mercury_ai.utils.memory_auditor",
+        "import": "typing.Optional"
+    },
+    {
+        "module": "mercury_ai.utils.memory_auditor",
+        "import": "mercury_ai.models.memory_audit.MemorySnapshot"
+    },
+    {
+        "module": "mercury_ai.utils.memory_auditor",
+        "import": "mercury_ai.models.memory_audit.MemoryAuditResult"
+    },
+    {
+        "module": "mercury_ai.utils.performance_collector",
+        "import": "time"
+    },
+    {
+        "module": "mercury_ai.utils.performance_collector",
+        "import": "tracemalloc"
+    },
+    {
+        "module": "mercury_ai.utils.performance_collector",
+        "import": "gc"
+    },
+    {
+        "module": "mercury_ai.utils.performance_collector",
+        "import": "statistics"
+    },
+    {
+        "module": "mercury_ai.utils.performance_collector",
+        "import": "contextlib.contextmanager"
+    },
+    {
+        "module": "mercury_ai.utils.performance_collector",
+        "import": "typing.List"
+    },
+    {
+        "module": "mercury_ai.utils.performance_collector",
+        "import": "typing.Tuple"
+    },
+    {
+        "module": "mercury_ai.utils.performance_collector",
+        "import": "typing.Optional"
+    },
+    {
+        "module": "mercury_ai.utils.performance_collector",
+        "import": "mercury_ai.models.performance.StageMetric"
+    },
+    {
+        "module": "mercury_ai.utils.performance_collector",
+        "import": "mercury_ai.models.performance.PipelineMetric"
+    },
+    {
+        "module": "mercury_ai.utils.performance_collector",
+        "import": "mercury_ai.models.performance.HotspotReport"
+    },
+    {
+        "module": "mercury_ai.utils.regression_detector",
+        "import": "json"
+    },
+    {
+        "module": "mercury_ai.utils.regression_detector",
+        "import": "typing.List"
+    },
+    {
+        "module": "mercury_ai.utils.regression_detector",
+        "import": "typing.Dict"
+    },
+    {
+        "module": "mercury_ai.utils.regression_detector",
+        "import": "typing.Optional"
+    },
+    {
+        "module": "mercury_ai.utils.regression_detector",
+        "import": "mercury_ai.models.regression.BenchmarkMetrics"
+    },
+    {
+        "module": "mercury_ai.utils.regression_detector",
+        "import": "mercury_ai.models.regression.RegressionResult"
+    },
+    {
+        "module": "mercury_ai.utils.report_generator",
+        "import": "json"
+    },
+    {
+        "module": "mercury_ai.utils.report_generator",
+        "import": "csv"
+    },
+    {
+        "module": "mercury_ai.utils.report_generator",
+        "import": "platform"
+    },
+    {
+        "module": "mercury_ai.utils.report_generator",
+        "import": "sys"
+    },
+    {
+        "module": "mercury_ai.utils.report_generator",
+        "import": "datetime"
+    },
+    {
+        "module": "mercury_ai.utils.report_generator",
+        "import": "typing.Any"
+    },
+    {
+        "module": "mercury_ai.utils.report_generator",
+        "import": "typing.Dict"
+    },
+    {
+        "module": "mercury_ai.utils.report_generator",
+        "import": "typing.List"
+    },
+    {
+        "module": "mercury_ai.utils.report_generator",
+        "import": "mercury_ai.models.performance.PipelineMetric"
+    },
+    {
+        "module": "mercury_ai.utils.report_generator",
+        "import": "mercury_ai.models.stress_test.StressTestResult"
+    },
+    {
+        "module": "mercury_ai.utils.report_generator",
+        "import": "mercury_ai.models.regression.RegressionResult"
+    },
+    {
+        "module": "mercury_ai.utils.stress_tester",
+        "import": "time"
+    },
+    {
+        "module": "mercury_ai.utils.stress_tester",
+        "import": "tracemalloc"
+    },
+    {
+        "module": "mercury_ai.utils.stress_tester",
+        "import": "random"
+    },
+    {
+        "module": "mercury_ai.utils.stress_tester",
+        "import": "typing.Callable"
+    },
+    {
+        "module": "mercury_ai.utils.stress_tester",
+        "import": "typing.Any"
+    },
+    {
+        "module": "mercury_ai.utils.stress_tester",
+        "import": "typing.Dict"
+    },
+    {
+        "module": "mercury_ai.utils.stress_tester",
+        "import": "typing.List"
+    },
+    {
+        "module": "mercury_ai.utils.stress_tester",
+        "import": "mercury_ai.models.stress_test.StressTestResult"
+    },
+    {
+        "module": "mercury_ai.utils.system_monitor",
+        "import": "psutil"
+    },
+    {
+        "module": "mercury_ai.utils.system_monitor",
+        "import": "time"
+    },
+    {
+        "module": "tests.test_adaptive_weighting",
+        "import": "pytest"
+    },
+    {
+        "module": "tests.test_adaptive_weighting",
+        "import": "unittest.mock.MagicMock"
+    },
+    {
+        "module": "tests.test_adaptive_weighting",
+        "import": "mercury_ai.models.evidence.Evidence"
+    },
+    {
+        "module": "tests.test_adaptive_weighting",
+        "import": "mercury_ai.models.market_context.MarketContext"
+    },
+    {
+        "module": "tests.test_adaptive_weighting",
+        "import": "mercury_ai.models.market_regime.MarketRegime"
+    },
+    {
+        "module": "tests.test_adaptive_weighting",
+        "import": "mercury_ai.models.market_regime_enum.MarketRegimeEnum"
+    },
+    {
+        "module": "tests.test_adaptive_weighting",
+        "import": "mercury_ai.analysis.conflict_resolution_engine.ConflictResolutionEngine"
+    },
+    {
+        "module": "tests.test_asset_registry",
+        "import": "pytest"
+    },
+    {
+        "module": "tests.test_asset_registry",
+        "import": "os"
+    },
+    {
+        "module": "tests.test_asset_registry",
+        "import": "json"
+    },
+    {
+        "module": "tests.test_asset_registry",
+        "import": "mercury_ai.core.asset_registry.AssetRegistry"
+    },
+    {
+        "module": "tests.test_asset_registry",
+        "import": "mercury_ai.brain.scanner.MercuryScanner"
+    },
+    {
+        "module": "tests.test_auto_health",
+        "import": "pytest"
+    },
+    {
+        "module": "tests.test_auto_health",
+        "import": "mercury_ai.core.auto_health.MercuryAutoHealth"
+    },
+    {
+        "module": "tests.test_auto_health",
+        "import": "mercury_ai.providers.mercury_data_provider.MercuryDataProvider"
+    },
+    {
+        "module": "tests.test_auto_health",
+        "import": "mercury_ai.core.asset_registry.AssetRegistry"
+    },
+    {
+        "module": "tests.test_benchmark_integration",
+        "import": "pytest"
+    },
+    {
+        "module": "tests.test_benchmark_integration",
+        "import": "pandas"
+    },
+    {
+        "module": "tests.test_benchmark_integration",
+        "import": "typing.List"
+    },
+    {
+        "module": "tests.test_benchmark_integration",
+        "import": "typing.Tuple"
+    },
+    {
+        "module": "tests.test_benchmark_integration",
+        "import": "mercury_ai.analysis.smart_money.liquidity_engine.LiquidityEngine"
+    },
+    {
+        "module": "tests.test_benchmark_integration",
+        "import": "mercury_ai.analysis.smart_money.liquidity_engine.EqualHighGroup"
+    },
+    {
+        "module": "tests.test_benchmark_integration",
+        "import": "mercury_ai.models.swing_analysis.Swing"
+    },
+    {
+        "module": "tests.test_benchmark_integration",
+        "import": "mercury_ai.models.market_structure_profile.MarketStructureProfile"
+    },
+    {
+        "module": "tests.test_benchmark_integration",
+        "import": "mercury_ai.core.pipeline_profiler.PipelineProfiler"
+    },
+    {
+        "module": "tests.test_broker_filtering",
+        "import": "pytest"
+    },
+    {
+        "module": "tests.test_broker_filtering",
+        "import": "os"
+    },
+    {
+        "module": "tests.test_broker_filtering",
+        "import": "json"
+    },
+    {
+        "module": "tests.test_broker_filtering",
+        "import": "mercury_ai.brain.scanner.MercuryScanner"
+    },
+    {
+        "module": "tests.test_broker_filtering",
+        "import": "mercury_ai.core.asset_registry.AssetRegistry"
+    },
+    {
+        "module": "tests.test_confidence_calibration",
+        "import": "pytest"
+    },
+    {
+        "module": "tests.test_confidence_calibration",
+        "import": "unittest.mock.MagicMock"
+    },
+    {
+        "module": "tests.test_confidence_calibration",
+        "import": "mercury_ai.models.evidence.Evidence"
+    },
+    {
+        "module": "tests.test_confidence_calibration",
+        "import": "mercury_ai.models.market_context.MarketContext"
+    },
+    {
+        "module": "tests.test_confidence_calibration",
+        "import": "mercury_ai.models.market_evidence_bundle.MarketEvidenceBundle"
+    },
+    {
+        "module": "tests.test_confidence_calibration",
+        "import": "mercury_ai.models.market_state.MarketState"
+    },
+    {
+        "module": "tests.test_confidence_calibration",
+        "import": "mercury_ai.models.market_state_enum.MarketStateEnum"
+    },
+    {
+        "module": "tests.test_confidence_calibration",
+        "import": "mercury_ai.models.mtf_consensus.MTFConsensus"
+    },
+    {
+        "module": "tests.test_confidence_calibration",
+        "import": "mercury_ai.analysis.confidence_engine.ConfidenceEngine"
+    },
+    {
+        "module": "tests.test_confidence_calibration_auditor",
+        "import": "mercury_ai.analysis.confidence_calibration_auditor.ConfidenceCalibrationAuditor"
+    },
+    {
+        "module": "tests.test_configuration_center",
+        "import": "os"
+    },
+    {
+        "module": "tests.test_configuration_center",
+        "import": "pytest"
+    },
+    {
+        "module": "tests.test_configuration_center",
+        "import": "mercury_ai.config.configuration_center.MercuryConfigCenter"
+    },
+    {
+        "module": "tests.test_conflict_resolution",
+        "import": "pytest"
+    },
+    {
+        "module": "tests.test_conflict_resolution",
+        "import": "unittest.mock.MagicMock"
+    },
+    {
+        "module": "tests.test_conflict_resolution",
+        "import": "mercury_ai.models.evidence.Evidence"
+    },
+    {
+        "module": "tests.test_conflict_resolution",
+        "import": "mercury_ai.models.market_context.MarketContext"
+    },
+    {
+        "module": "tests.test_conflict_resolution",
+        "import": "mercury_ai.analysis.conflict_resolution_engine.ConflictResolutionEngine"
+    },
+    {
+        "module": "tests.test_data_exporter",
+        "import": "mercury_ai.analysis.data_exporter.DataExporter"
+    },
+    {
+        "module": "tests.test_data_exporter",
+        "import": "pathlib.Path"
+    },
+    {
+        "module": "tests.test_data_exporter",
+        "import": "shutil"
+    },
+    {
+        "module": "tests.test_data_provider_manager",
+        "import": "pytest"
+    },
+    {
+        "module": "tests.test_data_provider_manager",
+        "import": "mercury_ai.data.mercury_data_provider.MercuryDataProvider"
+    },
+    {
+        "module": "tests.test_data_provider_manager",
+        "import": "mercury_ai.data.mercury_data_provider.YahooProvider"
+    },
+    {
+        "module": "tests.test_data_provider_manager",
+        "import": "mercury_ai.data.mercury_data_provider.BinanceProvider"
+    },
+    {
+        "module": "tests.test_data_quality_engine",
+        "import": "pytest"
+    },
+    {
+        "module": "tests.test_data_quality_engine",
+        "import": "pandas"
+    },
+    {
+        "module": "tests.test_data_quality_engine",
+        "import": "numpy"
+    },
+    {
+        "module": "tests.test_data_quality_engine",
+        "import": "mercury_ai.analysis.data_quality_engine.DataQualityEngine"
+    },
+    {
+        "module": "tests.test_demo_operations",
+        "import": "mercury_ai.operations.demo_manager.DemoOperationsManager"
+    },
+    {
+        "module": "tests.test_demo_page",
+        "import": "mercury_ai.core.analysis_pipeline.AnalysisPipeline"
+    },
+    {
+        "module": "tests.test_demo_page",
+        "import": "mercury_ai.data.market_data.MarketDataService"
+    },
+    {
+        "module": "tests.test_demo_page",
+        "import": "mercury_ai.providers.yahoo_finance_provider.YahooFinanceProvider"
+    },
+    {
+        "module": "tests.test_determinism",
+        "import": "pytest"
+    },
+    {
+        "module": "tests.test_determinism",
+        "import": "mercury_ai.core.analysis_pipeline.AnalysisPipeline"
+    },
+    {
+        "module": "tests.test_determinism",
+        "import": "mercury_ai.data.market_data.MarketDataService"
+    },
+    {
+        "module": "tests.test_determinism",
+        "import": "mercury_ai.providers.yahoo_finance_provider.YahooFinanceProvider"
+    },
+    {
+        "module": "tests.test_engine_performance_auditor",
+        "import": "mercury_ai.analysis.engine_performance_auditor.EnginePerformanceAuditor"
+    },
+    {
+        "module": "tests.test_evidence_engine",
+        "import": "pytest"
+    },
+    {
+        "module": "tests.test_evidence_engine",
+        "import": "mercury_ai.models.evidence.Evidence"
+    },
+    {
+        "module": "tests.test_evidence_engine",
+        "import": "mercury_ai.analysis.evidence_engine.EvidenceEngine"
+    },
+    {
+        "module": "tests.test_evidence_engine",
+        "import": "unittest.mock.MagicMock"
+    },
+    {
+        "module": "tests.test_evidence_quality_engine",
+        "import": "pytest"
+    },
+    {
+        "module": "tests.test_evidence_quality_engine",
+        "import": "mercury_ai.models.evidence.Evidence"
+    },
+    {
+        "module": "tests.test_evidence_quality_engine",
+        "import": "mercury_ai.analysis.evidence_quality_engine.EvidenceQualityEngine"
+    },
+    {
+        "module": "tests.test_export_center",
+        "import": "pytest"
+    },
+    {
+        "module": "tests.test_export_center",
+        "import": "os"
+    },
+    {
+        "module": "tests.test_export_center",
+        "import": "json"
+    },
+    {
+        "module": "tests.test_export_center",
+        "import": "pandas"
+    },
+    {
+        "module": "tests.test_export_center",
+        "import": "mercury_ai.core.export_center.ExportCenter"
+    },
+    {
+        "module": "tests.test_health_auditor",
+        "import": "mercury_ai.analysis.health_auditor.HealthAuditor"
+    },
+    {
+        "module": "tests.test_health_center",
+        "import": "pytest"
+    },
+    {
+        "module": "tests.test_health_center",
+        "import": "mercury_ai.core.health_center.HealthCenter"
+    },
+    {
+        "module": "tests.test_health_center",
+        "import": "mercury_ai.providers.mercury_data_provider.MercuryDataProviderManager"
+    },
+    {
+        "module": "tests.test_health_center",
+        "import": "app.dashboard.health_center_panel.render_health_center_panel"
+    },
+    {
+        "module": "tests.test_health_checker",
+        "import": "mercury_ai.analysis.health_checker.HealthChecker"
+    },
+    {
+        "module": "tests.test_institutional_report_generator",
+        "import": "mercury_ai.analysis.institutional_report_generator.InstitutionalReportGenerator"
+    },
+    {
+        "module": "tests.test_integrity_checker",
+        "import": "mercury_ai.analysis.integrity_checker.IntegrityChecker"
+    },
+    {
+        "module": "tests.test_job_manager",
+        "import": "time"
+    },
+    {
+        "module": "tests.test_job_manager",
+        "import": "mercury_ai.core.job_manager.JobManager"
+    },
+    {
+        "module": "tests.test_live_monitor",
+        "import": "mercury_ai.analysis.live_monitor.LiveMonitor"
+    },
+    {
+        "module": "tests.test_main_dashboard",
+        "import": "pytest"
+    },
+    {
+        "module": "tests.test_main_dashboard",
+        "import": "app.dashboard.main_dashboard.main"
+    },
+    {
+        "module": "tests.test_market_resilience",
+        "import": "pytest"
+    },
+    {
+        "module": "tests.test_market_resilience",
+        "import": "unittest.mock.MagicMock"
+    },
+    {
+        "module": "tests.test_market_resilience",
+        "import": "mercury_ai.core.analysis_pipeline.AnalysisPipeline"
+    },
+    {
+        "module": "tests.test_market_resilience",
+        "import": "mercury_ai.core.exceptions.MarketClosedException"
+    },
+    {
+        "module": "tests.test_market_resilience",
+        "import": "pandas"
+    },
+    {
+        "module": "tests.test_market_resilience",
+        "import": "mercury_ai.data.market_data.MarketDataService"
+    },
+    {
+        "module": "tests.test_market_resilience",
+        "import": "mercury_ai.providers.yahoo_finance_provider.YahooFinanceProvider"
+    },
+    {
+        "module": "tests.test_market_resilience",
+        "import": "mercury_ai.data.market_data.MarketDataService"
+    },
+    {
+        "module": "tests.test_market_resilience",
+        "import": "mercury_ai.providers.yahoo_finance_provider.YahooFinanceProvider"
+    },
+    {
+        "module": "tests.test_market_resilience",
+        "import": "yfinance"
+    },
+    {
+        "module": "tests.test_market_resilience",
+        "import": "mercury_ai.data.market_data.MarketDataService"
+    },
+    {
+        "module": "tests.test_market_resilience",
+        "import": "mercury_ai.providers.yahoo_finance_provider.YahooFinanceProvider"
+    },
+    {
+        "module": "tests.test_market_resilience",
+        "import": "yfinance"
+    },
+    {
+        "module": "tests.test_notification_center",
+        "import": "pytest"
+    },
+    {
+        "module": "tests.test_notification_center",
+        "import": "os"
+    },
+    {
+        "module": "tests.test_notification_center",
+        "import": "mercury_ai.analysis.notification_center.NotificationCenter"
+    },
+    {
+        "module": "tests.test_observability_center",
+        "import": "pytest"
+    },
+    {
+        "module": "tests.test_observability_center",
+        "import": "mercury_ai.core.observability_center.ObservabilityCenter"
+    },
+    {
+        "module": "tests.test_observability_panel",
+        "import": "pytest"
+    },
+    {
+        "module": "tests.test_observability_panel",
+        "import": "app.dashboard.observability_panel.render_observability_dashboard"
+    },
+    {
+        "module": "tests.test_operational_history",
+        "import": "mercury_ai.analysis.operational_history.OperationalHistory"
+    },
+    {
+        "module": "tests.test_performance_analytics",
+        "import": "mercury_ai.analysis.performance_analytics.PerformanceAnalytics"
+    },
+    {
+        "module": "tests.test_performance_center",
+        "import": "mercury_ai.analysis.performance_center.PerformanceCenter"
+    },
+    {
+        "module": "tests.test_performance_collector",
+        "import": "pytest"
+    },
+    {
+        "module": "tests.test_performance_collector",
+        "import": "mercury_ai.utils.performance_collector.PerformanceCollector"
+    },
+    {
+        "module": "tests.test_performance_collector",
+        "import": "time"
+    },
+    {
+        "module": "tests.test_performance_statistics",
+        "import": "mercury_ai.analysis.performance_statistics.PerformanceStatistics"
+    },
+    {
+        "module": "tests.test_pipeline_persistence",
+        "import": "pytest"
+    },
+    {
+        "module": "tests.test_pipeline_persistence",
+        "import": "pathlib.Path"
+    },
+    {
+        "module": "tests.test_pipeline_persistence",
+        "import": "mercury_ai.core.analysis_pipeline.AnalysisPipeline"
+    },
+    {
+        "module": "tests.test_pipeline_persistence",
+        "import": "shutil"
+    },
+    {
+        "module": "tests.test_pipeline_persistence",
+        "import": "pandas"
+    },
+    {
+        "module": "tests.test_pipeline_persistence",
+        "import": "numpy"
+    },
+    {
+        "module": "tests.test_pipeline_persistence",
+        "import": "mercury_ai.data.providers.historical_data_provider.HistoricalDataProvider"
+    },
+    {
+        "module": "tests.test_pipeline_persistence",
+        "import": "mercury_ai.data.market_data.MarketDataService"
+    },
+    {
+        "module": "tests.test_probability_engine",
+        "import": "pytest"
+    },
+    {
+        "module": "tests.test_probability_engine",
+        "import": "unittest.mock.MagicMock"
+    },
+    {
+        "module": "tests.test_probability_engine",
+        "import": "mercury_ai.brain.probability_engine.ProbabilityEngine"
+    },
+    {
+        "module": "tests.test_probability_engine",
+        "import": "mercury_ai.models.market_context.MarketContext"
+    },
+    {
+        "module": "tests.test_probability_engine",
+        "import": "mercury_ai.models.market_evidence_bundle.MarketEvidenceBundle"
+    },
+    {
+        "module": "tests.test_probability_engine",
+        "import": "mercury_ai.models.evidence.Evidence"
+    },
+    {
+        "module": "tests.test_provider_priority_engine",
+        "import": "pytest"
+    },
+    {
+        "module": "tests.test_provider_priority_engine",
+        "import": "mercury_ai.data.mercury_data_provider.MercuryDataProvider"
+    },
+    {
+        "module": "tests.test_provider_priority_engine",
+        "import": "mercury_ai.data.mercury_data_provider.YahooProvider"
+    },
+    {
+        "module": "tests.test_provider_priority_engine",
+        "import": "mercury_ai.data.mercury_data_provider.PolygonProvider"
+    },
+    {
+        "module": "tests.test_provider_priority_engine",
+        "import": "mercury_ai.data.mercury_data_provider.TwelveDataProvider"
+    },
+    {
+        "module": "tests.test_provider_priority_engine",
+        "import": "mercury_ai.data.mercury_data_provider.AlphaVantageProvider"
+    },
+    {
+        "module": "tests.test_provider_priority_engine",
+        "import": "mercury_ai.data.mercury_data_provider.BinanceProvider"
+    },
+    {
+        "module": "tests.test_provider_priority_engine",
+        "import": "mercury_ai.data.mercury_data_provider.MetaTrader5Provider"
+    },
+    {
+        "module": "tests.test_provider_priority_engine",
+        "import": "mercury_ai.analysis.provider_priority_engine.ProviderPriorityEngine"
+    },
+    {
+        "module": "tests.test_read_only",
+        "import": "pytest"
+    },
+    {
+        "module": "tests.test_read_only",
+        "import": "mercury_ai.core.read_only.check_read_only"
+    },
+    {
+        "module": "tests.test_read_only",
+        "import": "mercury_ai.core.read_only.ReadOnlyViolation"
+    },
+    {
+        "module": "tests.test_robustness",
+        "import": "pytest"
+    },
+    {
+        "module": "tests.test_robustness",
+        "import": "pandas"
+    },
+    {
+        "module": "tests.test_robustness",
+        "import": "numpy"
+    },
+    {
+        "module": "tests.test_robustness",
+        "import": "typing.List"
+    },
+    {
+        "module": "tests.test_robustness",
+        "import": "mercury_ai.core.analysis_pipeline.AnalysisPipeline"
+    },
+    {
+        "module": "tests.test_robustness",
+        "import": "mercury_ai.data.market_data_provider.MarketDataProvider"
+    },
+    {
+        "module": "tests.test_robustness",
+        "import": "mercury_ai.data.market_data.MarketDataService"
+    },
+    {
+        "module": "tests.test_scanner_priority",
+        "import": "pytest"
+    },
+    {
+        "module": "tests.test_scanner_priority",
+        "import": "mercury_ai.brain.scanner.MercuryScanner"
+    },
+    {
+        "module": "tests.test_scanner_priority",
+        "import": "mercury_ai.core.asset_registry.AssetRegistry"
+    },
+    {
+        "module": "tests.test_scanner_recovery",
+        "import": "pytest"
+    },
+    {
+        "module": "tests.test_scanner_recovery",
+        "import": "unittest.mock.MagicMock"
+    },
+    {
+        "module": "tests.test_scanner_recovery",
+        "import": "mercury_ai.brain.scanner.MercuryScanner"
+    },
+    {
+        "module": "tests.test_security_center",
+        "import": "pytest"
+    },
+    {
+        "module": "tests.test_security_center",
+        "import": "mercury_ai.core.security_center.SecurityCenter"
+    },
+    {
+        "module": "tests.test_session_id",
+        "import": "mercury_ai.core.analysis_pipeline.AnalysisPipeline"
+    },
+    {
+        "module": "tests.test_session_id",
+        "import": "mercury_ai.data.market_data.MarketDataService"
+    },
+    {
+        "module": "tests.test_session_id",
+        "import": "mercury_ai.providers.yahoo_finance_provider.YahooFinanceProvider"
+    },
+    {
+        "module": "tests.test_session_manager",
+        "import": "mercury_ai.core.session_manager.SessionManager"
+    },
+    {
+        "module": "tests.test_statistical_auditor",
+        "import": "mercury_ai.analysis.statistical_auditor.StatisticalAuditor"
+    },
+    {
+        "module": "tests.test_trade_outcome_engine",
+        "import": "mercury_ai.analysis.trade_outcome_engine.TradeOutcomeEngine"
+    },
+    {
+        "module": "tests.test_validation_engine",
+        "import": "pytest"
+    },
+    {
+        "module": "tests.test_validation_engine",
+        "import": "unittest.mock.MagicMock"
+    },
+    {
+        "module": "tests.test_validation_engine",
+        "import": "mercury_ai.analysis.validation_engine.ValidationEngine"
+    },
+    {
+        "module": "tests.test_validation_engine",
+        "import": "mercury_ai.models.market_context.MarketContext"
+    },
+    {
+        "module": "tests.test_validation_engine",
+        "import": "mercury_ai.models.market_evidence_bundle.MarketEvidenceBundle"
+    },
+    {
+        "module": "tests.test_validation_engine",
+        "import": "mercury_ai.models.evidence.Evidence"
+    },
+    {
+        "module": "tests.test_versioning",
+        "import": "mercury_ai.models.analysis_result.AnalysisResult"
+    },
+    {
+        "module": "tests.test_versioning",
+        "import": "mercury_ai.models.decision_snapshot.DecisionSnapshot"
+    },
+    {
+        "module": "tests.test_versioning",
+        "import": "mercury_ai.config.settings"
+    },
+    {
+        "module": "tests.test_versioning",
+        "import": "unittest.mock.MagicMock"
+    },
+    {
+        "module": "tests.test_weight_simulator",
+        "import": "mercury_ai.analysis.weight_simulator.WeightSimulator"
+    },
+    {
+        "module": "tools.project_mapper.architecture_audit",
+        "import": "json"
+    },
+    {
+        "module": "tools.project_mapper.architecture_audit",
+        "import": "pathlib.Path"
+    },
+    {
+        "module": "tools.project_mapper.architecture_audit",
+        "import": "config.PROJECT_ROOT"
+    },
+    {
+        "module": "tools.project_mapper.ast_parser",
+        "import": "ast"
+    },
+    {
+        "module": "tools.project_mapper.ast_parser",
+        "import": "pathlib.Path"
+    },
+    {
+        "module": "tools.project_mapper.call_graph_builder",
+        "import": "ast"
+    },
+    {
+        "module": "tools.project_mapper.call_graph_builder",
+        "import": "json"
+    },
+    {
+        "module": "tools.project_mapper.call_graph_builder",
+        "import": "pathlib.Path"
+    },
+    {
+        "module": "tools.project_mapper.call_graph_builder",
+        "import": "config.PROJECT_ROOT"
+    },
+    {
+        "module": "tools.project_mapper.config",
+        "import": "pathlib.Path"
+    },
+    {
+        "module": "tools.project_mapper.dependency_builder",
+        "import": "json"
+    },
+    {
+        "module": "tools.project_mapper.dependency_builder",
+        "import": "collections.defaultdict"
+    },
+    {
+        "module": "tools.project_mapper.dependency_builder",
+        "import": "pathlib.Path"
+    },
+    {
+        "module": "tools.project_mapper.dependency_builder",
+        "import": "config.PROJECT_ROOT"
+    },
+    {
+        "module": "tools.project_mapper.main",
+        "import": "scanner.ProjectScanner"
+    },
+    {
+        "module": "tools.project_mapper.main",
+        "import": "writer.InventoryWriter"
+    },
+    {
+        "module": "tools.project_mapper.main",
+        "import": "python_indexer.PythonIndexer"
+    },
+    {
+        "module": "tools.project_mapper.main",
+        "import": "module_index.ModuleIndexBuilder"
+    },
+    {
+        "module": "tools.project_mapper.main",
+        "import": "dependency_builder.DependencyBuilder"
+    },
+    {
+        "module": "tools.project_mapper.main",
+        "import": "call_graph_builder.CallGraphBuilder"
+    },
+    {
+        "module": "tools.project_mapper.main",
+        "import": "architecture_audit.ArchitectureAudit"
+    },
+    {
+        "module": "tools.project_mapper.main",
+        "import": "snapshot_builder.SnapshotBuilder"
+    },
+    {
+        "module": "tools.project_mapper.models",
+        "import": "dataclasses.dataclass"
+    },
+    {
+        "module": "tools.project_mapper.models",
+        "import": "dataclasses.field"
+    },
+    {
+        "module": "tools.project_mapper.module_index",
+        "import": "json"
+    },
+    {
+        "module": "tools.project_mapper.module_index",
+        "import": "collections.defaultdict"
+    },
+    {
+        "module": "tools.project_mapper.module_index",
+        "import": "pathlib.Path"
+    },
+    {
+        "module": "tools.project_mapper.module_index",
+        "import": "config.PROJECT_ROOT"
+    },
+    {
+        "module": "tools.project_mapper.python_indexer",
+        "import": "ast"
+    },
+    {
+        "module": "tools.project_mapper.python_indexer",
+        "import": "json"
+    },
+    {
+        "module": "tools.project_mapper.python_indexer",
+        "import": "pathlib.Path"
+    },
+    {
+        "module": "tools.project_mapper.python_indexer",
+        "import": "config.PROJECT_ROOT"
+    },
+    {
+        "module": "tools.project_mapper.scanner",
+        "import": "pathlib.Path"
+    },
+    {
+        "module": "tools.project_mapper.scanner",
+        "import": "ast_parser.ASTParser"
+    },
+    {
+        "module": "tools.project_mapper.scanner",
+        "import": "config.PROJECT_ROOT"
+    },
+    {
+        "module": "tools.project_mapper.scanner",
+        "import": "config.IGNORE_DIRS"
+    },
+    {
+        "module": "tools.project_mapper.scanner",
+        "import": "config.IGNORE_FILES"
+    },
+    {
+        "module": "tools.project_mapper.scanner",
+        "import": "config.SOURCE_EXTENSIONS"
+    },
+    {
+        "module": "tools.project_mapper.scanner",
+        "import": "models.FileInfo"
+    },
+    {
+        "module": "tools.project_mapper.scanner",
+        "import": "models.Inventory"
+    },
+    {
+        "module": "tools.project_mapper.snapshot_builder",
+        "import": "json"
+    },
+    {
+        "module": "tools.project_mapper.snapshot_builder",
+        "import": "pathlib.Path"
+    },
+    {
+        "module": "tools.project_mapper.writer",
+        "import": "json"
+    },
+    {
+        "module": "tools.project_mapper.writer",
+        "import": "dataclasses.asdict"
+    },
+    {
+        "module": "tools.project_mapper.writer",
+        "import": "pathlib.Path"
+    },
+    {
+        "module": "tools.project_mapper.writer",
+        "import": "config.PROJECT_ROOT"
+    }
+]

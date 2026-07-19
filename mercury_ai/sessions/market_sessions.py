@@ -1,4 +1,5 @@
 from datetime import datetime
+from mercury_ai.config import sessions
 
 
 class MarketSessions:
@@ -8,18 +9,18 @@ class MarketSessions:
         hour = datetime.utcnow().hour
 
         if 22 <= hour or hour < 7:
-            return "Sydney"
+            return sessions.SYDNEY
 
         elif 0 <= hour < 9:
-            return "Tokyo"
+            return sessions.TOKYO
 
         elif 7 <= hour < 16:
-            return "London"
+            return sessions.LONDON
 
         elif 13 <= hour < 22:
-            return "New York"
+            return sessions.NEW_YORK
 
-        return "Closed"
+        return sessions.CLOSED
 
     def is_high_liquidity(self):
 
