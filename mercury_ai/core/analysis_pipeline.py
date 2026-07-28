@@ -45,6 +45,10 @@ from mercury_ai.analysis.volume_intelligence_engine import VolumeIntelligenceEng
 from mercury_ai.analysis.market_structure_intelligence_engine import MarketStructureIntelligenceEngine
 from mercury_ai.config.timeframes import DEFAULT_TIMEFRAME
 from mercury_ai.analysis.institutional_trade_filter_engine import InstitutionalTradeFilterEngine
+from mercury_ai.analysis.confluence_engine import ConfluenceEngine
+from mercury_ai.analysis.confidence_engine import ConfidenceEngine
+from mercury_ai.analysis.confluence_score_engine import ConfluenceScoreEngine
+from mercury_ai.analysis.market_thesis_builder import MarketThesisBuilder
 from mercury_ai.analysis.price_action_analyzer import PriceActionAnalyzer
 from mercury_ai.analysis.fair_value_gap_engine import FairValueGapEngine
 from mercury_ai.analysis.smart_money.order_block_engine import OrderBlockEngine
@@ -88,9 +92,16 @@ class AnalysisPipeline:
         self.candlestick_engine = CandlestickEngine()
         self.structure_intel_engine = MarketStructureIntelligenceEngine()
         
-        
         # Coordination & Filtering
         self.risk_engine = RiskEngine()
+        self.confluence = ConfluenceEngine(
+            thesis_builder=MarketThesisBuilder(
+                risk_engine=self.risk_engine,
+                confidence_engine=ConfidenceEngine(),
+                state_engine=self.state_engine,
+                score_engine=ConfluenceScoreEngine(),
+            ),
+        )
         self.trade_filter = InstitutionalTradeFilterEngine()
         self.ranking_engine = EvidenceRankingEngine()
         self.evidence_quality_engine = EvidenceQualityEngine()
@@ -145,7 +156,7 @@ class AnalysisPipeline:
         )
         self.runtime_report.stages.append(telemetry)
 
-    def analyze(self, symbol="GC=F", avg_volume=None, avg_body=None):
+    def analyze(self, symbol="GC=F", avg_volume=None, avg_body=None, silent=False):
         self.profiler.start_pipeline()
         
         try:
@@ -158,8 +169,8 @@ class AnalysisPipeline:
             start = DeterministicClock.utcnow()
             with self.profiler.stage("DataQuality"):
                 is_valid, quality_score, reason = self.quality_engine.validate(df)
-                if not is_valid:
-                    logging.warning("Data quality issue for %s: %s (Score: %s)", symbol, reason, quality_score)
+                if not is_valid and not silent:
+                    print(f"Data quality issue for {symbol}: {reason} (Score: {quality_score})")
             self._record_telemetry("DataQuality", start, df, is_valid)
 
             start = DeterministicClock.utcnow()

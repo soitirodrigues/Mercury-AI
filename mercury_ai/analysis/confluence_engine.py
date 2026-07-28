@@ -14,6 +14,17 @@ from mercury_ai.analysis.confluence_helpers import (
     dominant_direction,
 )
 
+# Institutional Weights
+INSTITUTIONAL_WEIGHTS = {
+    "LiquidityEngine": 25.0,
+    "SmartMoneyEngine": 20.0,
+    "MarketStructureIntelligenceEngine": 15.0,
+    "VolumeIntelligenceEngine": 10.0,
+    "TrendAnalyzer": 10.0,
+    "CandlestickEngine": 10.0,
+    "VolatilityEngine": 5.0,
+    "ConfluenceEngine": 5.0,
+}
 
 class ConfluenceEngine:
     """

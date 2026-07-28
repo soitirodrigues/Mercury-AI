@@ -6,4 +6,7 @@ yfinance
 streamlit
 plotly
 ta
+<<<<<<< HEAD
 psutil
+=======
+>>>>>>> 3e8bc87dc84ef379614a58c33a5424c354f3cf06

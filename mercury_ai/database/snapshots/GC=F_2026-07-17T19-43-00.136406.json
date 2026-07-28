@@ -1,0 +1,642 @@
+{
+    "timestamp": "2026-07-17T19:43:00.136406",
+    "asset": "GC=F",
+    "timeframe": "M5",
+    "context": {
+        "market": {
+            "symbol": "GC=F",
+            "timeframe": "M5",
+            "close": 4010.89990234375,
+            "ema9": 4011.3492081033023,
+            "ema21": 4013.5047299678963,
+            "ema50": 4013.320737331322,
+            "rsi": 38.83165259996308,
+            "atr": 3.1856863839285716,
+            "adx": 0.0,
+            "macd": -1.9186724197770673,
+            "macd_signal": -1.3450090447767746,
+            "bollinger_upper": 4020.579886558583,
+            "bollinger_lower": 4005.891548988292,
+            "volume": 226.0
+        },
+        "trend": [
+            {
+                "engine_name": "SmartMoney",
+                "evidence_name": "BOS BULLISH",
+                "direction": "BULLISH",
+                "strength": 50.0,
+                "confidence": 85.0,
+                "description": "Rompimento de estrutura de alta confirmado.",
+                "weight": 15.0,
+                "contribution_score": 0.0,
+                "quality_score": 70.0,
+                "context_score": 100.0,
+                "timeframe": "M5",
+                "timestamp": "2026-07-17T19:42:58.962239",
+                "metadata": {}
+            },
+            {
+                "engine_name": "LiquidityEngine",
+                "evidence_name": "Equal High Liquidity",
+                "direction": "BULLISH",
+                "strength": 100.0,
+                "confidence": 100.0,
+                "description": "Equal High cluster detected: 2 touches at 4014.10.",
+                "weight": 30.0,
+                "contribution_score": 0.0,
+                "quality_score": 70.0,
+                "context_score": 100.0,
+                "timeframe": "M5",
+                "timestamp": "2026-07-17T19:42:58.978275",
+                "metadata": {
+                    "touch_count": 2,
+                    "average_price": 4014.0999755859375,
+                    "average_strength": 100.0,
+                    "average_ATR": 4.292978797407901,
+                    "age_in_swings": 1067,
+                    "cluster_density": 0.9756326148078955,
+                    "final_score": 100.0
+                }
+            },
+            {
+                "engine_name": "SwingEngine",
+                "evidence_name": "New HL",
+                "direction": "BULLISH",
+                "strength": 70.0,
+                "confidence": 90.0,
+                "description": "Swing Low HL",
+                "weight": 20.0,
+                "contribution_score": 0.0,
+                "quality_score": 62.99999999999999,
+                "context_score": 100.0,
+                "timeframe": "M5",
+                "timestamp": "2026-07-17T19:42:51.951998",
+                "metadata": {}
+            },
+            {
+                "engine_name": "SwingEngine",
+                "evidence_name": "New HH",
+                "direction": "BULLISH",
+                "strength": 70.0,
+                "confidence": 90.0,
+                "description": "Swing High HH",
+                "weight": 20.0,
+                "contribution_score": 0.0,
+                "quality_score": 62.99999999999999,
+                "context_score": 100.0,
+                "timeframe": "M5",
+                "timestamp": "2026-07-17T19:42:51.968113",
+                "metadata": {}
+            }
+        ],
+        "price_action": {
+            "trend_structure": "UNKNOWN",
+            "last_event": "NONE",
+            "confidence": 0.0,
+            "explanation": []
+        },
+        "support_resistance": {
+            "support": 0.0,
+            "resistance": 0.0,
+            "distance_support": 0.0,
+            "distance_resistance": 0.0,
+            "explanation": []
+        },
+        "smart_money": {
+            "structure": {
+                "trend": "RANGE",
+                "higher_high": false,
+                "higher_low": false,
+                "lower_high": false,
+                "lower_low": false,
+                "swing_highs": 0,
+                "swing_lows": 0,
+                "confidence": 0,
+                "explanation": []
+            },
+            "score": 0,
+            "confidence": 0.0,
+            "institutional_score": 0.0,
+            "explanation": []
+        },
+        "liquidity": {
+            "internal_liquidity": 0.0,
+            "external_liquidity": 0.0,
+            "liquidity_sweep": false,
+            "equal_highs": false,
+            "equal_lows": false,
+            "stop_hunt_probability": 0.0,
+            "liquidity_density": 0.0
+        },
+        "risk_assessment": {
+            "suggested_stop": 0.0,
+            "suggested_take_profit": 0.0,
+            "risk_reward_ratio": 0.0,
+            "expected_drawdown": 0.0,
+            "expected_volatility": 0.0,
+            "trade_quality": 0.0,
+            "max_exposure": 0.0,
+            "invalidation_point": 0.0,
+            "institutional_risk_score": 0.0
+        },
+        "mtf_consensus": {
+            "global_bias": "NEUTRAL",
+            "local_bias": "NEUTRAL",
+            "conflict_detected": false,
+            "alignment_score": 0.0,
+            "conflict_score": 0.0,
+            "trend_alignment": 0.0,
+            "liquidity_alignment": 0.0,
+            "structure_alignment": 0.0,
+            "volatility_alignment": 0.0,
+            "dominant_trend": "NEUTRAL",
+            "institutional_consensus_strength": 0.0,
+            "summary": "Generated by ContextEngine"
+        },
+        "market_state": {
+            "state": "MarketStateEnum.UNKNOWN",
+            "explanation": "Generated by ContextEngine"
+        },
+        "market_regime": {
+            "regime": "MarketRegimeEnum.UNKNOWN",
+            "confidence": 0.0,
+            "supporting_evidences": []
+        }
+    },
+    "evidence_bundle": {
+        "evidences": [
+            {
+                "engine_name": "SmartMoney",
+                "evidence_name": "BOS BULLISH",
+                "direction": "BULLISH",
+                "strength": 50.0,
+                "confidence": 85.0,
+                "description": "Rompimento de estrutura de alta confirmado.",
+                "weight": 15.0,
+                "contribution_score": 0.0,
+                "quality_score": 70.0,
+                "context_score": 100.0,
+                "timeframe": "M5",
+                "timestamp": "2026-07-17T19:42:58.962239",
+                "metadata": {}
+            },
+            {
+                "engine_name": "LiquidityEngine",
+                "evidence_name": "Equal High Liquidity",
+                "direction": "BULLISH",
+                "strength": 100.0,
+                "confidence": 100.0,
+                "description": "Equal High cluster detected: 2 touches at 4014.10.",
+                "weight": 30.0,
+                "contribution_score": 0.0,
+                "quality_score": 70.0,
+                "context_score": 100.0,
+                "timeframe": "M5",
+                "timestamp": "2026-07-17T19:42:58.978275",
+                "metadata": {
+                    "touch_count": 2,
+                    "average_price": 4014.0999755859375,
+                    "average_strength": 100.0,
+                    "average_ATR": 4.292978797407901,
+                    "age_in_swings": 1067,
+                    "cluster_density": 0.9756326148078955,
+                    "final_score": 100.0
+                }
+            },
+            {
+                "engine_name": "SwingEngine",
+                "evidence_name": "New HL",
+                "direction": "BULLISH",
+                "strength": 70.0,
+                "confidence": 90.0,
+                "description": "Swing Low HL",
+                "weight": 20.0,
+                "contribution_score": 0.0,
+                "quality_score": 62.99999999999999,
+                "context_score": 100.0,
+                "timeframe": "M5",
+                "timestamp": "2026-07-17T19:42:51.951998",
+                "metadata": {}
+            },
+            {
+                "engine_name": "SwingEngine",
+                "evidence_name": "New HH",
+                "direction": "BULLISH",
+                "strength": 70.0,
+                "confidence": 90.0,
+                "description": "Swing High HH",
+                "weight": 20.0,
+                "contribution_score": 0.0,
+                "quality_score": 62.99999999999999,
+                "context_score": 100.0,
+                "timeframe": "M5",
+                "timestamp": "2026-07-17T19:42:51.968113",
+                "metadata": {}
+            }
+        ],
+        "timestamp": "2026-07-17T19:42:59.868669",
+        "asset": "GC=F",
+        "timeframe": "M5"
+    },
+    "decision_result": {
+        "decision": "BUY",
+        "grade": "B",
+        "confidence": 0.69005,
+        "clarity": 26.899999999999995,
+        "risk_score": 0.0,
+        "score": 26.9,
+        "quality": 63.349999999999994,
+        "expected_strength": 85.0,
+        "buy_probability": 60.701,
+        "sell_probability": 39.299,
+        "wait_probability": 10,
+        "expected_risk": 10.0,
+        "expected_reward": 20.0,
+        "expected_drawdown": 5.0,
+        "audit_id": "549a03a84d9f12624a86a294322024c6e6e9865de60ecee5b3356d87f8da63d6",
+        "version_metadata": {
+            "engine_version": "1.0.4",
+            "pipeline_version": "1.0.4",
+            "context_version": "1.0.4",
+            "weights_version": "1.0.4"
+        },
+        "explanation": {
+            "exec_summary": "Institutional BUY signal triggered based on current market regime.",
+            "decision_rationale": "Decision BUY triggered primarily by Equal High Liquidity (Strength: 100.0%) with a confluence score of 26.90.",
+            "market_context": "Session: UNKNOWN",
+            "trend_context": "Bias: BULLISH",
+            "liquidity_context": "Liquidity assessed via profile.",
+            "structure_context": "Structure: RANGE",
+            "momentum_context": "Momentum assessed via CandlestickEngine.",
+            "volume_context": "Volume check passed.",
+            "smart_money_context": "Smart Money confirmed.",
+            "confluence_context": "Net Confluence: 26.90",
+            "risk_assessment": "Risk Score: 0.0",
+            "confidence_rationale": "Confidence calibrated via evidence quality and consistency.",
+            "strong_evidences": [
+                "Equal High Liquidity"
+            ],
+            "weak_evidences": [
+                "BOS BULLISH",
+                "New HL",
+                "New HH"
+            ],
+            "missing_confirmations": [
+                "Volume"
+            ],
+            "detected_risks": [],
+            "bullish_factors": [
+                "Equal High Liquidity",
+                "New HL",
+                "New HH",
+                "BOS BULLISH"
+            ],
+            "bearish_factors": [],
+            "neutral_factors": [],
+            "conflicts": [],
+            "logical_sequence": [
+                "BOS BULLISH",
+                "Equal High Liquidity",
+                "New HL",
+                "New HH"
+            ],
+            "risk_analysis": "Score: 0.0",
+            "institutional_context": "Regime: MarketRegimeEnum.UNKNOWN",
+            "suggested_entry": 0.0,
+            "suggested_stop": 0.0,
+            "suggested_targets": [
+                0.0
+            ],
+            "confidence_explanation": "Score: 0.0",
+            "machine_readable": {
+                "decision": "BUY",
+                "confluence": 26.9,
+                "evidence_count": 4
+            },
+            "engine_weights": {
+                "SmartMoney": 15.0,
+                "LiquidityEngine": 30.0,
+                "SwingEngine": 20.0
+            },
+            "warnings": []
+        },
+        "mtf_consensus": null,
+        "market_regime": null,
+        "trade_allowed": true,
+        "trade_block_reasons": [],
+        "trade_quality_score": 0.0,
+        "trade_quality_level": "N/A",
+        "trace": null,
+        "warnings": [],
+        "weaknesses": [],
+        "blockers": [],
+        "summary": "Institutional BUY signal triggered based on current market regime.",
+        "technical_reason": "Decision BUY triggered primarily by Equal High Liquidity (Strength: 100.0%) with a confluence score of 26.90.",
+        "institutional_alignment": false,
+        "evidence_ranking": {
+            "ranked_evidences": [
+                {
+                    "engine_name": "LiquidityEngine",
+                    "evidence_name": "Equal High Liquidity",
+                    "direction": "BULLISH",
+                    "strength": 100.0,
+                    "confidence": 100.0,
+                    "description": "Equal High cluster detected: 2 touches at 4014.10.",
+                    "weight": 30.0,
+                    "contribution_score": 0.3,
+                    "quality_score": 70.0,
+                    "context_score": 100.0,
+                    "timeframe": "M5",
+                    "timestamp": "2026-07-17T19:42:58.978275",
+                    "metadata": {
+                        "touch_count": 2,
+                        "average_price": 4014.0999755859375,
+                        "average_strength": 100.0,
+                        "average_ATR": 4.292978797407901,
+                        "age_in_swings": 1067,
+                        "cluster_density": 0.9756326148078955,
+                        "final_score": 100.0
+                    }
+                },
+                {
+                    "engine_name": "SwingEngine",
+                    "evidence_name": "New HL",
+                    "direction": "BULLISH",
+                    "strength": 70.0,
+                    "confidence": 90.0,
+                    "description": "Swing Low HL",
+                    "weight": 20.0,
+                    "contribution_score": 0.126,
+                    "quality_score": 56.699999999999996,
+                    "context_score": 100.0,
+                    "timeframe": "M5",
+                    "timestamp": "2026-07-17T19:42:51.951998",
+                    "metadata": {}
+                },
+                {
+                    "engine_name": "SwingEngine",
+                    "evidence_name": "New HH",
+                    "direction": "BULLISH",
+                    "strength": 70.0,
+                    "confidence": 90.0,
+                    "description": "Swing High HH",
+                    "weight": 20.0,
+                    "contribution_score": 0.126,
+                    "quality_score": 56.699999999999996,
+                    "context_score": 100.0,
+                    "timeframe": "M5",
+                    "timestamp": "2026-07-17T19:42:51.968113",
+                    "metadata": {}
+                },
+                {
+                    "engine_name": "SmartMoney",
+                    "evidence_name": "BOS BULLISH",
+                    "direction": "BULLISH",
+                    "strength": 50.0,
+                    "confidence": 85.0,
+                    "description": "Rompimento de estrutura de alta confirmado.",
+                    "weight": 15.0,
+                    "contribution_score": 0.06375,
+                    "quality_score": 70.0,
+                    "context_score": 100.0,
+                    "timeframe": "M5",
+                    "timestamp": "2026-07-17T19:42:58.962239",
+                    "metadata": {}
+                }
+            ],
+            "contribution_percentage": {
+                "BULLISH": 100.0,
+                "BEARISH": 0.0,
+                "NEUTRAL": 0.0
+            },
+            "strongest_evidence": {
+                "engine_name": "LiquidityEngine",
+                "evidence_name": "Equal High Liquidity",
+                "direction": "BULLISH",
+                "strength": 100.0,
+                "confidence": 100.0,
+                "description": "Equal High cluster detected: 2 touches at 4014.10.",
+                "weight": 30.0,
+                "contribution_score": 0.3,
+                "quality_score": 70.0,
+                "context_score": 100.0,
+                "timeframe": "M5",
+                "timestamp": "2026-07-17T19:42:58.978275",
+                "metadata": {
+                    "touch_count": 2,
+                    "average_price": 4014.0999755859375,
+                    "average_strength": 100.0,
+                    "average_ATR": 4.292978797407901,
+                    "age_in_swings": 1067,
+                    "cluster_density": 0.9756326148078955,
+                    "final_score": 100.0
+                }
+            },
+            "weakest_evidence": {
+                "engine_name": "SmartMoney",
+                "evidence_name": "BOS BULLISH",
+                "direction": "BULLISH",
+                "strength": 50.0,
+                "confidence": 85.0,
+                "description": "Rompimento de estrutura de alta confirmado.",
+                "weight": 15.0,
+                "contribution_score": 0.06375,
+                "quality_score": 70.0,
+                "context_score": 100.0,
+                "timeframe": "M5",
+                "timestamp": "2026-07-17T19:42:58.962239",
+                "metadata": {}
+            },
+            "total_weight": 85.0,
+            "bullish_weight": 85.0,
+            "bearish_weight": 0,
+            "neutral_weight": 0,
+            "bullish_score": 0.61575,
+            "bearish_score": 0,
+            "neutral_score": 0,
+            "top_bullish_evidence": {
+                "engine_name": "LiquidityEngine",
+                "evidence_name": "Equal High Liquidity",
+                "direction": "BULLISH",
+                "strength": 100.0,
+                "confidence": 100.0,
+                "description": "Equal High cluster detected: 2 touches at 4014.10.",
+                "weight": 30.0,
+                "contribution_score": 0.3,
+                "quality_score": 70.0,
+                "context_score": 100.0,
+                "timeframe": "M5",
+                "timestamp": "2026-07-17T19:42:58.978275",
+                "metadata": {
+                    "touch_count": 2,
+                    "average_price": 4014.0999755859375,
+                    "average_strength": 100.0,
+                    "average_ATR": 4.292978797407901,
+                    "age_in_swings": 1067,
+                    "cluster_density": 0.9756326148078955,
+                    "final_score": 100.0
+                }
+            },
+            "top_bearish_evidence": null,
+            "top_neutral_evidence": null
+        }
+    },
+    "version_metadata": {
+        "engine_version": "1.0.4",
+        "pipeline_version": "1.0.4",
+        "context_version": "1.0.4",
+        "weights_version": "1.0.4"
+    },
+    "audit_events": [
+        "Data quality issue detected"
+    ],
+    "session_id": "27bf2291-5672-46ae-8814-f14399a4c921",
+    "evidence_ranking": {
+        "ranked_evidences": [
+            {
+                "engine_name": "LiquidityEngine",
+                "evidence_name": "Equal High Liquidity",
+                "direction": "BULLISH",
+                "strength": 100.0,
+                "confidence": 100.0,
+                "description": "Equal High cluster detected: 2 touches at 4014.10.",
+                "weight": 30.0,
+                "contribution_score": 0.3,
+                "quality_score": 70.0,
+                "context_score": 100.0,
+                "timeframe": "M5",
+                "timestamp": "2026-07-17T19:42:58.978275",
+                "metadata": {
+                    "touch_count": 2,
+                    "average_price": 4014.0999755859375,
+                    "average_strength": 100.0,
+                    "average_ATR": 4.292978797407901,
+                    "age_in_swings": 1067,
+                    "cluster_density": 0.9756326148078955,
+                    "final_score": 100.0
+                }
+            },
+            {
+                "engine_name": "SwingEngine",
+                "evidence_name": "New HL",
+                "direction": "BULLISH",
+                "strength": 70.0,
+                "confidence": 90.0,
+                "description": "Swing Low HL",
+                "weight": 20.0,
+                "contribution_score": 0.126,
+                "quality_score": 56.699999999999996,
+                "context_score": 100.0,
+                "timeframe": "M5",
+                "timestamp": "2026-07-17T19:42:51.951998",
+                "metadata": {}
+            },
+            {
+                "engine_name": "SwingEngine",
+                "evidence_name": "New HH",
+                "direction": "BULLISH",
+                "strength": 70.0,
+                "confidence": 90.0,
+                "description": "Swing High HH",
+                "weight": 20.0,
+                "contribution_score": 0.126,
+                "quality_score": 56.699999999999996,
+                "context_score": 100.0,
+                "timeframe": "M5",
+                "timestamp": "2026-07-17T19:42:51.968113",
+                "metadata": {}
+            },
+            {
+                "engine_name": "SmartMoney",
+                "evidence_name": "BOS BULLISH",
+                "direction": "BULLISH",
+                "strength": 50.0,
+                "confidence": 85.0,
+                "description": "Rompimento de estrutura de alta confirmado.",
+                "weight": 15.0,
+                "contribution_score": 0.06375,
+                "quality_score": 70.0,
+                "context_score": 100.0,
+                "timeframe": "M5",
+                "timestamp": "2026-07-17T19:42:58.962239",
+                "metadata": {}
+            }
+        ],
+        "contribution_percentage": {
+            "BULLISH": 100.0,
+            "BEARISH": 0.0,
+            "NEUTRAL": 0.0
+        },
+        "strongest_evidence": {
+            "engine_name": "LiquidityEngine",
+            "evidence_name": "Equal High Liquidity",
+            "direction": "BULLISH",
+            "strength": 100.0,
+            "confidence": 100.0,
+            "description": "Equal High cluster detected: 2 touches at 4014.10.",
+            "weight": 30.0,
+            "contribution_score": 0.3,
+            "quality_score": 70.0,
+            "context_score": 100.0,
+            "timeframe": "M5",
+            "timestamp": "2026-07-17T19:42:58.978275",
+            "metadata": {
+                "touch_count": 2,
+                "average_price": 4014.0999755859375,
+                "average_strength": 100.0,
+                "average_ATR": 4.292978797407901,
+                "age_in_swings": 1067,
+                "cluster_density": 0.9756326148078955,
+                "final_score": 100.0
+            }
+        },
+        "weakest_evidence": {
+            "engine_name": "SmartMoney",
+            "evidence_name": "BOS BULLISH",
+            "direction": "BULLISH",
+            "strength": 50.0,
+            "confidence": 85.0,
+            "description": "Rompimento de estrutura de alta confirmado.",
+            "weight": 15.0,
+            "contribution_score": 0.06375,
+            "quality_score": 70.0,
+            "context_score": 100.0,
+            "timeframe": "M5",
+            "timestamp": "2026-07-17T19:42:58.962239",
+            "metadata": {}
+        },
+        "total_weight": 85.0,
+        "bullish_weight": 85.0,
+        "bearish_weight": 0,
+        "neutral_weight": 0,
+        "bullish_score": 0.61575,
+        "bearish_score": 0,
+        "neutral_score": 0,
+        "top_bullish_evidence": {
+            "engine_name": "LiquidityEngine",
+            "evidence_name": "Equal High Liquidity",
+            "direction": "BULLISH",
+            "strength": 100.0,
+            "confidence": 100.0,
+            "description": "Equal High cluster detected: 2 touches at 4014.10.",
+            "weight": 30.0,
+            "contribution_score": 0.3,
+            "quality_score": 70.0,
+            "context_score": 100.0,
+            "timeframe": "M5",
+            "timestamp": "2026-07-17T19:42:58.978275",
+            "metadata": {
+                "touch_count": 2,
+                "average_price": 4014.0999755859375,
+                "average_strength": 100.0,
+                "average_ATR": 4.292978797407901,
+                "age_in_swings": 1067,
+                "cluster_density": 0.9756326148078955,
+                "final_score": 100.0
+            }
+        },
+        "top_bearish_evidence": null,
+        "top_neutral_evidence": null
+    },
+    "version": "0.1"
+}

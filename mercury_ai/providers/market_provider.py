@@ -80,7 +80,6 @@ class MercuryDataProvider:
         return self._get_best_provider(symbol)
 
     # ---------------------------------------------------------
-
     def is_available(self) -> bool:
         """Verifica se há pelo menos um provider saudável."""
         try:
@@ -103,9 +102,7 @@ class MercuryDataProvider:
         provider = self._get_best_provider(symbol)
         return provider.get_data(symbol, interval)
 
-    # ---------------------------------------------------------
-
-    def trigger_failover(self, reason: str = "") -> bool:
+    # ---------------------------------------------------------    def trigger_failover(self, reason: str = "") -> bool:
 
         logger.warning(f"Failover requested: {reason}")
 
