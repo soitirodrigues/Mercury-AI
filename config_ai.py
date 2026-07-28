@@ -1,1 +1,1 @@
-MODEL = "openrouter/free"
+MODEL = "openai/gpt-4o"

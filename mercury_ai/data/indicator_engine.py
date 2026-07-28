@@ -14,10 +14,28 @@ class IndicatorEngine:
 
         data = df.copy()
 
+        # Handle empty DataFrame - return default values matching MarketData fields
+        if data.empty:
+            return {
+                "close": 0.0,
+                "ema9": 0.0,
+                "ema21": 0.0,
+                "ema50": 0.0,
+                "rsi": 50.0,
+                "atr": 0.0,
+                "adx": 0.0,
+                "macd": 0.0,
+                "macd_signal": 0.0,
+                "bollinger_upper": 0.0,
+                "bollinger_lower": 0.0,
+                "volume": 0.0,
+            }
+
 
         close = data["close"]
         high = data["high"]
         low = data["low"]
+        volume = data["volume"]
 
 
         # EMA

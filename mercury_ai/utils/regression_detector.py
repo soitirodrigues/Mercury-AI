@@ -1,6 +1,7 @@
 import json
 from typing import List, Dict
 from mercury_ai.models.regression import BenchmarkMetrics, RegressionResult
+from mercury_ai.utils.atomic_io import atomic_json_write
 
 class RegressionDetector:
     def __init__(self, history_file: str, thresholds: Dict[str, float]):
@@ -17,8 +18,7 @@ class RegressionDetector:
             return []
 
     def save_history(self):
-        with open(self.history_file, 'w') as f:
-            json.dump([m.__dict__ for m in self.history], f, indent=2)
+        atomic_json_write(self.history_file, [m.__dict__ for m in self.history], indent=2)
 
     def detect(self, current: BenchmarkMetrics) -> RegressionResult:
         if not self.history:

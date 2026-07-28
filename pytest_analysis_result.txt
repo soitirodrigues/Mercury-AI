@@ -1,0 +1,87 @@
+﻿FFFFFFF......FF..F+++++++++++++++++++++++++++++++++++ Timeout +++++++++++++++++++++++++++++++++++
+~~~~~~~~~~~~~~~~~~~~~~~~~ Stack of MainThread (9236) ~~~~~~~~~~~~~~~~~~~~~~~~~~
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Projetos\Mercury-AI\.venv\Lib\site-packages\pytest\__main__.py", line 9, in <module>
+    raise SystemExit(_console_main())
+  File "C:\Projetos\Mercury-AI\.venv\Lib\site-packages\_pytest\config\__init__.py", line 253, in _console_main
+    code = _main(prog=_get_prog_name(sys.argv))
+  File "C:\Projetos\Mercury-AI\.venv\Lib\site-packages\_pytest\config\__init__.py", line 229, in _main
+    ret: ExitCode | int = config.hook.pytest_cmdline_main(config=config)
+  File "C:\Projetos\Mercury-AI\.venv\Lib\site-packages\pluggy\_hooks.py", line 512, in __call__
+    return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+  File "C:\Projetos\Mercury-AI\.venv\Lib\site-packages\pluggy\_manager.py", line 120, in _hookexec
+    return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+  File "C:\Projetos\Mercury-AI\.venv\Lib\site-packages\pluggy\_callers.py", line 121, in _multicall
+    res = hook_impl.function(*args)
+  File "C:\Projetos\Mercury-AI\.venv\Lib\site-packages\_pytest\main.py", line 377, in pytest_cmdline_main
+    return wrap_session(config, _main)
+  File "C:\Projetos\Mercury-AI\.venv\Lib\site-packages\_pytest\main.py", line 330, in wrap_session
+    session.exitstatus = doit(config, session) or 0
+  File "C:\Projetos\Mercury-AI\.venv\Lib\site-packages\_pytest\main.py", line 384, in _main
+    config.hook.pytest_runtestloop(session=session)
+  File "C:\Projetos\Mercury-AI\.venv\Lib\site-packages\pluggy\_hooks.py", line 512, in __call__
+    return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+  File "C:\Projetos\Mercury-AI\.venv\Lib\site-packages\pluggy\_manager.py", line 120, in _hookexec
+    return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+  File "C:\Projetos\Mercury-AI\.venv\Lib\site-packages\pluggy\_callers.py", line 121, in _multicall
+    res = hook_impl.function(*args)
+  File "C:\Projetos\Mercury-AI\.venv\Lib\site-packages\_pytest\main.py", line 408, in pytest_runtestloop
+    item.config.hook.pytest_runtest_protocol(item=item, nextitem=nextitem)
+  File "C:\Projetos\Mercury-AI\.venv\Lib\site-packages\pluggy\_hooks.py", line 512, in __call__
+    return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+  File "C:\Projetos\Mercury-AI\.venv\Lib\site-packages\pluggy\_manager.py", line 120, in _hookexec
+    return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+  File "C:\Projetos\Mercury-AI\.venv\Lib\site-packages\pluggy\_callers.py", line 121, in _multicall
+    res = hook_impl.function(*args)
+  File "C:\Projetos\Mercury-AI\.venv\Lib\site-packages\_pytest\runner.py", line 118, in pytest_runtest_protocol
+    runtestprotocol(item, nextitem=nextitem)
+  File "C:\Projetos\Mercury-AI\.venv\Lib\site-packages\_pytest\runner.py", line 139, in runtestprotocol
+    reports.append(call_and_report(item, "call", log))
+  File "C:\Projetos\Mercury-AI\.venv\Lib\site-packages\_pytest\runner.py", line 249, in call_and_report
+    call = CallInfo.from_call(
+  File "C:\Projetos\Mercury-AI\.venv\Lib\site-packages\_pytest\runner.py", line 361, in from_call
+    result: TResult | None = func()
+  File "C:\Projetos\Mercury-AI\.venv\Lib\site-packages\_pytest\runner.py", line 250, in <lambda>
+    lambda: runtest_hook(item=item, **kwds),
+  File "C:\Projetos\Mercury-AI\.venv\Lib\site-packages\pluggy\_hooks.py", line 512, in __call__
+    return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+  File "C:\Projetos\Mercury-AI\.venv\Lib\site-packages\pluggy\_manager.py", line 120, in _hookexec
+    return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+  File "C:\Projetos\Mercury-AI\.venv\Lib\site-packages\pluggy\_callers.py", line 121, in _multicall
+    res = hook_impl.function(*args)
+  File "C:\Projetos\Mercury-AI\.venv\Lib\site-packages\_pytest\runner.py", line 184, in pytest_runtest_call
+    item.runtest()
+  File "C:\Projetos\Mercury-AI\.venv\Lib\site-packages\_pytest\python.py", line 1707, in runtest
+    self.ihook.pytest_pyfunc_call(pyfuncitem=self)
+  File "C:\Projetos\Mercury-AI\.venv\Lib\site-packages\pluggy\_hooks.py", line 512, in __call__
+    return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+  File "C:\Projetos\Mercury-AI\.venv\Lib\site-packages\pluggy\_manager.py", line 120, in _hookexec
+    return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+  File "C:\Projetos\Mercury-AI\.venv\Lib\site-packages\pluggy\_callers.py", line 121, in _multicall
+    res = hook_impl.function(*args)
+  File "C:\Projetos\Mercury-AI\.venv\Lib\site-packages\_pytest\python.py", line 167, in pytest_pyfunc_call
+    result = testfunction(**testargs)
+  File "C:\Projetos\Mercury-AI\mercury_ai\analysis\tests\test_historical_replay_engine.py", line 96, in test_cache_populated_after_run
+    engine.run_replay("CACHE-TEST", sample_df, n_candles=5, silent=True)
+  File "C:\Projetos\Mercury-AI\mercury_ai\analysis\historical_replay_engine.py", line 141, in run_replay
+    pipeline.analyze(
+  File "C:\Projetos\Mercury-AI\mercury_ai\core\analysis_pipeline.py", line 179, in analyze
+    indicator_data = self.indicators.calculate(df)
+  File "C:\Projetos\Mercury-AI\mercury_ai\data\indicator_engine.py", line 145, in calculate
+    .mean()
+  File "C:\Projetos\Mercury-AI\.venv\Lib\site-packages\pandas\core\window\rolling.py", line 2653, in mean
+    return super().mean(
+  File "C:\Projetos\Mercury-AI\.venv\Lib\site-packages\pandas\core\window\rolling.py", line 1706, in mean
+    return self._apply(window_func, name="mean", numeric_only=numeric_only)
+  File "C:\Projetos\Mercury-AI\.venv\Lib\site-packages\pandas\core\window\rolling.py", line 595, in _apply
+    return self._apply_columnwise(homogeneous_func, name, numeric_only)
+  File "C:\Projetos\Mercury-AI\.venv\Lib\site-packages\pandas\core\window\rolling.py", line 456, in _apply_columnwise
+    return self._apply_series(homogeneous_func, name)
+  File "C:\Projetos\Mercury-AI\.venv\Lib\site-packages\pandas\core\window\rolling.py", line 440, in _apply_series
+    result = homogeneous_func(values)
+  File "C:\Projetos\Mercury-AI\.venv\Lib\site-packages\pandas\core\window\rolling.py", line 590, in homogeneous_func
+    result = calc(values)
+  File "C:\Projetos\Mercury-AI\.venv\Lib\site-packages\pandas\core\window\rolling.py", line 587, in calc
+    return func(x, start, end, min_periods, *numba_args)
++++++++++++++++++++++++++++++++++++ Timeout +++++++++++++++++++++++++++++++++++

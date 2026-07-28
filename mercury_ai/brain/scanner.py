@@ -21,6 +21,7 @@ class MercuryScanner:
 
         # Provider central V1
         self.provider = MercuryDataProvider()
+        self.provider_manager = self.provider  # alias para compatibilidade com testes
 
         # Pipeline institucional
         self.pipeline = AnalysisPipeline(
@@ -141,7 +142,7 @@ class MercuryScanner:
                     analysis
                 )
 
-            except Exception as e:
+            except (RuntimeError, ValueError, TypeError, KeyError, OSError, ConnectionError, TimeoutError) as e:
 
                 logger.error("=" * 80)
                 logger.error("ERRO DURANTE A ANÁLISE DE %s", symbol)
@@ -152,6 +153,17 @@ class MercuryScanner:
                 logger.error("Mensagem: %s", e)
 
                 logger.error("=" * 80)
+
+                # Trigger provider failover on failure
+                if hasattr(self, 'provider_manager') and self.provider_manager is not None:
+                    try:
+                        self.provider_manager.trigger_failover()
+                        self.notification_center.send(
+                            "scanner_failover",
+                            {"symbol": symbol, "error": str(e)}
+                        )
+                    except (RuntimeError, ConnectionError, OSError, AttributeError) as failover_error:
+                        logger.error("Falha no failover: %s", failover_error)
 
         ranked = self.ranking_engine.rank(
             analyses

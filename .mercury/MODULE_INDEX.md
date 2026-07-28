@@ -41,7 +41,7 @@ Imports
 - mercury_ai.analysis.notification_center.NotificationCenter
 - mercury_ai.analysis.operational_history.OperationalHistory
 - mercury_ai.analysis.performance_statistics.PerformanceStatistics
-- mercury_ai.brain.scanner.Scanner
+- mercury_ai.brain.scanner.MercuryScanner
 - mercury_ai.config.configuration_center.MercuryConfigCenter
 - mercury_ai.config.settings
 - pandas
@@ -128,7 +128,7 @@ Funções
 
 Imports
 -------
-- mercury_ai.providers.manager.MercuryProviderManager
+- mercury_ai.providers.market_provider.MercuryDataProvider
 - psutil
 - streamlit
 - time
@@ -152,7 +152,7 @@ Imports
 - mercury_ai.analysis.integrity_checker.IntegrityChecker
 - mercury_ai.analysis.operational_history.OperationalHistory
 - mercury_ai.analysis.performance_statistics.PerformanceStatistics
-- mercury_ai.brain.scanner.Scanner
+- mercury_ai.brain.scanner.MercuryScanner
 - mercury_ai.config.settings
 - pandas
 - pathlib.Path
@@ -174,6 +174,7 @@ Funções
 
 Imports
 -------
+- mercury_ai.data.mercury_data_provider.ProviderStatus
 - mercury_ai.providers.mercury_data_provider.MercuryDataProvider
 - streamlit
 
@@ -235,7 +236,7 @@ Funções
 
 Imports
 -------
-- mercury_ai.brain.scanner.Scanner
+- mercury_ai.brain.scanner.MercuryScanner
 - pandas
 - pathlib.Path
 - streamlit
@@ -427,11 +428,15 @@ Classes
 
 Funções
 --------
+- _run_scan
 - main
 
 Imports
 -------
+- logging
 - mercury_ai.brain.scanner.MercuryScanner
+- sys
+- threading
 
 
 ================================================================================
@@ -478,27 +483,54 @@ mercury_ai.analysis.benchmark_framework
 
 Classes
 --------
+- BuyAndHoldBaseline
+- EnhancedBenchmarkReport
 - MercuryBenchmarkFramework
+- StatisticalTestResult
 
 Funções
 --------
 - __init__
+- _apply_warm_cool_filter
+- _compute_buy_and_hold
+- _get_real_outcome
+- _run_single_symbol
+- _run_statistical_tests
+- norm_sf
 - run_benchmark
+- run_quick_benchmark
 
 Imports
 -------
+- concurrent.futures.ThreadPoolExecutor
+- concurrent.futures.as_completed
+- dataclasses.dataclass
+- dataclasses.field
+- logging
+- math.erf
+- math.sqrt
 - mercury_ai.analysis.metric_calculator.MetricCalculator
+- mercury_ai.analysis.metric_calculator.PerformanceMetrics
+- mercury_ai.analysis.performance_engine.PerformanceEngine
 - mercury_ai.core.analysis_pipeline.AnalysisPipeline
 - mercury_ai.data.market_data.MarketDataService
+- mercury_ai.database.replay_storage.ReplayMetrics
 - mercury_ai.models.benchmark_report.BenchmarkReport
 - mercury_ai.models.benchmark_report.BenchmarkRunResult
+- mercury_ai.models.equity_metrics.AssetPerformance
+- mercury_ai.models.equity_metrics.UniversePerformance
 - mercury_ai.providers.yahoo_finance_provider.YahooFinanceProvider
 - mercury_ai.utils.deterministic_clock.DeterministicClock
+- numpy
 - os
 - psutil
+- scipy.stats
 - time
 - tracemalloc
+- typing.Dict
 - typing.List
+- typing.Optional
+- typing.Tuple
 
 
 ================================================================================
@@ -576,7 +608,6 @@ Imports
 - numpy
 - typing.Any
 - typing.Dict
-- typing.List
 
 
 ================================================================================
@@ -585,15 +616,18 @@ mercury_ai.analysis.confidence_engine
 
 Classes
 --------
+- ConfidenceComponents
 - ConfidenceEngine
 
 Funções
 --------
 - _get_grade
 - calculate
+- calibrate
 
 Imports
 -------
+- dataclasses.dataclass
 - mercury_ai.analysis.conflict_resolution_engine.ConflictResolutionEngine
 - mercury_ai.analysis.evidence_query.EvidenceQuery
 - mercury_ai.models.confidence_result.ConfidenceResult
@@ -640,12 +674,36 @@ Funções
 
 Imports
 -------
+- mercury_ai.analysis.confluence_helpers.clamp_score
+- mercury_ai.analysis.confluence_helpers.dominant_direction
+- mercury_ai.analysis.confluence_helpers.has_conflict
 - mercury_ai.analysis.decision_trace_engine.DecisionTraceEngine
+- mercury_ai.analysis.institutional_contribution.InstitutionalContribution
 - mercury_ai.analysis.market_thesis_builder.MarketThesisBuilder
-- mercury_ai.models.analysis_result.AnalysisDirection
+- mercury_ai.config.institutional_weights.INSTITUTIONAL_WEIGHTS
+- mercury_ai.config.institutional_weights.INSTITUTIONAL_WEIGHTS_SUM
 - mercury_ai.models.confluence_result.ConfluenceResult
 - mercury_ai.models.market_context.MarketContext
 - mercury_ai.models.market_evidence_bundle.MarketEvidenceBundle
+
+
+================================================================================
+mercury_ai.analysis.confluence_helpers
+================================================================================
+
+Classes
+--------
+(nenhuma)
+
+Funções
+--------
+- clamp_score
+- dominant_direction
+- has_conflict
+
+Imports
+-------
+- mercury_ai.models.direction.AnalysisDirection
 
 
 ================================================================================
@@ -662,9 +720,13 @@ Funções
 
 Imports
 -------
+- mercury_ai.analysis.confluence_helpers.clamp_score
+- mercury_ai.analysis.confluence_helpers.has_conflict
 - mercury_ai.analysis.evidence_query.EvidenceQuery
+- mercury_ai.config.institutional_weights.INSTITUTIONAL_WEIGHTS
 - mercury_ai.models.confluence_score.ConfluenceScore
 - mercury_ai.models.market_context.MarketContext
+- mercury_ai.models.market_state_enum.MarketStateEnum
 
 
 ================================================================================
@@ -709,6 +771,7 @@ Funções
 
 Imports
 -------
+- dataclasses.replace
 - mercury_ai.models.evidence.Evidence
 - mercury_ai.models.market_context.MarketContext
 - typing.List
@@ -733,6 +796,7 @@ Funções
 Imports
 -------
 - json
+- logging
 - mercury_ai.analysis.operational_history.OperationalHistory
 - mercury_ai.database.snapshot_logger.DecisionSnapshotLogger
 - pandas
@@ -766,6 +830,75 @@ Imports
 - pandas
 - typing.Any
 - typing.Dict
+
+
+================================================================================
+mercury_ai.analysis.decision_explainability
+================================================================================
+
+Classes
+--------
+- DecisionExplainability
+
+Funções
+--------
+(nenhuma)
+
+Imports
+-------
+- dataclasses.dataclass
+- dataclasses.field
+- mercury_ai.analysis.institutional_contribution.InstitutionalContribution
+- typing.Tuple
+
+
+================================================================================
+mercury_ai.analysis.decision_resolver_engine
+================================================================================
+
+Classes
+--------
+- DecisionResolverEngine
+- DecisionResolverResult
+
+Funções
+--------
+- resolve
+
+Imports
+-------
+- dataclasses.dataclass
+- typing.Optional
+
+
+================================================================================
+mercury_ai.analysis.decision_result_builder
+================================================================================
+
+Classes
+--------
+- DecisionResultBuilder
+
+Funções
+--------
+- build
+
+Imports
+-------
+- hashlib
+- mercury_ai.analysis.decision_explainability.DecisionExplainability
+- mercury_ai.models.confidence_result.ConfidenceResult
+- mercury_ai.models.confluence_result.ConfluenceResult
+- mercury_ai.models.decision_result.DecisionResult
+- mercury_ai.models.evidence_ranking.EvidenceRankingResult
+- mercury_ai.models.market_context.MarketContext
+- mercury_ai.models.market_evidence_bundle.MarketEvidenceBundle
+- mercury_ai.models.probability_result.ProbabilityResult
+- mercury_ai.models.trading_explanation.TradingExplanation
+- mercury_ai.models.version_metadata.VersionMetadata
+- typing.List
+- typing.Optional
+- typing.Tuple
 
 
 ================================================================================
@@ -943,8 +1076,6 @@ Funções
 
 Imports
 -------
-- mercury_ai.analysis.confidence_engine.ConfidenceEngine
-- mercury_ai.analysis.narrative_engine.NarrativeEngine
 - mercury_ai.brain.mercury_decision_engine.MercuryDecisionEngine
 - mercury_ai.brain.probability_engine.ProbabilityEngine
 - mercury_ai.core.pipeline_executor.PipelineExecutor
@@ -971,10 +1102,6 @@ Imports
 -------
 - dataclasses.asdict
 - dataclasses.dataclass
-- mercury_ai.analysis.confidence_engine.ConfidenceEngine
-- mercury_ai.analysis.narrative_engine.NarrativeEngine
-- mercury_ai.analysis.operational_history.OperationalHistory
-- mercury_ai.analysis.statistical_auditor.StatisticalAuditor
 - mercury_ai.brain.mercury_decision_engine.MercuryDecisionEngine
 - mercury_ai.brain.probability_engine.ProbabilityEngine
 - mercury_ai.config.settings
@@ -996,10 +1123,14 @@ Classes
 
 Funções
 --------
+- __init__
+- cache
+- replay_stats
 - run_replay
 
 Imports
 -------
+- mercury_ai.analysis.replay_cache.ReplayCache
 - mercury_ai.core.analysis_pipeline.AnalysisPipeline
 - mercury_ai.data.market_data.MarketDataService
 - mercury_ai.database.replay_storage.ReplayMetrics
@@ -1007,6 +1138,10 @@ Imports
 - mercury_ai.providers.historical_replay_provider.HistoricalReplayProvider
 - mercury_ai.utils.deterministic_clock.DeterministicClock
 - pandas
+- time
+- typing.Dict
+- typing.List
+- typing.Optional
 
 
 ================================================================================
@@ -1020,18 +1155,36 @@ Classes
 Funções
 --------
 - __init__
-- _get_engine_contribution
-- _get_top_patterns
+- _attribution_analysis
+- _confidence_analysis
+- _engine_contribution
 - _load_data
+- _load_replay_metrics
+- _max_consecutive
+- _overview_stats
+- _pattern_analysis
+- _recent_trend
+- _risk_metrics
+- _temporal_analysis
+- _win_rate_analysis
+- export_report_json
+- export_report_summary
 - generate_quality_report
 
 Imports
 -------
+- collections.defaultdict
+- datetime.datetime
+- datetime.timedelta
 - json
+- numpy
 - os
 - pandas
 - typing.Any
 - typing.Dict
+- typing.List
+- typing.Optional
+- typing.Tuple
 
 
 ================================================================================
@@ -1056,6 +1209,23 @@ Imports
 
 
 ================================================================================
+mercury_ai.analysis.institutional_contribution
+================================================================================
+
+Classes
+--------
+- InstitutionalContribution
+
+Funções
+--------
+(nenhuma)
+
+Imports
+-------
+- dataclasses.dataclass
+
+
+================================================================================
 mercury_ai.analysis.institutional_memory_engine
 ================================================================================
 
@@ -1066,7 +1236,13 @@ Classes
 Funções
 --------
 - __init__
+- __new__
 - _get_setup_key
+- _initialize_memory
+- _load_into_cache
+- _load_memory
+- _save_memory
+- flush
 - get_consistency_score
 - record_decision
 - record_outcome
@@ -1075,8 +1251,11 @@ Imports
 -------
 - hashlib
 - json
+- logging
 - mercury_ai.models.decision_snapshot.DecisionSnapshot
 - os
+- threading
+- time
 
 
 ================================================================================
@@ -1123,6 +1302,24 @@ Imports
 
 
 ================================================================================
+mercury_ai.analysis.institutional_score_engine
+================================================================================
+
+Classes
+--------
+- InstitutionalScoreEngine
+- InstitutionalScoreResult
+
+Funções
+--------
+- calculate
+
+Imports
+-------
+- dataclasses.dataclass
+
+
+================================================================================
 mercury_ai.analysis.institutional_trade_filter_engine
 ================================================================================
 
@@ -1139,8 +1336,8 @@ Imports
 - mercury_ai.models.market_context.MarketContext
 - mercury_ai.models.market_evidence_bundle.MarketEvidenceBundle
 - mercury_ai.models.market_regime_enum.MarketRegimeEnum
+- mercury_ai.models.trade_filter_result.TradeFilterResult
 - typing.List
-- typing.Tuple
 
 
 ================================================================================
@@ -1201,16 +1398,14 @@ Classes
 Funções
 --------
 - __init__
-- run_cycle
+- is_running
+- start
+- stop
 
 Imports
 -------
-- mercury_ai.config.assets.SUPPORTED_ASSETS
-- mercury_ai.core.analysis_pipeline.AnalysisPipeline
-- mercury_ai.data.market_data.MarketDataService
-- mercury_ai.providers.yahoo_finance_provider.YahooFinanceProvider
+- logging
 - time
-- typing.List
 
 
 ================================================================================
@@ -1252,16 +1447,23 @@ Classes
 
 Funções
 --------
-- __init__
 - build
 
 Imports
 -------
+- mercury_ai.models.evidence.Evidence
+- mercury_ai.models.liquidity_profile.LiquidityProfile
 - mercury_ai.models.market_context.MarketContext
+- mercury_ai.models.market_regime.MarketRegime
 - mercury_ai.models.market_state.MarketState
 - mercury_ai.models.market_state.MarketStateEnum
+- mercury_ai.models.market_structure_profile.MarketStructureProfile
 - mercury_ai.models.mtf_consensus.MTFConsensus
+- mercury_ai.models.price_action.PriceActionAnalysis
 - mercury_ai.models.risk_assessment.RiskAssessment
+- mercury_ai.models.smart_money.SmartMoneyAnalysis
+- mercury_ai.models.support_resistance.SupportResistanceAnalysis
+- typing.List
 
 
 ================================================================================
@@ -1278,6 +1480,7 @@ Funções
 
 Imports
 -------
+- mercury_ai.models.market_regime.MarketRegime
 - mercury_ai.models.market_regime_enum.MarketRegimeEnum
 
 
@@ -1299,7 +1502,6 @@ Imports
 - mercury_ai.models.market_state.MarketState
 - mercury_ai.models.market_state_enum.MarketStateEnum
 - mercury_ai.models.session_analysis.SessionAnalysis
-- typing.Optional
 
 
 ================================================================================
@@ -1406,11 +1608,13 @@ Funções
 --------
 - __init__
 - _build_consensus
+- _determine_trend
 - analyze
 - calculate_factor_alignment
 
 Imports
 -------
+- dataclasses.replace
 - mercury_ai.analysis.market_structure_intelligence_engine.MarketStructureIntelligenceEngine
 - mercury_ai.analysis.smart_money.liquidity_engine.LiquidityEngine
 - mercury_ai.analysis.trend_analyzer.TrendAnalyzer
@@ -1512,10 +1716,10 @@ Funções
 Imports
 -------
 - datetime.datetime
+- mercury_ai.core.exceptions.MarketClosedException
 - mercury_ai.data.market_data.MarketDataService
 - mercury_ai.database.snapshot_logger.DecisionSnapshotLogger
 - mercury_ai.providers.yahoo_finance_provider.YahooFinanceProvider
-- pathlib.Path
 - typing.Any
 - typing.Dict
 - typing.List
@@ -1546,6 +1750,36 @@ Imports
 
 
 ================================================================================
+mercury_ai.analysis.performance_engine
+================================================================================
+
+Classes
+--------
+- PerformanceEngine
+
+Funções
+--------
+- __init__
+- _calculate_drawdown
+- _calculate_sharpe
+- _calculate_sortino
+- _empty_asset_performance
+- calculate_asset_performance
+- calculate_universe_performance
+
+Imports
+-------
+- mercury_ai.analysis.historical_replay_engine.ReplayMetrics
+- mercury_ai.models.equity_metrics.AssetPerformance
+- mercury_ai.models.equity_metrics.UniversePerformance
+- numpy
+- pandas
+- typing.Dict
+- typing.List
+- typing.Tuple
+
+
+================================================================================
 mercury_ai.analysis.performance_statistics
 ================================================================================
 
@@ -1563,7 +1797,6 @@ Imports
 - mercury_ai.analysis.performance_analytics.PerformanceAnalytics
 - typing.Any
 - typing.Dict
-- typing.List
 
 
 ================================================================================
@@ -1657,13 +1890,82 @@ Classes
 
 Funções
 --------
-- calculate_rank_score
 - rank
 
 Imports
 -------
 - mercury_ai.models.analysis_result.AnalysisResult
 - typing.List
+
+
+================================================================================
+mercury_ai.analysis.replay_batch_processor
+================================================================================
+
+Classes
+--------
+- BatchReplayReport
+- BatchReplayResult
+- ReplayBatchProcessor
+
+Funções
+--------
+- __init__
+- _aggregate_cache_stats
+- _run_single_symbol
+- run_batch
+
+Imports
+-------
+- concurrent.futures.ThreadPoolExecutor
+- concurrent.futures.TimeoutError
+- concurrent.futures.as_completed
+- dataclasses.dataclass
+- dataclasses.field
+- logging
+- mercury_ai.analysis.historical_replay_engine.HistoricalReplayEngine
+- mercury_ai.analysis.institutional_memory_engine.InstitutionalMemoryEngine
+- mercury_ai.analysis.performance_engine.PerformanceEngine
+- mercury_ai.analysis.replay_cache.ReplayCache
+- mercury_ai.database.replay_storage.ReplayMetrics
+- mercury_ai.models.equity_metrics.AssetPerformance
+- mercury_ai.models.equity_metrics.UniversePerformance
+- pandas
+- threading
+- time
+- typing.Dict
+- typing.List
+- typing.Optional
+- typing.Tuple
+
+
+================================================================================
+mercury_ai.analysis.replay_cache
+================================================================================
+
+Classes
+--------
+- ReplayCache
+
+Funções
+--------
+- __contains__
+- __init__
+- __len__
+- clear
+- get
+- hit_rate
+- put
+- size
+- stats
+
+Imports
+-------
+- collections.OrderedDict
+- threading
+- typing.Any
+- typing.Optional
+- typing.Tuple
 
 
 ================================================================================
@@ -1677,14 +1979,43 @@ Classes
 Funções
 --------
 - __init__
+- _compute_correlation_matrix
+- _compute_kelly
+- _compute_stress_test
+- _compute_var_cvar
+- _pearson_correlation
 - assess
+- assess_simple
 
 Imports
 -------
+- math
 - mercury_ai.analysis.evidence_quality_engine.EvidenceQualityEngine
+- mercury_ai.config.risk.KELLY_DEFAULT_PAYOFF
+- mercury_ai.config.risk.KELLY_DEFAULT_WIN_RATE
+- mercury_ai.config.risk.KELLY_MAX_FRACTION
+- mercury_ai.config.risk.STRESS_SCENARIOS
+- mercury_ai.config.risk.VAR_CONFIDENCE_95
+- mercury_ai.config.risk.VAR_CONFIDENCE_99
+- mercury_ai.models.evidence.Evidence
+- mercury_ai.models.liquidity_profile.LiquidityProfile
 - mercury_ai.models.market_context.MarketContext
+- mercury_ai.models.market_data.MarketData
 - mercury_ai.models.market_evidence_bundle.MarketEvidenceBundle
+- mercury_ai.models.market_regime.MarketRegime
+- mercury_ai.models.market_regime_enum.MarketRegimeEnum
+- mercury_ai.models.market_state.MarketState
+- mercury_ai.models.market_state_enum.MarketStateEnum
+- mercury_ai.models.market_structure.MarketStructure
+- mercury_ai.models.mtf_consensus.MTFConsensus
+- mercury_ai.models.price_action.PriceActionAnalysis
 - mercury_ai.models.risk_assessment.RiskAssessment
+- mercury_ai.models.smart_money.SmartMoneyAnalysis
+- mercury_ai.models.support_resistance.SupportResistanceAnalysis
+- typing.Dict
+- typing.List
+- typing.Optional
+- typing.Tuple
 
 
 ================================================================================
@@ -1994,7 +2325,6 @@ Imports
 - mercury_ai.database.snapshot_logger.DecisionSnapshotLogger
 - typing.Any
 - typing.Dict
-- typing.List
 
 
 ================================================================================
@@ -2018,7 +2348,7 @@ Funções
 
 Imports
 -------
-- mercury_ai.models.support_resistance_analysis.SupportResistanceAnalysis
+- mercury_ai.models.support_resistance.SupportResistanceAnalysis
 - numpy
 - pandas
 - ta.volatility.AverageTrueRange
@@ -2058,15 +2388,25 @@ mercury_ai.analysis.tests.test_benchmark_framework
 
 Classes
 --------
-(nenhuma)
+- TestMercuryBenchmarkFramework
 
 Funções
 --------
 - test_benchmark_framework_execution
+- test_buy_and_hold_baseline
+- test_enhanced_report_fields
+- test_multiple_symbols
+- test_quick_benchmark_compatibility
+- test_statistical_test_result
+- test_warm_cool_filter
 
 Imports
 -------
+- mercury_ai.analysis.benchmark_framework.BuyAndHoldBaseline
+- mercury_ai.analysis.benchmark_framework.EnhancedBenchmarkReport
 - mercury_ai.analysis.benchmark_framework.MercuryBenchmarkFramework
+- mercury_ai.analysis.benchmark_framework.StatisticalTestResult
+- pytest
 
 
 ================================================================================
@@ -2101,7 +2441,7 @@ Classes
 
 Funções
 --------
-- test_context_engine_aggregation
+(nenhuma)
 
 Imports
 -------
@@ -2109,7 +2449,20 @@ Imports
 - mercury_ai.core.pipeline_executor.PipelineExecutor
 - mercury_ai.core.pipeline_profiler.PipelineProfiler
 - mercury_ai.models.evidence.Evidence
+- mercury_ai.models.liquidity_profile.LiquidityProfile
+- mercury_ai.models.market_context.MarketContext
 - mercury_ai.models.market_data.MarketData
+- mercury_ai.models.market_regime.MarketRegime
+- mercury_ai.models.market_regime_enum.MarketRegimeEnum
+- mercury_ai.models.market_state.MarketState
+- mercury_ai.models.market_state_enum.MarketStateEnum
+- mercury_ai.models.market_structure.MarketStructure
+- mercury_ai.models.mtf_consensus.MTFConsensus
+- mercury_ai.models.price_action.PriceActionAnalysis
+- mercury_ai.models.risk_assessment.RiskAssessment
+- mercury_ai.models.smart_money.SmartMoneyAnalysis
+- mercury_ai.models.support_resistance.SupportResistanceAnalysis
+- unittest.mock.MagicMock
 - unittest.mock.Mock
 
 
@@ -2133,6 +2486,51 @@ Imports
 - mercury_ai.models.fair_value_gap_analysis.FairValueGapAnalysis
 - pandas
 - pytest
+
+
+================================================================================
+mercury_ai.analysis.tests.test_historical_replay_engine
+================================================================================
+
+Classes
+--------
+- TestHistoricalReplayEngineBasic
+- TestHistoricalReplayEngineConstructor
+- TestReplayCacheIntegration
+- TestReplayEdgeCases
+- TestSilentMode
+
+Funções
+--------
+- sample_df
+- test_cache_populated_after_run
+- test_custom_cache
+- test_default_cache
+- test_different_symbols_separate_cache
+- test_metrics_have_expected_fields
+- test_n_candles_large
+- test_replay_stats_after_insufficient_data
+- test_replay_stats_initial
+- test_run_replay_empty_dataframe
+- test_run_replay_insufficient_data_returns_empty
+- test_run_replay_returns_list
+- test_run_replay_returns_replay_metrics
+- test_run_replay_updates_stats
+- test_second_run_uses_cache
+- test_silent_mode_no_output
+- test_verbose_mode_has_output
+
+Imports
+-------
+- mercury_ai.analysis.historical_replay_engine.HistoricalReplayEngine
+- mercury_ai.analysis.replay_cache.ReplayCache
+- mercury_ai.database.replay_storage.ReplayMetrics
+- numpy
+- pandas
+- pytest
+- unittest.mock.MagicMock
+- unittest.mock.PropertyMock
+- unittest.mock.patch
 
 
 ================================================================================
@@ -2220,6 +2618,184 @@ Imports
 - mercury_ai.models.price_action_analysis.PriceActionAnalysis
 - pandas
 - pytest
+
+
+================================================================================
+mercury_ai.analysis.tests.test_replay_batch_processor
+================================================================================
+
+Classes
+--------
+- TestBatchProcessorErrorHandling
+- TestBatchReplayReport
+- TestBatchReplayResult
+- TestCacheAggregation
+- TestReplayBatchProcessorBasic
+
+Funções
+--------
+- sample_data_map
+- test_aggregate_cache_stats_present
+- test_constructor
+- test_constructor_defaults
+- test_creation
+- test_creation
+- test_frozen
+- test_frozen
+- test_partial_failure_mixed_results
+- test_run_batch_all_success_no_errors
+- test_run_batch_empty_data_map
+- test_run_batch_multiple_symbols
+- test_run_batch_single_symbol
+- test_successful_and_failed_counts
+- test_symbol_error_is_captured
+- test_total_wall_time
+- test_with_error
+
+Imports
+-------
+- mercury_ai.analysis.replay_batch_processor.BatchReplayReport
+- mercury_ai.analysis.replay_batch_processor.BatchReplayResult
+- mercury_ai.analysis.replay_batch_processor.ReplayBatchProcessor
+- mercury_ai.database.replay_storage.ReplayMetrics
+- mercury_ai.models.equity_metrics.AssetPerformance
+- mercury_ai.models.equity_metrics.UniversePerformance
+- numpy
+- pandas
+- pytest
+- unittest.mock.MagicMock
+- unittest.mock.patch
+
+
+================================================================================
+mercury_ai.analysis.tests.test_replay_cache
+================================================================================
+
+Classes
+--------
+- TestCacheStats
+- TestReplayCacheBasic
+- TestReplayCacheEdgeCases
+- TestReplayCacheLRU
+- TestReplayCacheThreadSafety
+
+Funções
+--------
+- put_entries
+- reader
+- test_clear_empty_cache
+- test_clear_resets_stats
+- test_concurrent_gets_and_puts
+- test_concurrent_puts
+- test_contains
+- test_different_symbols_same_index
+- test_evicts_oldest_when_full
+- test_get_miss_returns_none
+- test_get_refreshes_lru_order
+- test_hit_rate
+- test_hit_rate_all_hits
+- test_hit_rate_zero_requests
+- test_initial_stats
+- test_large_number_of_entries
+- test_len
+- test_maxsize_one
+- test_maxsize_zero_clamped_to_one
+- test_negative_maxsize_clamped_to_one
+- test_overwrite_existing_key
+- test_put_and_get
+- test_put_refreshes_lru_order
+- test_same_symbol_different_index
+- writer
+
+Imports
+-------
+- mercury_ai.analysis.replay_cache.ReplayCache
+- pytest
+- threading
+
+
+================================================================================
+mercury_ai.analysis.tests.test_risk_engine
+================================================================================
+
+Classes
+--------
+- TestAssessIntegration
+- TestCorrelationMatrix
+- TestEdgeCases
+- TestKellyCriterion
+- TestPearsonCorrelation
+- TestStressTesting
+- TestVaRCVaR
+
+Funções
+--------
+- engine
+- mock_context
+- mock_evidence_bundle
+- sample_returns_negative
+- sample_returns_normal
+- sample_returns_positive
+- test_assess_basic
+- test_assess_bearish_trend
+- test_assess_empty_evidence_bundle
+- test_assess_full
+- test_assess_no_volatility_evidence
+- test_assess_risk_assessment_is_frozen
+- test_assess_with_correlation
+- test_assess_with_historical_returns
+- test_assess_with_kelly_params
+- test_assess_zero_atr
+- test_assess_zero_price
+- test_constant_vector
+- test_correlation_empty_map
+- test_correlation_insufficient_data
+- test_correlation_single_asset
+- test_correlation_three_assets
+- test_correlation_two_assets_perfect_negative
+- test_correlation_two_assets_perfect_positive
+- test_correlation_unequal_lengths
+- test_kelly_breakeven
+- test_kelly_capped_at_max
+- test_kelly_default_params
+- test_kelly_extreme_values
+- test_kelly_high_win_rate
+- test_kelly_low_win_rate
+- test_kelly_negative_win_rate_clamped
+- test_kelly_win_rate_clamped
+- test_kelly_zero_payoff
+- test_no_correlation
+- test_pearson_identical_vectors
+- test_perfect_negative
+- test_perfect_positive
+- test_single_element
+- test_stress_capped_at_80_percent
+- test_stress_high_volatility
+- test_stress_low_volatility
+- test_stress_negative_volatility
+- test_stress_normal_volatility
+- test_stress_zero_volatility
+- test_var_cvar_empty_returns
+- test_var_cvar_insufficient_returns
+- test_var_cvar_single_outlier
+- test_var_cvar_with_negative_returns
+- test_var_cvar_with_normal_returns
+- test_var_cvar_with_positive_returns
+- test_var_cvar_zero_variance
+
+Imports
+-------
+- math
+- mercury_ai.analysis.risk_engine.RiskEngine
+- mercury_ai.models.evidence.Evidence
+- mercury_ai.models.market_context.MarketContext
+- mercury_ai.models.market_data.MarketData
+- mercury_ai.models.market_evidence_bundle.MarketEvidenceBundle
+- mercury_ai.models.market_structure.MarketStructure
+- mercury_ai.models.risk_assessment.RiskAssessment
+- mercury_ai.models.smart_money.SmartMoneyAnalysis
+- pytest
+- unittest.mock.MagicMock
 
 
 ================================================================================
@@ -2324,7 +2900,6 @@ Funções
 
 Imports
 -------
-- mercury_ai.models.decision_snapshot.DecisionSnapshot
 - typing.Any
 - typing.Dict
 
@@ -2367,7 +2942,6 @@ Imports
 - mercury_ai.models.evidence.Evidence
 - mercury_ai.models.market_context.MarketContext
 - mercury_ai.models.market_evidence_bundle.MarketEvidenceBundle
-- pandas
 - typing.List
 - typing.Tuple
 
@@ -2514,9 +3088,9 @@ Funções
 
 Imports
 -------
-- mercury_ai.models.analysis_result.AnalysisDirection
 - mercury_ai.models.analysis_result.AnalysisResult
 - mercury_ai.models.confluence_result.ConfluenceResult
+- mercury_ai.models.direction.AnalysisDirection
 - mercury_ai.models.probability_result.ProbabilityResult
 - mercury_ai.models.trading_explanation.TradingExplanation
 - typing.Tuple
@@ -2532,14 +3106,11 @@ Classes
 
 Funções
 --------
-- _get_all_evidences
 - explain
 
 Imports
 -------
 - mercury_ai.models.analysis_result.AnalysisResult
-- mercury_ai.models.evidence.Evidence
-- typing.List
 
 
 ================================================================================
@@ -2558,24 +3129,32 @@ Funções
 
 Imports
 -------
-- hashlib
+- logging
 - mercury_ai.analysis.confidence_engine.ConfidenceEngine
 - mercury_ai.analysis.conflict_resolution_engine.ConflictResolutionEngine
 - mercury_ai.analysis.confluence_engine.ConfluenceEngine
+- mercury_ai.analysis.confluence_score_engine.ConfluenceScoreEngine
+- mercury_ai.analysis.decision_explainability.DecisionExplainability
+- mercury_ai.analysis.decision_resolver_engine.DecisionResolverEngine
+- mercury_ai.analysis.decision_result_builder.DecisionResultBuilder
 - mercury_ai.analysis.evidence_quality_engine.EvidenceQualityEngine
 - mercury_ai.analysis.evidence_ranking_engine.EvidenceRankingEngine
 - mercury_ai.analysis.institutional_memory_engine.InstitutionalMemoryEngine
+- mercury_ai.analysis.institutional_score_engine.InstitutionalScoreEngine
+- mercury_ai.analysis.market_state_engine.MarketStateEngine
+- mercury_ai.analysis.market_thesis_builder.MarketThesisBuilder
 - mercury_ai.analysis.narrative_engine.NarrativeEngine
+- mercury_ai.analysis.risk_engine.RiskEngine
 - mercury_ai.analysis.validation_engine.ValidationEngine
 - mercury_ai.brain.probability_engine.ProbabilityEngine
+- mercury_ai.config.institutional_weights.INSTITUTIONAL_WEIGHTS_NORMALIZED
 - mercury_ai.core.pipeline_executor.PipelineExecutor
 - mercury_ai.core.pipeline_profiler.PipelineProfiler
+- mercury_ai.models.confidence_result.ConfidenceResult
 - mercury_ai.models.decision_result.DecisionResult
 - mercury_ai.models.market_context.MarketContext
 - mercury_ai.models.market_evidence_bundle.MarketEvidenceBundle
-- mercury_ai.models.market_regime_enum.MarketRegimeEnum
-- mercury_ai.models.version_metadata.VersionMetadata
-- typing.List
+- mercury_ai.models.trade_filter_result.TradeFilterResult
 - typing.Optional
 
 
@@ -2594,6 +3173,7 @@ Funções
 
 Imports
 -------
+- mercury_ai.models.market_context.MarketContext
 - mercury_ai.models.probability_result.ProbabilityResult
 - typing.Any
 - typing.Dict
@@ -2619,7 +3199,7 @@ Funções
 
 Imports
 -------
-- mercury_ai.analysis.evidence_query.EvidenceQuery
+- logging
 - mercury_ai.analysis.notification_center.NotificationCenter
 - mercury_ai.analysis.ranking_engine.RankingEngine
 - mercury_ai.brain.institutional_brain.InstitutionalBrain
@@ -2628,6 +3208,7 @@ Imports
 - mercury_ai.core.asset_registry.AssetRegistry
 - mercury_ai.data.market_data.MarketDataService
 - mercury_ai.providers.mercury_data_provider.MercuryDataProvider
+- traceback
 
 
 ================================================================================
@@ -2645,8 +3226,8 @@ Funções
 Imports
 -------
 - mercury_ai.brain.explainability_engine.ExplainabilityEngine
-- mercury_ai.models.analysis_result.AnalysisDirection
 - mercury_ai.models.confluence_result.ConfluenceResult
+- mercury_ai.models.direction.AnalysisDirection
 - mercury_ai.models.probability_result.ProbabilityResult
 - unittest.mock.MagicMock
 
@@ -2673,6 +3254,7 @@ Imports
 - mercury_ai.models.evidence_ranking.EvidenceRankingResult
 - mercury_ai.models.market_context.MarketContext
 - mercury_ai.models.market_evidence_bundle.MarketEvidenceBundle
+- mercury_ai.models.trade_filter_result.TradeFilterResult
 - time
 - unittest.mock.MagicMock
 
@@ -2701,9 +3283,22 @@ Imports
 - mercury_ai.models.confidence_result.ConfidenceResult
 - mercury_ai.models.evidence.Evidence
 - mercury_ai.models.evidence_ranking.EvidenceRankingResult
+- mercury_ai.models.liquidity_profile.LiquidityProfile
 - mercury_ai.models.market_context.MarketContext
+- mercury_ai.models.market_data.MarketData
 - mercury_ai.models.market_evidence_bundle.MarketEvidenceBundle
+- mercury_ai.models.market_regime.MarketRegime
+- mercury_ai.models.market_regime_enum.MarketRegimeEnum
+- mercury_ai.models.market_state.MarketState
+- mercury_ai.models.market_state_enum.MarketStateEnum
+- mercury_ai.models.market_structure.MarketStructure
+- mercury_ai.models.mtf_consensus.MTFConsensus
+- mercury_ai.models.price_action.PriceActionAnalysis
 - mercury_ai.models.probability_result.ProbabilityResult
+- mercury_ai.models.risk_assessment.RiskAssessment
+- mercury_ai.models.smart_money.SmartMoneyAnalysis
+- mercury_ai.models.support_resistance.SupportResistanceAnalysis
+- mercury_ai.models.trade_filter_result.TradeFilterResult
 - mercury_ai.models.trading_explanation.TradingExplanation
 - pytest
 - unittest.mock.MagicMock
@@ -2715,11 +3310,10 @@ mercury_ai.brain.tests.test_probability_engine
 
 Classes
 --------
-- MockRiskContext
+(nenhuma)
 
 Funções
 --------
-- __init__
 - test_probability_engine_calculation
 
 Imports
@@ -2767,6 +3361,58 @@ Imports
 
 
 ================================================================================
+mercury_ai.config.__init__
+================================================================================
+
+Classes
+--------
+(nenhuma)
+
+Funções
+--------
+(nenhuma)
+
+Imports
+-------
+- mercury_ai.config.institutional_weights.INSTITUTIONAL_WEIGHTS
+- mercury_ai.config.institutional_weights.INSTITUTIONAL_WEIGHTS_NORMALIZED
+- mercury_ai.config.institutional_weights.INSTITUTIONAL_WEIGHTS_SUM
+
+
+================================================================================
+mercury_ai.config.assets
+================================================================================
+
+Classes
+--------
+(nenhuma)
+
+Funções
+--------
+(nenhuma)
+
+Imports
+-------
+- mercury_ai.config.universe.ALL_SYMBOLS
+- mercury_ai.config.universe.COMMODITY_SYMBOLS
+- mercury_ai.config.universe.COMMODITY_UNIVERSE
+- mercury_ai.config.universe.CRYPTO_SYMBOLS
+- mercury_ai.config.universe.CRYPTO_UNIVERSE
+- mercury_ai.config.universe.FOREX_SYMBOLS
+- mercury_ai.config.universe.FOREX_UNIVERSE
+- mercury_ai.config.universe.OPERATIONAL_UNIVERSE
+- mercury_ai.config.universe.STOCK_SYMBOLS
+- mercury_ai.config.universe.STOCK_UNIVERSE
+- mercury_ai.config.universe.SUPPORTED_ASSETS
+- mercury_ai.config.universe.UniverseAsset
+- mercury_ai.config.universe.get_all_provider_symbols
+- mercury_ai.config.universe.get_asset
+- mercury_ai.config.universe.get_enabled_symbols
+- mercury_ai.config.universe.universe_summary
+- mercury_ai.config.universe.validate_symbol
+
+
+================================================================================
 mercury_ai.config.configuration_center
 ================================================================================
 
@@ -2789,6 +3435,52 @@ Imports
 
 
 ================================================================================
+mercury_ai.config.universe
+================================================================================
+
+Classes
+--------
+- UniverseAsset
+
+Funções
+--------
+- get_all_provider_symbols
+- get_asset
+- get_enabled_symbols
+- universe_summary
+- validate_symbol
+
+Imports
+-------
+- dataclasses.dataclass
+- dataclasses.field
+- typing.Dict
+- typing.List
+- typing.Optional
+
+
+================================================================================
+mercury_ai.core._stage_builder
+================================================================================
+
+Classes
+--------
+- _StageBuilder
+
+Funções
+--------
+- __init__
+- duration
+- memory_delta
+- percentage_of
+
+Imports
+-------
+- __future__.annotations
+- typing.List
+
+
+================================================================================
 mercury_ai.core.analysis_pipeline
 ================================================================================
 
@@ -2806,8 +3498,11 @@ Imports
 -------
 - dataclasses.replace
 - json
+- logging
 - mercury_ai.analysis.candlestick_engine.CandlestickEngine
+- mercury_ai.analysis.confidence_engine.ConfidenceEngine
 - mercury_ai.analysis.confluence_engine.ConfluenceEngine
+- mercury_ai.analysis.confluence_score_engine.ConfluenceScoreEngine
 - mercury_ai.analysis.context_engine.ContextEngine
 - mercury_ai.analysis.context_intelligence_engine.ContextIntelligenceEngine
 - mercury_ai.analysis.evidence_engine.EvidenceEngine
@@ -2821,6 +3516,7 @@ Imports
 - mercury_ai.analysis.market_regime_engine.MarketRegimeEngine
 - mercury_ai.analysis.market_state_engine.MarketStateEngine
 - mercury_ai.analysis.market_structure_intelligence_engine.MarketStructureIntelligenceEngine
+- mercury_ai.analysis.market_thesis_builder.MarketThesisBuilder
 - mercury_ai.analysis.mtf_engine.MTFEngine
 - mercury_ai.analysis.price_action_analyzer.PriceActionAnalyzer
 - mercury_ai.analysis.risk_engine.RiskEngine
@@ -2847,6 +3543,7 @@ Imports
 - mercury_ai.models.decision_result.DecisionResult
 - mercury_ai.models.decision_snapshot.DecisionSnapshot
 - mercury_ai.models.market_data.MarketData
+- mercury_ai.models.risk_assessment.RiskAssessment
 - mercury_ai.models.version_metadata.VersionMetadata
 - mercury_ai.providers.base_provider.MarketDataProvider
 - mercury_ai.utils.deterministic_clock.DeterministicClock
@@ -3030,7 +3727,6 @@ Imports
 -------
 - json
 - mercury_ai.analysis.data_exporter.DataExporter
-- os
 - pandas
 - pathlib.Path
 - typing.Any
@@ -3092,9 +3788,6 @@ Imports
 - mercury_ai.providers.yahoo_finance_provider.YahooFinanceProvider
 - threading
 - time
-- typing.Any
-- typing.Dict
-- typing.List
 - typing.Optional
 
 
@@ -3138,6 +3831,7 @@ Funções
 Imports
 -------
 - datetime.datetime
+- datetime.timezone
 - mercury_ai.core.audit_sink.AuditEvent
 - mercury_ai.core.audit_sink.AuditSink
 - mercury_ai.core.pipeline_profiler.PipelineProfiler
@@ -3179,15 +3873,13 @@ mercury_ai.core.pipeline_profiler
 Classes
 --------
 - PipelineProfiler
-- _StageBuilder
 
 Funções
 --------
 - __init__
-- __init__
+- _finalize_stage
 - end_pipeline
 - end_stage
-- finalize
 - json
 - pretty_print
 - stage
@@ -3201,12 +3893,39 @@ Imports
 - dataclasses.asdict
 - gc
 - json
+- mercury_ai.core._stage_builder._StageBuilder
 - mercury_ai.models.profiler_models.PipelineProfile
 - mercury_ai.models.profiler_models.StageProfile
 - threading
 - time
 - tracemalloc
-- typing.List
+
+
+================================================================================
+mercury_ai.core.project_state
+================================================================================
+
+Classes
+--------
+- ProjectState
+
+Funções
+--------
+- __init__
+- documents
+- get
+- has
+- json
+- metadata
+- statistics
+- summary
+
+Imports
+-------
+- __future__.annotations
+- json
+- pathlib.Path
+- typing.Any
 
 
 ================================================================================
@@ -3244,7 +3963,6 @@ Imports
 - dataclasses.dataclass
 - dataclasses.field
 - typing.Any
-- typing.Dict
 - typing.List
 - typing.Optional
 
@@ -3269,7 +3987,6 @@ Imports
 -------
 - dataclasses.dataclass
 - dataclasses.field
-- json
 - mercury_ai.utils.deterministic_clock.DeterministicClock
 - typing.Any
 - typing.Dict
@@ -3440,6 +4157,7 @@ Funções
 - __init__
 - __init__
 - _get_best_provider
+- best_provider
 - connect
 - connect
 - connect
@@ -3457,9 +4175,12 @@ Funções
 - health
 - health
 - healthcheck
+- healthcheck
+- list_providers
 - market_status
 - market_status
 - market_status
+- provider_status
 - register_provider
 - trigger_failover
 
@@ -3642,7 +4363,7 @@ Funções
 Imports
 -------
 - mercury_ai.config.settings.ASSET
-- mercury_ai.providers.market_provider.MarketProvider
+- mercury_ai.providers.market_provider.MercuryDataProvider
 
 
 ================================================================================
@@ -3651,7 +4372,6 @@ mercury_ai.models.analysis_result
 
 Classes
 --------
-- AnalysisDirection
 - AnalysisResult
 
 Funções
@@ -3664,12 +4384,25 @@ Imports
 - dataclasses.field
 - enum.Enum
 - mercury_ai.config.settings
+- mercury_ai.models.candlestick_analysis.CandlestickAnalysis
+- mercury_ai.models.confluence_result.ConfluenceResult
+- mercury_ai.models.decision_result.DecisionResult
 - mercury_ai.models.evidence.Evidence
+- mercury_ai.models.evidence_ranking.EvidenceRankingResult
+- mercury_ai.models.liquidity_result.LiquidityResult
+- mercury_ai.models.market_condition.MarketCondition
 - mercury_ai.models.market_context.MarketContext
 - mercury_ai.models.market_data.MarketData
+- mercury_ai.models.market_regime.MarketRegime
+- mercury_ai.models.market_state.MarketState
+- mercury_ai.models.market_structure_profile.MarketStructureProfile
+- mercury_ai.models.risk_assessment.RiskAssessment
+- mercury_ai.models.session_analysis.SessionAnalysis
 - mercury_ai.models.smart_money.SmartMoneyAnalysis
+- mercury_ai.models.support_resistance.SupportResistanceAnalysis
+- mercury_ai.models.volatility_analysis.VolatilityAnalysis
+- mercury_ai.models.volume_analysis.VolumeAnalysis
 - mercury_ai.utils.deterministic_clock.DeterministicClock
-- typing.Any
 - typing.List
 
 
@@ -3746,7 +4479,7 @@ Funções
 Imports
 -------
 - dataclasses.dataclass
-- mercury_ai.models.analysis_result.AnalysisDirection
+- mercury_ai.models.direction.AnalysisDirection
 - typing.Any
 - typing.Tuple
 
@@ -3858,6 +4591,7 @@ Imports
 -------
 - dataclasses.dataclass
 - dataclasses.field
+- mercury_ai.analysis.decision_explainability.DecisionExplainability
 - mercury_ai.models.decision_trace.DecisionTrace
 - mercury_ai.models.evidence_ranking.EvidenceRankingResult
 - mercury_ai.models.market_regime.MarketRegime
@@ -3911,6 +4645,47 @@ Imports
 - dataclasses.dataclass
 - dataclasses.field
 - mercury_ai.models.decision_node.DecisionNode
+- typing.Tuple
+
+
+================================================================================
+mercury_ai.models.direction
+================================================================================
+
+Classes
+--------
+- AnalysisDirection
+
+Funções
+--------
+(nenhuma)
+
+Imports
+-------
+- enum.Enum
+
+
+================================================================================
+mercury_ai.models.equity_metrics
+================================================================================
+
+Classes
+--------
+- AssetPerformance
+- UniversePerformance
+
+Funções
+--------
+(nenhuma)
+
+Imports
+-------
+- dataclasses.dataclass
+- dataclasses.field
+- pandas
+- typing.Dict
+- typing.List
+- typing.Optional
 - typing.Tuple
 
 
@@ -4097,7 +4872,6 @@ Imports
 - mercury_ai.models.smart_money.SmartMoneyAnalysis
 - mercury_ai.models.support_resistance.SupportResistanceAnalysis
 - typing.List
-- typing.Optional
 
 
 ================================================================================
@@ -4503,6 +5277,10 @@ Funções
 Imports
 -------
 - dataclasses.dataclass
+- dataclasses.field
+- typing.Dict
+- typing.Optional
+- typing.Tuple
 
 
 ================================================================================
@@ -4635,6 +5413,25 @@ Imports
 - dataclasses.field
 - typing.List
 - typing.Optional
+
+
+================================================================================
+mercury_ai.models.trade_filter_result
+================================================================================
+
+Classes
+--------
+- TradeFilterResult
+
+Funções
+--------
+(nenhuma)
+
+Imports
+-------
+- dataclasses.dataclass
+- dataclasses.field
+- typing.Tuple
 
 
 ================================================================================
@@ -4868,6 +5665,7 @@ Funções
 
 Imports
 -------
+- logging
 - mercury_ai.config.assets.SUPPORTED_ASSETS
 - mercury_ai.core.analysis_pipeline.AnalysisPipeline
 - mercury_ai.data.market_data.MarketDataService
@@ -4948,6 +5746,10 @@ Funções
 
 Imports
 -------
+- logging
+- mercury_ai.config.universe.ALL_SYMBOLS
+- mercury_ai.config.universe.CRYPTO_SYMBOLS
+- mercury_ai.config.universe.FOREX_SYMBOLS
 - mercury_ai.providers.data_interfaces.IDataProvider
 - pandas
 - yfinance
@@ -5056,6 +5858,8 @@ Funções
 - get_data
 - is_available
 - max_history
+- set_data
+- set_index
 - source_name
 - supports_market
 - supports_symbol
@@ -5063,9 +5867,9 @@ Funções
 
 Imports
 -------
-- mercury_ai.providers.base_provider.MarketDataProvider
 - os
 - pandas
+- typing.Optional
 
 
 ================================================================================
@@ -5084,12 +5888,15 @@ Funções
 - best_provider
 - connect
 - get_candles
+- get_data
 - get_history
 - get_last_price
 - health
+- healthcheck
+- is_available
+- list_providers
 - market_status
 - register_provider
-- trigger_failover
 
 Imports
 -------
@@ -5113,37 +5920,15 @@ mercury_ai.providers.mercury_data_provider
 
 Classes
 --------
-- MercuryDataProvider
+(nenhuma)
 
 Funções
 --------
-- __init__
-- _get_best_provider
-- best_provider
-- connect
-- get_candles
-- get_data
-- get_history
-- get_last_price
-- health
-- is_available
-- market_status
-- register_provider
+(nenhuma)
 
 Imports
 -------
-- functools.lru_cache
-- logging
-- mercury_ai.providers.data_adapters.AlphaVantageAdapter
-- mercury_ai.providers.data_adapters.BinanceAdapter
-- mercury_ai.providers.data_adapters.MetaTrader5Adapter
-- mercury_ai.providers.data_adapters.PolygonAdapter
-- mercury_ai.providers.data_adapters.TwelveDataAdapter
-- mercury_ai.providers.data_adapters.YahooAdapter
-- mercury_ai.providers.data_interfaces.IDataProvider
-- pandas
-- time
-- typing.Dict
+- mercury_ai.providers.market_provider.MercuryDataProvider
 
 
 ================================================================================
@@ -5178,7 +5963,7 @@ Funções
 
 Imports
 -------
-- mercury_ai.providers.market_provider.MarketProvider
+- mercury_ai.providers.market_provider.MercuryDataProvider
 
 
 ================================================================================
@@ -5202,7 +5987,6 @@ Funções
 Imports
 -------
 - mercury_ai.core.exceptions.MarketClosedException
-- mercury_ai.providers.base_provider.MarketDataProvider
 - pandas
 - yfinance
 
@@ -5294,29 +6078,26 @@ mercury_ai.utils.performance_collector
 Classes
 --------
 - PerformanceCollector
-- _StageBuilder
 
 Funções
 --------
 - __init__
-- __init__
+- _finalize_metric
 - _flatten_stages
 - collect
-- finalize
 - stage
 
 Imports
 -------
 - contextlib.contextmanager
 - gc
+- mercury_ai.core._stage_builder._StageBuilder
 - mercury_ai.models.performance.HotspotReport
 - mercury_ai.models.performance.PipelineMetric
 - mercury_ai.models.performance.StageMetric
-- statistics
 - time
 - tracemalloc
 - typing.List
-- typing.Optional
 - typing.Tuple
 
 
@@ -5342,7 +6123,6 @@ Imports
 - mercury_ai.models.regression.RegressionResult
 - typing.Dict
 - typing.List
-- typing.Optional
 
 
 ================================================================================
@@ -5366,9 +6146,6 @@ Imports
 - csv
 - datetime
 - json
-- mercury_ai.models.performance.PipelineMetric
-- mercury_ai.models.regression.RegressionResult
-- mercury_ai.models.stress_test.StressTestResult
 - platform
 - sys
 - typing.Any
@@ -5393,13 +6170,11 @@ Funções
 Imports
 -------
 - mercury_ai.models.stress_test.StressTestResult
-- random
 - time
 - tracemalloc
 - typing.Any
 - typing.Callable
 - typing.Dict
-- typing.List
 
 
 ================================================================================
@@ -5417,7 +6192,45 @@ Funções
 Imports
 -------
 - psutil
-- time
+
+
+================================================================================
+parity_check
+================================================================================
+
+Classes
+--------
+(nenhuma)
+
+Funções
+--------
+(nenhuma)
+
+Imports
+-------
+- pandas
+- yfinance
+
+
+================================================================================
+resolve_merge_conflicts
+================================================================================
+
+Classes
+--------
+(nenhuma)
+
+Funções
+--------
+- _has_real_markers
+- main
+- resolve_conflicts_in_file
+
+Imports
+-------
+- glob
+- os
+- re
 
 
 ================================================================================
@@ -5450,14 +6263,22 @@ Classes
 
 Funções
 --------
+- generate_performance_report
 - load_local_data
 - run_institutional_replay
 
 Imports
 -------
+- datetime.datetime
 - mercury_ai.analysis.historical_replay_engine.HistoricalReplayEngine
+- mercury_ai.analysis.performance_engine.PerformanceEngine
+- mercury_ai.database.replay_storage.ReplayMetrics
+- mercury_ai.models.equity_metrics.AssetPerformance
+- mercury_ai.models.equity_metrics.UniversePerformance
 - os
 - pandas
+- typing.Dict
+- typing.List
 
 
 ================================================================================
@@ -5486,6 +6307,76 @@ Imports
 
 
 ================================================================================
+scripts.generate_benchmark_framework
+================================================================================
+
+Classes
+--------
+(nenhuma)
+
+Funções
+--------
+(nenhuma)
+
+Imports
+-------
+- os
+
+
+================================================================================
+scripts.prepare_replay_data
+================================================================================
+
+Classes
+--------
+(nenhuma)
+
+Funções
+--------
+- download_and_save
+- prepare_all_assets
+
+Imports
+-------
+- argparse
+- datetime.datetime
+- datetime.timedelta
+- mercury_ai.config.universe.ALL_SYMBOLS
+- mercury_ai.config.universe.CRYPTO_SYMBOLS
+- mercury_ai.config.universe.FOREX_SYMBOLS
+- os
+- pandas
+- sys
+- yfinance
+
+
+================================================================================
+scripts.run_replay_3500
+================================================================================
+
+Classes
+--------
+(nenhuma)
+
+Funções
+--------
+- main
+
+Imports
+-------
+- datetime.datetime
+- mercury_ai.analysis.historical_replay_engine.HistoricalReplayEngine
+- mercury_ai.analysis.performance_engine.PerformanceEngine
+- mercury_ai.database.replay_storage.ReplayMetrics
+- mercury_ai.models.equity_metrics.AssetPerformance
+- mercury_ai.models.equity_metrics.UniversePerformance
+- os
+- pandas
+- sys
+- time
+
+
+================================================================================
 stress_test_replay
 ================================================================================
 
@@ -5510,6 +6401,29 @@ Imports
 
 
 ================================================================================
+test_bloco7_scenarios
+================================================================================
+
+Classes
+--------
+(nenhuma)
+
+Funções
+--------
+- main
+- run_all_scenarios
+- validate_consistency
+
+Imports
+-------
+- mercury_ai.analysis.decision_resolver_engine.DecisionResolverEngine
+- mercury_ai.analysis.decision_resolver_engine.DecisionResolverResult
+- os
+- sys
+- traceback
+
+
+================================================================================
 test_mercury_signal
 ================================================================================
 
@@ -5527,6 +6441,28 @@ Imports
 - mercury_ai.data.market_data.MarketDataService
 - mercury_ai.presentation.signal_formatter.SignalFormatter
 - mercury_ai.providers.mercury_data_provider.MercuryDataProvider
+
+
+================================================================================
+test_replay_quick
+================================================================================
+
+Classes
+--------
+(nenhuma)
+
+Funções
+--------
+- main
+
+Imports
+-------
+- mercury_ai.analysis.historical_replay_engine.HistoricalReplayEngine
+- mercury_ai.analysis.performance_engine.PerformanceEngine
+- mercury_ai.database.replay_storage.ReplayMetrics
+- os
+- pandas
+- sys
 
 
 ================================================================================
@@ -5693,7 +6629,9 @@ Imports
 - mercury_ai.brain.scanner.MercuryScanner
 - mercury_ai.core.asset_registry.AssetRegistry
 - os
+- pathlib.Path
 - pytest
+- shutil
 
 
 ================================================================================
@@ -5895,7 +6833,9 @@ Imports
 -------
 - mercury_ai.core.analysis_pipeline.AnalysisPipeline
 - mercury_ai.data.market_data.MarketDataService
-- mercury_ai.providers.yahoo_finance_provider.YahooFinanceProvider
+- mercury_ai.data.providers.historical_data_provider.HistoricalDataProvider
+- numpy
+- pandas
 - pytest
 
 
@@ -6037,6 +6977,64 @@ Imports
 
 
 ================================================================================
+tests.test_institutional_backtest
+================================================================================
+
+Classes
+--------
+- TestIntegrationBatchToUniverse
+- TestIntegrationEndToEnd
+- TestIntegrationExtremeScenarios
+- TestIntegrationReplayToCache
+- TestIntegrationReplayToMetrics
+- TestIntegrationReplayToPerformance
+- TestIntegrationRiskAndReplay
+
+Funções
+--------
+- _make_multi_symbol_data
+- _make_ohlcv_df
+- build_data_symbol_data
+- build_multi_symbol_data
+- test_batch_produces_universe_performance
+- test_batch_results_have_cache_stats
+- test_cache_populated_after_replay
+- test_flat_market
+- test_full_pipeline_multi_symbol
+- test_full_pipeline_single_symbol
+- test_high_volatility
+- test_performance_fields_are_finite
+- test_performance_from_replay_metrics
+- test_pipeline_with_risk_on_all_symbols
+- test_replay_metrics_are_finite
+- test_replay_produces_metrics
+- test_replay_updates_stats
+- test_risk_assessment_fields_are_finite
+- test_risk_assessment_from_replay
+- test_second_run_hits_cache
+- test_single_candle_dataframe
+
+Imports
+-------
+- math
+- mercury_ai.analysis.historical_replay_engine.HistoricalReplayEngine
+- mercury_ai.analysis.performance_engine.PerformanceEngine
+- mercury_ai.analysis.replay_batch_processor.BatchReplayReport
+- mercury_ai.analysis.replay_batch_processor.BatchReplayResult
+- mercury_ai.analysis.replay_batch_processor.ReplayBatchProcessor
+- mercury_ai.analysis.replay_cache.ReplayCache
+- mercury_ai.analysis.risk_engine.RiskEngine
+- mercury_ai.database.replay_storage.ReplayMetrics
+- mercury_ai.models.equity_metrics.AssetPerformance
+- mercury_ai.models.equity_metrics.UniversePerformance
+- mercury_ai.models.risk_assessment.RiskAssessment
+- numpy
+- pandas
+- pytest
+- time
+
+
+================================================================================
 tests.test_institutional_report_generator
 ================================================================================
 
@@ -6098,11 +7096,13 @@ Classes
 
 Funções
 --------
-- test_live_monitor_cycle
+- test_live_monitor_import
+- test_live_monitor_instantiation
 
 Imports
 -------
 - mercury_ai.analysis.live_monitor.LiveMonitor
+- pytest
 
 
 ================================================================================
@@ -6275,6 +7275,31 @@ Imports
 
 
 ================================================================================
+tests.test_performance_engine
+================================================================================
+
+Classes
+--------
+- TestPerformanceEngine
+
+Funções
+--------
+- setUp
+- test_asset_performance_basic
+- test_calculate_drawdown
+- test_calculate_sharpe
+- test_calculate_sortino
+- test_universe_performance
+
+Imports
+-------
+- mercury_ai.analysis.historical_replay_engine.ReplayMetrics
+- mercury_ai.analysis.performance_engine.PerformanceEngine
+- numpy
+- unittest
+
+
+================================================================================
 tests.test_performance_statistics
 ================================================================================
 
@@ -6305,6 +7330,7 @@ Funções
 
 Imports
 -------
+- json
 - mercury_ai.core.analysis_pipeline.AnalysisPipeline
 - mercury_ai.data.market_data.MarketDataService
 - mercury_ai.data.providers.historical_data_provider.HistoricalDataProvider
@@ -6378,6 +7404,40 @@ Imports
 -------
 - mercury_ai.core.read_only.ReadOnlyViolation
 - mercury_ai.core.read_only.check_read_only
+- pytest
+
+
+================================================================================
+tests.test_regression_sprint18
+================================================================================
+
+Classes
+--------
+- TestRegressionBug1MarketStructureProfileTrend
+- TestRegressionBug2AnalysisPipelineInit
+- TestRegressionBug3HistoricalReplayProvider
+
+Funções
+--------
+- test_constructor_missing_providers_raises
+- test_constructor_with_providers
+- test_get_data_without_set_data
+- test_set_data_and_set_index_workflow
+- test_set_data_exists
+- test_set_index_exists
+- test_set_index_zero
+- test_trend_field_bearish
+- test_trend_field_custom_value
+- test_trend_field_exists_default
+- test_trend_field_is_frozen
+
+Imports
+-------
+- mercury_ai.core.analysis_pipeline.AnalysisPipeline
+- mercury_ai.data.market_data.MarketDataService
+- mercury_ai.models.market_structure_profile.MarketStructureProfile
+- mercury_ai.providers.historical_replay_provider.HistoricalReplayProvider
+- pandas
 - pytest
 
 
@@ -6481,7 +7541,9 @@ Imports
 -------
 - mercury_ai.core.analysis_pipeline.AnalysisPipeline
 - mercury_ai.data.market_data.MarketDataService
-- mercury_ai.providers.yahoo_finance_provider.YahooFinanceProvider
+- mercury_ai.data.providers.historical_data_provider.HistoricalDataProvider
+- numpy
+- pandas
 
 
 ================================================================================
@@ -6594,6 +7656,838 @@ Funções
 Imports
 -------
 - mercury_ai.analysis.weight_simulator.WeightSimulator
+
+
+================================================================================
+tools.main
+================================================================================
+
+Classes
+--------
+(nenhuma)
+
+Funções
+--------
+- main
+
+Imports
+-------
+- scanner.ProjectScanner
+- writer.InventoryWriter
+
+
+================================================================================
+tools.mercury_integrity_auditor.auditors.__init__
+================================================================================
+
+Classes
+--------
+(nenhuma)
+
+Funções
+--------
+(nenhuma)
+
+Imports
+-------
+- .contract_auditor
+- .coverage_auditor
+- .decision_auditor
+- .dependency_auditor
+- .flow_auditor
+- .integrity_auditor
+- .masking_auditor
+- .report
+- .runtime_auditor
+- .static_auditor
+- .test_auditor
+
+
+================================================================================
+tools.mercury_integrity_auditor.auditors.backtest_auditor
+================================================================================
+
+Classes
+--------
+(nenhuma)
+
+Funções
+--------
+- _check_data_leakage
+- _check_execution_simulation
+- _check_monte_carlo
+- _check_out_of_sample
+- _check_overfitting
+- _check_performance_metrics
+- _check_position_sizing_risk
+- _check_survivorship_bias
+- _check_transaction_costs
+- _check_walk_forward
+- run
+
+Imports
+-------
+- pathlib.Path
+- re
+- sys
+- tools.mercury_integrity_auditor.config.CRITICAL
+- tools.mercury_integrity_auditor.config.HIGH
+- tools.mercury_integrity_auditor.config.LOW
+- tools.mercury_integrity_auditor.config.MEDIUM
+- tools.mercury_integrity_auditor.config.MERCURY_AI_DIR
+- tools.mercury_integrity_auditor.config.PROJECT_ROOT
+- tools.mercury_integrity_auditor.config.STATUS_FAIL
+- tools.mercury_integrity_auditor.config.STATUS_INCONCLUSIVE
+- tools.mercury_integrity_auditor.config.STATUS_INFO
+- tools.mercury_integrity_auditor.config.STATUS_PASS
+- tools.mercury_integrity_auditor.config.STATUS_WARNING
+- tools.mercury_integrity_auditor.config.TESTS_DIR
+- tools.mercury_integrity_auditor.models.AuditFinding
+- tools.mercury_integrity_auditor.models.AuditSection
+
+
+================================================================================
+tools.mercury_integrity_auditor.auditors.contract_auditor
+================================================================================
+
+Classes
+--------
+- DataclassContractChecker
+
+Funções
+--------
+- __init__
+- run
+- visit_ClassDef
+
+Imports
+-------
+- ast
+- pathlib.Path
+- sys
+- tools.mercury_integrity_auditor.config.CRITICAL
+- tools.mercury_integrity_auditor.config.HIGH
+- tools.mercury_integrity_auditor.config.LOW
+- tools.mercury_integrity_auditor.config.MEDIUM
+- tools.mercury_integrity_auditor.config.MERCURY_AI_DIR
+- tools.mercury_integrity_auditor.config.PROJECT_ROOT
+- tools.mercury_integrity_auditor.config.STATUS_FAIL
+- tools.mercury_integrity_auditor.config.STATUS_INFO
+- tools.mercury_integrity_auditor.config.STATUS_PASS
+- tools.mercury_integrity_auditor.config.STATUS_WARNING
+- tools.mercury_integrity_auditor.models.AuditFinding
+- tools.mercury_integrity_auditor.models.AuditSection
+
+
+================================================================================
+tools.mercury_integrity_auditor.auditors.coverage_auditor
+================================================================================
+
+Classes
+--------
+(nenhuma)
+
+Funções
+--------
+- _analyze_coverage_data
+- _find_untested_modules
+- _run_coverage
+- run
+
+Imports
+-------
+- json
+- pathlib.Path
+- subprocess
+- sys
+- tools.mercury_integrity_auditor.config.CRITICAL
+- tools.mercury_integrity_auditor.config.HIGH
+- tools.mercury_integrity_auditor.config.LOW
+- tools.mercury_integrity_auditor.config.MEDIUM
+- tools.mercury_integrity_auditor.config.MERCURY_AI_DIR
+- tools.mercury_integrity_auditor.config.PROJECT_ROOT
+- tools.mercury_integrity_auditor.config.STATUS_FAIL
+- tools.mercury_integrity_auditor.config.STATUS_INFO
+- tools.mercury_integrity_auditor.config.STATUS_PASS
+- tools.mercury_integrity_auditor.config.STATUS_WARNING
+- tools.mercury_integrity_auditor.config.TESTS_DIR
+- tools.mercury_integrity_auditor.models.AuditFinding
+- tools.mercury_integrity_auditor.models.AuditSection
+
+
+================================================================================
+tools.mercury_integrity_auditor.auditors.data_auditor
+================================================================================
+
+Classes
+--------
+(nenhuma)
+
+Funções
+--------
+- _check_data_drift_detection
+- _check_data_lineage
+- _check_data_schema_validation
+- _check_missing_data_handling
+- _check_pii_handling
+- _check_train_test_leakage
+- run
+
+Imports
+-------
+- json
+- pathlib.Path
+- sys
+- tools.mercury_integrity_auditor.config.CRITICAL
+- tools.mercury_integrity_auditor.config.HIGH
+- tools.mercury_integrity_auditor.config.LOW
+- tools.mercury_integrity_auditor.config.MEDIUM
+- tools.mercury_integrity_auditor.config.MERCURY_AI_DIR
+- tools.mercury_integrity_auditor.config.PROJECT_ROOT
+- tools.mercury_integrity_auditor.config.STATUS_FAIL
+- tools.mercury_integrity_auditor.config.STATUS_INCONCLUSIVE
+- tools.mercury_integrity_auditor.config.STATUS_INFO
+- tools.mercury_integrity_auditor.config.STATUS_PASS
+- tools.mercury_integrity_auditor.config.STATUS_WARNING
+- tools.mercury_integrity_auditor.models.AuditFinding
+- tools.mercury_integrity_auditor.models.AuditSection
+
+
+================================================================================
+tools.mercury_integrity_auditor.auditors.decision_auditor
+================================================================================
+
+Classes
+--------
+- DecisionPathAnalyzer
+
+Funções
+--------
+- __init__
+- _analyze_decision_file
+- run
+- visit_Call
+- visit_If
+
+Imports
+-------
+- ast
+- json
+- pathlib.Path
+- sys
+- tools.mercury_integrity_auditor.config.CRITICAL
+- tools.mercury_integrity_auditor.config.HIGH
+- tools.mercury_integrity_auditor.config.LOW
+- tools.mercury_integrity_auditor.config.MEDIUM
+- tools.mercury_integrity_auditor.config.MERCURY_AI_DIR
+- tools.mercury_integrity_auditor.config.PROJECT_ROOT
+- tools.mercury_integrity_auditor.config.STATUS_FAIL
+- tools.mercury_integrity_auditor.config.STATUS_INFO
+- tools.mercury_integrity_auditor.config.STATUS_PASS
+- tools.mercury_integrity_auditor.config.STATUS_WARNING
+- tools.mercury_integrity_auditor.models.AuditFinding
+- tools.mercury_integrity_auditor.models.AuditSection
+
+
+================================================================================
+tools.mercury_integrity_auditor.auditors.dependency_auditor
+================================================================================
+
+Classes
+--------
+(nenhuma)
+
+Funções
+--------
+- _collect_imports
+- _get_installed_packages
+- _parse_requirements
+- run
+
+Imports
+-------
+- ast
+- importlib.metadata
+- pathlib.Path
+- sys
+- tools.mercury_integrity_auditor.config.CRITICAL
+- tools.mercury_integrity_auditor.config.HIGH
+- tools.mercury_integrity_auditor.config.LOW
+- tools.mercury_integrity_auditor.config.MEDIUM
+- tools.mercury_integrity_auditor.config.MERCURY_AI_DIR
+- tools.mercury_integrity_auditor.config.PROJECT_ROOT
+- tools.mercury_integrity_auditor.config.STATUS_FAIL
+- tools.mercury_integrity_auditor.config.STATUS_INFO
+- tools.mercury_integrity_auditor.config.STATUS_PASS
+- tools.mercury_integrity_auditor.config.STATUS_WARNING
+- tools.mercury_integrity_auditor.models.AuditFinding
+- tools.mercury_integrity_auditor.models.AuditSection
+
+
+================================================================================
+tools.mercury_integrity_auditor.auditors.determinism_auditor
+================================================================================
+
+Classes
+--------
+(nenhuma)
+
+Funções
+--------
+- _check_deterministic_replay
+- _check_environment_isolation
+- _check_external_dependencies
+- _check_fixed_seeds
+- _check_floating_point
+- _check_non_deterministic_ops
+- run
+
+Imports
+-------
+- pathlib.Path
+- sys
+- tools.mercury_integrity_auditor.config.CRITICAL
+- tools.mercury_integrity_auditor.config.HIGH
+- tools.mercury_integrity_auditor.config.LOW
+- tools.mercury_integrity_auditor.config.MEDIUM
+- tools.mercury_integrity_auditor.config.MERCURY_AI_DIR
+- tools.mercury_integrity_auditor.config.PROJECT_ROOT
+- tools.mercury_integrity_auditor.config.STATUS_FAIL
+- tools.mercury_integrity_auditor.config.STATUS_INCONCLUSIVE
+- tools.mercury_integrity_auditor.config.STATUS_INFO
+- tools.mercury_integrity_auditor.config.STATUS_PASS
+- tools.mercury_integrity_auditor.config.STATUS_WARNING
+- tools.mercury_integrity_auditor.models.AuditFinding
+- tools.mercury_integrity_auditor.models.AuditSection
+
+
+================================================================================
+tools.mercury_integrity_auditor.auditors.explainability_auditor
+================================================================================
+
+Classes
+--------
+(nenhuma)
+
+Funções
+--------
+- _check_counterfactual_explanations
+- _check_decision_logging
+- _check_feature_importance
+- _check_model_cards
+- run
+
+Imports
+-------
+- json
+- pathlib.Path
+- sys
+- tools.mercury_integrity_auditor.config.CRITICAL
+- tools.mercury_integrity_auditor.config.HIGH
+- tools.mercury_integrity_auditor.config.LOW
+- tools.mercury_integrity_auditor.config.MEDIUM
+- tools.mercury_integrity_auditor.config.MERCURY_AI_DIR
+- tools.mercury_integrity_auditor.config.PROJECT_ROOT
+- tools.mercury_integrity_auditor.config.STATUS_FAIL
+- tools.mercury_integrity_auditor.config.STATUS_INCONCLUSIVE
+- tools.mercury_integrity_auditor.config.STATUS_INFO
+- tools.mercury_integrity_auditor.config.STATUS_PASS
+- tools.mercury_integrity_auditor.config.STATUS_WARNING
+- tools.mercury_integrity_auditor.models.AuditFinding
+- tools.mercury_integrity_auditor.models.AuditSection
+
+
+================================================================================
+tools.mercury_integrity_auditor.auditors.flow_auditor
+================================================================================
+
+Classes
+--------
+- ComponentChecker
+
+Funções
+--------
+- __init__
+- _find_class_in_project
+- run
+- visit_ClassDef
+- visit_FunctionDef
+
+Imports
+-------
+- ast
+- pathlib.Path
+- sys
+- tools.mercury_integrity_auditor.config.CRITICAL
+- tools.mercury_integrity_auditor.config.HIGH
+- tools.mercury_integrity_auditor.config.LOW
+- tools.mercury_integrity_auditor.config.MEDIUM
+- tools.mercury_integrity_auditor.config.MERCURY_AI_DIR
+- tools.mercury_integrity_auditor.config.PROJECT_ROOT
+- tools.mercury_integrity_auditor.config.STATUS_FAIL
+- tools.mercury_integrity_auditor.config.STATUS_INFO
+- tools.mercury_integrity_auditor.config.STATUS_PASS
+- tools.mercury_integrity_auditor.config.STATUS_WARNING
+- tools.mercury_integrity_auditor.models.AuditFinding
+- tools.mercury_integrity_auditor.models.AuditSection
+
+
+================================================================================
+tools.mercury_integrity_auditor.auditors.global_state_auditor
+================================================================================
+
+Classes
+--------
+(nenhuma)
+
+Funções
+--------
+- _check_global_config
+- _check_global_variables
+- _check_runtime_state
+- _check_singletons
+- _check_state_persistence
+- _check_thread_safety
+- run
+
+Imports
+-------
+- json
+- pathlib.Path
+- sys
+- tools.mercury_integrity_auditor.config.CRITICAL
+- tools.mercury_integrity_auditor.config.HIGH
+- tools.mercury_integrity_auditor.config.LOW
+- tools.mercury_integrity_auditor.config.MEDIUM
+- tools.mercury_integrity_auditor.config.MERCURY_AI_DIR
+- tools.mercury_integrity_auditor.config.PROJECT_ROOT
+- tools.mercury_integrity_auditor.config.STATUS_FAIL
+- tools.mercury_integrity_auditor.config.STATUS_INCONCLUSIVE
+- tools.mercury_integrity_auditor.config.STATUS_INFO
+- tools.mercury_integrity_auditor.config.STATUS_PASS
+- tools.mercury_integrity_auditor.config.STATUS_WARNING
+- tools.mercury_integrity_auditor.models.AuditFinding
+- tools.mercury_integrity_auditor.models.AuditSection
+
+
+================================================================================
+tools.mercury_integrity_auditor.auditors.integrity_auditor
+================================================================================
+
+Classes
+--------
+(nenhuma)
+
+Funções
+--------
+- _check_checksums
+- _check_config_integrity
+- _check_dot_mercury_integrity
+- _check_models_integrity
+- _check_runtime_reports_integrity
+- run
+
+Imports
+-------
+- hashlib
+- json
+- pathlib.Path
+- sys
+- tools.mercury_integrity_auditor.config.CRITICAL
+- tools.mercury_integrity_auditor.config.DOT_MERCURY_DIR
+- tools.mercury_integrity_auditor.config.HIGH
+- tools.mercury_integrity_auditor.config.LOW
+- tools.mercury_integrity_auditor.config.MEDIUM
+- tools.mercury_integrity_auditor.config.MERCURY_AI_DIR
+- tools.mercury_integrity_auditor.config.PROJECT_ROOT
+- tools.mercury_integrity_auditor.config.STATUS_FAIL
+- tools.mercury_integrity_auditor.config.STATUS_INFO
+- tools.mercury_integrity_auditor.config.STATUS_PASS
+- tools.mercury_integrity_auditor.config.STATUS_WARNING
+- tools.mercury_integrity_auditor.models.AuditFinding
+- tools.mercury_integrity_auditor.models.AuditSection
+
+
+================================================================================
+tools.mercury_integrity_auditor.auditors.masking_auditor
+================================================================================
+
+Classes
+--------
+- MaskingDetector
+
+Funções
+--------
+- __init__
+- run
+- visit_Call
+- visit_ExceptHandler
+- visit_Import
+- visit_ImportFrom
+
+Imports
+-------
+- ast
+- pathlib.Path
+- sys
+- tools.mercury_integrity_auditor.config.CRITICAL
+- tools.mercury_integrity_auditor.config.HIGH
+- tools.mercury_integrity_auditor.config.LOW
+- tools.mercury_integrity_auditor.config.MEDIUM
+- tools.mercury_integrity_auditor.config.MERCURY_AI_DIR
+- tools.mercury_integrity_auditor.config.PROJECT_ROOT
+- tools.mercury_integrity_auditor.config.STATUS_FAIL
+- tools.mercury_integrity_auditor.config.STATUS_INFO
+- tools.mercury_integrity_auditor.config.STATUS_PASS
+- tools.mercury_integrity_auditor.config.STATUS_WARNING
+- tools.mercury_integrity_auditor.models.AuditFinding
+- tools.mercury_integrity_auditor.models.AuditSection
+
+
+================================================================================
+tools.mercury_integrity_auditor.auditors.performance_auditor
+================================================================================
+
+Classes
+--------
+(nenhuma)
+
+Funções
+--------
+- _check_algorithmic_complexity
+- _check_caching
+- _check_critical_latency
+- _check_database_performance
+- _check_io_blocking
+- _check_memory_usage
+- _check_profiling_benchmarking
+- _check_resource_utilization
+- run
+
+Imports
+-------
+- pathlib.Path
+- sys
+- tools.mercury_integrity_auditor.config.CRITICAL
+- tools.mercury_integrity_auditor.config.HIGH
+- tools.mercury_integrity_auditor.config.LOW
+- tools.mercury_integrity_auditor.config.MEDIUM
+- tools.mercury_integrity_auditor.config.MERCURY_AI_DIR
+- tools.mercury_integrity_auditor.config.PROJECT_ROOT
+- tools.mercury_integrity_auditor.config.STATUS_FAIL
+- tools.mercury_integrity_auditor.config.STATUS_INCONCLUSIVE
+- tools.mercury_integrity_auditor.config.STATUS_INFO
+- tools.mercury_integrity_auditor.config.STATUS_PASS
+- tools.mercury_integrity_auditor.config.STATUS_WARNING
+- tools.mercury_integrity_auditor.models.AuditFinding
+- tools.mercury_integrity_auditor.models.AuditSection
+
+
+================================================================================
+tools.mercury_integrity_auditor.auditors.report
+================================================================================
+
+Classes
+--------
+(nenhuma)
+
+Funções
+--------
+- generate_consolidated_metrics
+- generate_executive_summary
+- generate_html_report
+- run
+- save_all_reports
+
+Imports
+-------
+- datetime.datetime
+- json
+- pathlib.Path
+- sys
+- tools.mercury_integrity_auditor.config.AUDIT_OUTPUT_DIR
+- tools.mercury_integrity_auditor.config.AUDIT_TIMESTAMP
+- tools.mercury_integrity_auditor.config.PROJECT_ROOT
+- tools.mercury_integrity_auditor.models.AuditFinding
+- tools.mercury_integrity_auditor.models.AuditReport
+- tools.mercury_integrity_auditor.models.AuditSection
+- typing.Any
+
+
+================================================================================
+tools.mercury_integrity_auditor.auditors.runtime_auditor
+================================================================================
+
+Classes
+--------
+(nenhuma)
+
+Funções
+--------
+- run
+
+Imports
+-------
+- pathlib.Path
+- subprocess
+- sys
+- time
+- tools.mercury_integrity_auditor.config.CRITICAL
+- tools.mercury_integrity_auditor.config.HIGH
+- tools.mercury_integrity_auditor.config.LOW
+- tools.mercury_integrity_auditor.config.MEDIUM
+- tools.mercury_integrity_auditor.config.PROJECT_ROOT
+- tools.mercury_integrity_auditor.config.STATUS_FAIL
+- tools.mercury_integrity_auditor.config.STATUS_INFO
+- tools.mercury_integrity_auditor.config.STATUS_PASS
+- tools.mercury_integrity_auditor.config.STATUS_WARNING
+- tools.mercury_integrity_auditor.models.AuditFinding
+- tools.mercury_integrity_auditor.models.AuditSection
+
+
+================================================================================
+tools.mercury_integrity_auditor.auditors.static_auditor
+================================================================================
+
+Classes
+--------
+- StaticAnalyzer
+
+Funções
+--------
+- __init__
+- _count_lines
+- _find_python_files
+- _is_stub
+- _parse_file
+- run
+- visit_AsyncFunctionDef
+- visit_ClassDef
+- visit_ExceptHandler
+- visit_FunctionDef
+- visit_Import
+- visit_ImportFrom
+
+Imports
+-------
+- ast
+- os
+- pathlib.Path
+- sys
+- tools.mercury_integrity_auditor.config.CRITICAL
+- tools.mercury_integrity_auditor.config.HIGH
+- tools.mercury_integrity_auditor.config.LOW
+- tools.mercury_integrity_auditor.config.MEDIUM
+- tools.mercury_integrity_auditor.config.MERCURY_AI_DIR
+- tools.mercury_integrity_auditor.config.PROJECT_ROOT
+- tools.mercury_integrity_auditor.config.STATUS_FAIL
+- tools.mercury_integrity_auditor.config.STATUS_INCONCLUSIVE
+- tools.mercury_integrity_auditor.config.STATUS_INFO
+- tools.mercury_integrity_auditor.config.STATUS_PASS
+- tools.mercury_integrity_auditor.config.STATUS_WARNING
+- tools.mercury_integrity_auditor.models.AuditFinding
+- tools.mercury_integrity_auditor.models.AuditSection
+
+
+================================================================================
+tools.mercury_integrity_auditor.auditors.test_auditor
+================================================================================
+
+Classes
+--------
+(nenhuma)
+
+Funções
+--------
+- run
+
+Imports
+-------
+- pathlib.Path
+- re
+- subprocess
+- sys
+- time
+- tools.mercury_integrity_auditor.config.CRITICAL
+- tools.mercury_integrity_auditor.config.HIGH
+- tools.mercury_integrity_auditor.config.LOW
+- tools.mercury_integrity_auditor.config.MEDIUM
+- tools.mercury_integrity_auditor.config.PROJECT_ROOT
+- tools.mercury_integrity_auditor.config.STATUS_FAIL
+- tools.mercury_integrity_auditor.config.STATUS_INFO
+- tools.mercury_integrity_auditor.config.STATUS_PASS
+- tools.mercury_integrity_auditor.config.STATUS_WARNING
+- tools.mercury_integrity_auditor.models.AuditFinding
+- tools.mercury_integrity_auditor.models.AuditSection
+
+
+================================================================================
+tools.mercury_integrity_auditor.auditors.universe_auditor
+================================================================================
+
+Classes
+--------
+(nenhuma)
+
+Funções
+--------
+- _check_corporate_actions
+- _check_data_coverage
+- _check_liquidity_filters
+- _check_sector_diversification
+- _check_universe_definition
+- _check_universe_rebalancing
+- run
+
+Imports
+-------
+- pathlib.Path
+- sys
+- tools.mercury_integrity_auditor.config.CRITICAL
+- tools.mercury_integrity_auditor.config.HIGH
+- tools.mercury_integrity_auditor.config.LOW
+- tools.mercury_integrity_auditor.config.MEDIUM
+- tools.mercury_integrity_auditor.config.MERCURY_AI_DIR
+- tools.mercury_integrity_auditor.config.PROJECT_ROOT
+- tools.mercury_integrity_auditor.config.STATUS_FAIL
+- tools.mercury_integrity_auditor.config.STATUS_INCONCLUSIVE
+- tools.mercury_integrity_auditor.config.STATUS_INFO
+- tools.mercury_integrity_auditor.config.STATUS_PASS
+- tools.mercury_integrity_auditor.config.STATUS_WARNING
+- tools.mercury_integrity_auditor.models.AuditFinding
+- tools.mercury_integrity_auditor.models.AuditSection
+
+
+================================================================================
+tools.mercury_integrity_auditor.config
+================================================================================
+
+Classes
+--------
+(nenhuma)
+
+Funções
+--------
+(nenhuma)
+
+Imports
+-------
+- datetime.datetime
+- os
+- pathlib.Path
+- sys
+
+
+================================================================================
+tools.mercury_integrity_auditor.main
+================================================================================
+
+Classes
+--------
+(nenhuma)
+
+Funções
+--------
+- compute_verdict
+- ensure_output_dir
+- generate_markdown_report
+- main
+- run_audit_phase
+
+Imports
+-------
+- auditors.backtest_auditor
+- auditors.contract_auditor
+- auditors.coverage_auditor
+- auditors.data_auditor
+- auditors.decision_auditor
+- auditors.dependency_auditor
+- auditors.determinism_auditor
+- auditors.explainability_auditor
+- auditors.flow_auditor
+- auditors.global_state_auditor
+- auditors.integrity_auditor
+- auditors.masking_auditor
+- auditors.performance_auditor
+- auditors.report
+- auditors.runtime_auditor
+- auditors.static_auditor
+- auditors.test_auditor
+- auditors.universe_auditor
+- config.AUDIT_OUTPUT_DIR
+- config.AUDIT_TIMESTAMP
+- config.CRITICAL
+- config.HIGH
+- config.LOW
+- config.MEDIUM
+- config.MERCURY_AI_DIR
+- config.PROJECT_ROOT
+- config.REPORT_JSON
+- config.REPORT_MD
+- config.STATUS_FAIL
+- config.STATUS_INCONCLUSIVE
+- config.STATUS_INFO
+- config.STATUS_PASS
+- config.STATUS_WARNING
+- config.TESTS_DIR
+- json
+- models.AuditFinding
+- models.AuditReport
+- models.AuditSection
+- pathlib.Path
+- subprocess
+- sys
+- time
+
+
+================================================================================
+tools.mercury_integrity_auditor.models
+================================================================================
+
+Classes
+--------
+- AuditFinding
+- AuditReport
+- AuditSection
+
+Funções
+--------
+- fail_count
+- inconclusive_count
+- info_count
+- pass_count
+- total_critical
+- total_fail
+- total_findings
+- total_pass
+- total_warning
+- warning_count
+
+Imports
+-------
+- dataclasses.dataclass
+- dataclasses.field
+- datetime.datetime
+- typing.Optional
+
+
+================================================================================
+tools.models
+================================================================================
+
+Classes
+--------
+- FileInfo
+- Inventory
+
+Funções
+--------
+(nenhuma)
+
+Imports
+-------
+- dataclasses.dataclass
+- dataclasses.field
 
 
 ================================================================================
@@ -6836,6 +8730,67 @@ Imports
 - dataclasses.asdict
 - json
 - pathlib.Path
+
+
+================================================================================
+tools.scanner
+================================================================================
+
+Classes
+--------
+- ProjectScanner
+
+Funções
+--------
+- scan
+
+Imports
+-------
+- config.IGNORE_DIRS
+- config.IGNORE_FILES
+- config.PROJECT_ROOT
+- config.SOURCE_EXTENSIONS
+- models.FileInfo
+- models.Inventory
+- pathlib.Path
+
+
+================================================================================
+tools.writer
+================================================================================
+
+Classes
+--------
+- InventoryWriter
+
+Funções
+--------
+- save
+
+Imports
+-------
+- config.PROJECT_ROOT
+- dataclasses.asdict
+- json
+- pathlib.Path
+
+
+================================================================================
+validate_universe_parity
+================================================================================
+
+Classes
+--------
+(nenhuma)
+
+Funções
+--------
+- validate_universe
+
+Imports
+-------
+- mercury_ai.config.universe.ALL_SYMBOLS
+- yfinance
 
 
 ================================================================================

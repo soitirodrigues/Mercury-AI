@@ -6,8 +6,13 @@ def test_scanner_auto_recovery_triggers_failover():
     # Setup scanner with mocked pipeline and provider_manager
     scanner = MercuryScanner()
     
-    # Register a test asset in the registry so it's picked up by scan()
+    # Clear the asset registry and add only our test assets
+    scanner.asset_registry.assets.clear()
     scanner.asset_registry.register_asset("BTC-USD", "Cripto", 5, "Demo", enabled=True)
+    scanner.asset_registry.register_asset("ETH-USD", "Cripto", 4, "Demo", enabled=True)
+    
+    # Mock get_assets_for_broker to return only our test assets
+    scanner.asset_registry.get_assets_for_broker = MagicMock(return_value=["BTC-USD", "ETH-USD"])
     
     # Mock pipeline to raise an exception on first call (simulating provider failure)
     mock_analysis = MagicMock()

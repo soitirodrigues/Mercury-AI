@@ -4,6 +4,7 @@ import zipfile
 from pathlib import Path
 from typing import Dict, Any, List, Optional, Callable
 from mercury_ai.analysis.data_exporter import DataExporter
+from mercury_ai.utils.atomic_io import atomic_json_write
 
 class ExportCenter:
     """
@@ -34,8 +35,7 @@ class ExportCenter:
         for fmt in formats:
             path = self.export_dir / f"{name}.{fmt}"
             if fmt == 'json':
-                with open(path, "w") as f:
-                    json.dump(data, f, indent=4, default=str)
+                atomic_json_write(str(path), data, indent=4, default=str)
             elif fmt == 'csv':
                 df.to_csv(path, index=False)
             elif fmt == 'xlsx':

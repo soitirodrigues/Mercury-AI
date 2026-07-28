@@ -1,0 +1,444 @@
+{
+    "timestamp": "2024-01-04T02:00:00",
+    "asset": "ASSET-A",
+    "timeframe": "M5",
+    "context": {
+        "market": {
+            "symbol": "ASSET-A",
+            "timeframe": "M5",
+            "close": 100.49671415301123,
+            "ema9": 100.49671415301123,
+            "ema21": 100.49671415301123,
+            "ema50": 100.49671415301123,
+            "rsi": NaN,
+            "atr": NaN,
+            "adx": 0.0,
+            "macd": 0.0,
+            "macd_signal": 0.0,
+            "bollinger_upper": NaN,
+            "bollinger_lower": NaN,
+            "volume": 1401.0
+        },
+        "trend": [
+            {
+                "engine_name": "Trend",
+                "evidence_name": "Price vs EMA9",
+                "direction": "BEARISH",
+                "strength": 80.0,
+                "confidence": 80.0,
+                "description": "Pre\u00e7o abaixo da EMA9",
+                "weight": 10.0,
+                "contribution_score": 0.0,
+                "quality_score": 100.0,
+                "context_score": 100.0,
+                "timeframe": "M5",
+                "timestamp": "2024-01-04T02:00:00",
+                "metadata": {}
+            }
+        ],
+        "price_action": {
+            "trend_structure": "UNKNOWN",
+            "last_event": "UNKNOWN",
+            "confidence": 0,
+            "explanation": [
+                "Dados insuficientes"
+            ]
+        },
+        "support_resistance": {
+            "support": 0.0,
+            "resistance": 0.0,
+            "distance_support": 0.0,
+            "distance_resistance": 0.0,
+            "explanation": [
+                "Dados insuficientes para an\u00e1lise de SR."
+            ]
+        },
+        "smart_money": {
+            "structure": {
+                "trend": "RANGE",
+                "higher_high": false,
+                "higher_low": false,
+                "lower_high": false,
+                "lower_low": false,
+                "swing_highs": 0,
+                "swing_lows": 0,
+                "confidence": 40,
+                "explanation": []
+            },
+            "score": 0,
+            "confidence": 0.0,
+            "institutional_score": 0.0,
+            "explanation": []
+        },
+        "liquidity": {
+            "internal_liquidity": 0.0,
+            "external_liquidity": 0.0,
+            "liquidity_sweep": false,
+            "equal_highs": false,
+            "equal_lows": false,
+            "stop_hunt_probability": 0.0,
+            "liquidity_density": 0.0
+        },
+        "market_state": {
+            "state": "MarketStateEnum.RANGING",
+            "explanation": "Mercado lateral | Sess\u00e3o: TOKYO"
+        },
+        "market_regime": {
+            "regime": "MarketRegimeEnum.CONSOLIDATION",
+            "confidence": 0.7,
+            "supporting_evidences": [
+                {
+                    "engine_name": "Trend",
+                    "evidence_name": "Price vs EMA9",
+                    "direction": "BEARISH",
+                    "strength": 80.0,
+                    "confidence": 80.0,
+                    "description": "Pre\u00e7o abaixo da EMA9",
+                    "weight": 10.0,
+                    "contribution_score": 0.0,
+                    "quality_score": 100.0,
+                    "context_score": 100.0,
+                    "timeframe": "M5",
+                    "timestamp": "2024-01-04T02:00:00",
+                    "metadata": {}
+                }
+            ]
+        },
+        "mtf_consensus": {
+            "global_bias": "BEARISH",
+            "local_bias": "BEARISH",
+            "conflict_detected": false,
+            "alignment_score": 0,
+            "conflict_score": 0,
+            "trend_alignment": 0,
+            "liquidity_alignment": 0,
+            "structure_alignment": 0,
+            "volatility_alignment": 0,
+            "dominant_trend": "BEARISH",
+            "institutional_consensus_strength": 0.0,
+            "summary": "Bias: BEARISH. Alignment: 0.0%. Conflict: 0.0%."
+        },
+        "risk_assessment": {
+            "suggested_stop": 101.50168129454134,
+            "suggested_take_profit": 98.486779869951,
+            "risk_reward_ratio": -2.0,
+            "expected_drawdown": 5.0,
+            "expected_volatility": NaN,
+            "trade_quality": 100.0,
+            "max_exposure": 0.02,
+            "invalidation_point": 101.50168129454134,
+            "institutional_risk_score": 60.0,
+            "var_95": 0.0,
+            "var_99": 0.0,
+            "cvar_95": 0.0,
+            "kelly_fraction": 0.25,
+            "kelly_half": 0.125,
+            "kelly_quarter": 0.0625,
+            "correlation_matrix": null,
+            "stress_test_loss": 0.5
+        }
+    },
+    "evidence_bundle": {
+        "evidences": [
+            {
+                "engine_name": "Trend",
+                "evidence_name": "Price vs EMA9",
+                "direction": "BEARISH",
+                "strength": 80.0,
+                "confidence": 80.0,
+                "description": "Pre\u00e7o abaixo da EMA9",
+                "weight": 10.0,
+                "contribution_score": 0.0,
+                "quality_score": 100.0,
+                "context_score": 100.0,
+                "timeframe": "M5",
+                "timestamp": "2024-01-04T02:00:00",
+                "metadata": {}
+            }
+        ],
+        "timestamp": "2024-01-04T02:00:00",
+        "asset": "ASSET-A",
+        "timeframe": "M5"
+    },
+    "decision_result": {
+        "decision": "WAIT",
+        "grade": "D",
+        "confidence": 0.6181,
+        "clarity": 5.0,
+        "risk_score": 60.0,
+        "score": 38.8215,
+        "quality": 53.0,
+        "expected_strength": 10.0,
+        "buy_probability": 0.0,
+        "sell_probability": 40.0,
+        "wait_probability": 60.0,
+        "expected_risk": 101.50168129454134,
+        "expected_reward": 98.486779869951,
+        "expected_drawdown": 5.0,
+        "audit_id": "c7a7742662b1b93e55f27773ba627d64347ad2a0f0d78d4a1a0efb12f65bf26e",
+        "version_metadata": {
+            "engine_version": "1.2.0",
+            "pipeline_version": "1.2.0",
+            "context_version": "1.2.0",
+            "weights_version": "1.2.0"
+        },
+        "explanation": {
+            "exec_summary": "Institutional WAIT signal triggered based on current market regime.",
+            "decision_rationale": "Decision WAIT based on neutral market state and confluence of 1 evidences.",
+            "market_context": "Session: UNKNOWN",
+            "trend_context": "Bias: BEARISH",
+            "liquidity_context": "Liquidity assessed via profile.",
+            "structure_context": "Structure: RANGE",
+            "momentum_context": "Momentum assessed via CandlestickEngine.",
+            "volume_context": "Volume check passed.",
+            "smart_money_context": "Smart Money confirmed.",
+            "confluence_context": "Net Confluence: 5.00",
+            "risk_assessment": "Risk Score: 60.0",
+            "confidence_rationale": "Confidence calibrated via evidence quality and consistency.",
+            "strong_evidences": [
+                "Price vs EMA9"
+            ],
+            "weak_evidences": [],
+            "missing_confirmations": [
+                "Volume"
+            ],
+            "detected_risks": [],
+            "bullish_factors": [],
+            "bearish_factors": [
+                "Price vs EMA9"
+            ],
+            "neutral_factors": [],
+            "conflicts": [],
+            "logical_sequence": [
+                "Price vs EMA9"
+            ],
+            "risk_analysis": "Score: 60.0",
+            "institutional_context": "Regime: MarketRegimeEnum.CONSOLIDATION",
+            "suggested_entry": 100.49671415301123,
+            "suggested_stop": 101.50168129454134,
+            "suggested_targets": [
+                98.486779869951
+            ],
+            "confidence_explanation": "Score: 100.0",
+            "machine_readable": {
+                "decision": "WAIT",
+                "confluence": 5.0,
+                "evidence_count": 1
+            },
+            "engine_weights": {
+                "Trend": 10.0
+            },
+            "warnings": []
+        },
+        "mtf_consensus": null,
+        "market_regime": null,
+        "trade_allowed": true,
+        "trade_block_reasons": [],
+        "trade_quality_score": 0.0,
+        "trade_quality_level": "N/A",
+        "trace": null,
+        "warnings": [],
+        "weaknesses": [],
+        "blockers": [],
+        "summary": "Institutional WAIT signal triggered based on current market regime.",
+        "technical_reason": "Decision WAIT based on neutral market state and confluence of 1 evidences.",
+        "institutional_alignment": false,
+        "evidence_ranking": {
+            "ranked_evidences": [
+                {
+                    "engine_name": "Trend",
+                    "evidence_name": "Price vs EMA9",
+                    "direction": "BEARISH",
+                    "strength": 80.0,
+                    "confidence": 80.0,
+                    "description": "Pre\u00e7o abaixo da EMA9",
+                    "weight": 10.0,
+                    "contribution_score": 0.064,
+                    "quality_score": 100.0,
+                    "context_score": 100.0,
+                    "timeframe": "M5",
+                    "timestamp": "2024-01-04T02:00:00",
+                    "metadata": {}
+                }
+            ],
+            "contribution_percentage": {
+                "BULLISH": 0.0,
+                "BEARISH": 100.0,
+                "NEUTRAL": 0.0
+            },
+            "strongest_evidence": {
+                "engine_name": "Trend",
+                "evidence_name": "Price vs EMA9",
+                "direction": "BEARISH",
+                "strength": 80.0,
+                "confidence": 80.0,
+                "description": "Pre\u00e7o abaixo da EMA9",
+                "weight": 10.0,
+                "contribution_score": 0.064,
+                "quality_score": 100.0,
+                "context_score": 100.0,
+                "timeframe": "M5",
+                "timestamp": "2024-01-04T02:00:00",
+                "metadata": {}
+            },
+            "weakest_evidence": {
+                "engine_name": "Trend",
+                "evidence_name": "Price vs EMA9",
+                "direction": "BEARISH",
+                "strength": 80.0,
+                "confidence": 80.0,
+                "description": "Pre\u00e7o abaixo da EMA9",
+                "weight": 10.0,
+                "contribution_score": 0.064,
+                "quality_score": 100.0,
+                "context_score": 100.0,
+                "timeframe": "M5",
+                "timestamp": "2024-01-04T02:00:00",
+                "metadata": {}
+            },
+            "total_weight": 10.0,
+            "bullish_weight": 0,
+            "bearish_weight": 10.0,
+            "neutral_weight": 0,
+            "bullish_score": 0,
+            "bearish_score": 0.064,
+            "neutral_score": 0,
+            "top_bullish_evidence": null,
+            "top_bearish_evidence": {
+                "engine_name": "Trend",
+                "evidence_name": "Price vs EMA9",
+                "direction": "BEARISH",
+                "strength": 80.0,
+                "confidence": 80.0,
+                "description": "Pre\u00e7o abaixo da EMA9",
+                "weight": 10.0,
+                "contribution_score": 0.064,
+                "quality_score": 100.0,
+                "context_score": 100.0,
+                "timeframe": "M5",
+                "timestamp": "2024-01-04T02:00:00",
+                "metadata": {}
+            },
+            "top_neutral_evidence": null
+        },
+        "explainability": {
+            "decision": "WAIT",
+            "reason": "Regra 3: dominant_direction=SELL, grade=D, conflict=False, is_valid=True",
+            "dominant_direction": "SELL",
+            "opportunity_grade": "D",
+            "conflicting_signals": false,
+            "institutional_score": 38.8215,
+            "confidence": 61.809999999999995,
+            "triggered_rule": 3,
+            "contributions": [
+                {
+                    "engine_name": "Trend",
+                    "weight": 1.0,
+                    "raw_score": 80.0,
+                    "weighted_score": 0.8,
+                    "direction": "BEARISH",
+                    "confidence": 80.0,
+                    "explanation": "Trend: direcao=BEARISH, strength=80.0, peso=1.0, contribuicao_ponderada=0.8000"
+                }
+            ],
+            "decision_chain": [
+                "1.Validation: is_valid=True",
+                "2.Quality: avg=100.00",
+                "3.Conflict: score=1.00",
+                "4.Ranking: 1 evidencias",
+                "5.Memory: consistency=0.00",
+                "6.Confidence: final=61.81",
+                "7.Confluence: direction=SELL, weighted=5.00",
+                "8.Probability: grade=D, buy=0.00, sell=40.00",
+                "9.Resolver: rule=3, decision=WAIT"
+            ]
+        }
+    },
+    "version_metadata": {
+        "engine_version": "1.2.0",
+        "pipeline_version": "1.2.0",
+        "context_version": "1.2.0",
+        "weights_version": "1.2.0"
+    },
+    "audit_events": [],
+    "session_id": "fed42a31-3119-452c-8a32-647c0345e26d",
+    "evidence_ranking": {
+        "ranked_evidences": [
+            {
+                "engine_name": "Trend",
+                "evidence_name": "Price vs EMA9",
+                "direction": "BEARISH",
+                "strength": 80.0,
+                "confidence": 80.0,
+                "description": "Pre\u00e7o abaixo da EMA9",
+                "weight": 10.0,
+                "contribution_score": 0.064,
+                "quality_score": 100.0,
+                "context_score": 100.0,
+                "timeframe": "M5",
+                "timestamp": "2024-01-04T02:00:00",
+                "metadata": {}
+            }
+        ],
+        "contribution_percentage": {
+            "BULLISH": 0.0,
+            "BEARISH": 100.0,
+            "NEUTRAL": 0.0
+        },
+        "strongest_evidence": {
+            "engine_name": "Trend",
+            "evidence_name": "Price vs EMA9",
+            "direction": "BEARISH",
+            "strength": 80.0,
+            "confidence": 80.0,
+            "description": "Pre\u00e7o abaixo da EMA9",
+            "weight": 10.0,
+            "contribution_score": 0.064,
+            "quality_score": 100.0,
+            "context_score": 100.0,
+            "timeframe": "M5",
+            "timestamp": "2024-01-04T02:00:00",
+            "metadata": {}
+        },
+        "weakest_evidence": {
+            "engine_name": "Trend",
+            "evidence_name": "Price vs EMA9",
+            "direction": "BEARISH",
+            "strength": 80.0,
+            "confidence": 80.0,
+            "description": "Pre\u00e7o abaixo da EMA9",
+            "weight": 10.0,
+            "contribution_score": 0.064,
+            "quality_score": 100.0,
+            "context_score": 100.0,
+            "timeframe": "M5",
+            "timestamp": "2024-01-04T02:00:00",
+            "metadata": {}
+        },
+        "total_weight": 10.0,
+        "bullish_weight": 0,
+        "bearish_weight": 10.0,
+        "neutral_weight": 0,
+        "bullish_score": 0,
+        "bearish_score": 0.064,
+        "neutral_score": 0,
+        "top_bullish_evidence": null,
+        "top_bearish_evidence": {
+            "engine_name": "Trend",
+            "evidence_name": "Price vs EMA9",
+            "direction": "BEARISH",
+            "strength": 80.0,
+            "confidence": 80.0,
+            "description": "Pre\u00e7o abaixo da EMA9",
+            "weight": 10.0,
+            "contribution_score": 0.064,
+            "quality_score": 100.0,
+            "context_score": 100.0,
+            "timeframe": "M5",
+            "timestamp": "2024-01-04T02:00:00",
+            "metadata": {}
+        },
+        "top_neutral_evidence": null
+    },
+    "version": "0.1"
+}

@@ -40,7 +40,7 @@ class DemoOperationsManager:
                     }
                 }
                 self.demo_log.append(log_entry)
-            except Exception as e:
-                logging.error(f"Erro na simulação para {symbol}: {e}")
+            except (RuntimeError, ValueError, TypeError, KeyError, OSError, AttributeError) as e:
+                logging.error("Erro na simulação para %s: %s", symbol, e, exc_info=True)
         
         return self.demo_log

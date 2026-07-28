@@ -1,9 +1,35 @@
 {
-    "python_files": 334,
-    "parsed_files": 334,
-    "failed_files": 0,
-    "classes": 258,
-    "functions": 637,
-    "imports": 1424,
-    "errors": []
+    "python_files": 402,
+    "parsed_files": 397,
+    "failed_files": 5,
+    "classes": 322,
+    "functions": 999,
+    "imports": 2103,
+    "errors": [
+        {
+            "file": "tools\\mercury_integrity_auditor\\contract_audit.py",
+            "error": "SyntaxError",
+            "message": "invalid syntax (<unknown>, line 3)"
+        },
+        {
+            "file": "tools\\mercury_integrity_auditor\\dependency_audit.py",
+            "error": "SyntaxError",
+            "message": "invalid syntax (<unknown>, line 3)"
+        },
+        {
+            "file": "tools\\mercury_integrity_auditor\\final_report.py",
+            "error": "SyntaxError",
+            "message": "invalid syntax (<unknown>, line 3)"
+        },
+        {
+            "file": "tools\\mercury_integrity_auditor\\runtime_audit.py",
+            "error": "SyntaxError",
+            "message": "invalid syntax (<unknown>, line 3)"
+        },
+        {
+            "file": "tools\\mercury_integrity_auditor\\static_audit.py",
+            "error": "SyntaxError",
+            "message": "invalid syntax (<unknown>, line 5)"
+        }
+    ]
 }

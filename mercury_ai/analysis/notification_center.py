@@ -1,8 +1,8 @@
-import json
 import csv
 from dataclasses import dataclass, field
 from typing import List, Optional
 from mercury_ai.utils.deterministic_clock import DeterministicClock
+from mercury_ai.utils.atomic_io import atomic_json_write
 
 @dataclass
 class Notification:
@@ -31,8 +31,7 @@ class NotificationCenter:
         return history
 
     def export_to_json(self, filepath: str):
-        with open(filepath, 'w') as f:
-            json.dump([n.__dict__ for n in self._history], f, indent=4)
+        atomic_json_write(filepath, [n.__dict__ for n in self._history], indent=4)
 
     def export_to_csv(self, filepath: str):
         with open(filepath, 'w', newline='') as f:

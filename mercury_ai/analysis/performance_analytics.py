@@ -2,6 +2,7 @@ from typing import List, Dict, Any
 from mercury_ai.database.snapshot_logger import DecisionSnapshotLogger
 from mercury_ai.data.market_data import MarketDataService
 from mercury_ai.providers.yahoo_finance_provider import YahooFinanceProvider
+from mercury_ai.core.exceptions import MarketClosedException
 from datetime import datetime
 
 class PerformanceAnalytics:
@@ -21,7 +22,7 @@ class PerformanceAnalytics:
             # Get historical data for trade analysis
             try:
                 df = self.market_service.get_data(symbol)
-            except (KeyError, IndexError, ValueError, ConnectionError, RuntimeError):
+            except (KeyError, IndexError, ValueError, ConnectionError, RuntimeError, MarketClosedException):
                 continue  # Skip if data cannot be retrieved
             
             # Normalize entry_time to match df index timezone

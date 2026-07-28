@@ -1,0 +1,1117 @@
+{
+  "project": "Mercury AI V1",
+  "audit_date": "2026-08-01T13:47:42.170542",
+  "release_gate_verdict": "NO_GO",
+  "release_gate_reason": "3 falha(s) crítica(s) encontrada(s). Correção obrigatória antes do release.",
+  "sections": [
+    {
+      "name": "1. Static Audit (AST)",
+      "status": "WARNING",
+      "findings": [
+        {
+          "id": "STATIC-001",
+          "category": "Static Audit",
+          "severity": "LOW",
+          "status": "INFO",
+          "title": "Total de arquivos Python analisados: 261",
+          "description": "261 arquivos .py em C:\\Projetos\\Mercury-AI\\mercury_ai, 707 funções, 286 classes.",
+          "location": "C:\\Projetos\\Mercury-AI\\mercury_ai",
+          "evidence": "",
+          "recommendation": ""
+        },
+        {
+          "id": "STATIC-002",
+          "category": "Static Audit",
+          "severity": "LOW",
+          "status": "PASS",
+          "title": "Nenhum erro de sintaxe encontrado",
+          "description": "Todos os arquivos Python foram parseados com sucesso.",
+          "location": "",
+          "evidence": "",
+          "recommendation": ""
+        },
+        {
+          "id": "STATIC-003",
+          "category": "Static Audit",
+          "severity": "MEDIUM",
+          "status": "WARNING",
+          "title": "19 função(ões) stub (não implementadas)",
+          "description": "Funções que levantam NotImplementedError ou têm corpo vazio:\n  mercury_ai\\data\\market_data_provider.py:5 -> get_data()\n  mercury_ai\\data\\mercury_data_provider.py:48 -> connect()\n  mercury_ai\\data\\mercury_data_provider.py:49 -> health()\n  mercury_ai\\data\\mercury_data_provider.py:50 -> get_history()\n  mercury_ai\\data\\mercury_data_provider.py:51 -> get_last_price()\n  mercury_ai\\data\\mercury_data_provider.py:52 -> get_candles()\n  mercury_ai\\data\\mercury_data_provider.py:53 -> market_status()\n  mercury_ai\\providers\\base_provider.py:5 -> get_data()\n  mercury_ai\\providers\\base_provider.py:8 -> is_available()\n  mercury_ai\\providers\\base_provider.py:11 -> supports_symbol()\n  mercury_ai\\providers\\base_provider.py:14 -> supports_market()\n  mercury_ai\\providers\\base_provider.py:17 -> supports_timeframe()\n  mercury_ai\\providers\\base_provider.py:20 -> max_history()\n  mercury_ai\\providers\\base_provider.py:23 -> source_name()\n  mercury_ai\\providers\\data_interfaces.py:12 -> get_data()\n  mercury_ai\\providers\\data_interfaces.py:14 -> check_health()\n  mercury_ai\\providers\\future_broker_provider.py:2 -> get_data()\n  mercury_ai\\providers\\future_polygon_provider.py:2 -> get_data()\n  mercury_ai\\providers\\future_tradingview_provider.py:2 -> get_data()",
+          "location": "Vários",
+          "evidence": "",
+          "recommendation": "Implementar ou remover funções stub antes do release."
+        },
+        {
+          "id": "STATIC-004",
+          "category": "Static Audit",
+          "severity": "LOW",
+          "status": "PASS",
+          "title": "Nenhum bare except encontrado",
+          "description": "Todos os blocos except especificam o tipo de exceção.",
+          "location": "",
+          "evidence": "",
+          "recommendation": ""
+        },
+        {
+          "id": "STATIC-005",
+          "category": "Static Audit",
+          "severity": "MEDIUM",
+          "status": "WARNING",
+          "title": "7 função(ões) muito longas (>200 linhas)",
+          "description": "Funções com mais de 200 linhas:\n  mercury_ai\\analysis\\market_structure_intelligence_engine.py:17 evaluate() — 204 linhas\n  mercury_ai\\analysis\\swing_engine.py:65 detect_swings() — 215 linhas\n  mercury_ai\\analysis\\volatility_engine.py:20 analyze() — 222 linhas\n  mercury_ai\\analysis\\volume_intelligence_engine.py:15 evaluate() — 218 linhas\n  mercury_ai\\brain\\mercury_decision_engine.py:113 _analyze_logic() — 287 linhas\n  mercury_ai\\brain\\probability_engine.py:34 analyze() — 212 linhas\n  mercury_ai\\core\\analysis_pipeline.py:159 analyze() — 267 linhas",
+          "location": "",
+          "evidence": "",
+          "recommendation": "Refatorar funções longas em unidades menores."
+        }
+      ]
+    },
+    {
+      "name": "2. Contract Audit",
+      "status": "PASS",
+      "findings": [
+        {
+          "id": "CONTRACT-RiskAssessment-001",
+          "category": "Contract Audit",
+          "severity": "LOW",
+          "status": "PASS",
+          "title": "RiskAssessment está corretamente frozen=True",
+          "description": "Dataclass RiskAssessment com frozen=True.",
+          "location": "",
+          "evidence": "",
+          "recommendation": ""
+        },
+        {
+          "id": "CONTRACT-RiskAssessment-002",
+          "category": "Contract Audit",
+          "severity": "LOW",
+          "status": "PASS",
+          "title": "RiskAssessment: todos os campos obrigatórios presentes",
+          "description": "17 campos verificados.",
+          "location": "",
+          "evidence": "",
+          "recommendation": ""
+        },
+        {
+          "id": "CONTRACT-MarketData-001",
+          "category": "Contract Audit",
+          "severity": "LOW",
+          "status": "PASS",
+          "title": "MarketData está corretamente frozen=True",
+          "description": "Dataclass MarketData com frozen=True.",
+          "location": "",
+          "evidence": "",
+          "recommendation": ""
+        },
+        {
+          "id": "CONTRACT-MarketData-002",
+          "category": "Contract Audit",
+          "severity": "LOW",
+          "status": "PASS",
+          "title": "MarketData: todos os campos obrigatórios presentes",
+          "description": "14 campos verificados.",
+          "location": "",
+          "evidence": "",
+          "recommendation": ""
+        },
+        {
+          "id": "CONTRACT-MarketContext-001",
+          "category": "Contract Audit",
+          "severity": "LOW",
+          "status": "PASS",
+          "title": "MarketContext está corretamente frozen=True",
+          "description": "Dataclass MarketContext com frozen=True.",
+          "location": "",
+          "evidence": "",
+          "recommendation": ""
+        },
+        {
+          "id": "CONTRACT-MarketContext-002",
+          "category": "Contract Audit",
+          "severity": "LOW",
+          "status": "PASS",
+          "title": "MarketContext: todos os campos obrigatórios presentes",
+          "description": "10 campos verificados.",
+          "location": "",
+          "evidence": "",
+          "recommendation": ""
+        },
+        {
+          "id": "CONTRACT-MarketEvidenceBundle-001",
+          "category": "Contract Audit",
+          "severity": "LOW",
+          "status": "PASS",
+          "title": "MarketEvidenceBundle está corretamente frozen=True",
+          "description": "Dataclass MarketEvidenceBundle com frozen=True.",
+          "location": "",
+          "evidence": "",
+          "recommendation": ""
+        },
+        {
+          "id": "CONTRACT-MarketEvidenceBundle-002",
+          "category": "Contract Audit",
+          "severity": "LOW",
+          "status": "PASS",
+          "title": "MarketEvidenceBundle: todos os campos obrigatórios presentes",
+          "description": "1 campos verificados.",
+          "location": "",
+          "evidence": "",
+          "recommendation": ""
+        },
+        {
+          "id": "CONTRACT-SUMMARY",
+          "category": "Contract Audit",
+          "severity": "LOW",
+          "status": "INFO",
+          "title": "Total de dataclasses encontrados: 65",
+          "description": "Dataclasses: AnalysisResult, AssetPerformance, BenchmarkMetrics, BenchmarkReport, BenchmarkRunResult, CandlestickAnalysis, ConfidenceResult, ConfluenceResult, ConfluenceScore, DataQualityResult, DecisionInput, DecisionNode, DecisionOutcome, DecisionResult, DecisionSnapshot, DecisionTrace, Evidence, EvidenceRankingResult, FairValueGapAnalysis, HotspotReport, HotspotSummary, LiquidityAnalysis, LiquidityProfile, LiquidityResult, MTFConsensus, MarketCondition, MarketContext, MarketData, MarketEvidenceBundle, MarketRegime, MarketState, MarketStructure, MarketStructureProfile, MarketThesis, MemoryAuditResult, MemorySnapshot, MomentumAnalysis, PerformanceMetrics, PipelineMetric, PipelineProfile, PriceActionAnalysis, ProbabilityResult, ProfessionalThesis, RegressionResult, RiskAssessment, SessionAnalysis, Signal, SmartMoneyAnalysis, StageMetric, StageProfile, StressTestResult, SupportResistanceAnalysis, Swing, SwingSequenceResult, TradeFilterResult, TradeMemory, TradePermission, TradingExplanation, TrendAnalysis, UniversePerformance, VWAPAnalysis, VersionMetadata, VolatilityAnalysis, VolumeAnalysis, VolumeProfile",
+          "location": "",
+          "evidence": "",
+          "recommendation": ""
+        }
+      ]
+    },
+    {
+      "name": "3. Dependency Audit",
+      "status": "WARNING",
+      "findings": [
+        {
+          "id": "DEP-001",
+          "category": "Dependency Audit",
+          "severity": "LOW",
+          "status": "PASS",
+          "title": "requirements.txt com 12 dependências declaradas",
+          "description": "Dependências: numpy, openai, pandas, plotly, psutil, pytest, python-dotenv, requests, scipy, streamlit, ta, yfinance",
+          "location": "",
+          "evidence": "",
+          "recommendation": ""
+        },
+        {
+          "id": "DEP-002",
+          "category": "Dependency Audit",
+          "severity": "LOW",
+          "status": "PASS",
+          "title": "Todas as dependências declaradas estão instaladas",
+          "description": "12 pacotes verificados.",
+          "location": "",
+          "evidence": "",
+          "recommendation": ""
+        },
+        {
+          "id": "DEP-003",
+          "category": "Dependency Audit",
+          "severity": "MEDIUM",
+          "status": "WARNING",
+          "title": "3 import(s) de terceiros não declarados em requirements.txt",
+          "description": "Pacotes importados mas não listados: __future__, gc, tracemalloc",
+          "location": "",
+          "evidence": "",
+          "recommendation": "Adicionar pacotes ao requirements.txt ou verificar se são necessários."
+        },
+        {
+          "id": "DEP-004",
+          "category": "Dependency Audit",
+          "severity": "LOW",
+          "status": "PASS",
+          "title": "Nenhuma dependência circular detectada",
+          "description": "Todos os imports internos são acíclicos.",
+          "location": "",
+          "evidence": "",
+          "recommendation": ""
+        }
+      ]
+    },
+    {
+      "name": "4. Masking Audit",
+      "status": "PASS",
+      "findings": [
+        {
+          "id": "MASK-001",
+          "category": "Masking Audit",
+          "severity": "LOW",
+          "status": "PASS",
+          "title": "Nenhum Mock/MagicMock em código de produção",
+          "description": "Verificação de mock em produção passou.",
+          "location": "",
+          "evidence": "",
+          "recommendation": ""
+        },
+        {
+          "id": "MASK-002",
+          "category": "Masking Audit",
+          "severity": "LOW",
+          "status": "PASS",
+          "title": "Nenhum bare except em produção",
+          "description": "Todos os blocos except especificam o tipo.",
+          "location": "",
+          "evidence": "",
+          "recommendation": ""
+        }
+      ]
+    },
+    {
+      "name": "5. Runtime Audit",
+      "status": "PASS",
+      "findings": [
+        {
+          "id": "RUNTIME-001",
+          "category": "Runtime Audit",
+          "severity": "LOW",
+          "status": "INFO",
+          "title": "main.py executado 3 vezes",
+          "description": "Sucesso: 3/3, Falhas: 0/3",
+          "location": "",
+          "evidence": "",
+          "recommendation": ""
+        },
+        {
+          "id": "RUNTIME-002",
+          "category": "Runtime Audit",
+          "severity": "LOW",
+          "status": "PASS",
+          "title": "Nenhum crash detectado",
+          "description": "main.py executou 3 vezes sem erros.",
+          "location": "",
+          "evidence": "",
+          "recommendation": ""
+        },
+        {
+          "id": "RUNTIME-003",
+          "category": "Runtime Audit",
+          "severity": "LOW",
+          "status": "INFO",
+          "title": "Tempo médio de execução: 3.58s (max: 7.29s)",
+          "description": "Baseado em 3 execuções bem-sucedidas.",
+          "location": "",
+          "evidence": "",
+          "recommendation": ""
+        },
+        {
+          "id": "RUNTIME-004",
+          "category": "Runtime Audit",
+          "severity": "LOW",
+          "status": "PASS",
+          "title": "Saída consistente entre execuções",
+          "description": "Todas as execuções produziram 0 linhas de stdout.",
+          "location": "",
+          "evidence": "",
+          "recommendation": ""
+        }
+      ]
+    },
+    {
+      "name": "6. Flow & Pipeline Audit",
+      "status": "WARNING",
+      "findings": [
+        {
+          "id": "FLOW-AnalysisPipeline-METHODS",
+          "category": "Flow Audit",
+          "severity": "HIGH",
+          "status": "WARNING",
+          "title": "AnalysisPipeline: métodos esperados ausentes",
+          "description": "Encontrados: [], Ausentes: ['run', 'execute', 'process']",
+          "location": "mercury_ai\\core\\analysis_pipeline.py:57",
+          "evidence": "",
+          "recommendation": "Implementar métodos: run, execute, process"
+        },
+        {
+          "id": "FLOW-HistoricalReplayEngine-METHODS",
+          "category": "Flow Audit",
+          "severity": "HIGH",
+          "status": "WARNING",
+          "title": "HistoricalReplayEngine: métodos esperados ausentes",
+          "description": "Encontrados: ['run_replay'], Ausentes: ['replay', 'process']",
+          "location": "mercury_ai\\analysis\\historical_replay_engine.py:27",
+          "evidence": "",
+          "recommendation": "Implementar métodos: replay, process"
+        },
+        {
+          "id": "FLOW-RiskEngine",
+          "category": "Flow Audit",
+          "severity": "LOW",
+          "status": "PASS",
+          "title": "RiskEngine encontrado com todos os métodos",
+          "description": "Localizado em mercury_ai\\analysis\\risk_engine.py:29, métodos: assess",
+          "location": "",
+          "evidence": "",
+          "recommendation": ""
+        },
+        {
+          "id": "FLOW-InstitutionalMemoryEngine",
+          "category": "Flow Audit",
+          "severity": "LOW",
+          "status": "PASS",
+          "title": "InstitutionalMemoryEngine encontrado com todos os métodos",
+          "description": "Localizado em mercury_ai\\analysis\\institutional_memory_engine.py:10, métodos: record_decision, record_outcome",
+          "location": "",
+          "evidence": "",
+          "recommendation": ""
+        },
+        {
+          "id": "FLOW-MercuryDecisionEngine-METHODS",
+          "category": "Flow Audit",
+          "severity": "HIGH",
+          "status": "WARNING",
+          "title": "MercuryDecisionEngine: métodos esperados ausentes",
+          "description": "Encontrados: [], Ausentes: ['decide', 'evaluate']",
+          "location": "mercury_ai\\brain\\mercury_decision_engine.py:38",
+          "evidence": "",
+          "recommendation": "Implementar métodos: decide, evaluate"
+        },
+        {
+          "id": "FLOW-PerformanceEngine-METHODS",
+          "category": "Flow Audit",
+          "severity": "HIGH",
+          "status": "WARNING",
+          "title": "PerformanceEngine: métodos esperados ausentes",
+          "description": "Encontrados: [], Ausentes: ['calculate', 'evaluate']",
+          "location": "mercury_ai\\analysis\\performance_engine.py:7",
+          "evidence": "",
+          "recommendation": "Implementar métodos: calculate, evaluate"
+        },
+        {
+          "id": "FLOW-PipelineExecutor-METHODS",
+          "category": "Flow Audit",
+          "severity": "HIGH",
+          "status": "WARNING",
+          "title": "PipelineExecutor: métodos esperados ausentes",
+          "description": "Encontrados: ['execute'], Ausentes: ['run']",
+          "location": "mercury_ai\\core\\pipeline_executor.py:7",
+          "evidence": "",
+          "recommendation": "Implementar métodos: run"
+        },
+        {
+          "id": "FLOW-ReplayBatchProcessor-METHODS",
+          "category": "Flow Audit",
+          "severity": "HIGH",
+          "status": "WARNING",
+          "title": "ReplayBatchProcessor: métodos esperados ausentes",
+          "description": "Encontrados: [], Ausentes: ['process_batch', 'run']",
+          "location": "mercury_ai\\analysis\\replay_batch_processor.py:58",
+          "evidence": "",
+          "recommendation": "Implementar métodos: process_batch, run"
+        },
+        {
+          "id": "FLOW-SUMMARY",
+          "category": "Flow Audit",
+          "severity": "LOW",
+          "status": "INFO",
+          "title": "Componentes: 8/8 encontrados, 0 ausentes, 6 com métodos faltando",
+          "description": "Resumo da auditoria de fluxo.",
+          "location": "",
+          "evidence": "",
+          "recommendation": ""
+        }
+      ]
+    },
+    {
+      "name": "7. Test Audit",
+      "status": "PASS",
+      "findings": [
+        {
+          "id": "TEST-001",
+          "category": "Test Audit",
+          "severity": "LOW",
+          "status": "PASS",
+          "title": "Todos os 100 testes passaram!",
+          "description": "100 passed, 0 failed, 0 errors em 1683.3s",
+          "location": "",
+          "evidence": "",
+          "recommendation": ""
+        },
+        {
+          "id": "TEST-003",
+          "category": "Test Audit",
+          "severity": "LOW",
+          "status": "INFO",
+          "title": "Tempo total de execução: 1683.3s",
+          "description": "100 testes executados em 1683.3s.",
+          "location": "",
+          "evidence": "",
+          "recommendation": ""
+        },
+        {
+          "id": "TEST-004",
+          "category": "Test Audit",
+          "severity": "LOW",
+          "status": "INFO",
+          "title": "Cobertura de código não disponível",
+          "description": "pytest-cov não instalado ou erro na execução.",
+          "location": "",
+          "evidence": "",
+          "recommendation": ""
+        }
+      ]
+    },
+    {
+      "name": "8. Decision Integrity Audit",
+      "status": "WARNING",
+      "findings": [
+        {
+          "id": "DEC-001",
+          "category": "Decision Audit",
+          "severity": "LOW",
+          "status": "INFO",
+          "title": "Total de pontos de decisão: 8",
+          "description": "Encontrados em 8 arquivos de decisão.",
+          "location": "",
+          "evidence": "",
+          "recommendation": ""
+        },
+        {
+          "id": "DEC-002",
+          "category": "Decision Audit",
+          "severity": "LOW",
+          "status": "PASS",
+          "title": "Nenhuma chamada a random() detectada",
+          "description": "Decisões parecem ser determinísticas.",
+          "location": "",
+          "evidence": "",
+          "recommendation": ""
+        },
+        {
+          "id": "DEC-003",
+          "category": "Decision Audit",
+          "severity": "MEDIUM",
+          "status": "WARNING",
+          "title": "Nenhum guard contra NaN/Inf detectado",
+          "description": "Decisões podem produzir valores inválidos sem detecção.",
+          "location": "",
+          "evidence": "",
+          "recommendation": "Adicionar verificações math.isfinite() em cálculos críticos."
+        },
+        {
+          "id": "DEC-004",
+          "category": "Decision Audit",
+          "severity": "LOW",
+          "status": "PASS",
+          "title": "Validação de decisão detectada",
+          "description": "O código contém asserts/validações nas decisões.",
+          "location": "",
+          "evidence": "",
+          "recommendation": ""
+        }
+      ]
+    },
+    {
+      "name": "9. Coverage Audit",
+      "status": "WARNING",
+      "findings": [
+        {
+          "id": "COV-001",
+          "category": "Coverage Audit",
+          "severity": "HIGH",
+          "status": "WARNING",
+          "title": "Falha ao obter dados de cobertura",
+          "description": "Erro: timeout. Cobertura não pôde ser medida.",
+          "location": "",
+          "evidence": "",
+          "recommendation": "Verificar se pytest-cov está instalado e configurado."
+        },
+        {
+          "id": "COV-004",
+          "category": "Coverage Audit",
+          "severity": "LOW",
+          "status": "PASS",
+          "title": "Todos os módulos têm testes associados",
+          "description": "Cada módulo do mercury_ai tem pelo menos um teste que o importa.",
+          "location": "",
+          "evidence": "",
+          "recommendation": ""
+        }
+      ]
+    },
+    {
+      "name": "10. Integrity Audit",
+      "status": "WARNING",
+      "findings": [
+        {
+          "id": "INT-CFG-CONFIG.JSON",
+          "category": "Integrity Audit",
+          "severity": "LOW",
+          "status": "PASS",
+          "title": "Configuração válida: config.json",
+          "description": "JSON bem formado e legível.",
+          "location": "",
+          "evidence": "",
+          "recommendation": ""
+        },
+        {
+          "id": "INT-CFG-MODELS.JSON",
+          "category": "Integrity Audit",
+          "severity": "LOW",
+          "status": "PASS",
+          "title": "Configuração válida: models.json",
+          "description": "JSON bem formado e legível.",
+          "location": "",
+          "evidence": "",
+          "recommendation": ""
+        },
+        {
+          "id": "INT-RUNTIME-002",
+          "category": "Integrity Audit",
+          "severity": "LOW",
+          "status": "PASS",
+          "title": "Todos os relatórios de runtime têm JSON válido",
+          "description": "0 arquivos verificados com sucesso.",
+          "location": "",
+          "evidence": "",
+          "recommendation": ""
+        },
+        {
+          "id": "INT-RUNTIME-004",
+          "category": "Integrity Audit",
+          "severity": "MEDIUM",
+          "status": "WARNING",
+          "title": "100 relatórios com schema incompleto",
+          "description": "Chaves esperadas: {'decision', 'timestamp', 'metadata', 'symbol', 'price', 'indicators'}. Alguns relatórios faltam campos obrigatórios.",
+          "location": "",
+          "evidence": "",
+          "recommendation": ""
+        },
+        {
+          "id": "INT-DOTMERCURY-001",
+          "category": "Integrity Audit",
+          "severity": "LOW",
+          "status": "PASS",
+          "title": "Todos os artefatos do Project Mapper presentes",
+          "description": "6 arquivos verificados em .mercury/.",
+          "location": "",
+          "evidence": "",
+          "recommendation": ""
+        },
+        {
+          "id": "INT-DOTMERCURY-DEPENDENCY_GRAPH.JSON",
+          "category": "Integrity Audit",
+          "severity": "LOW",
+          "status": "PASS",
+          "title": "Artefato válido: dependency_graph.json",
+          "description": "JSON bem formado.",
+          "location": "",
+          "evidence": "",
+          "recommendation": ""
+        },
+        {
+          "id": "INT-DOTMERCURY-CALL_GRAPH.JSON",
+          "category": "Integrity Audit",
+          "severity": "LOW",
+          "status": "PASS",
+          "title": "Artefato válido: call_graph.json",
+          "description": "JSON bem formado.",
+          "location": "",
+          "evidence": "",
+          "recommendation": ""
+        },
+        {
+          "id": "INT-DOTMERCURY-MERCURY_SNAPSHOT.JSON",
+          "category": "Integrity Audit",
+          "severity": "LOW",
+          "status": "PASS",
+          "title": "Artefato válido: mercury_snapshot.json",
+          "description": "JSON bem formado.",
+          "location": "",
+          "evidence": "",
+          "recommendation": ""
+        },
+        {
+          "id": "INT-MODELS-001",
+          "category": "Integrity Audit",
+          "severity": "LOW",
+          "status": "PASS",
+          "title": "models.json válido com 3 modelos",
+          "description": "Estrutura JSON correta.",
+          "location": "",
+          "evidence": "",
+          "recommendation": ""
+        },
+        {
+          "id": "INT-MODELS-003",
+          "category": "Integrity Audit",
+          "severity": "MEDIUM",
+          "status": "WARNING",
+          "title": "3 modelos com campos incompletos",
+          "description": "Campos esperados: {'version', 'type', 'params'}",
+          "location": "",
+          "evidence": "",
+          "recommendation": ""
+        },
+        {
+          "id": "INT-CHECKSUM-CONFIG.JSON",
+          "category": "Integrity Audit",
+          "severity": "LOW",
+          "status": "INFO",
+          "title": "Checksum config.json: 01d7bf5715e0aea3",
+          "description": "SHA256 (primeiros 16 chars): 01d7bf5715e0aea3",
+          "location": "",
+          "evidence": "",
+          "recommendation": ""
+        },
+        {
+          "id": "INT-CHECKSUM-MAIN.PY",
+          "category": "Integrity Audit",
+          "severity": "LOW",
+          "status": "INFO",
+          "title": "Checksum main.py: 05da59aa6901eb26",
+          "description": "SHA256 (primeiros 16 chars): 05da59aa6901eb26",
+          "location": "",
+          "evidence": "",
+          "recommendation": ""
+        },
+        {
+          "id": "INT-CHECKSUM-REQUIREMENTS.TXT",
+          "category": "Integrity Audit",
+          "severity": "LOW",
+          "status": "INFO",
+          "title": "Checksum requirements.txt: 847cd75afa2c1743",
+          "description": "SHA256 (primeiros 16 chars): 847cd75afa2c1743",
+          "location": "",
+          "evidence": "",
+          "recommendation": ""
+        }
+      ]
+    },
+    {
+      "name": "11. Explainability Audit",
+      "status": "PASS",
+      "findings": [
+        {
+          "id": "EXP-001",
+          "category": "EXPLAINABILITY",
+          "severity": "LOW",
+          "status": "PASS",
+          "title": "Feature Importance / SHAP Implementation Found",
+          "description": "Encontrados 3 arquivo(s) relacionados a feature importance/SHAP: ['mercury_ai\\\\analysis\\\\decision_explainability.py', 'mercury_ai\\\\brain\\\\explainability_engine.py', 'mercury_ai\\\\brain\\\\tests\\\\test_explainability_engine.py']",
+          "location": "C:\\Projetos\\Mercury-AI\\mercury_ai",
+          "evidence": "",
+          "recommendation": ""
+        },
+        {
+          "id": "EXP-002",
+          "category": "EXPLAINABILITY",
+          "severity": "LOW",
+          "status": "PASS",
+          "title": "Decision Logging with Explanations Found",
+          "description": "Sistema possui logging de decisões com explicações/razões.",
+          "location": "C:\\Projetos\\Mercury-AI\\mercury_ai",
+          "evidence": "",
+          "recommendation": ""
+        },
+        {
+          "id": "EXP-003",
+          "category": "EXPLAINABILITY",
+          "severity": "LOW",
+          "status": "PASS",
+          "title": "Model Documentation Found",
+          "description": "Encontrada documentação de modelos: 0 model card(s) + models.json=True",
+          "location": "C:\\Projetos\\Mercury-AI",
+          "evidence": "",
+          "recommendation": ""
+        },
+        {
+          "id": "EXP-004",
+          "category": "EXPLAINABILITY",
+          "severity": "LOW",
+          "status": "INFO",
+          "title": "Counterfactual Explanations Not Implemented",
+          "description": "Explicações contrafactuais (what-if analysis) não implementadas. Opcional para V1.",
+          "location": "C:\\Projetos\\Mercury-AI\\mercury_ai",
+          "evidence": "",
+          "recommendation": "Considerar implementar para versões futuras: 'O que aconteceria se feature X tivesse valor Y?'."
+        }
+      ]
+    },
+    {
+      "name": "12. Data Audit",
+      "status": "FAIL",
+      "findings": [
+        {
+          "id": "DATA-001",
+          "category": "DATA",
+          "severity": "LOW",
+          "status": "PASS",
+          "title": "Data Schema Validation Found",
+          "description": "Sistema possui validação de schema de dados (pydantic, dataclasses, ou similar).",
+          "location": "C:\\Projetos\\Mercury-AI\\mercury_ai",
+          "evidence": "",
+          "recommendation": ""
+        },
+        {
+          "id": "DATA-002",
+          "category": "DATA",
+          "severity": "MEDIUM",
+          "status": "WARNING",
+          "title": "Data Lineage / Versioning Missing",
+          "description": "Não há rastreabilidade de lineage dos dados (origem, transformações, versionamento).",
+          "location": "C:\\Projetos\\Mercury-AI",
+          "evidence": "",
+          "recommendation": "Implementar data lineage tracking e considerar DVC para versionamento de datasets."
+        },
+        {
+          "id": "DATA-003",
+          "category": "DATA",
+          "severity": "LOW",
+          "status": "PASS",
+          "title": "Missing Data Handling Found",
+          "description": "Sistema possui tratamento explícito de dados faltantes (NaN, None, gaps).",
+          "location": "C:\\Projetos\\Mercury-AI\\mercury_ai",
+          "evidence": "",
+          "recommendation": ""
+        },
+        {
+          "id": "DATA-004",
+          "category": "DATA",
+          "severity": "LOW",
+          "status": "PASS",
+          "title": "Data Drift Detection Found",
+          "description": "Encontrados 2 arquivo(s) relacionados a detecção de data drift.",
+          "location": "C:\\Projetos\\Mercury-AI\\mercury_ai",
+          "evidence": "",
+          "recommendation": ""
+        },
+        {
+          "id": "DATA-005",
+          "category": "DATA",
+          "severity": "LOW",
+          "status": "PASS",
+          "title": "Train/Test Leakage Prevention Found",
+          "description": "Sistema usa validação temporal adequada (TimeSeriesSplit, PurgedKFold, embargo/gap).",
+          "location": "C:\\Projetos\\Mercury-AI\\mercury_ai",
+          "evidence": "",
+          "recommendation": ""
+        },
+        {
+          "id": "DATA-006",
+          "category": "DATA",
+          "severity": "CRITICAL",
+          "status": "FAIL",
+          "title": "Potential Secrets in Code/Config",
+          "description": "Possíveis secrets (password, api_key, token) encontrados em arquivos de config/log.",
+          "location": "C:\\Projetos\\Mercury-AI\\mercury_ai",
+          "evidence": "",
+          "recommendation": "Mover secrets para variáveis de ambiente ou vault. Nunca commitar secrets."
+        }
+      ]
+    },
+    {
+      "name": "13. Universe Audit",
+      "status": "WARNING",
+      "findings": [
+        {
+          "id": "UNIV-001",
+          "category": "UNIVERSE",
+          "severity": "LOW",
+          "status": "PASS",
+          "title": "Universe Definition Found",
+          "description": "Universo de ativos definido: 1 arquivo(s) + config.json=False",
+          "location": "C:\\Projetos\\Mercury-AI\\mercury_ai",
+          "evidence": "",
+          "recommendation": ""
+        },
+        {
+          "id": "UNIV-002",
+          "category": "UNIVERSE",
+          "severity": "LOW",
+          "status": "PASS",
+          "title": "Data Coverage Check Found",
+          "description": "Sistema verifica cobertura de market data para o universo de ativos.",
+          "location": "C:\\Projetos\\Mercury-AI\\mercury_ai",
+          "evidence": "",
+          "recommendation": ""
+        },
+        {
+          "id": "UNIV-003",
+          "category": "UNIVERSE",
+          "severity": "LOW",
+          "status": "PASS",
+          "title": "Liquidity/Volume Filters Found",
+          "description": "Sistema possui filtros de liquidez/volume para seleção de ativos.",
+          "location": "C:\\Projetos\\Mercury-AI\\mercury_ai",
+          "evidence": "",
+          "recommendation": ""
+        },
+        {
+          "id": "UNIV-004",
+          "category": "UNIVERSE",
+          "severity": "MEDIUM",
+          "status": "WARNING",
+          "title": "Sector Diversification Not Enforced",
+          "description": "Não há controle de concentração setorial/industrial no universo ou portfolio.",
+          "location": "C:\\Projetos\\Mercury-AI\\mercury_ai",
+          "evidence": "",
+          "recommendation": "Implementar limites de concentração setorial (ex: max 20% por setor, max 10% por indústria)."
+        },
+        {
+          "id": "UNIV-005",
+          "category": "UNIVERSE",
+          "severity": "LOW",
+          "status": "PASS",
+          "title": "Corporate Actions Handling Found",
+          "description": "Sistema trata corporate actions: 48 arquivo(s) relacionados (splits, dividendos, M&A).",
+          "location": "C:\\Projetos\\Mercury-AI\\mercury_ai",
+          "evidence": "",
+          "recommendation": ""
+        },
+        {
+          "id": "UNIV-006",
+          "category": "UNIVERSE",
+          "severity": "MEDIUM",
+          "status": "WARNING",
+          "title": "Universe Rebalancing Not Defined",
+          "description": "Não há processo definido de rebalanceamento/atualização periódica do universo (frequência, critérios, automação).",
+          "location": "C:\\Projetos\\Mercury-AI\\mercury_ai",
+          "evidence": "",
+          "recommendation": "Definir política de rebalanceamento: frequência (mensal/trimestral), critérios de entrada/saída, automação."
+        }
+      ]
+    },
+    {
+      "name": "14. Global State Audit",
+      "status": "WARNING",
+      "findings": [
+        {
+          "id": "GST-001",
+          "category": "GLOBAL_STATE",
+          "severity": "MEDIUM",
+          "status": "WARNING",
+          "title": "Potential Mutable Global Variables: 4593",
+          "description": "Variáveis globais potencialmente mutáveis encontradas: [('mercury_ai\\\\main.py', 6, 'scanner'), ('mercury_ai\\\\main.py', 11, 'if __name__'), ('mercury_ai\\\\ai\\\\llm.py', 8, 'self.client'), ('mercury_ai\\\\ai\\\\llm.py', 9, 'api_key'), ('mercury_ai\\\\ai\\\\llm.py', 10, 'base_url')]",
+          "location": "C:\\Projetos\\Mercury-AI\\mercury_ai",
+          "evidence": "",
+          "recommendation": "Evitar variáveis globais mutáveis. Usar dependency injection, context managers, ou classes de estado."
+        },
+        {
+          "id": "GST-002",
+          "category": "GLOBAL_STATE",
+          "severity": "MEDIUM",
+          "status": "WARNING",
+          "title": "Singleton Patterns Found: 1",
+          "description": "Padrões Singleton detectados em: mercury_ai\\analysis\\institutional_memory_engine.py",
+          "location": "C:\\Projetos\\Mercury-AI\\mercury_ai",
+          "evidence": "",
+          "recommendation": "Avaliar se singletons são necessários. Preferir dependency injection para testabilidade."
+        },
+        {
+          "id": "GST-003",
+          "category": "GLOBAL_STATE",
+          "severity": "LOW",
+          "status": "PASS",
+          "title": "Global Configuration Found",
+          "description": "Configuração global: config.json=True, config.py=13, .env=False",
+          "location": "C:\\Projetos\\Mercury-AI",
+          "evidence": "",
+          "recommendation": ""
+        },
+        {
+          "id": "GST-003b",
+          "category": "GLOBAL_STATE",
+          "severity": "LOW",
+          "status": "PASS",
+          "title": "config.json Valid JSON",
+          "description": "config.json é JSON válido e parseável.",
+          "location": "C:\\Projetos\\Mercury-AI\\config.json",
+          "evidence": "",
+          "recommendation": ""
+        },
+        {
+          "id": "GST-004",
+          "category": "GLOBAL_STATE",
+          "severity": "LOW",
+          "status": "PASS",
+          "title": "Runtime State Management Found",
+          "description": "Gestão de estado de runtime: 5 arquivo(s) (posições, ordens, portfolio, PnL).",
+          "location": "C:\\Projetos\\Mercury-AI\\mercury_ai",
+          "evidence": "",
+          "recommendation": ""
+        },
+        {
+          "id": "GST-005",
+          "category": "GLOBAL_STATE",
+          "severity": "LOW",
+          "status": "PASS",
+          "title": "Thread Safety Mechanisms Found",
+          "description": "Concorrência detectada: threading=True, asyncio=False, locks=True",
+          "location": "C:\\Projetos\\Mercury-AI\\mercury_ai",
+          "evidence": "",
+          "recommendation": ""
+        },
+        {
+          "id": "GST-006",
+          "category": "GLOBAL_STATE",
+          "severity": "LOW",
+          "status": "PASS",
+          "title": "State Persistence/Recovery Found",
+          "description": "Persistência de estado: 2 módulos + .mercury state files=True",
+          "location": "C:\\Projetos\\Mercury-AI\\mercury_ai",
+          "evidence": "",
+          "recommendation": ""
+        }
+      ]
+    },
+    {
+      "name": "15. Determinism Audit",
+      "status": "WARNING",
+      "findings": [
+        {
+          "id": "DET-001",
+          "category": "DETERMINISM",
+          "severity": "LOW",
+          "status": "PASS",
+          "title": "Fixed Seeds Found: 2",
+          "description": "Seeds explícitos definidos: [('mercury_ai\\\\analysis\\\\tests\\\\test_historical_replay_engine.py', 17, 'np.random.seed(42)'), ('mercury_ai\\\\analysis\\\\tests\\\\test_replay_batch_processor.py', 21, 'np.random.seed(42)')]",
+          "location": "C:\\Projetos\\Mercury-AI\\mercury_ai",
+          "evidence": "",
+          "recommendation": ""
+        },
+        {
+          "id": "DET-003",
+          "category": "DETERMINISM",
+          "severity": "HIGH",
+          "status": "WARNING",
+          "title": "Time-Based Operations: 26",
+          "description": "Operações baseadas em tempo (não-determinísticas): [('mercury_ai\\\\analysis\\\\benchmark_framework.py', 139, 'start_time = time.perf_counter()'), ('mercury_ai\\\\analysis\\\\benchmark_framework.py', 143, 'end_time = time.perf_counter()'), ('mercury_ai\\\\analysis\\\\benchmark_framework.py', 347, 'wall_start = time.perf_counter()')]",
+          "location": "C:\\Projetos\\Mercury-AI\\mercury_ai",
+          "evidence": "",
+          "recommendation": "Injetar tempo como dependência (time_provider) para testes determinísticos. Usar freezegun em testes."
+        },
+        {
+          "id": "DET-004",
+          "category": "DETERMINISM",
+          "severity": "MEDIUM",
+          "status": "WARNING",
+          "title": "UUID Generation: 2",
+          "description": "Geração de UUID aleatórios: [('mercury_ai\\\\core\\\\analysis_pipeline.py', 75, 'self.session_id = str(uuid.uuid4())'), ('mercury_ai\\\\core\\\\session_manager.py', 10, 'self.session_id = str(uuid.uuid4())')]",
+          "location": "C:\\Projetos\\Mercury-AI\\mercury_ai",
+          "evidence": "",
+          "recommendation": "Para testes: usar uuid determinístico (uuid5 com namespace fixo) ou mock."
+        },
+        {
+          "id": "DET-005",
+          "category": "DETERMINISM",
+          "severity": "HIGH",
+          "status": "WARNING",
+          "title": "Concurrency Operations: 8",
+          "description": "Operações de concorrência (ordem não-determinística): [('mercury_ai\\\\analysis\\\\institutional_memory_engine.py', 12, '_lock = threading.Lock()'), ('mercury_ai\\\\analysis\\\\replay_cache.py', 32, 'self._lock = threading.Lock()'), ('mercury_ai\\\\analysis\\\\tests\\\\test_replay_cache.py', 203, 'threading.Thread(target=reader),')]",
+          "location": "C:\\Projetos\\Mercury-AI\\mercury_ai",
+          "evidence": "",
+          "recommendation": "Evitar concorrência em lógica crítica. Se necessário, usar locks determinísticos ou single-threaded para replay."
+        },
+        {
+          "id": "DET-006",
+          "category": "DETERMINISM",
+          "severity": "LOW",
+          "status": "INFO",
+          "title": "Dict Iteration Order: 2",
+          "description": "Iteração de dict (ordem garantida desde Python 3.7, mas não confiar para lógica crítica): [('mercury_ai\\\\core\\\\asset_registry.py', 46, 'json.dump({s: a.__dict__ for s, a in self.assets.items()}, f, indent=4)'), ('mercury_ai\\\\data\\\\mercury_data_provider.py', 151, 'return {name: p.health() for name, p in self._providers.items()}')]",
+          "location": "C:\\Projetos\\Mercury-AI\\mercury_ai",
+          "evidence": "",
+          "recommendation": "Ordem de dict é preservada em Python 3.7+, mas para determinismo estrito usar sorted() ou OrderedDict."
+        },
+        {
+          "id": "DET-007",
+          "category": "DETERMINISM",
+          "severity": "MEDIUM",
+          "status": "WARNING",
+          "title": "Floating Point Comparisons: 14",
+          "description": "Possíveis comparações de ponto flutuante: [('mercury_ai\\\\analysis\\\\performance_engine.py', 132, \"if len(downside_returns) == 0: return float('inf')\"), ('mercury_ai\\\\analysis\\\\smart_money\\\\tests\\\\test_liquidity_engine.py', 44, 'assert groups[0].prices == [100.0, 100.2]'), ('mercury_ai\\\\analysis\\\\smart_money\\\\tests\\\\test_liquidity_engine.py', 55, 'assert groups[0].prices == [100.0, 100.1]')]",
+          "location": "C:\\Projetos\\Mercury-AI\\mercury_ai",
+          "evidence": "",
+          "recommendation": "Usar math.isclose() ou decimal.Decimal para comparações financeiras. Evitar == com floats."
+        },
+        {
+          "id": "DET-008",
+          "category": "DETERMINISM",
+          "severity": "MEDIUM",
+          "status": "WARNING",
+          "title": "External Dependencies: 23 files",
+          "description": "Dependências externas (API, DB, FS, network) em: mercury_ai\\analysis\\institutional_analytics_engine.py, mercury_ai\\analysis\\calibration_analyzer.py, mercury_ai\\analysis\\health_checker.py, mercury_ai\\analysis\\health_auditor.py, mercury_ai\\analysis\\data_exporter.py",
+          "location": "C:\\Projetos\\Mercury-AI\\mercury_ai",
+          "evidence": "",
+          "recommendation": "Isolar dependências externas atrás de interfaces. Usar mocks/fakes para testes determinísticos. Implementar replay de dados externos."
+        },
+        {
+          "id": "DET-009",
+          "category": "DETERMINISM",
+          "severity": "LOW",
+          "status": "PASS",
+          "title": "Deterministic Replay Capability Found",
+          "description": "Scripts de replay: True, instrumented: True, institutional: True. Módulos: 31",
+          "location": "C:\\Projetos\\Mercury-AI",
+          "evidence": "",
+          "recommendation": ""
+        },
+        {
+          "id": "DET-010",
+          "category": "DETERMINISM",
+          "severity": "MEDIUM",
+          "status": "WARNING",
+          "title": "Dependencies Not Fully Pinned",
+          "description": "requirements.txt não tem versões pinadas consistentemente. Risco de drift de dependências.",
+          "location": "C:\\Projetos\\Mercury-AI\\requirements.txt",
+          "evidence": "",
+          "recommendation": "Pin todas as dependências com == em requirements.txt ou usar pip-tools/poetry lockfile."
+        },
+        {
+          "id": "DET-011",
+          "category": "DETERMINISM",
+          "severity": "LOW",
+          "status": "INFO",
+          "title": "No Containerization",
+          "description": "Sem Dockerfile/docker-compose. Ambiente depende de configuração manual.",
+          "location": "C:\\Projetos\\Mercury-AI",
+          "evidence": "",
+          "recommendation": "Considerar Docker para reprodutibilidade total de ambiente (OS, libs, Python version)."
+        }
+      ]
+    },
+    {
+      "name": "16. Performance Audit",
+      "status": "FAIL",
+      "findings": [
+        {
+          "id": "AUDIT-16.-PERFORMANCE-AUDIT-ERR",
+          "category": "16. Performance Audit",
+          "severity": "CRITICAL",
+          "status": "FAIL",
+          "title": "Fase de auditoria falhou: 16. Performance Audit",
+          "description": "'set' object is not subscriptable",
+          "location": "auditor executor",
+          "evidence": "",
+          "recommendation": ""
+        }
+      ]
+    },
+    {
+      "name": "17. Backtest Audit",
+      "status": "FAIL",
+      "findings": [
+        {
+          "id": "AUDIT-17.-BACKTEST-AUDIT-ERR",
+          "category": "17. Backtest Audit",
+          "severity": "CRITICAL",
+          "status": "FAIL",
+          "title": "Fase de auditoria falhou: 17. Backtest Audit",
+          "description": "'set' object is not subscriptable",
+          "location": "auditor executor",
+          "evidence": "",
+          "recommendation": ""
+        }
+      ]
+    },
+    {
+      "name": "18. Final Report Generation",
+      "status": "PASS",
+      "findings": [
+        {
+          "id": "RPT-001",
+          "category": "REPORT",
+          "severity": "INFO",
+          "status": "PASS",
+          "title": "Report Generation Complete",
+          "description": "Markdown and JSON reports generated successfully",
+          "location": "tools/mercury_integrity_auditor/main.py",
+          "evidence": "generate_markdown_report() and JSON serialization executed",
+          "recommendation": "Review generated reports at audit_report.md and audit_report.json"
+        }
+      ]
+    }
+  ]
+}

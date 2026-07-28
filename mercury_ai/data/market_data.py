@@ -38,9 +38,6 @@ class MarketDataService:
         if df is None:
             return df
 
-        if df.empty:
-            return df
-
 
         try:
 

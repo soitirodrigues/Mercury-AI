@@ -60,7 +60,7 @@ st.sidebar.write(f"**Health:** {'🟢' if health.system_ready else '🔴'}")
 
 # Statistics & Counters
 st.sidebar.subheader("Auditoria de Dados")
-snapshots = Scanner().snapshot_logger.list_snapshots()
+snapshots = MercuryScanner().snapshot_logger.list_snapshots()
 st.sidebar.write(f"**Snapshots:** {len(snapshots)}")
 st.sidebar.write(f"**Replay Count:** {len(snapshots)}") # Replay is supported if snapshots exist
 

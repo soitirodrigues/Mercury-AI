@@ -1,6 +1,10 @@
 from typing import List, Dict, Any
 from mercury_ai.database.snapshot_logger import DecisionSnapshotLogger
 import re
+import json
+import logging
+
+logger = logging.getLogger(__name__)
 
 class IntegrityChecker:
     """
@@ -15,7 +19,8 @@ class IntegrityChecker:
             try:
                 data = self.logger.load_snapshot(path)
                 issues.extend(self._check_snapshot(data, path.name))
-            except Exception as e:
+            except (json.JSONDecodeError, KeyError, TypeError, OSError, ValueError) as e:
+                logger.error("Snapshot corrompido %s: %s", path.name, e, exc_info=True)
                 issues.append(f"File {path.name} corrupted: {e}")
         return issues
 

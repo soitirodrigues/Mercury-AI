@@ -1,0 +1,452 @@
+{
+  "project": "Mercury AI V1",
+  "audit_date": "2026-07-31T02:53:22.281157",
+  "release_gate_verdict": "NO_GO",
+  "release_gate_reason": "2 falha(s) crítica(s) encontrada(s). Correção obrigatória antes do release.",
+  "sections": [
+    {
+      "name": "1. Static Audit (AST)",
+      "status": "WARNING",
+      "findings": [
+        {
+          "id": "STATIC-001",
+          "category": "Static Audit",
+          "severity": "LOW",
+          "status": "INFO",
+          "title": "Total de arquivos Python analisados: 261",
+          "description": "261 arquivos .py em C:\\Projetos\\Mercury-AI\\mercury_ai, 695 funções, 286 classes.",
+          "location": "C:\\Projetos\\Mercury-AI\\mercury_ai",
+          "evidence": "",
+          "recommendation": ""
+        },
+        {
+          "id": "STATIC-002",
+          "category": "Static Audit",
+          "severity": "LOW",
+          "status": "PASS",
+          "title": "Nenhum erro de sintaxe encontrado",
+          "description": "Todos os arquivos Python foram parseados com sucesso.",
+          "location": "",
+          "evidence": "",
+          "recommendation": ""
+        },
+        {
+          "id": "STATIC-003",
+          "category": "Static Audit",
+          "severity": "MEDIUM",
+          "status": "WARNING",
+          "title": "19 função(ões) stub (não implementadas)",
+          "description": "Funções que levantam NotImplementedError ou têm corpo vazio:\n  mercury_ai\\data\\market_data_provider.py:5 -> get_data()\n  mercury_ai\\data\\mercury_data_provider.py:48 -> connect()\n  mercury_ai\\data\\mercury_data_provider.py:49 -> health()\n  mercury_ai\\data\\mercury_data_provider.py:50 -> get_history()\n  mercury_ai\\data\\mercury_data_provider.py:51 -> get_last_price()\n  mercury_ai\\data\\mercury_data_provider.py:52 -> get_candles()\n  mercury_ai\\data\\mercury_data_provider.py:53 -> market_status()\n  mercury_ai\\providers\\base_provider.py:5 -> get_data()\n  mercury_ai\\providers\\base_provider.py:8 -> is_available()\n  mercury_ai\\providers\\base_provider.py:11 -> supports_symbol()\n  mercury_ai\\providers\\base_provider.py:14 -> supports_market()\n  mercury_ai\\providers\\base_provider.py:17 -> supports_timeframe()\n  mercury_ai\\providers\\base_provider.py:20 -> max_history()\n  mercury_ai\\providers\\base_provider.py:23 -> source_name()\n  mercury_ai\\providers\\data_interfaces.py:12 -> get_data()\n  mercury_ai\\providers\\data_interfaces.py:14 -> check_health()\n  mercury_ai\\providers\\future_broker_provider.py:2 -> get_data()\n  mercury_ai\\providers\\future_polygon_provider.py:2 -> get_data()\n  mercury_ai\\providers\\future_tradingview_provider.py:2 -> get_data()",
+          "location": "Vários",
+          "evidence": "",
+          "recommendation": "Implementar ou remover funções stub antes do release."
+        },
+        {
+          "id": "STATIC-004",
+          "category": "Static Audit",
+          "severity": "LOW",
+          "status": "PASS",
+          "title": "Nenhum bare except encontrado",
+          "description": "Todos os blocos except especificam o tipo de exceção.",
+          "location": "",
+          "evidence": "",
+          "recommendation": ""
+        },
+        {
+          "id": "STATIC-005",
+          "category": "Static Audit",
+          "severity": "MEDIUM",
+          "status": "WARNING",
+          "title": "6 função(ões) muito longas (>200 linhas)",
+          "description": "Funções com mais de 200 linhas:\n  mercury_ai\\analysis\\swing_engine.py:59 detect_swings() — 210 linhas\n  mercury_ai\\analysis\\volatility_engine.py:20 analyze() — 222 linhas\n  mercury_ai\\analysis\\volume_intelligence_engine.py:15 evaluate() — 218 linhas\n  mercury_ai\\brain\\mercury_decision_engine.py:113 _analyze_logic() — 287 linhas\n  mercury_ai\\brain\\probability_engine.py:34 analyze() — 212 linhas\n  mercury_ai\\core\\analysis_pipeline.py:159 analyze() — 267 linhas",
+          "location": "",
+          "evidence": "",
+          "recommendation": "Refatorar funções longas em unidades menores."
+        }
+      ]
+    },
+    {
+      "name": "2. Contract Audit",
+      "status": "PASS",
+      "findings": [
+        {
+          "id": "CONTRACT-RiskAssessment-001",
+          "category": "Contract Audit",
+          "severity": "LOW",
+          "status": "PASS",
+          "title": "RiskAssessment está corretamente frozen=True",
+          "description": "Dataclass RiskAssessment com frozen=True.",
+          "location": "",
+          "evidence": "",
+          "recommendation": ""
+        },
+        {
+          "id": "CONTRACT-RiskAssessment-002",
+          "category": "Contract Audit",
+          "severity": "LOW",
+          "status": "PASS",
+          "title": "RiskAssessment: todos os campos obrigatórios presentes",
+          "description": "17 campos verificados.",
+          "location": "",
+          "evidence": "",
+          "recommendation": ""
+        },
+        {
+          "id": "CONTRACT-MarketData-001",
+          "category": "Contract Audit",
+          "severity": "LOW",
+          "status": "PASS",
+          "title": "MarketData está corretamente frozen=True",
+          "description": "Dataclass MarketData com frozen=True.",
+          "location": "",
+          "evidence": "",
+          "recommendation": ""
+        },
+        {
+          "id": "CONTRACT-MarketData-002",
+          "category": "Contract Audit",
+          "severity": "LOW",
+          "status": "PASS",
+          "title": "MarketData: todos os campos obrigatórios presentes",
+          "description": "14 campos verificados.",
+          "location": "",
+          "evidence": "",
+          "recommendation": ""
+        },
+        {
+          "id": "CONTRACT-MarketContext-001",
+          "category": "Contract Audit",
+          "severity": "LOW",
+          "status": "PASS",
+          "title": "MarketContext está corretamente frozen=True",
+          "description": "Dataclass MarketContext com frozen=True.",
+          "location": "",
+          "evidence": "",
+          "recommendation": ""
+        },
+        {
+          "id": "CONTRACT-MarketContext-002",
+          "category": "Contract Audit",
+          "severity": "LOW",
+          "status": "PASS",
+          "title": "MarketContext: todos os campos obrigatórios presentes",
+          "description": "10 campos verificados.",
+          "location": "",
+          "evidence": "",
+          "recommendation": ""
+        },
+        {
+          "id": "CONTRACT-MarketEvidenceBundle-001",
+          "category": "Contract Audit",
+          "severity": "LOW",
+          "status": "PASS",
+          "title": "MarketEvidenceBundle está corretamente frozen=True",
+          "description": "Dataclass MarketEvidenceBundle com frozen=True.",
+          "location": "",
+          "evidence": "",
+          "recommendation": ""
+        },
+        {
+          "id": "CONTRACT-MarketEvidenceBundle-002",
+          "category": "Contract Audit",
+          "severity": "LOW",
+          "status": "PASS",
+          "title": "MarketEvidenceBundle: todos os campos obrigatórios presentes",
+          "description": "1 campos verificados.",
+          "location": "",
+          "evidence": "",
+          "recommendation": ""
+        },
+        {
+          "id": "CONTRACT-SUMMARY",
+          "category": "Contract Audit",
+          "severity": "LOW",
+          "status": "INFO",
+          "title": "Total de dataclasses encontrados: 65",
+          "description": "Dataclasses: AnalysisResult, AssetPerformance, BenchmarkMetrics, BenchmarkReport, BenchmarkRunResult, CandlestickAnalysis, ConfidenceResult, ConfluenceResult, ConfluenceScore, DataQualityResult, DecisionInput, DecisionNode, DecisionOutcome, DecisionResult, DecisionSnapshot, DecisionTrace, Evidence, EvidenceRankingResult, FairValueGapAnalysis, HotspotReport, HotspotSummary, LiquidityAnalysis, LiquidityProfile, LiquidityResult, MTFConsensus, MarketCondition, MarketContext, MarketData, MarketEvidenceBundle, MarketRegime, MarketState, MarketStructure, MarketStructureProfile, MarketThesis, MemoryAuditResult, MemorySnapshot, MomentumAnalysis, PerformanceMetrics, PipelineMetric, PipelineProfile, PriceActionAnalysis, ProbabilityResult, ProfessionalThesis, RegressionResult, RiskAssessment, SessionAnalysis, Signal, SmartMoneyAnalysis, StageMetric, StageProfile, StressTestResult, SupportResistanceAnalysis, Swing, SwingSequenceResult, TradeFilterResult, TradeMemory, TradePermission, TradingExplanation, TrendAnalysis, UniversePerformance, VWAPAnalysis, VersionMetadata, VolatilityAnalysis, VolumeAnalysis, VolumeProfile",
+          "location": "",
+          "evidence": "",
+          "recommendation": ""
+        }
+      ]
+    },
+    {
+      "name": "3. Dependency Audit",
+      "status": "WARNING",
+      "findings": [
+        {
+          "id": "DEP-001",
+          "category": "Dependency Audit",
+          "severity": "LOW",
+          "status": "PASS",
+          "title": "requirements.txt com 12 dependências declaradas",
+          "description": "Dependências: numpy, openai, pandas, plotly, psutil, pytest, python-dotenv, requests, scipy, streamlit, ta, yfinance",
+          "location": "",
+          "evidence": "",
+          "recommendation": ""
+        },
+        {
+          "id": "DEP-002",
+          "category": "Dependency Audit",
+          "severity": "LOW",
+          "status": "PASS",
+          "title": "Todas as dependências declaradas estão instaladas",
+          "description": "12 pacotes verificados.",
+          "location": "",
+          "evidence": "",
+          "recommendation": ""
+        },
+        {
+          "id": "DEP-003",
+          "category": "Dependency Audit",
+          "severity": "MEDIUM",
+          "status": "WARNING",
+          "title": "3 import(s) de terceiros não declarados em requirements.txt",
+          "description": "Pacotes importados mas não listados: __future__, gc, tracemalloc",
+          "location": "",
+          "evidence": "",
+          "recommendation": "Adicionar pacotes ao requirements.txt ou verificar se são necessários."
+        },
+        {
+          "id": "DEP-004",
+          "category": "Dependency Audit",
+          "severity": "LOW",
+          "status": "PASS",
+          "title": "Nenhuma dependência circular detectada",
+          "description": "Todos os imports internos são acíclicos.",
+          "location": "",
+          "evidence": "",
+          "recommendation": ""
+        }
+      ]
+    },
+    {
+      "name": "4. Masking Audit",
+      "status": "PASS",
+      "findings": [
+        {
+          "id": "MASK-001",
+          "category": "Masking Audit",
+          "severity": "LOW",
+          "status": "PASS",
+          "title": "Nenhum Mock/MagicMock em código de produção",
+          "description": "Verificação de mock em produção passou.",
+          "location": "",
+          "evidence": "",
+          "recommendation": ""
+        },
+        {
+          "id": "MASK-002",
+          "category": "Masking Audit",
+          "severity": "LOW",
+          "status": "PASS",
+          "title": "Nenhum bare except em produção",
+          "description": "Todos os blocos except especificam o tipo.",
+          "location": "",
+          "evidence": "",
+          "recommendation": ""
+        }
+      ]
+    },
+    {
+      "name": "5. Runtime Audit",
+      "status": "FAIL",
+      "findings": [
+        {
+          "id": "RUNTIME-001",
+          "category": "Runtime Audit",
+          "severity": "LOW",
+          "status": "INFO",
+          "title": "main.py executado 3 vezes",
+          "description": "Sucesso: 0/3, Falhas: 3/3",
+          "location": "",
+          "evidence": "",
+          "recommendation": ""
+        },
+        {
+          "id": "RUNTIME-002",
+          "category": "Runtime Audit",
+          "severity": "CRITICAL",
+          "status": "FAIL",
+          "title": "3 execução(ões) falharam!",
+          "description": "main.py crashou em 3 de 3 execuções:\n  Run 1: exit=1, stderr=INFO:mercury_ai.brain.scanner:============================================================\nINFO:mercury_ai.brain.scanner:MERCURY AI SCANNER\nINFO:mercury_ai.brain.scanner:==============================\n  Run 2: exit=1, stderr=INFO:mercury_ai.brain.scanner:============================================================\nINFO:mercury_ai.brain.scanner:MERCURY AI SCANNER\nINFO:mercury_ai.brain.scanner:==============================\n  Run 3: exit=1, stderr=INFO:mercury_ai.brain.scanner:============================================================\nINFO:mercury_ai.brain.scanner:MERCURY AI SCANNER\nINFO:mercury_ai.brain.scanner:==============================",
+          "location": "",
+          "evidence": "",
+          "recommendation": "Investigar e corrigir crashes em main.py."
+        }
+      ]
+    },
+    {
+      "name": "6. Flow & Pipeline Audit",
+      "status": "WARNING",
+      "findings": [
+        {
+          "id": "FLOW-AnalysisPipeline-METHODS",
+          "category": "Flow Audit",
+          "severity": "HIGH",
+          "status": "WARNING",
+          "title": "AnalysisPipeline: métodos esperados ausentes",
+          "description": "Encontrados: [], Ausentes: ['run', 'execute', 'process']",
+          "location": "mercury_ai\\core\\analysis_pipeline.py:57",
+          "evidence": "",
+          "recommendation": "Implementar métodos: run, execute, process"
+        },
+        {
+          "id": "FLOW-HistoricalReplayEngine-METHODS",
+          "category": "Flow Audit",
+          "severity": "HIGH",
+          "status": "WARNING",
+          "title": "HistoricalReplayEngine: métodos esperados ausentes",
+          "description": "Encontrados: ['run_replay'], Ausentes: ['replay', 'process']",
+          "location": "mercury_ai\\analysis\\historical_replay_engine.py:27",
+          "evidence": "",
+          "recommendation": "Implementar métodos: replay, process"
+        },
+        {
+          "id": "FLOW-RiskEngine",
+          "category": "Flow Audit",
+          "severity": "LOW",
+          "status": "PASS",
+          "title": "RiskEngine encontrado com todos os métodos",
+          "description": "Localizado em mercury_ai\\analysis\\risk_engine.py:29, métodos: assess",
+          "location": "",
+          "evidence": "",
+          "recommendation": ""
+        },
+        {
+          "id": "FLOW-InstitutionalMemoryEngine",
+          "category": "Flow Audit",
+          "severity": "LOW",
+          "status": "PASS",
+          "title": "InstitutionalMemoryEngine encontrado com todos os métodos",
+          "description": "Localizado em mercury_ai\\analysis\\institutional_memory_engine.py:6, métodos: record_decision, record_outcome",
+          "location": "",
+          "evidence": "",
+          "recommendation": ""
+        },
+        {
+          "id": "FLOW-MercuryDecisionEngine-METHODS",
+          "category": "Flow Audit",
+          "severity": "HIGH",
+          "status": "WARNING",
+          "title": "MercuryDecisionEngine: métodos esperados ausentes",
+          "description": "Encontrados: [], Ausentes: ['decide', 'evaluate']",
+          "location": "mercury_ai\\brain\\mercury_decision_engine.py:38",
+          "evidence": "",
+          "recommendation": "Implementar métodos: decide, evaluate"
+        },
+        {
+          "id": "FLOW-PerformanceEngine-METHODS",
+          "category": "Flow Audit",
+          "severity": "HIGH",
+          "status": "WARNING",
+          "title": "PerformanceEngine: métodos esperados ausentes",
+          "description": "Encontrados: [], Ausentes: ['calculate', 'evaluate']",
+          "location": "mercury_ai\\analysis\\performance_engine.py:7",
+          "evidence": "",
+          "recommendation": "Implementar métodos: calculate, evaluate"
+        },
+        {
+          "id": "FLOW-PipelineExecutor-METHODS",
+          "category": "Flow Audit",
+          "severity": "HIGH",
+          "status": "WARNING",
+          "title": "PipelineExecutor: métodos esperados ausentes",
+          "description": "Encontrados: ['execute'], Ausentes: ['run']",
+          "location": "mercury_ai\\core\\pipeline_executor.py:7",
+          "evidence": "",
+          "recommendation": "Implementar métodos: run"
+        },
+        {
+          "id": "FLOW-ReplayBatchProcessor-METHODS",
+          "category": "Flow Audit",
+          "severity": "HIGH",
+          "status": "WARNING",
+          "title": "ReplayBatchProcessor: métodos esperados ausentes",
+          "description": "Encontrados: [], Ausentes: ['process_batch', 'run']",
+          "location": "mercury_ai\\analysis\\replay_batch_processor.py:54",
+          "evidence": "",
+          "recommendation": "Implementar métodos: process_batch, run"
+        },
+        {
+          "id": "FLOW-SUMMARY",
+          "category": "Flow Audit",
+          "severity": "LOW",
+          "status": "INFO",
+          "title": "Componentes: 8/8 encontrados, 0 ausentes, 6 com métodos faltando",
+          "description": "Resumo da auditoria de fluxo.",
+          "location": "",
+          "evidence": "",
+          "recommendation": ""
+        }
+      ]
+    },
+    {
+      "name": "7. Test Audit",
+      "status": "FAIL",
+      "findings": [
+        {
+          "id": "TEST-001",
+          "category": "Test Audit",
+          "severity": "CRITICAL",
+          "status": "FAIL",
+          "title": "Execução de testes excedeu timeout (10min)",
+          "description": "A suíte de testes não completou em 10 minutos.",
+          "location": "",
+          "evidence": "",
+          "recommendation": ""
+        }
+      ]
+    },
+    {
+      "name": "8. Decision Integrity Audit",
+      "status": "WARNING",
+      "findings": [
+        {
+          "id": "DEC-001",
+          "category": "Decision Audit",
+          "severity": "LOW",
+          "status": "INFO",
+          "title": "Total de pontos de decisão: 8",
+          "description": "Encontrados em 8 arquivos de decisão.",
+          "location": "",
+          "evidence": "",
+          "recommendation": ""
+        },
+        {
+          "id": "DEC-002",
+          "category": "Decision Audit",
+          "severity": "LOW",
+          "status": "PASS",
+          "title": "Nenhuma chamada a random() detectada",
+          "description": "Decisões parecem ser determinísticas.",
+          "location": "",
+          "evidence": "",
+          "recommendation": ""
+        },
+        {
+          "id": "DEC-003",
+          "category": "Decision Audit",
+          "severity": "MEDIUM",
+          "status": "WARNING",
+          "title": "Nenhum guard contra NaN/Inf detectado",
+          "description": "Decisões podem produzir valores inválidos sem detecção.",
+          "location": "",
+          "evidence": "",
+          "recommendation": "Adicionar verificações math.isfinite() em cálculos críticos."
+        },
+        {
+          "id": "DEC-004",
+          "category": "Decision Audit",
+          "severity": "LOW",
+          "status": "PASS",
+          "title": "Validação de decisão detectada",
+          "description": "O código contém asserts/validações nas decisões.",
+          "location": "",
+          "evidence": "",
+          "recommendation": ""
+        }
+      ]
+    }
+  ]
+}

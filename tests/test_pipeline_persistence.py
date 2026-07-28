@@ -8,11 +8,17 @@ from mercury_ai.data.providers.historical_data_provider import HistoricalDataPro
 from mercury_ai.data.market_data import MarketDataService
 
 def test_pipeline_snapshot_persistence():
-    # Setup
+    # Setup - clean both snapshot dir and institutional memory
     snapshot_dir = Path("mercury_ai/database/snapshots")
     if snapshot_dir.exists():
-        shutil.rmtree(snapshot_dir)
+        shutil.rmtree(snapshot_dir, ignore_errors=True)
     snapshot_dir.mkdir(parents=True, exist_ok=True)
+    
+    # Clean corrupted institutional memory
+    import json
+    memory_file = Path("data/institutional_memory.json")
+    if memory_file.exists():
+        memory_file.unlink()
     
     # Minimal mock data
     periods = 100
@@ -25,10 +31,6 @@ def test_pipeline_snapshot_persistence():
     }
     df = pd.DataFrame(data, index=pd.date_range('2025-01-01', periods=periods, freq='5min'))
     provider = HistoricalDataProvider(df)
-    
-    # Adapt HistoricalDataProvider to be treated as MarketDataProvider if needed, 
-    # but based on the class definition, it is not a MarketDataProvider.
-    # This might fail later, but let's fix the constructor call first.
     
     pipeline = AnalysisPipeline(market_service=MarketDataService(providers=[provider]), providers=[provider])
     

@@ -20,7 +20,7 @@ app.dashboard.dashboard
  -> mercury_ai.analysis.notification_center.NotificationCenter
  -> mercury_ai.analysis.operational_history.OperationalHistory
  -> mercury_ai.analysis.performance_statistics.PerformanceStatistics
- -> mercury_ai.brain.scanner.Scanner
+ -> mercury_ai.brain.scanner.MercuryScanner
  -> mercury_ai.config.configuration_center.MercuryConfigCenter
  -> mercury_ai.config.settings
  -> pandas
@@ -59,7 +59,7 @@ app.dashboard.market_map_panel
 ================================================================================
 app.dashboard.observability_panel
 ================================================================================
- -> mercury_ai.providers.manager.MercuryProviderManager
+ -> mercury_ai.providers.market_provider.MercuryDataProvider
  -> psutil
  -> streamlit
  -> time
@@ -71,7 +71,7 @@ app.dashboard.operation_center
  -> mercury_ai.analysis.integrity_checker.IntegrityChecker
  -> mercury_ai.analysis.operational_history.OperationalHistory
  -> mercury_ai.analysis.performance_statistics.PerformanceStatistics
- -> mercury_ai.brain.scanner.Scanner
+ -> mercury_ai.brain.scanner.MercuryScanner
  -> mercury_ai.config.settings
  -> pandas
  -> pathlib.Path
@@ -81,6 +81,7 @@ app.dashboard.operation_center
 ================================================================================
 app.dashboard.provider_health_panel
 ================================================================================
+ -> mercury_ai.data.mercury_data_provider.ProviderStatus
  -> mercury_ai.providers.mercury_data_provider.MercuryDataProvider
  -> streamlit
 
@@ -106,7 +107,7 @@ app.terminal.pages.01_Scanner
 ================================================================================
 app.terminal.pages.02_Dashboard
 ================================================================================
- -> mercury_ai.brain.scanner.Scanner
+ -> mercury_ai.brain.scanner.MercuryScanner
  -> pandas
  -> pathlib.Path
  -> streamlit
@@ -191,7 +192,10 @@ calculate_institutional_stats
 ================================================================================
 main
 ================================================================================
+ -> logging
  -> mercury_ai.brain.scanner.MercuryScanner
+ -> sys
+ -> threading
 
 ================================================================================
 mercury_ai.ai.llm
@@ -209,18 +213,35 @@ mercury_ai.analysis.adaptive_weight_engine
 ================================================================================
 mercury_ai.analysis.benchmark_framework
 ================================================================================
+ -> concurrent.futures.ThreadPoolExecutor
+ -> concurrent.futures.as_completed
+ -> dataclasses.dataclass
+ -> dataclasses.field
+ -> logging
+ -> math.erf
+ -> math.sqrt
  -> mercury_ai.analysis.metric_calculator.MetricCalculator
+ -> mercury_ai.analysis.metric_calculator.PerformanceMetrics
+ -> mercury_ai.analysis.performance_engine.PerformanceEngine
  -> mercury_ai.core.analysis_pipeline.AnalysisPipeline
  -> mercury_ai.data.market_data.MarketDataService
+ -> mercury_ai.database.replay_storage.ReplayMetrics
  -> mercury_ai.models.benchmark_report.BenchmarkReport
  -> mercury_ai.models.benchmark_report.BenchmarkRunResult
+ -> mercury_ai.models.equity_metrics.AssetPerformance
+ -> mercury_ai.models.equity_metrics.UniversePerformance
  -> mercury_ai.providers.yahoo_finance_provider.YahooFinanceProvider
  -> mercury_ai.utils.deterministic_clock.DeterministicClock
+ -> numpy
  -> os
  -> psutil
+ -> scipy.stats
  -> time
  -> tracemalloc
+ -> typing.Dict
  -> typing.List
+ -> typing.Optional
+ -> typing.Tuple
 
 ================================================================================
 mercury_ai.analysis.calibration_analyzer
@@ -255,11 +276,11 @@ mercury_ai.analysis.confidence_calibration_auditor
  -> numpy
  -> typing.Any
  -> typing.Dict
- -> typing.List
 
 ================================================================================
 mercury_ai.analysis.confidence_engine
 ================================================================================
+ -> dataclasses.dataclass
  -> mercury_ai.analysis.conflict_resolution_engine.ConflictResolutionEngine
  -> mercury_ai.analysis.evidence_query.EvidenceQuery
  -> mercury_ai.models.confidence_result.ConfidenceResult
@@ -280,19 +301,33 @@ mercury_ai.analysis.conflict_resolution_engine
 ================================================================================
 mercury_ai.analysis.confluence_engine
 ================================================================================
+ -> mercury_ai.analysis.confluence_helpers.clamp_score
+ -> mercury_ai.analysis.confluence_helpers.dominant_direction
+ -> mercury_ai.analysis.confluence_helpers.has_conflict
  -> mercury_ai.analysis.decision_trace_engine.DecisionTraceEngine
+ -> mercury_ai.analysis.institutional_contribution.InstitutionalContribution
  -> mercury_ai.analysis.market_thesis_builder.MarketThesisBuilder
- -> mercury_ai.models.analysis_result.AnalysisDirection
+ -> mercury_ai.config.institutional_weights.INSTITUTIONAL_WEIGHTS
+ -> mercury_ai.config.institutional_weights.INSTITUTIONAL_WEIGHTS_SUM
  -> mercury_ai.models.confluence_result.ConfluenceResult
  -> mercury_ai.models.market_context.MarketContext
  -> mercury_ai.models.market_evidence_bundle.MarketEvidenceBundle
 
 ================================================================================
+mercury_ai.analysis.confluence_helpers
+================================================================================
+ -> mercury_ai.models.direction.AnalysisDirection
+
+================================================================================
 mercury_ai.analysis.confluence_score_engine
 ================================================================================
+ -> mercury_ai.analysis.confluence_helpers.clamp_score
+ -> mercury_ai.analysis.confluence_helpers.has_conflict
  -> mercury_ai.analysis.evidence_query.EvidenceQuery
+ -> mercury_ai.config.institutional_weights.INSTITUTIONAL_WEIGHTS
  -> mercury_ai.models.confluence_score.ConfluenceScore
  -> mercury_ai.models.market_context.MarketContext
+ -> mercury_ai.models.market_state_enum.MarketStateEnum
 
 ================================================================================
 mercury_ai.analysis.context_engine
@@ -307,6 +342,7 @@ mercury_ai.analysis.context_engine
 ================================================================================
 mercury_ai.analysis.context_intelligence_engine
 ================================================================================
+ -> dataclasses.replace
  -> mercury_ai.models.evidence.Evidence
  -> mercury_ai.models.market_context.MarketContext
  -> typing.List
@@ -315,6 +351,7 @@ mercury_ai.analysis.context_intelligence_engine
 mercury_ai.analysis.data_exporter
 ================================================================================
  -> json
+ -> logging
  -> mercury_ai.analysis.operational_history.OperationalHistory
  -> mercury_ai.database.snapshot_logger.DecisionSnapshotLogger
  -> pandas
@@ -334,6 +371,38 @@ mercury_ai.analysis.data_quality_engine
  -> pandas
  -> typing.Any
  -> typing.Dict
+
+================================================================================
+mercury_ai.analysis.decision_explainability
+================================================================================
+ -> dataclasses.dataclass
+ -> dataclasses.field
+ -> mercury_ai.analysis.institutional_contribution.InstitutionalContribution
+ -> typing.Tuple
+
+================================================================================
+mercury_ai.analysis.decision_resolver_engine
+================================================================================
+ -> dataclasses.dataclass
+ -> typing.Optional
+
+================================================================================
+mercury_ai.analysis.decision_result_builder
+================================================================================
+ -> hashlib
+ -> mercury_ai.analysis.decision_explainability.DecisionExplainability
+ -> mercury_ai.models.confidence_result.ConfidenceResult
+ -> mercury_ai.models.confluence_result.ConfluenceResult
+ -> mercury_ai.models.decision_result.DecisionResult
+ -> mercury_ai.models.evidence_ranking.EvidenceRankingResult
+ -> mercury_ai.models.market_context.MarketContext
+ -> mercury_ai.models.market_evidence_bundle.MarketEvidenceBundle
+ -> mercury_ai.models.probability_result.ProbabilityResult
+ -> mercury_ai.models.trading_explanation.TradingExplanation
+ -> mercury_ai.models.version_metadata.VersionMetadata
+ -> typing.List
+ -> typing.Optional
+ -> typing.Tuple
 
 ================================================================================
 mercury_ai.analysis.decision_trace_engine
@@ -400,8 +469,6 @@ mercury_ai.analysis.fair_value_gap_engine
 ================================================================================
 mercury_ai.analysis.health_auditor
 ================================================================================
- -> mercury_ai.analysis.confidence_engine.ConfidenceEngine
- -> mercury_ai.analysis.narrative_engine.NarrativeEngine
  -> mercury_ai.brain.mercury_decision_engine.MercuryDecisionEngine
  -> mercury_ai.brain.probability_engine.ProbabilityEngine
  -> mercury_ai.core.pipeline_executor.PipelineExecutor
@@ -414,10 +481,6 @@ mercury_ai.analysis.health_checker
 ================================================================================
  -> dataclasses.asdict
  -> dataclasses.dataclass
- -> mercury_ai.analysis.confidence_engine.ConfidenceEngine
- -> mercury_ai.analysis.narrative_engine.NarrativeEngine
- -> mercury_ai.analysis.operational_history.OperationalHistory
- -> mercury_ai.analysis.statistical_auditor.StatisticalAuditor
  -> mercury_ai.brain.mercury_decision_engine.MercuryDecisionEngine
  -> mercury_ai.brain.probability_engine.ProbabilityEngine
  -> mercury_ai.config.settings
@@ -431,6 +494,7 @@ mercury_ai.analysis.health_checker
 ================================================================================
 mercury_ai.analysis.historical_replay_engine
 ================================================================================
+ -> mercury_ai.analysis.replay_cache.ReplayCache
  -> mercury_ai.core.analysis_pipeline.AnalysisPipeline
  -> mercury_ai.data.market_data.MarketDataService
  -> mercury_ai.database.replay_storage.ReplayMetrics
@@ -438,18 +502,34 @@ mercury_ai.analysis.historical_replay_engine
  -> mercury_ai.providers.historical_replay_provider.HistoricalReplayProvider
  -> mercury_ai.utils.deterministic_clock.DeterministicClock
  -> pandas
+ -> time
+ -> typing.Dict
+ -> typing.List
+ -> typing.Optional
 
 ================================================================================
 mercury_ai.analysis.institutional_analytics_engine
 ================================================================================
+ -> collections.defaultdict
+ -> datetime.datetime
+ -> datetime.timedelta
  -> json
+ -> numpy
  -> os
  -> pandas
  -> typing.Any
  -> typing.Dict
+ -> typing.List
+ -> typing.Optional
+ -> typing.Tuple
 
 ================================================================================
 mercury_ai.analysis.institutional_context_builder
+================================================================================
+ -> dataclasses.dataclass
+
+================================================================================
+mercury_ai.analysis.institutional_contribution
 ================================================================================
  -> dataclasses.dataclass
 
@@ -458,8 +538,11 @@ mercury_ai.analysis.institutional_memory_engine
 ================================================================================
  -> hashlib
  -> json
+ -> logging
  -> mercury_ai.models.decision_snapshot.DecisionSnapshot
  -> os
+ -> threading
+ -> time
 
 ================================================================================
 mercury_ai.analysis.institutional_report
@@ -479,13 +562,18 @@ mercury_ai.analysis.institutional_report_generator
  -> typing.Dict
 
 ================================================================================
+mercury_ai.analysis.institutional_score_engine
+================================================================================
+ -> dataclasses.dataclass
+
+================================================================================
 mercury_ai.analysis.institutional_trade_filter_engine
 ================================================================================
  -> mercury_ai.models.market_context.MarketContext
  -> mercury_ai.models.market_evidence_bundle.MarketEvidenceBundle
  -> mercury_ai.models.market_regime_enum.MarketRegimeEnum
+ -> mercury_ai.models.trade_filter_result.TradeFilterResult
  -> typing.List
- -> typing.Tuple
 
 ================================================================================
 mercury_ai.analysis.integrity_checker
@@ -508,12 +596,8 @@ mercury_ai.analysis.learning_engine
 ================================================================================
 mercury_ai.analysis.live_monitor
 ================================================================================
- -> mercury_ai.config.assets.SUPPORTED_ASSETS
- -> mercury_ai.core.analysis_pipeline.AnalysisPipeline
- -> mercury_ai.data.market_data.MarketDataService
- -> mercury_ai.providers.yahoo_finance_provider.YahooFinanceProvider
+ -> logging
  -> time
- -> typing.List
 
 ================================================================================
 mercury_ai.analysis.market_condition_engine
@@ -525,15 +609,24 @@ mercury_ai.analysis.market_condition_engine
 ================================================================================
 mercury_ai.analysis.market_context_builder
 ================================================================================
+ -> mercury_ai.models.evidence.Evidence
+ -> mercury_ai.models.liquidity_profile.LiquidityProfile
  -> mercury_ai.models.market_context.MarketContext
+ -> mercury_ai.models.market_regime.MarketRegime
  -> mercury_ai.models.market_state.MarketState
  -> mercury_ai.models.market_state.MarketStateEnum
+ -> mercury_ai.models.market_structure_profile.MarketStructureProfile
  -> mercury_ai.models.mtf_consensus.MTFConsensus
+ -> mercury_ai.models.price_action.PriceActionAnalysis
  -> mercury_ai.models.risk_assessment.RiskAssessment
+ -> mercury_ai.models.smart_money.SmartMoneyAnalysis
+ -> mercury_ai.models.support_resistance.SupportResistanceAnalysis
+ -> typing.List
 
 ================================================================================
 mercury_ai.analysis.market_regime_engine
 ================================================================================
+ -> mercury_ai.models.market_regime.MarketRegime
  -> mercury_ai.models.market_regime_enum.MarketRegimeEnum
 
 ================================================================================
@@ -543,7 +636,6 @@ mercury_ai.analysis.market_state_engine
  -> mercury_ai.models.market_state.MarketState
  -> mercury_ai.models.market_state_enum.MarketStateEnum
  -> mercury_ai.models.session_analysis.SessionAnalysis
- -> typing.Optional
 
 ================================================================================
 mercury_ai.analysis.market_structure_intelligence_engine
@@ -587,6 +679,7 @@ mercury_ai.analysis.momentum_engine
 ================================================================================
 mercury_ai.analysis.mtf_engine
 ================================================================================
+ -> dataclasses.replace
  -> mercury_ai.analysis.market_structure_intelligence_engine.MarketStructureIntelligenceEngine
  -> mercury_ai.analysis.smart_money.liquidity_engine.LiquidityEngine
  -> mercury_ai.analysis.trend_analyzer.TrendAnalyzer
@@ -633,10 +726,10 @@ mercury_ai.analysis.operational_history
 mercury_ai.analysis.performance_analytics
 ================================================================================
  -> datetime.datetime
+ -> mercury_ai.core.exceptions.MarketClosedException
  -> mercury_ai.data.market_data.MarketDataService
  -> mercury_ai.database.snapshot_logger.DecisionSnapshotLogger
  -> mercury_ai.providers.yahoo_finance_provider.YahooFinanceProvider
- -> pathlib.Path
  -> typing.Any
  -> typing.Dict
  -> typing.List
@@ -653,12 +746,23 @@ mercury_ai.analysis.performance_center
  -> typing.Dict
 
 ================================================================================
+mercury_ai.analysis.performance_engine
+================================================================================
+ -> mercury_ai.analysis.historical_replay_engine.ReplayMetrics
+ -> mercury_ai.models.equity_metrics.AssetPerformance
+ -> mercury_ai.models.equity_metrics.UniversePerformance
+ -> numpy
+ -> pandas
+ -> typing.Dict
+ -> typing.List
+ -> typing.Tuple
+
+================================================================================
 mercury_ai.analysis.performance_statistics
 ================================================================================
  -> mercury_ai.analysis.performance_analytics.PerformanceAnalytics
  -> typing.Any
  -> typing.Dict
- -> typing.List
 
 ================================================================================
 mercury_ai.analysis.post_decision_evaluation_engine
@@ -697,12 +801,68 @@ mercury_ai.analysis.ranking_engine
  -> typing.List
 
 ================================================================================
+mercury_ai.analysis.replay_batch_processor
+================================================================================
+ -> concurrent.futures.ThreadPoolExecutor
+ -> concurrent.futures.TimeoutError
+ -> concurrent.futures.as_completed
+ -> dataclasses.dataclass
+ -> dataclasses.field
+ -> logging
+ -> mercury_ai.analysis.historical_replay_engine.HistoricalReplayEngine
+ -> mercury_ai.analysis.institutional_memory_engine.InstitutionalMemoryEngine
+ -> mercury_ai.analysis.performance_engine.PerformanceEngine
+ -> mercury_ai.analysis.replay_cache.ReplayCache
+ -> mercury_ai.database.replay_storage.ReplayMetrics
+ -> mercury_ai.models.equity_metrics.AssetPerformance
+ -> mercury_ai.models.equity_metrics.UniversePerformance
+ -> pandas
+ -> threading
+ -> time
+ -> typing.Dict
+ -> typing.List
+ -> typing.Optional
+ -> typing.Tuple
+
+================================================================================
+mercury_ai.analysis.replay_cache
+================================================================================
+ -> collections.OrderedDict
+ -> threading
+ -> typing.Any
+ -> typing.Optional
+ -> typing.Tuple
+
+================================================================================
 mercury_ai.analysis.risk_engine
 ================================================================================
+ -> math
  -> mercury_ai.analysis.evidence_quality_engine.EvidenceQualityEngine
+ -> mercury_ai.config.risk.KELLY_DEFAULT_PAYOFF
+ -> mercury_ai.config.risk.KELLY_DEFAULT_WIN_RATE
+ -> mercury_ai.config.risk.KELLY_MAX_FRACTION
+ -> mercury_ai.config.risk.STRESS_SCENARIOS
+ -> mercury_ai.config.risk.VAR_CONFIDENCE_95
+ -> mercury_ai.config.risk.VAR_CONFIDENCE_99
+ -> mercury_ai.models.evidence.Evidence
+ -> mercury_ai.models.liquidity_profile.LiquidityProfile
  -> mercury_ai.models.market_context.MarketContext
+ -> mercury_ai.models.market_data.MarketData
  -> mercury_ai.models.market_evidence_bundle.MarketEvidenceBundle
+ -> mercury_ai.models.market_regime.MarketRegime
+ -> mercury_ai.models.market_regime_enum.MarketRegimeEnum
+ -> mercury_ai.models.market_state.MarketState
+ -> mercury_ai.models.market_state_enum.MarketStateEnum
+ -> mercury_ai.models.market_structure.MarketStructure
+ -> mercury_ai.models.mtf_consensus.MTFConsensus
+ -> mercury_ai.models.price_action.PriceActionAnalysis
  -> mercury_ai.models.risk_assessment.RiskAssessment
+ -> mercury_ai.models.smart_money.SmartMoneyAnalysis
+ -> mercury_ai.models.support_resistance.SupportResistanceAnalysis
+ -> typing.Dict
+ -> typing.List
+ -> typing.Optional
+ -> typing.Tuple
 
 ================================================================================
 mercury_ai.analysis.session_engine
@@ -818,12 +978,11 @@ mercury_ai.analysis.statistical_auditor
  -> mercury_ai.database.snapshot_logger.DecisionSnapshotLogger
  -> typing.Any
  -> typing.Dict
- -> typing.List
 
 ================================================================================
 mercury_ai.analysis.support_resistance_analyzer
 ================================================================================
- -> mercury_ai.models.support_resistance_analysis.SupportResistanceAnalysis
+ -> mercury_ai.models.support_resistance.SupportResistanceAnalysis
  -> numpy
  -> pandas
  -> ta.volatility.AverageTrueRange
@@ -844,7 +1003,11 @@ mercury_ai.analysis.swing_engine
 ================================================================================
 mercury_ai.analysis.tests.test_benchmark_framework
 ================================================================================
+ -> mercury_ai.analysis.benchmark_framework.BuyAndHoldBaseline
+ -> mercury_ai.analysis.benchmark_framework.EnhancedBenchmarkReport
  -> mercury_ai.analysis.benchmark_framework.MercuryBenchmarkFramework
+ -> mercury_ai.analysis.benchmark_framework.StatisticalTestResult
+ -> pytest
 
 ================================================================================
 mercury_ai.analysis.tests.test_candlestick_engine
@@ -862,7 +1025,20 @@ mercury_ai.analysis.tests.test_context_engine
  -> mercury_ai.core.pipeline_executor.PipelineExecutor
  -> mercury_ai.core.pipeline_profiler.PipelineProfiler
  -> mercury_ai.models.evidence.Evidence
+ -> mercury_ai.models.liquidity_profile.LiquidityProfile
+ -> mercury_ai.models.market_context.MarketContext
  -> mercury_ai.models.market_data.MarketData
+ -> mercury_ai.models.market_regime.MarketRegime
+ -> mercury_ai.models.market_regime_enum.MarketRegimeEnum
+ -> mercury_ai.models.market_state.MarketState
+ -> mercury_ai.models.market_state_enum.MarketStateEnum
+ -> mercury_ai.models.market_structure.MarketStructure
+ -> mercury_ai.models.mtf_consensus.MTFConsensus
+ -> mercury_ai.models.price_action.PriceActionAnalysis
+ -> mercury_ai.models.risk_assessment.RiskAssessment
+ -> mercury_ai.models.smart_money.SmartMoneyAnalysis
+ -> mercury_ai.models.support_resistance.SupportResistanceAnalysis
+ -> unittest.mock.MagicMock
  -> unittest.mock.Mock
 
 ================================================================================
@@ -873,6 +1049,19 @@ mercury_ai.analysis.tests.test_fvg_engine
  -> mercury_ai.models.fair_value_gap_analysis.FairValueGapAnalysis
  -> pandas
  -> pytest
+
+================================================================================
+mercury_ai.analysis.tests.test_historical_replay_engine
+================================================================================
+ -> mercury_ai.analysis.historical_replay_engine.HistoricalReplayEngine
+ -> mercury_ai.analysis.replay_cache.ReplayCache
+ -> mercury_ai.database.replay_storage.ReplayMetrics
+ -> numpy
+ -> pandas
+ -> pytest
+ -> unittest.mock.MagicMock
+ -> unittest.mock.PropertyMock
+ -> unittest.mock.patch
 
 ================================================================================
 mercury_ai.analysis.tests.test_market_regime_engine
@@ -907,6 +1096,43 @@ mercury_ai.analysis.tests.test_price_action_engine
  -> mercury_ai.models.price_action_analysis.PriceActionAnalysis
  -> pandas
  -> pytest
+
+================================================================================
+mercury_ai.analysis.tests.test_replay_batch_processor
+================================================================================
+ -> mercury_ai.analysis.replay_batch_processor.BatchReplayReport
+ -> mercury_ai.analysis.replay_batch_processor.BatchReplayResult
+ -> mercury_ai.analysis.replay_batch_processor.ReplayBatchProcessor
+ -> mercury_ai.database.replay_storage.ReplayMetrics
+ -> mercury_ai.models.equity_metrics.AssetPerformance
+ -> mercury_ai.models.equity_metrics.UniversePerformance
+ -> numpy
+ -> pandas
+ -> pytest
+ -> unittest.mock.MagicMock
+ -> unittest.mock.patch
+
+================================================================================
+mercury_ai.analysis.tests.test_replay_cache
+================================================================================
+ -> mercury_ai.analysis.replay_cache.ReplayCache
+ -> pytest
+ -> threading
+
+================================================================================
+mercury_ai.analysis.tests.test_risk_engine
+================================================================================
+ -> math
+ -> mercury_ai.analysis.risk_engine.RiskEngine
+ -> mercury_ai.models.evidence.Evidence
+ -> mercury_ai.models.market_context.MarketContext
+ -> mercury_ai.models.market_data.MarketData
+ -> mercury_ai.models.market_evidence_bundle.MarketEvidenceBundle
+ -> mercury_ai.models.market_structure.MarketStructure
+ -> mercury_ai.models.risk_assessment.RiskAssessment
+ -> mercury_ai.models.smart_money.SmartMoneyAnalysis
+ -> pytest
+ -> unittest.mock.MagicMock
 
 ================================================================================
 mercury_ai.analysis.tests.test_trend_engine
@@ -946,7 +1172,6 @@ mercury_ai.analysis.trade_memory_engine
 ================================================================================
 mercury_ai.analysis.trade_outcome_engine
 ================================================================================
- -> mercury_ai.models.decision_snapshot.DecisionSnapshot
  -> typing.Any
  -> typing.Dict
 
@@ -963,7 +1188,6 @@ mercury_ai.analysis.validation_engine
  -> mercury_ai.models.evidence.Evidence
  -> mercury_ai.models.market_context.MarketContext
  -> mercury_ai.models.market_evidence_bundle.MarketEvidenceBundle
- -> pandas
  -> typing.List
  -> typing.Tuple
 
@@ -1016,9 +1240,9 @@ mercury_ai.analysis.weight_simulator
 ================================================================================
 mercury_ai.brain.explainability_engine
 ================================================================================
- -> mercury_ai.models.analysis_result.AnalysisDirection
  -> mercury_ai.models.analysis_result.AnalysisResult
  -> mercury_ai.models.confluence_result.ConfluenceResult
+ -> mercury_ai.models.direction.AnalysisDirection
  -> mercury_ai.models.probability_result.ProbabilityResult
  -> mercury_ai.models.trading_explanation.TradingExplanation
  -> typing.Tuple
@@ -1027,35 +1251,42 @@ mercury_ai.brain.explainability_engine
 mercury_ai.brain.institutional_brain
 ================================================================================
  -> mercury_ai.models.analysis_result.AnalysisResult
- -> mercury_ai.models.evidence.Evidence
- -> typing.List
 
 ================================================================================
 mercury_ai.brain.mercury_decision_engine
 ================================================================================
- -> hashlib
+ -> logging
  -> mercury_ai.analysis.confidence_engine.ConfidenceEngine
  -> mercury_ai.analysis.conflict_resolution_engine.ConflictResolutionEngine
  -> mercury_ai.analysis.confluence_engine.ConfluenceEngine
+ -> mercury_ai.analysis.confluence_score_engine.ConfluenceScoreEngine
+ -> mercury_ai.analysis.decision_explainability.DecisionExplainability
+ -> mercury_ai.analysis.decision_resolver_engine.DecisionResolverEngine
+ -> mercury_ai.analysis.decision_result_builder.DecisionResultBuilder
  -> mercury_ai.analysis.evidence_quality_engine.EvidenceQualityEngine
  -> mercury_ai.analysis.evidence_ranking_engine.EvidenceRankingEngine
  -> mercury_ai.analysis.institutional_memory_engine.InstitutionalMemoryEngine
+ -> mercury_ai.analysis.institutional_score_engine.InstitutionalScoreEngine
+ -> mercury_ai.analysis.market_state_engine.MarketStateEngine
+ -> mercury_ai.analysis.market_thesis_builder.MarketThesisBuilder
  -> mercury_ai.analysis.narrative_engine.NarrativeEngine
+ -> mercury_ai.analysis.risk_engine.RiskEngine
  -> mercury_ai.analysis.validation_engine.ValidationEngine
  -> mercury_ai.brain.probability_engine.ProbabilityEngine
+ -> mercury_ai.config.institutional_weights.INSTITUTIONAL_WEIGHTS_NORMALIZED
  -> mercury_ai.core.pipeline_executor.PipelineExecutor
  -> mercury_ai.core.pipeline_profiler.PipelineProfiler
+ -> mercury_ai.models.confidence_result.ConfidenceResult
  -> mercury_ai.models.decision_result.DecisionResult
  -> mercury_ai.models.market_context.MarketContext
  -> mercury_ai.models.market_evidence_bundle.MarketEvidenceBundle
- -> mercury_ai.models.market_regime_enum.MarketRegimeEnum
- -> mercury_ai.models.version_metadata.VersionMetadata
- -> typing.List
+ -> mercury_ai.models.trade_filter_result.TradeFilterResult
  -> typing.Optional
 
 ================================================================================
 mercury_ai.brain.probability_engine
 ================================================================================
+ -> mercury_ai.models.market_context.MarketContext
  -> mercury_ai.models.probability_result.ProbabilityResult
  -> typing.Any
  -> typing.Dict
@@ -1064,7 +1295,7 @@ mercury_ai.brain.probability_engine
 ================================================================================
 mercury_ai.brain.scanner
 ================================================================================
- -> mercury_ai.analysis.evidence_query.EvidenceQuery
+ -> logging
  -> mercury_ai.analysis.notification_center.NotificationCenter
  -> mercury_ai.analysis.ranking_engine.RankingEngine
  -> mercury_ai.brain.institutional_brain.InstitutionalBrain
@@ -1073,13 +1304,14 @@ mercury_ai.brain.scanner
  -> mercury_ai.core.asset_registry.AssetRegistry
  -> mercury_ai.data.market_data.MarketDataService
  -> mercury_ai.providers.mercury_data_provider.MercuryDataProvider
+ -> traceback
 
 ================================================================================
 mercury_ai.brain.tests.test_explainability_engine
 ================================================================================
  -> mercury_ai.brain.explainability_engine.ExplainabilityEngine
- -> mercury_ai.models.analysis_result.AnalysisDirection
  -> mercury_ai.models.confluence_result.ConfluenceResult
+ -> mercury_ai.models.direction.AnalysisDirection
  -> mercury_ai.models.probability_result.ProbabilityResult
  -> unittest.mock.MagicMock
 
@@ -1094,6 +1326,7 @@ mercury_ai.brain.tests.test_mercury_decision_benchmark
  -> mercury_ai.models.evidence_ranking.EvidenceRankingResult
  -> mercury_ai.models.market_context.MarketContext
  -> mercury_ai.models.market_evidence_bundle.MarketEvidenceBundle
+ -> mercury_ai.models.trade_filter_result.TradeFilterResult
  -> time
  -> unittest.mock.MagicMock
 
@@ -1105,9 +1338,22 @@ mercury_ai.brain.tests.test_mercury_decision_engine
  -> mercury_ai.models.confidence_result.ConfidenceResult
  -> mercury_ai.models.evidence.Evidence
  -> mercury_ai.models.evidence_ranking.EvidenceRankingResult
+ -> mercury_ai.models.liquidity_profile.LiquidityProfile
  -> mercury_ai.models.market_context.MarketContext
+ -> mercury_ai.models.market_data.MarketData
  -> mercury_ai.models.market_evidence_bundle.MarketEvidenceBundle
+ -> mercury_ai.models.market_regime.MarketRegime
+ -> mercury_ai.models.market_regime_enum.MarketRegimeEnum
+ -> mercury_ai.models.market_state.MarketState
+ -> mercury_ai.models.market_state_enum.MarketStateEnum
+ -> mercury_ai.models.market_structure.MarketStructure
+ -> mercury_ai.models.mtf_consensus.MTFConsensus
+ -> mercury_ai.models.price_action.PriceActionAnalysis
  -> mercury_ai.models.probability_result.ProbabilityResult
+ -> mercury_ai.models.risk_assessment.RiskAssessment
+ -> mercury_ai.models.smart_money.SmartMoneyAnalysis
+ -> mercury_ai.models.support_resistance.SupportResistanceAnalysis
+ -> mercury_ai.models.trade_filter_result.TradeFilterResult
  -> mercury_ai.models.trading_explanation.TradingExplanation
  -> pytest
  -> unittest.mock.MagicMock
@@ -1133,6 +1379,34 @@ mercury_ai.calendar.tests.test_economic_calendar
  -> mercury_ai.calendar.economic_calendar.EconomicCalendar
 
 ================================================================================
+mercury_ai.config.__init__
+================================================================================
+ -> mercury_ai.config.institutional_weights.INSTITUTIONAL_WEIGHTS
+ -> mercury_ai.config.institutional_weights.INSTITUTIONAL_WEIGHTS_NORMALIZED
+ -> mercury_ai.config.institutional_weights.INSTITUTIONAL_WEIGHTS_SUM
+
+================================================================================
+mercury_ai.config.assets
+================================================================================
+ -> mercury_ai.config.universe.ALL_SYMBOLS
+ -> mercury_ai.config.universe.COMMODITY_SYMBOLS
+ -> mercury_ai.config.universe.COMMODITY_UNIVERSE
+ -> mercury_ai.config.universe.CRYPTO_SYMBOLS
+ -> mercury_ai.config.universe.CRYPTO_UNIVERSE
+ -> mercury_ai.config.universe.FOREX_SYMBOLS
+ -> mercury_ai.config.universe.FOREX_UNIVERSE
+ -> mercury_ai.config.universe.OPERATIONAL_UNIVERSE
+ -> mercury_ai.config.universe.STOCK_SYMBOLS
+ -> mercury_ai.config.universe.STOCK_UNIVERSE
+ -> mercury_ai.config.universe.SUPPORTED_ASSETS
+ -> mercury_ai.config.universe.UniverseAsset
+ -> mercury_ai.config.universe.get_all_provider_symbols
+ -> mercury_ai.config.universe.get_asset
+ -> mercury_ai.config.universe.get_enabled_symbols
+ -> mercury_ai.config.universe.universe_summary
+ -> mercury_ai.config.universe.validate_symbol
+
+================================================================================
 mercury_ai.config.configuration_center
 ================================================================================
  -> json
@@ -1140,12 +1414,30 @@ mercury_ai.config.configuration_center
  -> os
 
 ================================================================================
+mercury_ai.config.universe
+================================================================================
+ -> dataclasses.dataclass
+ -> dataclasses.field
+ -> typing.Dict
+ -> typing.List
+ -> typing.Optional
+
+================================================================================
+mercury_ai.core._stage_builder
+================================================================================
+ -> __future__.annotations
+ -> typing.List
+
+================================================================================
 mercury_ai.core.analysis_pipeline
 ================================================================================
  -> dataclasses.replace
  -> json
+ -> logging
  -> mercury_ai.analysis.candlestick_engine.CandlestickEngine
+ -> mercury_ai.analysis.confidence_engine.ConfidenceEngine
  -> mercury_ai.analysis.confluence_engine.ConfluenceEngine
+ -> mercury_ai.analysis.confluence_score_engine.ConfluenceScoreEngine
  -> mercury_ai.analysis.context_engine.ContextEngine
  -> mercury_ai.analysis.context_intelligence_engine.ContextIntelligenceEngine
  -> mercury_ai.analysis.evidence_engine.EvidenceEngine
@@ -1159,6 +1451,7 @@ mercury_ai.core.analysis_pipeline
  -> mercury_ai.analysis.market_regime_engine.MarketRegimeEngine
  -> mercury_ai.analysis.market_state_engine.MarketStateEngine
  -> mercury_ai.analysis.market_structure_intelligence_engine.MarketStructureIntelligenceEngine
+ -> mercury_ai.analysis.market_thesis_builder.MarketThesisBuilder
  -> mercury_ai.analysis.mtf_engine.MTFEngine
  -> mercury_ai.analysis.price_action_analyzer.PriceActionAnalyzer
  -> mercury_ai.analysis.risk_engine.RiskEngine
@@ -1185,6 +1478,7 @@ mercury_ai.core.analysis_pipeline
  -> mercury_ai.models.decision_result.DecisionResult
  -> mercury_ai.models.decision_snapshot.DecisionSnapshot
  -> mercury_ai.models.market_data.MarketData
+ -> mercury_ai.models.risk_assessment.RiskAssessment
  -> mercury_ai.models.version_metadata.VersionMetadata
  -> mercury_ai.providers.base_provider.MarketDataProvider
  -> mercury_ai.utils.deterministic_clock.DeterministicClock
@@ -1240,7 +1534,6 @@ mercury_ai.core.export_center
 ================================================================================
  -> json
  -> mercury_ai.analysis.data_exporter.DataExporter
- -> os
  -> pandas
  -> pathlib.Path
  -> typing.Any
@@ -1270,9 +1563,6 @@ mercury_ai.core.job_manager
  -> mercury_ai.providers.yahoo_finance_provider.YahooFinanceProvider
  -> threading
  -> time
- -> typing.Any
- -> typing.Dict
- -> typing.List
  -> typing.Optional
 
 ================================================================================
@@ -1287,6 +1577,7 @@ mercury_ai.core.observability_center
 mercury_ai.core.pipeline_audit_middleware
 ================================================================================
  -> datetime.datetime
+ -> datetime.timezone
  -> mercury_ai.core.audit_sink.AuditEvent
  -> mercury_ai.core.audit_sink.AuditSink
  -> mercury_ai.core.pipeline_profiler.PipelineProfiler
@@ -1312,12 +1603,20 @@ mercury_ai.core.pipeline_profiler
  -> dataclasses.asdict
  -> gc
  -> json
+ -> mercury_ai.core._stage_builder._StageBuilder
  -> mercury_ai.models.profiler_models.PipelineProfile
  -> mercury_ai.models.profiler_models.StageProfile
  -> threading
  -> time
  -> tracemalloc
- -> typing.List
+
+================================================================================
+mercury_ai.core.project_state
+================================================================================
+ -> __future__.annotations
+ -> json
+ -> pathlib.Path
+ -> typing.Any
 
 ================================================================================
 mercury_ai.core.runtime_report
@@ -1325,7 +1624,6 @@ mercury_ai.core.runtime_report
  -> dataclasses.dataclass
  -> dataclasses.field
  -> typing.Any
- -> typing.Dict
  -> typing.List
  -> typing.Optional
 
@@ -1334,7 +1632,6 @@ mercury_ai.core.security_center
 ================================================================================
  -> dataclasses.dataclass
  -> dataclasses.field
- -> json
  -> mercury_ai.utils.deterministic_clock.DeterministicClock
  -> typing.Any
  -> typing.Dict
@@ -1448,7 +1745,7 @@ mercury_ai.main
 mercury_ai.market.market_engine
 ================================================================================
  -> mercury_ai.config.settings.ASSET
- -> mercury_ai.providers.market_provider.MarketProvider
+ -> mercury_ai.providers.market_provider.MercuryDataProvider
 
 ================================================================================
 mercury_ai.models.analysis_result
@@ -1457,12 +1754,25 @@ mercury_ai.models.analysis_result
  -> dataclasses.field
  -> enum.Enum
  -> mercury_ai.config.settings
+ -> mercury_ai.models.candlestick_analysis.CandlestickAnalysis
+ -> mercury_ai.models.confluence_result.ConfluenceResult
+ -> mercury_ai.models.decision_result.DecisionResult
  -> mercury_ai.models.evidence.Evidence
+ -> mercury_ai.models.evidence_ranking.EvidenceRankingResult
+ -> mercury_ai.models.liquidity_result.LiquidityResult
+ -> mercury_ai.models.market_condition.MarketCondition
  -> mercury_ai.models.market_context.MarketContext
  -> mercury_ai.models.market_data.MarketData
+ -> mercury_ai.models.market_regime.MarketRegime
+ -> mercury_ai.models.market_state.MarketState
+ -> mercury_ai.models.market_structure_profile.MarketStructureProfile
+ -> mercury_ai.models.risk_assessment.RiskAssessment
+ -> mercury_ai.models.session_analysis.SessionAnalysis
  -> mercury_ai.models.smart_money.SmartMoneyAnalysis
+ -> mercury_ai.models.support_resistance.SupportResistanceAnalysis
+ -> mercury_ai.models.volatility_analysis.VolatilityAnalysis
+ -> mercury_ai.models.volume_analysis.VolumeAnalysis
  -> mercury_ai.utils.deterministic_clock.DeterministicClock
- -> typing.Any
  -> typing.List
 
 ================================================================================
@@ -1490,7 +1800,7 @@ mercury_ai.models.confidence_result
 mercury_ai.models.confluence_result
 ================================================================================
  -> dataclasses.dataclass
- -> mercury_ai.models.analysis_result.AnalysisDirection
+ -> mercury_ai.models.direction.AnalysisDirection
  -> typing.Any
  -> typing.Tuple
 
@@ -1530,6 +1840,7 @@ mercury_ai.models.decision_result
 ================================================================================
  -> dataclasses.dataclass
  -> dataclasses.field
+ -> mercury_ai.analysis.decision_explainability.DecisionExplainability
  -> mercury_ai.models.decision_trace.DecisionTrace
  -> mercury_ai.models.evidence_ranking.EvidenceRankingResult
  -> mercury_ai.models.market_regime.MarketRegime
@@ -1559,6 +1870,22 @@ mercury_ai.models.decision_trace
  -> dataclasses.dataclass
  -> dataclasses.field
  -> mercury_ai.models.decision_node.DecisionNode
+ -> typing.Tuple
+
+================================================================================
+mercury_ai.models.direction
+================================================================================
+ -> enum.Enum
+
+================================================================================
+mercury_ai.models.equity_metrics
+================================================================================
+ -> dataclasses.dataclass
+ -> dataclasses.field
+ -> pandas
+ -> typing.Dict
+ -> typing.List
+ -> typing.Optional
  -> typing.Tuple
 
 ================================================================================
@@ -1637,7 +1964,6 @@ mercury_ai.models.market_context
  -> mercury_ai.models.smart_money.SmartMoneyAnalysis
  -> mercury_ai.models.support_resistance.SupportResistanceAnalysis
  -> typing.List
- -> typing.Optional
 
 ================================================================================
 mercury_ai.models.market_data
@@ -1785,6 +2111,10 @@ mercury_ai.models.regression
 mercury_ai.models.risk_assessment
 ================================================================================
  -> dataclasses.dataclass
+ -> dataclasses.field
+ -> typing.Dict
+ -> typing.Optional
+ -> typing.Tuple
 
 ================================================================================
 mercury_ai.models.session_analysis
@@ -1832,6 +2162,13 @@ mercury_ai.models.swing_analysis
  -> dataclasses.field
  -> typing.List
  -> typing.Optional
+
+================================================================================
+mercury_ai.models.trade_filter_result
+================================================================================
+ -> dataclasses.dataclass
+ -> dataclasses.field
+ -> typing.Tuple
 
 ================================================================================
 mercury_ai.models.trade_memory
@@ -1920,6 +2257,7 @@ mercury_ai.news.tests.test_news_provider
 ================================================================================
 mercury_ai.operations.demo_manager
 ================================================================================
+ -> logging
  -> mercury_ai.config.assets.SUPPORTED_ASSETS
  -> mercury_ai.core.analysis_pipeline.AnalysisPipeline
  -> mercury_ai.data.market_data.MarketDataService
@@ -1938,6 +2276,10 @@ mercury_ai.providers.base_provider
 ================================================================================
 mercury_ai.providers.data_adapters
 ================================================================================
+ -> logging
+ -> mercury_ai.config.universe.ALL_SYMBOLS
+ -> mercury_ai.config.universe.CRYPTO_SYMBOLS
+ -> mercury_ai.config.universe.FOREX_SYMBOLS
  -> mercury_ai.providers.data_interfaces.IDataProvider
  -> pandas
  -> yfinance
@@ -1952,9 +2294,9 @@ mercury_ai.providers.data_interfaces
 ================================================================================
 mercury_ai.providers.historical_replay_provider
 ================================================================================
- -> mercury_ai.providers.base_provider.MarketDataProvider
  -> os
  -> pandas
+ -> typing.Optional
 
 ================================================================================
 mercury_ai.providers.market_provider
@@ -1975,29 +2317,17 @@ mercury_ai.providers.market_provider
 ================================================================================
 mercury_ai.providers.mercury_data_provider
 ================================================================================
- -> functools.lru_cache
- -> logging
- -> mercury_ai.providers.data_adapters.AlphaVantageAdapter
- -> mercury_ai.providers.data_adapters.BinanceAdapter
- -> mercury_ai.providers.data_adapters.MetaTrader5Adapter
- -> mercury_ai.providers.data_adapters.PolygonAdapter
- -> mercury_ai.providers.data_adapters.TwelveDataAdapter
- -> mercury_ai.providers.data_adapters.YahooAdapter
- -> mercury_ai.providers.data_interfaces.IDataProvider
- -> pandas
- -> time
- -> typing.Dict
+ -> mercury_ai.providers.market_provider.MercuryDataProvider
 
 ================================================================================
 mercury_ai.providers.tests.test_market_provider
 ================================================================================
- -> mercury_ai.providers.market_provider.MarketProvider
+ -> mercury_ai.providers.market_provider.MercuryDataProvider
 
 ================================================================================
 mercury_ai.providers.yahoo_finance_provider
 ================================================================================
  -> mercury_ai.core.exceptions.MarketClosedException
- -> mercury_ai.providers.base_provider.MarketDataProvider
  -> pandas
  -> yfinance
 
@@ -2032,14 +2362,13 @@ mercury_ai.utils.performance_collector
 ================================================================================
  -> contextlib.contextmanager
  -> gc
+ -> mercury_ai.core._stage_builder._StageBuilder
  -> mercury_ai.models.performance.HotspotReport
  -> mercury_ai.models.performance.PipelineMetric
  -> mercury_ai.models.performance.StageMetric
- -> statistics
  -> time
  -> tracemalloc
  -> typing.List
- -> typing.Optional
  -> typing.Tuple
 
 ================================================================================
@@ -2050,7 +2379,6 @@ mercury_ai.utils.regression_detector
  -> mercury_ai.models.regression.RegressionResult
  -> typing.Dict
  -> typing.List
- -> typing.Optional
 
 ================================================================================
 mercury_ai.utils.report_generator
@@ -2058,9 +2386,6 @@ mercury_ai.utils.report_generator
  -> csv
  -> datetime
  -> json
- -> mercury_ai.models.performance.PipelineMetric
- -> mercury_ai.models.regression.RegressionResult
- -> mercury_ai.models.stress_test.StressTestResult
  -> platform
  -> sys
  -> typing.Any
@@ -2071,19 +2396,29 @@ mercury_ai.utils.report_generator
 mercury_ai.utils.stress_tester
 ================================================================================
  -> mercury_ai.models.stress_test.StressTestResult
- -> random
  -> time
  -> tracemalloc
  -> typing.Any
  -> typing.Callable
  -> typing.Dict
- -> typing.List
 
 ================================================================================
 mercury_ai.utils.system_monitor
 ================================================================================
  -> psutil
- -> time
+
+================================================================================
+parity_check
+================================================================================
+ -> pandas
+ -> yfinance
+
+================================================================================
+resolve_merge_conflicts
+================================================================================
+ -> glob
+ -> os
+ -> re
 
 ================================================================================
 run_deterministic_replay_scenarios
@@ -2095,9 +2430,16 @@ run_deterministic_replay_scenarios
 ================================================================================
 run_institutional_replay
 ================================================================================
+ -> datetime.datetime
  -> mercury_ai.analysis.historical_replay_engine.HistoricalReplayEngine
+ -> mercury_ai.analysis.performance_engine.PerformanceEngine
+ -> mercury_ai.database.replay_storage.ReplayMetrics
+ -> mercury_ai.models.equity_metrics.AssetPerformance
+ -> mercury_ai.models.equity_metrics.UniversePerformance
  -> os
  -> pandas
+ -> typing.Dict
+ -> typing.List
 
 ================================================================================
 run_instrumented
@@ -2105,6 +2447,39 @@ run_instrumented
  -> mercury_ai.core.analysis_pipeline.AnalysisPipeline
  -> mercury_ai.data.market_data.MarketDataService
  -> pandas
+
+================================================================================
+scripts.generate_benchmark_framework
+================================================================================
+ -> os
+
+================================================================================
+scripts.prepare_replay_data
+================================================================================
+ -> argparse
+ -> datetime.datetime
+ -> datetime.timedelta
+ -> mercury_ai.config.universe.ALL_SYMBOLS
+ -> mercury_ai.config.universe.CRYPTO_SYMBOLS
+ -> mercury_ai.config.universe.FOREX_SYMBOLS
+ -> os
+ -> pandas
+ -> sys
+ -> yfinance
+
+================================================================================
+scripts.run_replay_3500
+================================================================================
+ -> datetime.datetime
+ -> mercury_ai.analysis.historical_replay_engine.HistoricalReplayEngine
+ -> mercury_ai.analysis.performance_engine.PerformanceEngine
+ -> mercury_ai.database.replay_storage.ReplayMetrics
+ -> mercury_ai.models.equity_metrics.AssetPerformance
+ -> mercury_ai.models.equity_metrics.UniversePerformance
+ -> os
+ -> pandas
+ -> sys
+ -> time
 
 ================================================================================
 stress_test_replay
@@ -2118,12 +2493,31 @@ stress_test_replay
  -> tracemalloc
 
 ================================================================================
+test_bloco7_scenarios
+================================================================================
+ -> mercury_ai.analysis.decision_resolver_engine.DecisionResolverEngine
+ -> mercury_ai.analysis.decision_resolver_engine.DecisionResolverResult
+ -> os
+ -> sys
+ -> traceback
+
+================================================================================
 test_mercury_signal
 ================================================================================
  -> mercury_ai.core.analysis_pipeline.AnalysisPipeline
  -> mercury_ai.data.market_data.MarketDataService
  -> mercury_ai.presentation.signal_formatter.SignalFormatter
  -> mercury_ai.providers.mercury_data_provider.MercuryDataProvider
+
+================================================================================
+test_replay_quick
+================================================================================
+ -> mercury_ai.analysis.historical_replay_engine.HistoricalReplayEngine
+ -> mercury_ai.analysis.performance_engine.PerformanceEngine
+ -> mercury_ai.database.replay_storage.ReplayMetrics
+ -> os
+ -> pandas
+ -> sys
 
 ================================================================================
 teste_gemini
@@ -2191,7 +2585,9 @@ tests.test_broker_filtering
  -> mercury_ai.brain.scanner.MercuryScanner
  -> mercury_ai.core.asset_registry.AssetRegistry
  -> os
+ -> pathlib.Path
  -> pytest
+ -> shutil
 
 ================================================================================
 tests.test_confidence_calibration
@@ -2267,7 +2663,9 @@ tests.test_determinism
 ================================================================================
  -> mercury_ai.core.analysis_pipeline.AnalysisPipeline
  -> mercury_ai.data.market_data.MarketDataService
- -> mercury_ai.providers.yahoo_finance_provider.YahooFinanceProvider
+ -> mercury_ai.data.providers.historical_data_provider.HistoricalDataProvider
+ -> numpy
+ -> pandas
  -> pytest
 
 ================================================================================
@@ -2318,6 +2716,26 @@ tests.test_health_checker
  -> mercury_ai.analysis.health_checker.HealthChecker
 
 ================================================================================
+tests.test_institutional_backtest
+================================================================================
+ -> math
+ -> mercury_ai.analysis.historical_replay_engine.HistoricalReplayEngine
+ -> mercury_ai.analysis.performance_engine.PerformanceEngine
+ -> mercury_ai.analysis.replay_batch_processor.BatchReplayReport
+ -> mercury_ai.analysis.replay_batch_processor.BatchReplayResult
+ -> mercury_ai.analysis.replay_batch_processor.ReplayBatchProcessor
+ -> mercury_ai.analysis.replay_cache.ReplayCache
+ -> mercury_ai.analysis.risk_engine.RiskEngine
+ -> mercury_ai.database.replay_storage.ReplayMetrics
+ -> mercury_ai.models.equity_metrics.AssetPerformance
+ -> mercury_ai.models.equity_metrics.UniversePerformance
+ -> mercury_ai.models.risk_assessment.RiskAssessment
+ -> numpy
+ -> pandas
+ -> pytest
+ -> time
+
+================================================================================
 tests.test_institutional_report_generator
 ================================================================================
  -> mercury_ai.analysis.institutional_report_generator.InstitutionalReportGenerator
@@ -2337,6 +2755,7 @@ tests.test_job_manager
 tests.test_live_monitor
 ================================================================================
  -> mercury_ai.analysis.live_monitor.LiveMonitor
+ -> pytest
 
 ================================================================================
 tests.test_main_dashboard
@@ -2398,6 +2817,14 @@ tests.test_performance_collector
  -> time
 
 ================================================================================
+tests.test_performance_engine
+================================================================================
+ -> mercury_ai.analysis.historical_replay_engine.ReplayMetrics
+ -> mercury_ai.analysis.performance_engine.PerformanceEngine
+ -> numpy
+ -> unittest
+
+================================================================================
 tests.test_performance_statistics
 ================================================================================
  -> mercury_ai.analysis.performance_statistics.PerformanceStatistics
@@ -2405,6 +2832,7 @@ tests.test_performance_statistics
 ================================================================================
 tests.test_pipeline_persistence
 ================================================================================
+ -> json
  -> mercury_ai.core.analysis_pipeline.AnalysisPipeline
  -> mercury_ai.data.market_data.MarketDataService
  -> mercury_ai.data.providers.historical_data_provider.HistoricalDataProvider
@@ -2445,6 +2873,16 @@ tests.test_read_only
  -> pytest
 
 ================================================================================
+tests.test_regression_sprint18
+================================================================================
+ -> mercury_ai.core.analysis_pipeline.AnalysisPipeline
+ -> mercury_ai.data.market_data.MarketDataService
+ -> mercury_ai.models.market_structure_profile.MarketStructureProfile
+ -> mercury_ai.providers.historical_replay_provider.HistoricalReplayProvider
+ -> pandas
+ -> pytest
+
+================================================================================
 tests.test_robustness
 ================================================================================
  -> mercury_ai.core.analysis_pipeline.AnalysisPipeline
@@ -2480,7 +2918,9 @@ tests.test_session_id
 ================================================================================
  -> mercury_ai.core.analysis_pipeline.AnalysisPipeline
  -> mercury_ai.data.market_data.MarketDataService
- -> mercury_ai.providers.yahoo_finance_provider.YahooFinanceProvider
+ -> mercury_ai.data.providers.historical_data_provider.HistoricalDataProvider
+ -> numpy
+ -> pandas
 
 ================================================================================
 tests.test_session_manager
@@ -2519,6 +2959,447 @@ tests.test_versioning
 tests.test_weight_simulator
 ================================================================================
  -> mercury_ai.analysis.weight_simulator.WeightSimulator
+
+================================================================================
+tools.main
+================================================================================
+ -> scanner.ProjectScanner
+ -> writer.InventoryWriter
+
+================================================================================
+tools.mercury_integrity_auditor.auditors.__init__
+================================================================================
+ -> .contract_auditor
+ -> .coverage_auditor
+ -> .decision_auditor
+ -> .dependency_auditor
+ -> .flow_auditor
+ -> .integrity_auditor
+ -> .masking_auditor
+ -> .report
+ -> .runtime_auditor
+ -> .static_auditor
+ -> .test_auditor
+
+================================================================================
+tools.mercury_integrity_auditor.auditors.backtest_auditor
+================================================================================
+ -> pathlib.Path
+ -> re
+ -> sys
+ -> tools.mercury_integrity_auditor.config.CRITICAL
+ -> tools.mercury_integrity_auditor.config.HIGH
+ -> tools.mercury_integrity_auditor.config.LOW
+ -> tools.mercury_integrity_auditor.config.MEDIUM
+ -> tools.mercury_integrity_auditor.config.MERCURY_AI_DIR
+ -> tools.mercury_integrity_auditor.config.PROJECT_ROOT
+ -> tools.mercury_integrity_auditor.config.STATUS_FAIL
+ -> tools.mercury_integrity_auditor.config.STATUS_INCONCLUSIVE
+ -> tools.mercury_integrity_auditor.config.STATUS_INFO
+ -> tools.mercury_integrity_auditor.config.STATUS_PASS
+ -> tools.mercury_integrity_auditor.config.STATUS_WARNING
+ -> tools.mercury_integrity_auditor.config.TESTS_DIR
+ -> tools.mercury_integrity_auditor.models.AuditFinding
+ -> tools.mercury_integrity_auditor.models.AuditSection
+
+================================================================================
+tools.mercury_integrity_auditor.auditors.contract_auditor
+================================================================================
+ -> ast
+ -> pathlib.Path
+ -> sys
+ -> tools.mercury_integrity_auditor.config.CRITICAL
+ -> tools.mercury_integrity_auditor.config.HIGH
+ -> tools.mercury_integrity_auditor.config.LOW
+ -> tools.mercury_integrity_auditor.config.MEDIUM
+ -> tools.mercury_integrity_auditor.config.MERCURY_AI_DIR
+ -> tools.mercury_integrity_auditor.config.PROJECT_ROOT
+ -> tools.mercury_integrity_auditor.config.STATUS_FAIL
+ -> tools.mercury_integrity_auditor.config.STATUS_INFO
+ -> tools.mercury_integrity_auditor.config.STATUS_PASS
+ -> tools.mercury_integrity_auditor.config.STATUS_WARNING
+ -> tools.mercury_integrity_auditor.models.AuditFinding
+ -> tools.mercury_integrity_auditor.models.AuditSection
+
+================================================================================
+tools.mercury_integrity_auditor.auditors.coverage_auditor
+================================================================================
+ -> json
+ -> pathlib.Path
+ -> subprocess
+ -> sys
+ -> tools.mercury_integrity_auditor.config.CRITICAL
+ -> tools.mercury_integrity_auditor.config.HIGH
+ -> tools.mercury_integrity_auditor.config.LOW
+ -> tools.mercury_integrity_auditor.config.MEDIUM
+ -> tools.mercury_integrity_auditor.config.MERCURY_AI_DIR
+ -> tools.mercury_integrity_auditor.config.PROJECT_ROOT
+ -> tools.mercury_integrity_auditor.config.STATUS_FAIL
+ -> tools.mercury_integrity_auditor.config.STATUS_INFO
+ -> tools.mercury_integrity_auditor.config.STATUS_PASS
+ -> tools.mercury_integrity_auditor.config.STATUS_WARNING
+ -> tools.mercury_integrity_auditor.config.TESTS_DIR
+ -> tools.mercury_integrity_auditor.models.AuditFinding
+ -> tools.mercury_integrity_auditor.models.AuditSection
+
+================================================================================
+tools.mercury_integrity_auditor.auditors.data_auditor
+================================================================================
+ -> json
+ -> pathlib.Path
+ -> sys
+ -> tools.mercury_integrity_auditor.config.CRITICAL
+ -> tools.mercury_integrity_auditor.config.HIGH
+ -> tools.mercury_integrity_auditor.config.LOW
+ -> tools.mercury_integrity_auditor.config.MEDIUM
+ -> tools.mercury_integrity_auditor.config.MERCURY_AI_DIR
+ -> tools.mercury_integrity_auditor.config.PROJECT_ROOT
+ -> tools.mercury_integrity_auditor.config.STATUS_FAIL
+ -> tools.mercury_integrity_auditor.config.STATUS_INCONCLUSIVE
+ -> tools.mercury_integrity_auditor.config.STATUS_INFO
+ -> tools.mercury_integrity_auditor.config.STATUS_PASS
+ -> tools.mercury_integrity_auditor.config.STATUS_WARNING
+ -> tools.mercury_integrity_auditor.models.AuditFinding
+ -> tools.mercury_integrity_auditor.models.AuditSection
+
+================================================================================
+tools.mercury_integrity_auditor.auditors.decision_auditor
+================================================================================
+ -> ast
+ -> json
+ -> pathlib.Path
+ -> sys
+ -> tools.mercury_integrity_auditor.config.CRITICAL
+ -> tools.mercury_integrity_auditor.config.HIGH
+ -> tools.mercury_integrity_auditor.config.LOW
+ -> tools.mercury_integrity_auditor.config.MEDIUM
+ -> tools.mercury_integrity_auditor.config.MERCURY_AI_DIR
+ -> tools.mercury_integrity_auditor.config.PROJECT_ROOT
+ -> tools.mercury_integrity_auditor.config.STATUS_FAIL
+ -> tools.mercury_integrity_auditor.config.STATUS_INFO
+ -> tools.mercury_integrity_auditor.config.STATUS_PASS
+ -> tools.mercury_integrity_auditor.config.STATUS_WARNING
+ -> tools.mercury_integrity_auditor.models.AuditFinding
+ -> tools.mercury_integrity_auditor.models.AuditSection
+
+================================================================================
+tools.mercury_integrity_auditor.auditors.dependency_auditor
+================================================================================
+ -> ast
+ -> importlib.metadata
+ -> pathlib.Path
+ -> sys
+ -> tools.mercury_integrity_auditor.config.CRITICAL
+ -> tools.mercury_integrity_auditor.config.HIGH
+ -> tools.mercury_integrity_auditor.config.LOW
+ -> tools.mercury_integrity_auditor.config.MEDIUM
+ -> tools.mercury_integrity_auditor.config.MERCURY_AI_DIR
+ -> tools.mercury_integrity_auditor.config.PROJECT_ROOT
+ -> tools.mercury_integrity_auditor.config.STATUS_FAIL
+ -> tools.mercury_integrity_auditor.config.STATUS_INFO
+ -> tools.mercury_integrity_auditor.config.STATUS_PASS
+ -> tools.mercury_integrity_auditor.config.STATUS_WARNING
+ -> tools.mercury_integrity_auditor.models.AuditFinding
+ -> tools.mercury_integrity_auditor.models.AuditSection
+
+================================================================================
+tools.mercury_integrity_auditor.auditors.determinism_auditor
+================================================================================
+ -> pathlib.Path
+ -> sys
+ -> tools.mercury_integrity_auditor.config.CRITICAL
+ -> tools.mercury_integrity_auditor.config.HIGH
+ -> tools.mercury_integrity_auditor.config.LOW
+ -> tools.mercury_integrity_auditor.config.MEDIUM
+ -> tools.mercury_integrity_auditor.config.MERCURY_AI_DIR
+ -> tools.mercury_integrity_auditor.config.PROJECT_ROOT
+ -> tools.mercury_integrity_auditor.config.STATUS_FAIL
+ -> tools.mercury_integrity_auditor.config.STATUS_INCONCLUSIVE
+ -> tools.mercury_integrity_auditor.config.STATUS_INFO
+ -> tools.mercury_integrity_auditor.config.STATUS_PASS
+ -> tools.mercury_integrity_auditor.config.STATUS_WARNING
+ -> tools.mercury_integrity_auditor.models.AuditFinding
+ -> tools.mercury_integrity_auditor.models.AuditSection
+
+================================================================================
+tools.mercury_integrity_auditor.auditors.explainability_auditor
+================================================================================
+ -> json
+ -> pathlib.Path
+ -> sys
+ -> tools.mercury_integrity_auditor.config.CRITICAL
+ -> tools.mercury_integrity_auditor.config.HIGH
+ -> tools.mercury_integrity_auditor.config.LOW
+ -> tools.mercury_integrity_auditor.config.MEDIUM
+ -> tools.mercury_integrity_auditor.config.MERCURY_AI_DIR
+ -> tools.mercury_integrity_auditor.config.PROJECT_ROOT
+ -> tools.mercury_integrity_auditor.config.STATUS_FAIL
+ -> tools.mercury_integrity_auditor.config.STATUS_INCONCLUSIVE
+ -> tools.mercury_integrity_auditor.config.STATUS_INFO
+ -> tools.mercury_integrity_auditor.config.STATUS_PASS
+ -> tools.mercury_integrity_auditor.config.STATUS_WARNING
+ -> tools.mercury_integrity_auditor.models.AuditFinding
+ -> tools.mercury_integrity_auditor.models.AuditSection
+
+================================================================================
+tools.mercury_integrity_auditor.auditors.flow_auditor
+================================================================================
+ -> ast
+ -> pathlib.Path
+ -> sys
+ -> tools.mercury_integrity_auditor.config.CRITICAL
+ -> tools.mercury_integrity_auditor.config.HIGH
+ -> tools.mercury_integrity_auditor.config.LOW
+ -> tools.mercury_integrity_auditor.config.MEDIUM
+ -> tools.mercury_integrity_auditor.config.MERCURY_AI_DIR
+ -> tools.mercury_integrity_auditor.config.PROJECT_ROOT
+ -> tools.mercury_integrity_auditor.config.STATUS_FAIL
+ -> tools.mercury_integrity_auditor.config.STATUS_INFO
+ -> tools.mercury_integrity_auditor.config.STATUS_PASS
+ -> tools.mercury_integrity_auditor.config.STATUS_WARNING
+ -> tools.mercury_integrity_auditor.models.AuditFinding
+ -> tools.mercury_integrity_auditor.models.AuditSection
+
+================================================================================
+tools.mercury_integrity_auditor.auditors.global_state_auditor
+================================================================================
+ -> json
+ -> pathlib.Path
+ -> sys
+ -> tools.mercury_integrity_auditor.config.CRITICAL
+ -> tools.mercury_integrity_auditor.config.HIGH
+ -> tools.mercury_integrity_auditor.config.LOW
+ -> tools.mercury_integrity_auditor.config.MEDIUM
+ -> tools.mercury_integrity_auditor.config.MERCURY_AI_DIR
+ -> tools.mercury_integrity_auditor.config.PROJECT_ROOT
+ -> tools.mercury_integrity_auditor.config.STATUS_FAIL
+ -> tools.mercury_integrity_auditor.config.STATUS_INCONCLUSIVE
+ -> tools.mercury_integrity_auditor.config.STATUS_INFO
+ -> tools.mercury_integrity_auditor.config.STATUS_PASS
+ -> tools.mercury_integrity_auditor.config.STATUS_WARNING
+ -> tools.mercury_integrity_auditor.models.AuditFinding
+ -> tools.mercury_integrity_auditor.models.AuditSection
+
+================================================================================
+tools.mercury_integrity_auditor.auditors.integrity_auditor
+================================================================================
+ -> hashlib
+ -> json
+ -> pathlib.Path
+ -> sys
+ -> tools.mercury_integrity_auditor.config.CRITICAL
+ -> tools.mercury_integrity_auditor.config.DOT_MERCURY_DIR
+ -> tools.mercury_integrity_auditor.config.HIGH
+ -> tools.mercury_integrity_auditor.config.LOW
+ -> tools.mercury_integrity_auditor.config.MEDIUM
+ -> tools.mercury_integrity_auditor.config.MERCURY_AI_DIR
+ -> tools.mercury_integrity_auditor.config.PROJECT_ROOT
+ -> tools.mercury_integrity_auditor.config.STATUS_FAIL
+ -> tools.mercury_integrity_auditor.config.STATUS_INFO
+ -> tools.mercury_integrity_auditor.config.STATUS_PASS
+ -> tools.mercury_integrity_auditor.config.STATUS_WARNING
+ -> tools.mercury_integrity_auditor.models.AuditFinding
+ -> tools.mercury_integrity_auditor.models.AuditSection
+
+================================================================================
+tools.mercury_integrity_auditor.auditors.masking_auditor
+================================================================================
+ -> ast
+ -> pathlib.Path
+ -> sys
+ -> tools.mercury_integrity_auditor.config.CRITICAL
+ -> tools.mercury_integrity_auditor.config.HIGH
+ -> tools.mercury_integrity_auditor.config.LOW
+ -> tools.mercury_integrity_auditor.config.MEDIUM
+ -> tools.mercury_integrity_auditor.config.MERCURY_AI_DIR
+ -> tools.mercury_integrity_auditor.config.PROJECT_ROOT
+ -> tools.mercury_integrity_auditor.config.STATUS_FAIL
+ -> tools.mercury_integrity_auditor.config.STATUS_INFO
+ -> tools.mercury_integrity_auditor.config.STATUS_PASS
+ -> tools.mercury_integrity_auditor.config.STATUS_WARNING
+ -> tools.mercury_integrity_auditor.models.AuditFinding
+ -> tools.mercury_integrity_auditor.models.AuditSection
+
+================================================================================
+tools.mercury_integrity_auditor.auditors.performance_auditor
+================================================================================
+ -> pathlib.Path
+ -> sys
+ -> tools.mercury_integrity_auditor.config.CRITICAL
+ -> tools.mercury_integrity_auditor.config.HIGH
+ -> tools.mercury_integrity_auditor.config.LOW
+ -> tools.mercury_integrity_auditor.config.MEDIUM
+ -> tools.mercury_integrity_auditor.config.MERCURY_AI_DIR
+ -> tools.mercury_integrity_auditor.config.PROJECT_ROOT
+ -> tools.mercury_integrity_auditor.config.STATUS_FAIL
+ -> tools.mercury_integrity_auditor.config.STATUS_INCONCLUSIVE
+ -> tools.mercury_integrity_auditor.config.STATUS_INFO
+ -> tools.mercury_integrity_auditor.config.STATUS_PASS
+ -> tools.mercury_integrity_auditor.config.STATUS_WARNING
+ -> tools.mercury_integrity_auditor.models.AuditFinding
+ -> tools.mercury_integrity_auditor.models.AuditSection
+
+================================================================================
+tools.mercury_integrity_auditor.auditors.report
+================================================================================
+ -> datetime.datetime
+ -> json
+ -> pathlib.Path
+ -> sys
+ -> tools.mercury_integrity_auditor.config.AUDIT_OUTPUT_DIR
+ -> tools.mercury_integrity_auditor.config.AUDIT_TIMESTAMP
+ -> tools.mercury_integrity_auditor.config.PROJECT_ROOT
+ -> tools.mercury_integrity_auditor.models.AuditFinding
+ -> tools.mercury_integrity_auditor.models.AuditReport
+ -> tools.mercury_integrity_auditor.models.AuditSection
+ -> typing.Any
+
+================================================================================
+tools.mercury_integrity_auditor.auditors.runtime_auditor
+================================================================================
+ -> pathlib.Path
+ -> subprocess
+ -> sys
+ -> time
+ -> tools.mercury_integrity_auditor.config.CRITICAL
+ -> tools.mercury_integrity_auditor.config.HIGH
+ -> tools.mercury_integrity_auditor.config.LOW
+ -> tools.mercury_integrity_auditor.config.MEDIUM
+ -> tools.mercury_integrity_auditor.config.PROJECT_ROOT
+ -> tools.mercury_integrity_auditor.config.STATUS_FAIL
+ -> tools.mercury_integrity_auditor.config.STATUS_INFO
+ -> tools.mercury_integrity_auditor.config.STATUS_PASS
+ -> tools.mercury_integrity_auditor.config.STATUS_WARNING
+ -> tools.mercury_integrity_auditor.models.AuditFinding
+ -> tools.mercury_integrity_auditor.models.AuditSection
+
+================================================================================
+tools.mercury_integrity_auditor.auditors.static_auditor
+================================================================================
+ -> ast
+ -> os
+ -> pathlib.Path
+ -> sys
+ -> tools.mercury_integrity_auditor.config.CRITICAL
+ -> tools.mercury_integrity_auditor.config.HIGH
+ -> tools.mercury_integrity_auditor.config.LOW
+ -> tools.mercury_integrity_auditor.config.MEDIUM
+ -> tools.mercury_integrity_auditor.config.MERCURY_AI_DIR
+ -> tools.mercury_integrity_auditor.config.PROJECT_ROOT
+ -> tools.mercury_integrity_auditor.config.STATUS_FAIL
+ -> tools.mercury_integrity_auditor.config.STATUS_INCONCLUSIVE
+ -> tools.mercury_integrity_auditor.config.STATUS_INFO
+ -> tools.mercury_integrity_auditor.config.STATUS_PASS
+ -> tools.mercury_integrity_auditor.config.STATUS_WARNING
+ -> tools.mercury_integrity_auditor.models.AuditFinding
+ -> tools.mercury_integrity_auditor.models.AuditSection
+
+================================================================================
+tools.mercury_integrity_auditor.auditors.test_auditor
+================================================================================
+ -> pathlib.Path
+ -> re
+ -> subprocess
+ -> sys
+ -> time
+ -> tools.mercury_integrity_auditor.config.CRITICAL
+ -> tools.mercury_integrity_auditor.config.HIGH
+ -> tools.mercury_integrity_auditor.config.LOW
+ -> tools.mercury_integrity_auditor.config.MEDIUM
+ -> tools.mercury_integrity_auditor.config.PROJECT_ROOT
+ -> tools.mercury_integrity_auditor.config.STATUS_FAIL
+ -> tools.mercury_integrity_auditor.config.STATUS_INFO
+ -> tools.mercury_integrity_auditor.config.STATUS_PASS
+ -> tools.mercury_integrity_auditor.config.STATUS_WARNING
+ -> tools.mercury_integrity_auditor.models.AuditFinding
+ -> tools.mercury_integrity_auditor.models.AuditSection
+
+================================================================================
+tools.mercury_integrity_auditor.auditors.universe_auditor
+================================================================================
+ -> pathlib.Path
+ -> sys
+ -> tools.mercury_integrity_auditor.config.CRITICAL
+ -> tools.mercury_integrity_auditor.config.HIGH
+ -> tools.mercury_integrity_auditor.config.LOW
+ -> tools.mercury_integrity_auditor.config.MEDIUM
+ -> tools.mercury_integrity_auditor.config.MERCURY_AI_DIR
+ -> tools.mercury_integrity_auditor.config.PROJECT_ROOT
+ -> tools.mercury_integrity_auditor.config.STATUS_FAIL
+ -> tools.mercury_integrity_auditor.config.STATUS_INCONCLUSIVE
+ -> tools.mercury_integrity_auditor.config.STATUS_INFO
+ -> tools.mercury_integrity_auditor.config.STATUS_PASS
+ -> tools.mercury_integrity_auditor.config.STATUS_WARNING
+ -> tools.mercury_integrity_auditor.models.AuditFinding
+ -> tools.mercury_integrity_auditor.models.AuditSection
+
+================================================================================
+tools.mercury_integrity_auditor.config
+================================================================================
+ -> datetime.datetime
+ -> os
+ -> pathlib.Path
+ -> sys
+
+================================================================================
+tools.mercury_integrity_auditor.main
+================================================================================
+ -> auditors.backtest_auditor
+ -> auditors.contract_auditor
+ -> auditors.coverage_auditor
+ -> auditors.data_auditor
+ -> auditors.decision_auditor
+ -> auditors.dependency_auditor
+ -> auditors.determinism_auditor
+ -> auditors.explainability_auditor
+ -> auditors.flow_auditor
+ -> auditors.global_state_auditor
+ -> auditors.integrity_auditor
+ -> auditors.masking_auditor
+ -> auditors.performance_auditor
+ -> auditors.report
+ -> auditors.runtime_auditor
+ -> auditors.static_auditor
+ -> auditors.test_auditor
+ -> auditors.universe_auditor
+ -> config.AUDIT_OUTPUT_DIR
+ -> config.AUDIT_TIMESTAMP
+ -> config.CRITICAL
+ -> config.HIGH
+ -> config.LOW
+ -> config.MEDIUM
+ -> config.MERCURY_AI_DIR
+ -> config.PROJECT_ROOT
+ -> config.REPORT_JSON
+ -> config.REPORT_MD
+ -> config.STATUS_FAIL
+ -> config.STATUS_INCONCLUSIVE
+ -> config.STATUS_INFO
+ -> config.STATUS_PASS
+ -> config.STATUS_WARNING
+ -> config.TESTS_DIR
+ -> json
+ -> models.AuditFinding
+ -> models.AuditReport
+ -> models.AuditSection
+ -> pathlib.Path
+ -> subprocess
+ -> sys
+ -> time
+
+================================================================================
+tools.mercury_integrity_auditor.models
+================================================================================
+ -> dataclasses.dataclass
+ -> dataclasses.field
+ -> datetime.datetime
+ -> typing.Optional
+
+================================================================================
+tools.models
+================================================================================
+ -> dataclasses.dataclass
+ -> dataclasses.field
 
 ================================================================================
 tools.project_mapper.architecture_audit
@@ -2613,6 +3494,31 @@ tools.project_mapper.writer
  -> dataclasses.asdict
  -> json
  -> pathlib.Path
+
+================================================================================
+tools.scanner
+================================================================================
+ -> config.IGNORE_DIRS
+ -> config.IGNORE_FILES
+ -> config.PROJECT_ROOT
+ -> config.SOURCE_EXTENSIONS
+ -> models.FileInfo
+ -> models.Inventory
+ -> pathlib.Path
+
+================================================================================
+tools.writer
+================================================================================
+ -> config.PROJECT_ROOT
+ -> dataclasses.asdict
+ -> json
+ -> pathlib.Path
+
+================================================================================
+validate_universe_parity
+================================================================================
+ -> mercury_ai.config.universe.ALL_SYMBOLS
+ -> yfinance
 
 ================================================================================
 verify_assets

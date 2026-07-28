@@ -5,6 +5,7 @@ import logging
 from pathlib import Path
 from mercury_ai.analysis.operational_history import OperationalHistory
 from mercury_ai.database.snapshot_logger import DecisionSnapshotLogger
+from mercury_ai.utils.atomic_io import atomic_json_write
 from typing import Dict, Any, List
 
 class DataExporter:
@@ -27,8 +28,7 @@ class DataExporter:
         for fmt in formats:
             path = self.export_dir / f"{name}.{fmt}"
             if fmt == 'json':
-                with open(path, "w") as f:
-                    json.dump(data, f, indent=4, default=str)
+                atomic_json_write(str(path), data, indent=4, default=str)
             elif fmt == 'csv' and df is not None:
                 df.to_csv(path, index=False)
             elif fmt == 'xlsx' and df is not None:

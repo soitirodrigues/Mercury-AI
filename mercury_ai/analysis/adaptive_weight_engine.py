@@ -21,11 +21,14 @@ class AdaptiveWeightEngine:
         }
         
         # Ajustes baseados em Regime
-        market_regime = context.market_regime
-        
-        regime = market_regime.regime
-        
-        if regime in [MarketRegimeEnum.STRONG_UPTREND, MarketRegimeEnum.WEAK_UPTREND, 
+        market_regime = context.market_regime if context and context.market_regime else MarketRegimeEnum.UNKNOWN
+
+        if hasattr(market_regime, 'regime'):
+            regime = market_regime.regime
+        else:
+            regime = market_regime
+
+        if regime in [MarketRegimeEnum.STRONG_UPTREND, MarketRegimeEnum.WEAK_UPTREND,
                       MarketRegimeEnum.STRONG_DOWNTREND, MarketRegimeEnum.WEAK_DOWNTREND]:
             weights["Trend"] = min(weights["Trend"] * 1.5, 2.0)
             weights["Structure"] = min(weights["Structure"] * 1.2, 1.8)
@@ -35,7 +38,7 @@ class AdaptiveWeightEngine:
         elif regime == MarketRegimeEnum.EXPANSION:
             weights["Volatility"] = min(weights["Volatility"] * 1.8, 2.5)
             weights["Trend"] = max(weights["Trend"] * 0.5, 0.3)
-            
+
         # Ajustes baseados em Sessão (Ex: Alta liquidez em NY/London)
         # O contexto precisa ter informação de sessão.
         

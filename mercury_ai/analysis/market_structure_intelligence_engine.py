@@ -24,6 +24,12 @@ class MarketStructureIntelligenceEngine:
         if df.empty:
             return MarketStructureProfile(), []
 
+        # Normalize column names to lowercase for case-insensitive access (work on a copy)
+        df = df.copy()
+        df.columns = [str(c).strip().lower() for c in df.columns]
+        # Drop duplicate columns that may result from DataNormalizer adding both lowercase and uppercase
+        df = df.loc[:, ~df.columns.duplicated()]
+
         swings, evidences = self.swing_engine.detect_swings(df)
 
         sequence_result = self.swing_engine.analyze_sequence(swings)

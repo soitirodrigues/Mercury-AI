@@ -1,6 +1,7 @@
 import json
 import os
 from mercury_ai.config import settings
+from mercury_ai.utils.atomic_io import atomic_json_write
 
 class MercuryConfigCenter:
     """
@@ -41,8 +42,7 @@ class MercuryConfigCenter:
             self.settings[category].update(new_settings)
         else:
             self.settings[category] = new_settings
-        with open(self.config_file, "w") as f:
-            json.dump(self.settings, f, indent=4)
+        atomic_json_write(self.config_file, self.settings, indent=4)
 
     def get(self, category: str, key: str = None, default=None):
         if category not in self.settings:

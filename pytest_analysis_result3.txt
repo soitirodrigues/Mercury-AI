@@ -1,0 +1,220 @@
+﻿FFFFFFF................................................................. [ 69%]
+................................                                         [100%]
+================================== FAILURES ===================================
+______ TestMercuryBenchmarkFramework.test_benchmark_framework_execution _______
+mercury_ai\analysis\tests\test_benchmark_framework.py:18: in test_benchmark_framework_execution
+    report = framework.run_benchmark(symbols)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+mercury_ai\analysis\benchmark_framework.py:361: in run_benchmark
+    run_result, outcomes, decisions, scores = future.result()
+                                              ^^^^^^^^^^^^^^^
+C:\Users\jujuf\AppData\Local\Programs\Python\Python311\Lib\concurrent\futures\_base.py:449: in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+C:\Users\jujuf\AppData\Local\Programs\Python\Python311\Lib\concurrent\futures\_base.py:401: in __get_result
+    raise self._exception
+C:\Users\jujuf\AppData\Local\Programs\Python\Python311\Lib\concurrent\futures\thread.py:58: in run
+    result = self.fn(*self.args, **self.kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+mercury_ai\analysis\benchmark_framework.py:141: in _run_single_symbol
+    result = self.pipeline.analyze(symbol)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+mercury_ai\core\analysis_pipeline.py:200: in analyze
+    mtf_evidences, mtf_consensus = self.mtf_engine.analyze(symbol)
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+mercury_ai\analysis\mtf_engine.py:44: in analyze
+    df = self.market_service.get_data(symbol, interval=interval, period="1mo")
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+mercury_ai\data\market_data.py:223: in get_data
+    raise Exception(
+E   Exception: No provider available for BTC-USD
+---------------------------- Captured stdout call -----------------------------
+Provider <mercury_ai.providers.yahoo_finance_provider.YahooFinanceProvider object at 0x0000017D0DCE0B90> falhou: DataFrame vazio para BTC-USD
+------------------------------ Captured log call ------------------------------
+ERROR    yfinance:history.py:296 $BTC-USD: possibly delisted; no price data found  (period=1mo) (Yahoo error = "1m data not available for startTime=1783209523 and endTime=1785887923. Only 8 days worth of 1m granularity data are allowed to be fetched per request.")
+__________ TestMercuryBenchmarkFramework.test_enhanced_report_fields __________
+mercury_ai\analysis\tests\test_benchmark_framework.py:29: in test_enhanced_report_fields
+    report = framework.run_benchmark(symbols)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+mercury_ai\analysis\benchmark_framework.py:361: in run_benchmark
+    run_result, outcomes, decisions, scores = future.result()
+                                              ^^^^^^^^^^^^^^^
+C:\Users\jujuf\AppData\Local\Programs\Python\Python311\Lib\concurrent\futures\_base.py:449: in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+C:\Users\jujuf\AppData\Local\Programs\Python\Python311\Lib\concurrent\futures\_base.py:401: in __get_result
+    raise self._exception
+C:\Users\jujuf\AppData\Local\Programs\Python\Python311\Lib\concurrent\futures\thread.py:58: in run
+    result = self.fn(*self.args, **self.kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+mercury_ai\analysis\benchmark_framework.py:141: in _run_single_symbol
+    result = self.pipeline.analyze(symbol)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+mercury_ai\core\analysis_pipeline.py:200: in analyze
+    mtf_evidences, mtf_consensus = self.mtf_engine.analyze(symbol)
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+mercury_ai\analysis\mtf_engine.py:44: in analyze
+    df = self.market_service.get_data(symbol, interval=interval, period="1mo")
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+mercury_ai\data\market_data.py:223: in get_data
+    raise Exception(
+E   Exception: No provider available for BTC-USD
+---------------------------- Captured stdout call -----------------------------
+Provider <mercury_ai.providers.yahoo_finance_provider.YahooFinanceProvider object at 0x0000017D587609D0> falhou: DataFrame vazio para BTC-USD
+------------------------------ Captured log call ------------------------------
+ERROR    yfinance:history.py:296 $BTC-USD: possibly delisted; no price data found  (period=1mo) (Yahoo error = "1m data not available for startTime=1783209528 and endTime=1785887928. Only 8 days worth of 1m granularity data are allowed to be fetched per request.")
+_________ TestMercuryBenchmarkFramework.test_statistical_test_result __________
+mercury_ai\analysis\tests\test_benchmark_framework.py:45: in test_statistical_test_result
+    report = framework.run_benchmark(symbols)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+mercury_ai\analysis\benchmark_framework.py:361: in run_benchmark
+    run_result, outcomes, decisions, scores = future.result()
+                                              ^^^^^^^^^^^^^^^
+C:\Users\jujuf\AppData\Local\Programs\Python\Python311\Lib\concurrent\futures\_base.py:449: in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+C:\Users\jujuf\AppData\Local\Programs\Python\Python311\Lib\concurrent\futures\_base.py:401: in __get_result
+    raise self._exception
+C:\Users\jujuf\AppData\Local\Programs\Python\Python311\Lib\concurrent\futures\thread.py:58: in run
+    result = self.fn(*self.args, **self.kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+mercury_ai\analysis\benchmark_framework.py:141: in _run_single_symbol
+    result = self.pipeline.analyze(symbol)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+mercury_ai\core\analysis_pipeline.py:200: in analyze
+    mtf_evidences, mtf_consensus = self.mtf_engine.analyze(symbol)
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+mercury_ai\analysis\mtf_engine.py:44: in analyze
+    df = self.market_service.get_data(symbol, interval=interval, period="1mo")
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+mercury_ai\data\market_data.py:223: in get_data
+    raise Exception(
+E   Exception: No provider available for BTC-USD
+---------------------------- Captured stdout call -----------------------------
+Provider <mercury_ai.providers.yahoo_finance_provider.YahooFinanceProvider object at 0x0000017D5888BE90> falhou: DataFrame vazio para BTC-USD
+------------------------------ Captured log call ------------------------------
+ERROR    yfinance:history.py:296 $BTC-USD: possibly delisted; no price data found  (period=1mo) (Yahoo error = "1m data not available for startTime=1783209531 and endTime=1785887931. Only 8 days worth of 1m granularity data are allowed to be fetched per request.")
+__________ TestMercuryBenchmarkFramework.test_buy_and_hold_baseline ___________
+mercury_ai\analysis\tests\test_benchmark_framework.py:64: in test_buy_and_hold_baseline
+    report = framework.run_benchmark(symbols)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+mercury_ai\analysis\benchmark_framework.py:361: in run_benchmark
+    run_result, outcomes, decisions, scores = future.result()
+                                              ^^^^^^^^^^^^^^^
+C:\Users\jujuf\AppData\Local\Programs\Python\Python311\Lib\concurrent\futures\_base.py:449: in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+C:\Users\jujuf\AppData\Local\Programs\Python\Python311\Lib\concurrent\futures\_base.py:401: in __get_result
+    raise self._exception
+C:\Users\jujuf\AppData\Local\Programs\Python\Python311\Lib\concurrent\futures\thread.py:58: in run
+    result = self.fn(*self.args, **self.kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+mercury_ai\analysis\benchmark_framework.py:141: in _run_single_symbol
+    result = self.pipeline.analyze(symbol)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+mercury_ai\core\analysis_pipeline.py:200: in analyze
+    mtf_evidences, mtf_consensus = self.mtf_engine.analyze(symbol)
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+mercury_ai\analysis\mtf_engine.py:44: in analyze
+    df = self.market_service.get_data(symbol, interval=interval, period="1mo")
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+mercury_ai\data\market_data.py:223: in get_data
+    raise Exception(
+E   Exception: No provider available for BTC-USD
+---------------------------- Captured stdout call -----------------------------
+Provider <mercury_ai.providers.yahoo_finance_provider.YahooFinanceProvider object at 0x0000017D58878CD0> falhou: DataFrame vazio para BTC-USD
+------------------------------ Captured log call ------------------------------
+ERROR    yfinance:history.py:296 $BTC-USD: possibly delisted; no price data found  (period=1mo) (Yahoo error = "1m data not available for startTime=1783209535 and endTime=1785887935. Only 8 days worth of 1m granularity data are allowed to be fetched per request.")
+______ TestMercuryBenchmarkFramework.test_quick_benchmark_compatibility _______
+mercury_ai\analysis\tests\test_benchmark_framework.py:76: in test_quick_benchmark_compatibility
+    report = framework.run_quick_benchmark(symbols)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+mercury_ai\analysis\benchmark_framework.py:458: in run_quick_benchmark
+    result = self.pipeline.analyze(symbol)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+mercury_ai\core\analysis_pipeline.py:200: in analyze
+    mtf_evidences, mtf_consensus = self.mtf_engine.analyze(symbol)
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+mercury_ai\analysis\mtf_engine.py:44: in analyze
+    df = self.market_service.get_data(symbol, interval=interval, period="1mo")
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+mercury_ai\data\market_data.py:223: in get_data
+    raise Exception(
+E   Exception: No provider available for BTC-USD
+---------------------------- Captured stdout call -----------------------------
+Provider <mercury_ai.providers.yahoo_finance_provider.YahooFinanceProvider object at 0x0000017D174B4110> falhou: DataFrame vazio para BTC-USD
+------------------------------ Captured log call ------------------------------
+ERROR    yfinance:history.py:296 $BTC-USD: possibly delisted; no price data found  (period=1mo) (Yahoo error = "1m data not available for startTime=1783209540 and endTime=1785887940. Only 8 days worth of 1m granularity data are allowed to be fetched per request.")
+_____________ TestMercuryBenchmarkFramework.test_warm_cool_filter _____________
+mercury_ai\analysis\tests\test_benchmark_framework.py:89: in test_warm_cool_filter
+    report = framework.run_benchmark(symbols)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+mercury_ai\analysis\benchmark_framework.py:361: in run_benchmark
+    run_result, outcomes, decisions, scores = future.result()
+                                              ^^^^^^^^^^^^^^^
+C:\Users\jujuf\AppData\Local\Programs\Python\Python311\Lib\concurrent\futures\_base.py:449: in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+C:\Users\jujuf\AppData\Local\Programs\Python\Python311\Lib\concurrent\futures\_base.py:401: in __get_result
+    raise self._exception
+C:\Users\jujuf\AppData\Local\Programs\Python\Python311\Lib\concurrent\futures\thread.py:58: in run
+    result = self.fn(*self.args, **self.kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+mercury_ai\analysis\benchmark_framework.py:141: in _run_single_symbol
+    result = self.pipeline.analyze(symbol)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+mercury_ai\core\analysis_pipeline.py:200: in analyze
+    mtf_evidences, mtf_consensus = self.mtf_engine.analyze(symbol)
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+mercury_ai\analysis\mtf_engine.py:44: in analyze
+    df = self.market_service.get_data(symbol, interval=interval, period="1mo")
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+mercury_ai\data\market_data.py:223: in get_data
+    raise Exception(
+E   Exception: No provider available for BTC-USD
+---------------------------- Captured stdout call -----------------------------
+Provider <mercury_ai.providers.yahoo_finance_provider.YahooFinanceProvider object at 0x0000017D58820C10> falhou: DataFrame vazio para BTC-USD
+------------------------------ Captured log call ------------------------------
+ERROR    yfinance:history.py:296 $BTC-USD: possibly delisted; no price data found  (period=1mo) (Yahoo error = "1m data not available for startTime=1783209544 and endTime=1785887944. Only 8 days worth of 1m granularity data are allowed to be fetched per request.")
+_____________ TestMercuryBenchmarkFramework.test_multiple_symbols _____________
+mercury_ai\analysis\tests\test_benchmark_framework.py:99: in test_multiple_symbols
+    report = framework.run_benchmark(symbols)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+mercury_ai\analysis\benchmark_framework.py:361: in run_benchmark
+    run_result, outcomes, decisions, scores = future.result()
+                                              ^^^^^^^^^^^^^^^
+C:\Users\jujuf\AppData\Local\Programs\Python\Python311\Lib\concurrent\futures\_base.py:449: in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+C:\Users\jujuf\AppData\Local\Programs\Python\Python311\Lib\concurrent\futures\_base.py:401: in __get_result
+    raise self._exception
+C:\Users\jujuf\AppData\Local\Programs\Python\Python311\Lib\concurrent\futures\thread.py:58: in run
+    result = self.fn(*self.args, **self.kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+mercury_ai\analysis\benchmark_framework.py:141: in _run_single_symbol
+    result = self.pipeline.analyze(symbol)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+mercury_ai\core\analysis_pipeline.py:200: in analyze
+    mtf_evidences, mtf_consensus = self.mtf_engine.analyze(symbol)
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+mercury_ai\analysis\mtf_engine.py:44: in analyze
+    df = self.market_service.get_data(symbol, interval=interval, period="1mo")
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+mercury_ai\data\market_data.py:223: in get_data
+    raise Exception(
+E   Exception: No provider available for BTC-USD
+---------------------------- Captured stdout call -----------------------------
+Provider <mercury_ai.providers.yahoo_finance_provider.YahooFinanceProvider object at 0x0000017D58A92210> falhou: DataFrame vazio para BTC-USD
+Provider <mercury_ai.providers.yahoo_finance_provider.YahooFinanceProvider object at 0x0000017D58A92210> falhou: DataFrame vazio para ETH-USD
+------------------------------ Captured log call ------------------------------
+ERROR    yfinance:history.py:296 $BTC-USD: possibly delisted; no price data found  (period=1mo) (Yahoo error = "1m data not available for startTime=1783209550 and endTime=1785887950. Only 8 days worth of 1m granularity data are allowed to be fetched per request.")
+ERROR    yfinance:history.py:296 $ETH-USD: possibly delisted; no price data found  (period=1mo) (Yahoo error = "1m data not available for startTime=1783209551 and endTime=1785887951. Only 8 days worth of 1m granularity data are allowed to be fetched per request.")
+=========================== short test summary info ===========================
+FAILED mercury_ai/analysis/tests/test_benchmark_framework.py::TestMercuryBenchmarkFramework::test_benchmark_framework_execution
+FAILED mercury_ai/analysis/tests/test_benchmark_framework.py::TestMercuryBenchmarkFramework::test_enhanced_report_fields
+FAILED mercury_ai/analysis/tests/test_benchmark_framework.py::TestMercuryBenchmarkFramework::test_statistical_test_result
+FAILED mercury_ai/analysis/tests/test_benchmark_framework.py::TestMercuryBenchmarkFramework::test_buy_and_hold_baseline
+FAILED mercury_ai/analysis/tests/test_benchmark_framework.py::TestMercuryBenchmarkFramework::test_quick_benchmark_compatibility
+FAILED mercury_ai/analysis/tests/test_benchmark_framework.py::TestMercuryBenchmarkFramework::test_warm_cool_filter
+FAILED mercury_ai/analysis/tests/test_benchmark_framework.py::TestMercuryBenchmarkFramework::test_multiple_symbols
+7 failed, 97 passed in 34.88s

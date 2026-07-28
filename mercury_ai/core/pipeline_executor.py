@@ -1,5 +1,8 @@
 from typing import Any, Callable, Type, Optional, List, Dict
 from mercury_ai.core.pipeline_profiler import PipelineProfiler
+import logging
+
+logger = logging.getLogger(__name__)
 
 class PipelineContractError(Exception):
     pass
@@ -27,7 +30,8 @@ class PipelineExecutor:
             self.history.append({"stage": stage_name, "status": "success"})
             return result
             
-        except Exception as e:
+        except Exception as e:  # Broad catch intentional: pipeline executor wraps ALL stage errors into PipelineContractError
+            logger.error(f"Pipeline Stage '{stage_name}' falhou: {type(e).__name__}: {e}", exc_info=True)
             self.history.append({"stage": stage_name, "status": "failed", "error": str(e)})
             if isinstance(e, PipelineContractError):
                 raise

@@ -31,7 +31,7 @@ class StressTester:
             try:
                 result = self.engine(input_data)
                 results.append(result)
-            except Exception as e:
+            except Exception as e:  # Broad catch intentional: stress test collects ALL exceptions for analysis
                 exceptions.append(e)
                 failure_count += 1
             finally:

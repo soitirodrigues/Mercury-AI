@@ -74,13 +74,27 @@ class MercuryDataProvider:
     # ---------------------------------------------------------
     # PUBLIC API
     # ---------------------------------------------------------
+    # COMPATIBILITY API (para testes e health_center)
+    # ---------------------------------------------------------
+
+    def healthcheck(self) -> Dict[str, bool]:
+        """Retorna dict com status de saúde de cada provider."""
+        return {
+            provider.name: provider.check_health()
+            for provider in self._providers.values()
+        }
+
+    def list_providers(self) -> list:
+        """Retorna lista de nomes de providers registrados."""
+        return [provider.name for provider in self._providers.values()]
+
+    # ---------------------------------------------------------
 
     def best_provider(self, symbol: str):
 
         return self._get_best_provider(symbol)
 
     # ---------------------------------------------------------
-
     def is_available(self) -> bool:
         """Verifica se há pelo menos um provider saudável."""
         try:
@@ -103,9 +117,7 @@ class MercuryDataProvider:
         provider = self._get_best_provider(symbol)
         return provider.get_data(symbol, interval)
 
-    # ---------------------------------------------------------
-
-    def trigger_failover(self, reason: str = "") -> bool:
+    # ---------------------------------------------------------    def trigger_failover(self, reason: str = "") -> bool:
 
         logger.warning(f"Failover requested: {reason}")
 
@@ -187,15 +199,23 @@ class MercuryDataProvider:
 
                 return candles
 
-            except Exception as e:
+            except (TimeoutError, ConnectionError, OSError, RuntimeError) as e:
 
                 last_error = e
 
-                logger.warning(e)
+                logger.warning(f"{provider.name} falhou para {symbol} (tentativa {attempt+1}/{retries}): {e}")
 
                 time.sleep(0.5)
 
-        raise RuntimeError(last_error)
+            except (ValueError, TypeError, KeyError, AttributeError, IndexError) as e:
+
+                last_error = e
+
+                logger.error(f"{provider.name} erro inesperado para {symbol}: {e}", exc_info=True)
+
+                time.sleep(0.5)
+
+        raise RuntimeError(f"Provider falhou após {retries} tentativas para {symbol}: {last_error}")
 
     # ---------------------------------------------------------
 

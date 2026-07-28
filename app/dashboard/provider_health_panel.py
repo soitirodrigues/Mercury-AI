@@ -3,6 +3,7 @@ try:
 except ImportError:
     st = None
 from mercury_ai.providers.mercury_data_provider import MercuryDataProvider
+from mercury_ai.data.mercury_data_provider import ProviderStatus
 
 def render_provider_health_dashboard(manager: MercuryDataProvider):
 

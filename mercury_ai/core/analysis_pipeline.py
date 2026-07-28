@@ -24,6 +24,7 @@ from mercury_ai.database.snapshot_logger import DecisionSnapshotLogger
 from mercury_ai.core.pipeline_executor import PipelineExecutor
 from mercury_ai.core.pipeline_profiler import PipelineProfiler
 
+from mercury_ai.utils.atomic_io import atomic_json_write
 from mercury_ai.analysis.market_context_builder import MarketContextBuilder
 from mercury_ai.analysis.smart_money.smart_money_engine import SmartMoneyEngine
 from mercury_ai.analysis.trend_analyzer import TrendAnalyzer
@@ -45,6 +46,10 @@ from mercury_ai.analysis.volume_intelligence_engine import VolumeIntelligenceEng
 from mercury_ai.analysis.market_structure_intelligence_engine import MarketStructureIntelligenceEngine
 from mercury_ai.config.timeframes import DEFAULT_TIMEFRAME
 from mercury_ai.analysis.institutional_trade_filter_engine import InstitutionalTradeFilterEngine
+from mercury_ai.analysis.confluence_engine import ConfluenceEngine
+from mercury_ai.analysis.confidence_engine import ConfidenceEngine
+from mercury_ai.analysis.confluence_score_engine import ConfluenceScoreEngine
+from mercury_ai.analysis.market_thesis_builder import MarketThesisBuilder
 from mercury_ai.analysis.price_action_analyzer import PriceActionAnalyzer
 from mercury_ai.analysis.fair_value_gap_engine import FairValueGapEngine
 from mercury_ai.analysis.smart_money.order_block_engine import OrderBlockEngine
@@ -88,9 +93,16 @@ class AnalysisPipeline:
         self.candlestick_engine = CandlestickEngine()
         self.structure_intel_engine = MarketStructureIntelligenceEngine()
         
-        
         # Coordination & Filtering
         self.risk_engine = RiskEngine()
+        self.confluence = ConfluenceEngine(
+            thesis_builder=MarketThesisBuilder(
+                risk_engine=self.risk_engine,
+                confidence_engine=ConfidenceEngine(),
+                state_engine=self.state_engine,
+                score_engine=ConfluenceScoreEngine(),
+            ),
+        )
         self.trade_filter = InstitutionalTradeFilterEngine()
         self.ranking_engine = EvidenceRankingEngine()
         self.evidence_quality_engine = EvidenceQualityEngine()
@@ -145,7 +157,7 @@ class AnalysisPipeline:
         )
         self.runtime_report.stages.append(telemetry)
 
-    def analyze(self, symbol="GC=F", avg_volume=None, avg_body=None):
+    def analyze(self, symbol="GC=F", avg_volume=None, avg_body=None, silent=False):
         self.profiler.start_pipeline()
         
         try:
@@ -158,8 +170,8 @@ class AnalysisPipeline:
             start = DeterministicClock.utcnow()
             with self.profiler.stage("DataQuality"):
                 is_valid, quality_score, reason = self.quality_engine.validate(df)
-                if not is_valid:
-                    logging.warning("Data quality issue for %s: %s (Score: %s)", symbol, reason, quality_score)
+                if not is_valid and not silent:
+                    print(f"Data quality issue for {symbol}: {reason} (Score: {quality_score})")
             self._record_telemetry("DataQuality", start, df, is_valid)
 
             start = DeterministicClock.utcnow()
@@ -376,9 +388,7 @@ class AnalysisPipeline:
             self.profiler.end_pipeline()
             
             if self.runtime_report:
-                import json
-                with open(f"runtime_report_{symbol}_{DeterministicClock.utcnow().strftime('%Y%m%d%H%M%S')}.json", "w") as f:
-                    json.dump(self.runtime_report.to_dict(), f, indent=4)
+                atomic_json_write(f"runtime_report_{symbol}_{DeterministicClock.utcnow().strftime('%Y%m%d%H%M%S')}.json", self.runtime_report.to_dict(), indent=4)
             
             return result
 

@@ -2,21 +2,21 @@
 
 ## Architecture Audit
 
-Python files : 334
-Parsed files : 334
-Failed files : 0
+Python files : 402
+Parsed files : 397
+Failed files : 5
 
-Modules : 294
-Classes : 258
-Functions : 637
-Imports : 1424
-Calls : 3937
+Modules : 344
+Classes : 322
+Functions : 999
+Imports : 2103
+Calls : 8168
 
-Dependency nodes : 301
+Dependency nodes : 359
 
 ## Auditoria
 
-✔ Nenhum erro de parsing encontrado.
+✖ Existem arquivos com erro de parsing.
 
 ## Conclusão
 

@@ -1,7 +1,8 @@
 from dataclasses import dataclass
 from typing import Any
-import json
 import os
+
+from mercury_ai.utils.atomic_io import atomic_json_write
 
 @dataclass(frozen=True)
 class ReplayMetrics:
@@ -26,5 +27,4 @@ class ReplayStorage:
             "hit": metrics.hit,
             "timestamp": snapshot.timestamp
         }
-        with open(f"{self.output_dir}/{audit_id}.json", 'w') as f:
-            json.dump(data, f, indent=4)
+        atomic_json_write(f"{self.output_dir}/{audit_id}.json", data, indent=4)

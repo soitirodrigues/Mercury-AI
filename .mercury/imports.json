@@ -13,7 +13,39 @@
     },
     {
         "module": "main",
+        "import": "sys"
+    },
+    {
+        "module": "main",
+        "import": "threading"
+    },
+    {
+        "module": "main",
+        "import": "logging"
+    },
+    {
+        "module": "main",
         "import": "mercury_ai.brain.scanner.MercuryScanner"
+    },
+    {
+        "module": "parity_check",
+        "import": "yfinance"
+    },
+    {
+        "module": "parity_check",
+        "import": "pandas"
+    },
+    {
+        "module": "resolve_merge_conflicts",
+        "import": "os"
+    },
+    {
+        "module": "resolve_merge_conflicts",
+        "import": "re"
+    },
+    {
+        "module": "resolve_merge_conflicts",
+        "import": "glob"
     },
     {
         "module": "run_deterministic_replay_scenarios",
@@ -37,7 +69,35 @@
     },
     {
         "module": "run_institutional_replay",
+        "import": "datetime.datetime"
+    },
+    {
+        "module": "run_institutional_replay",
+        "import": "typing.Dict"
+    },
+    {
+        "module": "run_institutional_replay",
+        "import": "typing.List"
+    },
+    {
+        "module": "run_institutional_replay",
         "import": "mercury_ai.analysis.historical_replay_engine.HistoricalReplayEngine"
+    },
+    {
+        "module": "run_institutional_replay",
+        "import": "mercury_ai.analysis.performance_engine.PerformanceEngine"
+    },
+    {
+        "module": "run_institutional_replay",
+        "import": "mercury_ai.database.replay_storage.ReplayMetrics"
+    },
+    {
+        "module": "run_institutional_replay",
+        "import": "mercury_ai.models.equity_metrics.AssetPerformance"
+    },
+    {
+        "module": "run_institutional_replay",
+        "import": "mercury_ai.models.equity_metrics.UniversePerformance"
     },
     {
         "module": "run_instrumented",
@@ -104,6 +164,26 @@
         "import": "openai.OpenAI"
     },
     {
+        "module": "test_bloco7_scenarios",
+        "import": "sys"
+    },
+    {
+        "module": "test_bloco7_scenarios",
+        "import": "os"
+    },
+    {
+        "module": "test_bloco7_scenarios",
+        "import": "traceback"
+    },
+    {
+        "module": "test_bloco7_scenarios",
+        "import": "mercury_ai.analysis.decision_resolver_engine.DecisionResolverEngine"
+    },
+    {
+        "module": "test_bloco7_scenarios",
+        "import": "mercury_ai.analysis.decision_resolver_engine.DecisionResolverResult"
+    },
+    {
         "module": "test_mercury_signal",
         "import": "mercury_ai.core.analysis_pipeline.AnalysisPipeline"
     },
@@ -118,6 +198,38 @@
     {
         "module": "test_mercury_signal",
         "import": "mercury_ai.presentation.signal_formatter.SignalFormatter"
+    },
+    {
+        "module": "test_replay_quick",
+        "import": "pandas"
+    },
+    {
+        "module": "test_replay_quick",
+        "import": "os"
+    },
+    {
+        "module": "test_replay_quick",
+        "import": "sys"
+    },
+    {
+        "module": "test_replay_quick",
+        "import": "mercury_ai.analysis.historical_replay_engine.HistoricalReplayEngine"
+    },
+    {
+        "module": "test_replay_quick",
+        "import": "mercury_ai.analysis.performance_engine.PerformanceEngine"
+    },
+    {
+        "module": "test_replay_quick",
+        "import": "mercury_ai.database.replay_storage.ReplayMetrics"
+    },
+    {
+        "module": "validate_universe_parity",
+        "import": "yfinance"
+    },
+    {
+        "module": "validate_universe_parity",
+        "import": "mercury_ai.config.universe.ALL_SYMBOLS"
     },
     {
         "module": "verify_assets",
@@ -185,7 +297,7 @@
     },
     {
         "module": "app.dashboard.dashboard",
-        "import": "mercury_ai.brain.scanner.Scanner"
+        "import": "mercury_ai.brain.scanner.MercuryScanner"
     },
     {
         "module": "app.dashboard.dashboard",
@@ -309,7 +421,7 @@
     },
     {
         "module": "app.dashboard.observability_panel",
-        "import": "mercury_ai.providers.manager.MercuryProviderManager"
+        "import": "mercury_ai.providers.market_provider.MercuryDataProvider"
     },
     {
         "module": "app.dashboard.observability_panel",
@@ -333,7 +445,7 @@
     },
     {
         "module": "app.dashboard.operation_center",
-        "import": "mercury_ai.brain.scanner.Scanner"
+        "import": "mercury_ai.brain.scanner.MercuryScanner"
     },
     {
         "module": "app.dashboard.operation_center",
@@ -358,6 +470,10 @@
     {
         "module": "app.dashboard.provider_health_panel",
         "import": "mercury_ai.providers.mercury_data_provider.MercuryDataProvider"
+    },
+    {
+        "module": "app.dashboard.provider_health_panel",
+        "import": "mercury_ai.data.mercury_data_provider.ProviderStatus"
     },
     {
         "module": "app.dashboard.provider_health_panel",
@@ -433,7 +549,7 @@
     },
     {
         "module": "app.terminal.pages.02_Dashboard",
-        "import": "mercury_ai.brain.scanner.Scanner"
+        "import": "mercury_ai.brain.scanner.MercuryScanner"
     },
     {
         "module": "app.terminal.pages.03_Historico_Estatisticas",
@@ -613,7 +729,43 @@
     },
     {
         "module": "mercury_ai.analysis.benchmark_framework",
+        "import": "logging"
+    },
+    {
+        "module": "mercury_ai.analysis.benchmark_framework",
+        "import": "numpy"
+    },
+    {
+        "module": "mercury_ai.analysis.benchmark_framework",
         "import": "typing.List"
+    },
+    {
+        "module": "mercury_ai.analysis.benchmark_framework",
+        "import": "typing.Dict"
+    },
+    {
+        "module": "mercury_ai.analysis.benchmark_framework",
+        "import": "typing.Optional"
+    },
+    {
+        "module": "mercury_ai.analysis.benchmark_framework",
+        "import": "typing.Tuple"
+    },
+    {
+        "module": "mercury_ai.analysis.benchmark_framework",
+        "import": "concurrent.futures.ThreadPoolExecutor"
+    },
+    {
+        "module": "mercury_ai.analysis.benchmark_framework",
+        "import": "concurrent.futures.as_completed"
+    },
+    {
+        "module": "mercury_ai.analysis.benchmark_framework",
+        "import": "dataclasses.dataclass"
+    },
+    {
+        "module": "mercury_ai.analysis.benchmark_framework",
+        "import": "dataclasses.field"
     },
     {
         "module": "mercury_ai.analysis.benchmark_framework",
@@ -633,6 +785,22 @@
     },
     {
         "module": "mercury_ai.analysis.benchmark_framework",
+        "import": "mercury_ai.analysis.metric_calculator.PerformanceMetrics"
+    },
+    {
+        "module": "mercury_ai.analysis.benchmark_framework",
+        "import": "mercury_ai.analysis.performance_engine.PerformanceEngine"
+    },
+    {
+        "module": "mercury_ai.analysis.benchmark_framework",
+        "import": "mercury_ai.models.equity_metrics.AssetPerformance"
+    },
+    {
+        "module": "mercury_ai.analysis.benchmark_framework",
+        "import": "mercury_ai.models.equity_metrics.UniversePerformance"
+    },
+    {
+        "module": "mercury_ai.analysis.benchmark_framework",
         "import": "mercury_ai.utils.deterministic_clock.DeterministicClock"
     },
     {
@@ -642,6 +810,22 @@
     {
         "module": "mercury_ai.analysis.benchmark_framework",
         "import": "mercury_ai.providers.yahoo_finance_provider.YahooFinanceProvider"
+    },
+    {
+        "module": "mercury_ai.analysis.benchmark_framework",
+        "import": "mercury_ai.database.replay_storage.ReplayMetrics"
+    },
+    {
+        "module": "mercury_ai.analysis.benchmark_framework",
+        "import": "scipy.stats"
+    },
+    {
+        "module": "mercury_ai.analysis.benchmark_framework",
+        "import": "math.erf"
+    },
+    {
+        "module": "mercury_ai.analysis.benchmark_framework",
+        "import": "math.sqrt"
     },
     {
         "module": "mercury_ai.analysis.calibration_analyzer",
@@ -713,10 +897,6 @@
     },
     {
         "module": "mercury_ai.analysis.confidence_calibration_auditor",
-        "import": "typing.List"
-    },
-    {
-        "module": "mercury_ai.analysis.confidence_calibration_auditor",
         "import": "numpy"
     },
     {
@@ -760,6 +940,10 @@
         "import": "mercury_ai.analysis.conflict_resolution_engine.ConflictResolutionEngine"
     },
     {
+        "module": "mercury_ai.analysis.confidence_engine",
+        "import": "dataclasses.dataclass"
+    },
+    {
         "module": "mercury_ai.analysis.conflict_resolution_engine",
         "import": "typing.List"
     },
@@ -793,10 +977,6 @@
     },
     {
         "module": "mercury_ai.analysis.confluence_engine",
-        "import": "mercury_ai.models.analysis_result.AnalysisDirection"
-    },
-    {
-        "module": "mercury_ai.analysis.confluence_engine",
         "import": "mercury_ai.models.market_context.MarketContext"
     },
     {
@@ -808,6 +988,34 @@
         "import": "mercury_ai.analysis.decision_trace_engine.DecisionTraceEngine"
     },
     {
+        "module": "mercury_ai.analysis.confluence_engine",
+        "import": "mercury_ai.analysis.institutional_contribution.InstitutionalContribution"
+    },
+    {
+        "module": "mercury_ai.analysis.confluence_engine",
+        "import": "mercury_ai.config.institutional_weights.INSTITUTIONAL_WEIGHTS"
+    },
+    {
+        "module": "mercury_ai.analysis.confluence_engine",
+        "import": "mercury_ai.config.institutional_weights.INSTITUTIONAL_WEIGHTS_SUM"
+    },
+    {
+        "module": "mercury_ai.analysis.confluence_engine",
+        "import": "mercury_ai.analysis.confluence_helpers.has_conflict"
+    },
+    {
+        "module": "mercury_ai.analysis.confluence_engine",
+        "import": "mercury_ai.analysis.confluence_helpers.clamp_score"
+    },
+    {
+        "module": "mercury_ai.analysis.confluence_engine",
+        "import": "mercury_ai.analysis.confluence_helpers.dominant_direction"
+    },
+    {
+        "module": "mercury_ai.analysis.confluence_helpers",
+        "import": "mercury_ai.models.direction.AnalysisDirection"
+    },
+    {
         "module": "mercury_ai.analysis.confluence_score_engine",
         "import": "mercury_ai.models.market_context.MarketContext"
     },
@@ -817,7 +1025,23 @@
     },
     {
         "module": "mercury_ai.analysis.confluence_score_engine",
+        "import": "mercury_ai.models.market_state_enum.MarketStateEnum"
+    },
+    {
+        "module": "mercury_ai.analysis.confluence_score_engine",
         "import": "mercury_ai.analysis.evidence_query.EvidenceQuery"
+    },
+    {
+        "module": "mercury_ai.analysis.confluence_score_engine",
+        "import": "mercury_ai.config.institutional_weights.INSTITUTIONAL_WEIGHTS"
+    },
+    {
+        "module": "mercury_ai.analysis.confluence_score_engine",
+        "import": "mercury_ai.analysis.confluence_helpers.has_conflict"
+    },
+    {
+        "module": "mercury_ai.analysis.confluence_score_engine",
+        "import": "mercury_ai.analysis.confluence_helpers.clamp_score"
     },
     {
         "module": "mercury_ai.analysis.context_engine",
@@ -856,6 +1080,10 @@
         "import": "mercury_ai.models.market_context.MarketContext"
     },
     {
+        "module": "mercury_ai.analysis.context_intelligence_engine",
+        "import": "dataclasses.replace"
+    },
+    {
         "module": "mercury_ai.analysis.data_exporter",
         "import": "json"
     },
@@ -866,6 +1094,10 @@
     {
         "module": "mercury_ai.analysis.data_exporter",
         "import": "zipfile"
+    },
+    {
+        "module": "mercury_ai.analysis.data_exporter",
+        "import": "logging"
     },
     {
         "module": "mercury_ai.analysis.data_exporter",
@@ -918,6 +1150,86 @@
     {
         "module": "mercury_ai.analysis.data_quality_engine",
         "import": "typing.Any"
+    },
+    {
+        "module": "mercury_ai.analysis.decision_explainability",
+        "import": "dataclasses.dataclass"
+    },
+    {
+        "module": "mercury_ai.analysis.decision_explainability",
+        "import": "dataclasses.field"
+    },
+    {
+        "module": "mercury_ai.analysis.decision_explainability",
+        "import": "typing.Tuple"
+    },
+    {
+        "module": "mercury_ai.analysis.decision_explainability",
+        "import": "mercury_ai.analysis.institutional_contribution.InstitutionalContribution"
+    },
+    {
+        "module": "mercury_ai.analysis.decision_resolver_engine",
+        "import": "dataclasses.dataclass"
+    },
+    {
+        "module": "mercury_ai.analysis.decision_resolver_engine",
+        "import": "typing.Optional"
+    },
+    {
+        "module": "mercury_ai.analysis.decision_result_builder",
+        "import": "hashlib"
+    },
+    {
+        "module": "mercury_ai.analysis.decision_result_builder",
+        "import": "typing.List"
+    },
+    {
+        "module": "mercury_ai.analysis.decision_result_builder",
+        "import": "typing.Optional"
+    },
+    {
+        "module": "mercury_ai.analysis.decision_result_builder",
+        "import": "typing.Tuple"
+    },
+    {
+        "module": "mercury_ai.analysis.decision_result_builder",
+        "import": "mercury_ai.models.decision_result.DecisionResult"
+    },
+    {
+        "module": "mercury_ai.analysis.decision_result_builder",
+        "import": "mercury_ai.models.version_metadata.VersionMetadata"
+    },
+    {
+        "module": "mercury_ai.analysis.decision_result_builder",
+        "import": "mercury_ai.models.market_context.MarketContext"
+    },
+    {
+        "module": "mercury_ai.analysis.decision_result_builder",
+        "import": "mercury_ai.models.market_evidence_bundle.MarketEvidenceBundle"
+    },
+    {
+        "module": "mercury_ai.analysis.decision_result_builder",
+        "import": "mercury_ai.models.evidence_ranking.EvidenceRankingResult"
+    },
+    {
+        "module": "mercury_ai.analysis.decision_result_builder",
+        "import": "mercury_ai.models.confidence_result.ConfidenceResult"
+    },
+    {
+        "module": "mercury_ai.analysis.decision_result_builder",
+        "import": "mercury_ai.models.confluence_result.ConfluenceResult"
+    },
+    {
+        "module": "mercury_ai.analysis.decision_result_builder",
+        "import": "mercury_ai.models.probability_result.ProbabilityResult"
+    },
+    {
+        "module": "mercury_ai.analysis.decision_result_builder",
+        "import": "mercury_ai.models.trading_explanation.TradingExplanation"
+    },
+    {
+        "module": "mercury_ai.analysis.decision_result_builder",
+        "import": "mercury_ai.analysis.decision_explainability.DecisionExplainability"
     },
     {
         "module": "mercury_ai.analysis.decision_trace_engine",
@@ -1069,15 +1381,7 @@
     },
     {
         "module": "mercury_ai.analysis.health_auditor",
-        "import": "mercury_ai.analysis.narrative_engine.NarrativeEngine"
-    },
-    {
-        "module": "mercury_ai.analysis.health_auditor",
         "import": "mercury_ai.brain.probability_engine.ProbabilityEngine"
-    },
-    {
-        "module": "mercury_ai.analysis.health_auditor",
-        "import": "mercury_ai.analysis.confidence_engine.ConfidenceEngine"
     },
     {
         "module": "mercury_ai.analysis.health_auditor",
@@ -1121,23 +1425,7 @@
     },
     {
         "module": "mercury_ai.analysis.health_checker",
-        "import": "mercury_ai.analysis.narrative_engine.NarrativeEngine"
-    },
-    {
-        "module": "mercury_ai.analysis.health_checker",
         "import": "mercury_ai.brain.probability_engine.ProbabilityEngine"
-    },
-    {
-        "module": "mercury_ai.analysis.health_checker",
-        "import": "mercury_ai.analysis.confidence_engine.ConfidenceEngine"
-    },
-    {
-        "module": "mercury_ai.analysis.health_checker",
-        "import": "mercury_ai.analysis.statistical_auditor.StatisticalAuditor"
-    },
-    {
-        "module": "mercury_ai.analysis.health_checker",
-        "import": "mercury_ai.analysis.operational_history.OperationalHistory"
     },
     {
         "module": "mercury_ai.analysis.health_checker",
@@ -1146,6 +1434,18 @@
     {
         "module": "mercury_ai.analysis.health_checker",
         "import": "mercury_ai.config.settings"
+    },
+    {
+        "module": "mercury_ai.analysis.historical_replay_engine",
+        "import": "typing.Dict"
+    },
+    {
+        "module": "mercury_ai.analysis.historical_replay_engine",
+        "import": "typing.List"
+    },
+    {
+        "module": "mercury_ai.analysis.historical_replay_engine",
+        "import": "typing.Optional"
     },
     {
         "module": "mercury_ai.analysis.historical_replay_engine",
@@ -1176,12 +1476,24 @@
         "import": "mercury_ai.providers.historical_replay_provider.HistoricalReplayProvider"
     },
     {
+        "module": "mercury_ai.analysis.historical_replay_engine",
+        "import": "mercury_ai.analysis.replay_cache.ReplayCache"
+    },
+    {
+        "module": "mercury_ai.analysis.historical_replay_engine",
+        "import": "time"
+    },
+    {
         "module": "mercury_ai.analysis.institutional_analytics_engine",
         "import": "json"
     },
     {
         "module": "mercury_ai.analysis.institutional_analytics_engine",
         "import": "os"
+    },
+    {
+        "module": "mercury_ai.analysis.institutional_analytics_engine",
+        "import": "numpy"
     },
     {
         "module": "mercury_ai.analysis.institutional_analytics_engine",
@@ -1193,10 +1505,38 @@
     },
     {
         "module": "mercury_ai.analysis.institutional_analytics_engine",
+        "import": "typing.List"
+    },
+    {
+        "module": "mercury_ai.analysis.institutional_analytics_engine",
+        "import": "typing.Optional"
+    },
+    {
+        "module": "mercury_ai.analysis.institutional_analytics_engine",
+        "import": "typing.Tuple"
+    },
+    {
+        "module": "mercury_ai.analysis.institutional_analytics_engine",
+        "import": "datetime.datetime"
+    },
+    {
+        "module": "mercury_ai.analysis.institutional_analytics_engine",
+        "import": "datetime.timedelta"
+    },
+    {
+        "module": "mercury_ai.analysis.institutional_analytics_engine",
+        "import": "collections.defaultdict"
+    },
+    {
+        "module": "mercury_ai.analysis.institutional_analytics_engine",
         "import": "pandas"
     },
     {
         "module": "mercury_ai.analysis.institutional_context_builder",
+        "import": "dataclasses.dataclass"
+    },
+    {
+        "module": "mercury_ai.analysis.institutional_contribution",
         "import": "dataclasses.dataclass"
     },
     {
@@ -1213,7 +1553,19 @@
     },
     {
         "module": "mercury_ai.analysis.institutional_memory_engine",
+        "import": "threading"
+    },
+    {
+        "module": "mercury_ai.analysis.institutional_memory_engine",
+        "import": "logging"
+    },
+    {
+        "module": "mercury_ai.analysis.institutional_memory_engine",
         "import": "mercury_ai.models.decision_snapshot.DecisionSnapshot"
+    },
+    {
+        "module": "mercury_ai.analysis.institutional_memory_engine",
+        "import": "time"
     },
     {
         "module": "mercury_ai.analysis.institutional_report",
@@ -1252,12 +1604,12 @@
         "import": "mercury_ai.analysis.confidence_calibration_auditor.ConfidenceCalibrationAuditor"
     },
     {
-        "module": "mercury_ai.analysis.institutional_trade_filter_engine",
-        "import": "typing.List"
+        "module": "mercury_ai.analysis.institutional_score_engine",
+        "import": "dataclasses.dataclass"
     },
     {
         "module": "mercury_ai.analysis.institutional_trade_filter_engine",
-        "import": "typing.Tuple"
+        "import": "typing.List"
     },
     {
         "module": "mercury_ai.analysis.institutional_trade_filter_engine",
@@ -1270,6 +1622,10 @@
     {
         "module": "mercury_ai.analysis.institutional_trade_filter_engine",
         "import": "mercury_ai.models.market_regime_enum.MarketRegimeEnum"
+    },
+    {
+        "module": "mercury_ai.analysis.institutional_trade_filter_engine",
+        "import": "mercury_ai.models.trade_filter_result.TradeFilterResult"
     },
     {
         "module": "mercury_ai.analysis.integrity_checker",
@@ -1317,23 +1673,7 @@
     },
     {
         "module": "mercury_ai.analysis.live_monitor",
-        "import": "typing.List"
-    },
-    {
-        "module": "mercury_ai.analysis.live_monitor",
-        "import": "mercury_ai.core.analysis_pipeline.AnalysisPipeline"
-    },
-    {
-        "module": "mercury_ai.analysis.live_monitor",
-        "import": "mercury_ai.data.market_data.MarketDataService"
-    },
-    {
-        "module": "mercury_ai.analysis.live_monitor",
-        "import": "mercury_ai.providers.yahoo_finance_provider.YahooFinanceProvider"
-    },
-    {
-        "module": "mercury_ai.analysis.live_monitor",
-        "import": "mercury_ai.config.assets.SUPPORTED_ASSETS"
+        "import": "logging"
     },
     {
         "module": "mercury_ai.analysis.market_condition_engine",
@@ -1368,12 +1708,44 @@
         "import": "mercury_ai.models.mtf_consensus.MTFConsensus"
     },
     {
-        "module": "mercury_ai.analysis.market_regime_engine",
-        "import": "mercury_ai.models.market_regime_enum.MarketRegimeEnum"
+        "module": "mercury_ai.analysis.market_context_builder",
+        "import": "mercury_ai.models.liquidity_profile.LiquidityProfile"
     },
     {
-        "module": "mercury_ai.analysis.market_state_engine",
-        "import": "typing.Optional"
+        "module": "mercury_ai.analysis.market_context_builder",
+        "import": "mercury_ai.models.market_structure_profile.MarketStructureProfile"
+    },
+    {
+        "module": "mercury_ai.analysis.market_context_builder",
+        "import": "mercury_ai.models.evidence.Evidence"
+    },
+    {
+        "module": "mercury_ai.analysis.market_context_builder",
+        "import": "mercury_ai.models.price_action.PriceActionAnalysis"
+    },
+    {
+        "module": "mercury_ai.analysis.market_context_builder",
+        "import": "mercury_ai.models.support_resistance.SupportResistanceAnalysis"
+    },
+    {
+        "module": "mercury_ai.analysis.market_context_builder",
+        "import": "mercury_ai.models.smart_money.SmartMoneyAnalysis"
+    },
+    {
+        "module": "mercury_ai.analysis.market_context_builder",
+        "import": "mercury_ai.models.market_regime.MarketRegime"
+    },
+    {
+        "module": "mercury_ai.analysis.market_context_builder",
+        "import": "typing.List"
+    },
+    {
+        "module": "mercury_ai.analysis.market_regime_engine",
+        "import": "mercury_ai.models.market_regime.MarketRegime"
+    },
+    {
+        "module": "mercury_ai.analysis.market_regime_engine",
+        "import": "mercury_ai.models.market_regime_enum.MarketRegimeEnum"
     },
     {
         "module": "mercury_ai.analysis.market_state_engine",
@@ -1490,6 +1862,10 @@
     {
         "module": "mercury_ai.analysis.mtf_engine",
         "import": "typing.Tuple"
+    },
+    {
+        "module": "mercury_ai.analysis.mtf_engine",
+        "import": "dataclasses.replace"
     },
     {
         "module": "mercury_ai.analysis.mtf_engine",
@@ -1613,10 +1989,6 @@
     },
     {
         "module": "mercury_ai.analysis.performance_analytics",
-        "import": "pathlib.Path"
-    },
-    {
-        "module": "mercury_ai.analysis.performance_analytics",
         "import": "mercury_ai.database.snapshot_logger.DecisionSnapshotLogger"
     },
     {
@@ -1626,6 +1998,10 @@
     {
         "module": "mercury_ai.analysis.performance_analytics",
         "import": "mercury_ai.providers.yahoo_finance_provider.YahooFinanceProvider"
+    },
+    {
+        "module": "mercury_ai.analysis.performance_analytics",
+        "import": "mercury_ai.core.exceptions.MarketClosedException"
     },
     {
         "module": "mercury_ai.analysis.performance_analytics",
@@ -1660,8 +2036,36 @@
         "import": "collections.Counter"
     },
     {
-        "module": "mercury_ai.analysis.performance_statistics",
+        "module": "mercury_ai.analysis.performance_engine",
+        "import": "numpy"
+    },
+    {
+        "module": "mercury_ai.analysis.performance_engine",
+        "import": "pandas"
+    },
+    {
+        "module": "mercury_ai.analysis.performance_engine",
         "import": "typing.List"
+    },
+    {
+        "module": "mercury_ai.analysis.performance_engine",
+        "import": "typing.Dict"
+    },
+    {
+        "module": "mercury_ai.analysis.performance_engine",
+        "import": "typing.Tuple"
+    },
+    {
+        "module": "mercury_ai.analysis.performance_engine",
+        "import": "mercury_ai.models.equity_metrics.AssetPerformance"
+    },
+    {
+        "module": "mercury_ai.analysis.performance_engine",
+        "import": "mercury_ai.models.equity_metrics.UniversePerformance"
+    },
+    {
+        "module": "mercury_ai.analysis.performance_engine",
+        "import": "mercury_ai.analysis.historical_replay_engine.ReplayMetrics"
     },
     {
         "module": "mercury_ai.analysis.performance_statistics",
@@ -1740,6 +2144,130 @@
         "import": "mercury_ai.models.analysis_result.AnalysisResult"
     },
     {
+        "module": "mercury_ai.analysis.replay_batch_processor",
+        "import": "time"
+    },
+    {
+        "module": "mercury_ai.analysis.replay_batch_processor",
+        "import": "threading"
+    },
+    {
+        "module": "mercury_ai.analysis.replay_batch_processor",
+        "import": "logging"
+    },
+    {
+        "module": "mercury_ai.analysis.replay_batch_processor",
+        "import": "concurrent.futures.ThreadPoolExecutor"
+    },
+    {
+        "module": "mercury_ai.analysis.replay_batch_processor",
+        "import": "concurrent.futures.as_completed"
+    },
+    {
+        "module": "mercury_ai.analysis.replay_batch_processor",
+        "import": "concurrent.futures.TimeoutError"
+    },
+    {
+        "module": "mercury_ai.analysis.replay_batch_processor",
+        "import": "dataclasses.dataclass"
+    },
+    {
+        "module": "mercury_ai.analysis.replay_batch_processor",
+        "import": "dataclasses.field"
+    },
+    {
+        "module": "mercury_ai.analysis.replay_batch_processor",
+        "import": "typing.Dict"
+    },
+    {
+        "module": "mercury_ai.analysis.replay_batch_processor",
+        "import": "typing.List"
+    },
+    {
+        "module": "mercury_ai.analysis.replay_batch_processor",
+        "import": "typing.Optional"
+    },
+    {
+        "module": "mercury_ai.analysis.replay_batch_processor",
+        "import": "typing.Tuple"
+    },
+    {
+        "module": "mercury_ai.analysis.replay_batch_processor",
+        "import": "pandas"
+    },
+    {
+        "module": "mercury_ai.analysis.replay_batch_processor",
+        "import": "mercury_ai.analysis.historical_replay_engine.HistoricalReplayEngine"
+    },
+    {
+        "module": "mercury_ai.analysis.replay_batch_processor",
+        "import": "mercury_ai.analysis.performance_engine.PerformanceEngine"
+    },
+    {
+        "module": "mercury_ai.analysis.replay_batch_processor",
+        "import": "mercury_ai.analysis.replay_cache.ReplayCache"
+    },
+    {
+        "module": "mercury_ai.analysis.replay_batch_processor",
+        "import": "mercury_ai.analysis.institutional_memory_engine.InstitutionalMemoryEngine"
+    },
+    {
+        "module": "mercury_ai.analysis.replay_batch_processor",
+        "import": "mercury_ai.database.replay_storage.ReplayMetrics"
+    },
+    {
+        "module": "mercury_ai.analysis.replay_batch_processor",
+        "import": "mercury_ai.models.equity_metrics.AssetPerformance"
+    },
+    {
+        "module": "mercury_ai.analysis.replay_batch_processor",
+        "import": "mercury_ai.models.equity_metrics.UniversePerformance"
+    },
+    {
+        "module": "mercury_ai.analysis.replay_batch_processor",
+        "import": "time"
+    },
+    {
+        "module": "mercury_ai.analysis.replay_cache",
+        "import": "threading"
+    },
+    {
+        "module": "mercury_ai.analysis.replay_cache",
+        "import": "collections.OrderedDict"
+    },
+    {
+        "module": "mercury_ai.analysis.replay_cache",
+        "import": "typing.Any"
+    },
+    {
+        "module": "mercury_ai.analysis.replay_cache",
+        "import": "typing.Optional"
+    },
+    {
+        "module": "mercury_ai.analysis.replay_cache",
+        "import": "typing.Tuple"
+    },
+    {
+        "module": "mercury_ai.analysis.risk_engine",
+        "import": "math"
+    },
+    {
+        "module": "mercury_ai.analysis.risk_engine",
+        "import": "typing.Dict"
+    },
+    {
+        "module": "mercury_ai.analysis.risk_engine",
+        "import": "typing.List"
+    },
+    {
+        "module": "mercury_ai.analysis.risk_engine",
+        "import": "typing.Optional"
+    },
+    {
+        "module": "mercury_ai.analysis.risk_engine",
+        "import": "typing.Tuple"
+    },
+    {
         "module": "mercury_ai.analysis.risk_engine",
         "import": "mercury_ai.models.market_context.MarketContext"
     },
@@ -1756,6 +2284,86 @@
         "import": "mercury_ai.analysis.evidence_quality_engine.EvidenceQualityEngine"
     },
     {
+        "module": "mercury_ai.analysis.risk_engine",
+        "import": "mercury_ai.config.risk.VAR_CONFIDENCE_95"
+    },
+    {
+        "module": "mercury_ai.analysis.risk_engine",
+        "import": "mercury_ai.config.risk.VAR_CONFIDENCE_99"
+    },
+    {
+        "module": "mercury_ai.analysis.risk_engine",
+        "import": "mercury_ai.config.risk.KELLY_DEFAULT_WIN_RATE"
+    },
+    {
+        "module": "mercury_ai.analysis.risk_engine",
+        "import": "mercury_ai.config.risk.KELLY_DEFAULT_PAYOFF"
+    },
+    {
+        "module": "mercury_ai.analysis.risk_engine",
+        "import": "mercury_ai.config.risk.KELLY_MAX_FRACTION"
+    },
+    {
+        "module": "mercury_ai.analysis.risk_engine",
+        "import": "mercury_ai.config.risk.STRESS_SCENARIOS"
+    },
+    {
+        "module": "mercury_ai.analysis.risk_engine",
+        "import": "mercury_ai.models.market_data.MarketData"
+    },
+    {
+        "module": "mercury_ai.analysis.risk_engine",
+        "import": "mercury_ai.models.market_structure.MarketStructure"
+    },
+    {
+        "module": "mercury_ai.analysis.risk_engine",
+        "import": "mercury_ai.models.smart_money.SmartMoneyAnalysis"
+    },
+    {
+        "module": "mercury_ai.analysis.risk_engine",
+        "import": "mercury_ai.models.market_evidence_bundle.MarketEvidenceBundle"
+    },
+    {
+        "module": "mercury_ai.analysis.risk_engine",
+        "import": "mercury_ai.models.evidence.Evidence"
+    },
+    {
+        "module": "mercury_ai.analysis.risk_engine",
+        "import": "mercury_ai.models.price_action.PriceActionAnalysis"
+    },
+    {
+        "module": "mercury_ai.analysis.risk_engine",
+        "import": "mercury_ai.models.support_resistance.SupportResistanceAnalysis"
+    },
+    {
+        "module": "mercury_ai.analysis.risk_engine",
+        "import": "mercury_ai.models.liquidity_profile.LiquidityProfile"
+    },
+    {
+        "module": "mercury_ai.analysis.risk_engine",
+        "import": "mercury_ai.models.market_state.MarketState"
+    },
+    {
+        "module": "mercury_ai.analysis.risk_engine",
+        "import": "mercury_ai.models.market_state_enum.MarketStateEnum"
+    },
+    {
+        "module": "mercury_ai.analysis.risk_engine",
+        "import": "mercury_ai.models.market_regime.MarketRegime"
+    },
+    {
+        "module": "mercury_ai.analysis.risk_engine",
+        "import": "mercury_ai.models.market_regime_enum.MarketRegimeEnum"
+    },
+    {
+        "module": "mercury_ai.analysis.risk_engine",
+        "import": "mercury_ai.models.mtf_consensus.MTFConsensus"
+    },
+    {
+        "module": "mercury_ai.analysis.risk_engine",
+        "import": "mercury_ai.models.risk_assessment.RiskAssessment"
+    },
+    {
         "module": "mercury_ai.analysis.session_engine",
         "import": "typing.List"
     },
@@ -1770,10 +2378,6 @@
     {
         "module": "mercury_ai.analysis.session_engine",
         "import": "mercury_ai.config.sessions"
-    },
-    {
-        "module": "mercury_ai.analysis.statistical_auditor",
-        "import": "typing.List"
     },
     {
         "module": "mercury_ai.analysis.statistical_auditor",
@@ -1813,7 +2417,7 @@
     },
     {
         "module": "mercury_ai.analysis.support_resistance_analyzer",
-        "import": "mercury_ai.models.support_resistance_analysis.SupportResistanceAnalysis"
+        "import": "mercury_ai.models.support_resistance.SupportResistanceAnalysis"
     },
     {
         "module": "mercury_ai.analysis.support_resistance_analyzer",
@@ -1872,10 +2476,6 @@
         "import": "typing.Any"
     },
     {
-        "module": "mercury_ai.analysis.trade_outcome_engine",
-        "import": "mercury_ai.models.decision_snapshot.DecisionSnapshot"
-    },
-    {
         "module": "mercury_ai.analysis.trend_analyzer",
         "import": "mercury_ai.models.evidence.Evidence"
     },
@@ -1894,10 +2494,6 @@
     {
         "module": "mercury_ai.analysis.validation_engine",
         "import": "typing.Tuple"
-    },
-    {
-        "module": "mercury_ai.analysis.validation_engine",
-        "import": "pandas"
     },
     {
         "module": "mercury_ai.analysis.validation_engine",
@@ -2257,7 +2853,23 @@
     },
     {
         "module": "mercury_ai.analysis.tests.test_benchmark_framework",
+        "import": "pytest"
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_benchmark_framework",
         "import": "mercury_ai.analysis.benchmark_framework.MercuryBenchmarkFramework"
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_benchmark_framework",
+        "import": "mercury_ai.analysis.benchmark_framework.EnhancedBenchmarkReport"
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_benchmark_framework",
+        "import": "mercury_ai.analysis.benchmark_framework.StatisticalTestResult"
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_benchmark_framework",
+        "import": "mercury_ai.analysis.benchmark_framework.BuyAndHoldBaseline"
     },
     {
         "module": "mercury_ai.analysis.tests.test_candlestick_engine",
@@ -2285,6 +2897,10 @@
     },
     {
         "module": "mercury_ai.analysis.tests.test_context_engine",
+        "import": "unittest.mock.MagicMock"
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_context_engine",
         "import": "mercury_ai.analysis.context_engine.ContextEngine"
     },
     {
@@ -2302,6 +2918,54 @@
     {
         "module": "mercury_ai.analysis.tests.test_context_engine",
         "import": "mercury_ai.models.market_data.MarketData"
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_context_engine",
+        "import": "mercury_ai.models.market_context.MarketContext"
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_context_engine",
+        "import": "mercury_ai.models.price_action.PriceActionAnalysis"
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_context_engine",
+        "import": "mercury_ai.models.support_resistance.SupportResistanceAnalysis"
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_context_engine",
+        "import": "mercury_ai.models.smart_money.SmartMoneyAnalysis"
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_context_engine",
+        "import": "mercury_ai.models.market_state.MarketState"
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_context_engine",
+        "import": "mercury_ai.models.market_state_enum.MarketStateEnum"
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_context_engine",
+        "import": "mercury_ai.models.liquidity_profile.LiquidityProfile"
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_context_engine",
+        "import": "mercury_ai.models.mtf_consensus.MTFConsensus"
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_context_engine",
+        "import": "mercury_ai.models.market_regime.MarketRegime"
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_context_engine",
+        "import": "mercury_ai.models.market_regime_enum.MarketRegimeEnum"
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_context_engine",
+        "import": "mercury_ai.models.risk_assessment.RiskAssessment"
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_context_engine",
+        "import": "mercury_ai.models.market_structure.MarketStructure"
     },
     {
         "module": "mercury_ai.analysis.tests.test_fvg_engine",
@@ -2322,6 +2986,42 @@
     {
         "module": "mercury_ai.analysis.tests.test_fvg_engine",
         "import": "mercury_ai.core.pipeline_executor.PipelineExecutor"
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_historical_replay_engine",
+        "import": "pytest"
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_historical_replay_engine",
+        "import": "pandas"
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_historical_replay_engine",
+        "import": "numpy"
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_historical_replay_engine",
+        "import": "unittest.mock.MagicMock"
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_historical_replay_engine",
+        "import": "unittest.mock.patch"
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_historical_replay_engine",
+        "import": "unittest.mock.PropertyMock"
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_historical_replay_engine",
+        "import": "mercury_ai.analysis.historical_replay_engine.HistoricalReplayEngine"
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_historical_replay_engine",
+        "import": "mercury_ai.analysis.replay_cache.ReplayCache"
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_historical_replay_engine",
+        "import": "mercury_ai.database.replay_storage.ReplayMetrics"
     },
     {
         "module": "mercury_ai.analysis.tests.test_market_regime_engine",
@@ -2396,6 +3096,106 @@
         "import": "mercury_ai.core.pipeline_executor.PipelineExecutor"
     },
     {
+        "module": "mercury_ai.analysis.tests.test_replay_batch_processor",
+        "import": "pytest"
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_replay_batch_processor",
+        "import": "pandas"
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_replay_batch_processor",
+        "import": "numpy"
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_replay_batch_processor",
+        "import": "unittest.mock.MagicMock"
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_replay_batch_processor",
+        "import": "unittest.mock.patch"
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_replay_batch_processor",
+        "import": "mercury_ai.analysis.replay_batch_processor.ReplayBatchProcessor"
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_replay_batch_processor",
+        "import": "mercury_ai.analysis.replay_batch_processor.BatchReplayResult"
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_replay_batch_processor",
+        "import": "mercury_ai.analysis.replay_batch_processor.BatchReplayReport"
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_replay_batch_processor",
+        "import": "mercury_ai.database.replay_storage.ReplayMetrics"
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_replay_batch_processor",
+        "import": "mercury_ai.models.equity_metrics.AssetPerformance"
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_replay_batch_processor",
+        "import": "mercury_ai.models.equity_metrics.UniversePerformance"
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_replay_cache",
+        "import": "pytest"
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_replay_cache",
+        "import": "threading"
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_replay_cache",
+        "import": "mercury_ai.analysis.replay_cache.ReplayCache"
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_risk_engine",
+        "import": "math"
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_risk_engine",
+        "import": "pytest"
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_risk_engine",
+        "import": "unittest.mock.MagicMock"
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_risk_engine",
+        "import": "mercury_ai.analysis.risk_engine.RiskEngine"
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_risk_engine",
+        "import": "mercury_ai.models.market_context.MarketContext"
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_risk_engine",
+        "import": "mercury_ai.models.market_data.MarketData"
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_risk_engine",
+        "import": "mercury_ai.models.market_structure.MarketStructure"
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_risk_engine",
+        "import": "mercury_ai.models.smart_money.SmartMoneyAnalysis"
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_risk_engine",
+        "import": "mercury_ai.models.market_evidence_bundle.MarketEvidenceBundle"
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_risk_engine",
+        "import": "mercury_ai.models.evidence.Evidence"
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_risk_engine",
+        "import": "mercury_ai.models.risk_assessment.RiskAssessment"
+    },
+    {
         "module": "mercury_ai.analysis.tests.test_trend_engine",
         "import": "pytest"
     },
@@ -2461,7 +3261,7 @@
     },
     {
         "module": "mercury_ai.brain.explainability_engine",
-        "import": "mercury_ai.models.analysis_result.AnalysisDirection"
+        "import": "mercury_ai.models.direction.AnalysisDirection"
     },
     {
         "module": "mercury_ai.brain.explainability_engine",
@@ -2477,23 +3277,15 @@
     },
     {
         "module": "mercury_ai.brain.institutional_brain",
-        "import": "typing.List"
-    },
-    {
-        "module": "mercury_ai.brain.institutional_brain",
         "import": "mercury_ai.models.analysis_result.AnalysisResult"
     },
     {
-        "module": "mercury_ai.brain.institutional_brain",
-        "import": "mercury_ai.models.evidence.Evidence"
+        "module": "mercury_ai.brain.mercury_decision_engine",
+        "import": "logging"
     },
     {
         "module": "mercury_ai.brain.mercury_decision_engine",
         "import": "typing.Optional"
-    },
-    {
-        "module": "mercury_ai.brain.mercury_decision_engine",
-        "import": "typing.List"
     },
     {
         "module": "mercury_ai.brain.mercury_decision_engine",
@@ -2509,7 +3301,11 @@
     },
     {
         "module": "mercury_ai.brain.mercury_decision_engine",
-        "import": "mercury_ai.models.version_metadata.VersionMetadata"
+        "import": "mercury_ai.models.confidence_result.ConfidenceResult"
+    },
+    {
+        "module": "mercury_ai.brain.mercury_decision_engine",
+        "import": "mercury_ai.models.trade_filter_result.TradeFilterResult"
     },
     {
         "module": "mercury_ai.brain.mercury_decision_engine",
@@ -2549,23 +3345,47 @@
     },
     {
         "module": "mercury_ai.brain.mercury_decision_engine",
-        "import": "mercury_ai.brain.probability_engine.ProbabilityEngine"
-    },
-    {
-        "module": "mercury_ai.brain.mercury_decision_engine",
         "import": "mercury_ai.analysis.narrative_engine.NarrativeEngine"
     },
     {
         "module": "mercury_ai.brain.mercury_decision_engine",
-        "import": "mercury_ai.models.market_regime_enum.MarketRegimeEnum"
+        "import": "mercury_ai.analysis.institutional_score_engine.InstitutionalScoreEngine"
     },
     {
         "module": "mercury_ai.brain.mercury_decision_engine",
-        "import": "hashlib"
+        "import": "mercury_ai.analysis.decision_resolver_engine.DecisionResolverEngine"
     },
     {
-        "module": "mercury_ai.brain.probability_engine",
-        "import": "typing.Dict"
+        "module": "mercury_ai.brain.mercury_decision_engine",
+        "import": "mercury_ai.analysis.decision_result_builder.DecisionResultBuilder"
+    },
+    {
+        "module": "mercury_ai.brain.mercury_decision_engine",
+        "import": "mercury_ai.analysis.market_thesis_builder.MarketThesisBuilder"
+    },
+    {
+        "module": "mercury_ai.brain.mercury_decision_engine",
+        "import": "mercury_ai.analysis.risk_engine.RiskEngine"
+    },
+    {
+        "module": "mercury_ai.brain.mercury_decision_engine",
+        "import": "mercury_ai.analysis.market_state_engine.MarketStateEngine"
+    },
+    {
+        "module": "mercury_ai.brain.mercury_decision_engine",
+        "import": "mercury_ai.analysis.confluence_score_engine.ConfluenceScoreEngine"
+    },
+    {
+        "module": "mercury_ai.brain.mercury_decision_engine",
+        "import": "mercury_ai.analysis.decision_explainability.DecisionExplainability"
+    },
+    {
+        "module": "mercury_ai.brain.mercury_decision_engine",
+        "import": "mercury_ai.brain.probability_engine.ProbabilityEngine"
+    },
+    {
+        "module": "mercury_ai.brain.mercury_decision_engine",
+        "import": "mercury_ai.config.institutional_weights.INSTITUTIONAL_WEIGHTS_NORMALIZED"
     },
     {
         "module": "mercury_ai.brain.probability_engine",
@@ -2573,7 +3393,15 @@
     },
     {
         "module": "mercury_ai.brain.probability_engine",
+        "import": "typing.Dict"
+    },
+    {
+        "module": "mercury_ai.brain.probability_engine",
         "import": "typing.Optional"
+    },
+    {
+        "module": "mercury_ai.brain.probability_engine",
+        "import": "mercury_ai.models.market_context.MarketContext"
     },
     {
         "module": "mercury_ai.brain.probability_engine",
@@ -2581,11 +3409,15 @@
     },
     {
         "module": "mercury_ai.brain.scanner",
-        "import": "mercury_ai.core.analysis_pipeline.AnalysisPipeline"
+        "import": "logging"
     },
     {
         "module": "mercury_ai.brain.scanner",
-        "import": "mercury_ai.analysis.evidence_query.EvidenceQuery"
+        "import": "traceback"
+    },
+    {
+        "module": "mercury_ai.brain.scanner",
+        "import": "mercury_ai.core.analysis_pipeline.AnalysisPipeline"
     },
     {
         "module": "mercury_ai.brain.scanner",
@@ -2625,7 +3457,7 @@
     },
     {
         "module": "mercury_ai.brain.tests.test_explainability_engine",
-        "import": "mercury_ai.models.analysis_result.AnalysisDirection"
+        "import": "mercury_ai.models.direction.AnalysisDirection"
     },
     {
         "module": "mercury_ai.brain.tests.test_explainability_engine",
@@ -2673,6 +3505,10 @@
     },
     {
         "module": "mercury_ai.brain.tests.test_mercury_decision_benchmark",
+        "import": "mercury_ai.models.trade_filter_result.TradeFilterResult"
+    },
+    {
+        "module": "mercury_ai.brain.tests.test_mercury_decision_benchmark",
         "import": "mercury_ai.core.pipeline_executor.PipelineExecutor"
     },
     {
@@ -2717,7 +3553,63 @@
     },
     {
         "module": "mercury_ai.brain.tests.test_mercury_decision_engine",
+        "import": "mercury_ai.models.trade_filter_result.TradeFilterResult"
+    },
+    {
+        "module": "mercury_ai.brain.tests.test_mercury_decision_engine",
         "import": "mercury_ai.core.pipeline_executor.PipelineExecutor"
+    },
+    {
+        "module": "mercury_ai.brain.tests.test_mercury_decision_engine",
+        "import": "mercury_ai.models.market_data.MarketData"
+    },
+    {
+        "module": "mercury_ai.brain.tests.test_mercury_decision_engine",
+        "import": "mercury_ai.models.market_context.MarketContext"
+    },
+    {
+        "module": "mercury_ai.brain.tests.test_mercury_decision_engine",
+        "import": "mercury_ai.models.price_action.PriceActionAnalysis"
+    },
+    {
+        "module": "mercury_ai.brain.tests.test_mercury_decision_engine",
+        "import": "mercury_ai.models.support_resistance.SupportResistanceAnalysis"
+    },
+    {
+        "module": "mercury_ai.brain.tests.test_mercury_decision_engine",
+        "import": "mercury_ai.models.smart_money.SmartMoneyAnalysis"
+    },
+    {
+        "module": "mercury_ai.brain.tests.test_mercury_decision_engine",
+        "import": "mercury_ai.models.market_structure.MarketStructure"
+    },
+    {
+        "module": "mercury_ai.brain.tests.test_mercury_decision_engine",
+        "import": "mercury_ai.models.liquidity_profile.LiquidityProfile"
+    },
+    {
+        "module": "mercury_ai.brain.tests.test_mercury_decision_engine",
+        "import": "mercury_ai.models.market_state.MarketState"
+    },
+    {
+        "module": "mercury_ai.brain.tests.test_mercury_decision_engine",
+        "import": "mercury_ai.models.market_regime.MarketRegime"
+    },
+    {
+        "module": "mercury_ai.brain.tests.test_mercury_decision_engine",
+        "import": "mercury_ai.models.market_regime_enum.MarketRegimeEnum"
+    },
+    {
+        "module": "mercury_ai.brain.tests.test_mercury_decision_engine",
+        "import": "mercury_ai.models.market_state_enum.MarketStateEnum"
+    },
+    {
+        "module": "mercury_ai.brain.tests.test_mercury_decision_engine",
+        "import": "mercury_ai.models.mtf_consensus.MTFConsensus"
+    },
+    {
+        "module": "mercury_ai.brain.tests.test_mercury_decision_engine",
+        "import": "mercury_ai.models.risk_assessment.RiskAssessment"
     },
     {
         "module": "mercury_ai.brain.tests.test_probability_engine",
@@ -2752,6 +3644,74 @@
         "import": "mercury_ai.calendar.economic_calendar.EconomicCalendar"
     },
     {
+        "module": "mercury_ai.config.assets",
+        "import": "mercury_ai.config.universe.OPERATIONAL_UNIVERSE"
+    },
+    {
+        "module": "mercury_ai.config.assets",
+        "import": "mercury_ai.config.universe.FOREX_UNIVERSE"
+    },
+    {
+        "module": "mercury_ai.config.assets",
+        "import": "mercury_ai.config.universe.CRYPTO_UNIVERSE"
+    },
+    {
+        "module": "mercury_ai.config.assets",
+        "import": "mercury_ai.config.universe.STOCK_UNIVERSE"
+    },
+    {
+        "module": "mercury_ai.config.assets",
+        "import": "mercury_ai.config.universe.COMMODITY_UNIVERSE"
+    },
+    {
+        "module": "mercury_ai.config.assets",
+        "import": "mercury_ai.config.universe.FOREX_SYMBOLS"
+    },
+    {
+        "module": "mercury_ai.config.assets",
+        "import": "mercury_ai.config.universe.CRYPTO_SYMBOLS"
+    },
+    {
+        "module": "mercury_ai.config.assets",
+        "import": "mercury_ai.config.universe.STOCK_SYMBOLS"
+    },
+    {
+        "module": "mercury_ai.config.assets",
+        "import": "mercury_ai.config.universe.COMMODITY_SYMBOLS"
+    },
+    {
+        "module": "mercury_ai.config.assets",
+        "import": "mercury_ai.config.universe.ALL_SYMBOLS"
+    },
+    {
+        "module": "mercury_ai.config.assets",
+        "import": "mercury_ai.config.universe.SUPPORTED_ASSETS"
+    },
+    {
+        "module": "mercury_ai.config.assets",
+        "import": "mercury_ai.config.universe.get_asset"
+    },
+    {
+        "module": "mercury_ai.config.assets",
+        "import": "mercury_ai.config.universe.get_enabled_symbols"
+    },
+    {
+        "module": "mercury_ai.config.assets",
+        "import": "mercury_ai.config.universe.get_all_provider_symbols"
+    },
+    {
+        "module": "mercury_ai.config.assets",
+        "import": "mercury_ai.config.universe.validate_symbol"
+    },
+    {
+        "module": "mercury_ai.config.assets",
+        "import": "mercury_ai.config.universe.universe_summary"
+    },
+    {
+        "module": "mercury_ai.config.assets",
+        "import": "mercury_ai.config.universe.UniverseAsset"
+    },
+    {
         "module": "mercury_ai.config.configuration_center",
         "import": "json"
     },
@@ -2762,6 +3722,38 @@
     {
         "module": "mercury_ai.config.configuration_center",
         "import": "mercury_ai.config.settings"
+    },
+    {
+        "module": "mercury_ai.config.universe",
+        "import": "dataclasses.dataclass"
+    },
+    {
+        "module": "mercury_ai.config.universe",
+        "import": "dataclasses.field"
+    },
+    {
+        "module": "mercury_ai.config.universe",
+        "import": "typing.Dict"
+    },
+    {
+        "module": "mercury_ai.config.universe",
+        "import": "typing.List"
+    },
+    {
+        "module": "mercury_ai.config.universe",
+        "import": "typing.Optional"
+    },
+    {
+        "module": "mercury_ai.config.__init__",
+        "import": "mercury_ai.config.institutional_weights.INSTITUTIONAL_WEIGHTS"
+    },
+    {
+        "module": "mercury_ai.config.__init__",
+        "import": "mercury_ai.config.institutional_weights.INSTITUTIONAL_WEIGHTS_NORMALIZED"
+    },
+    {
+        "module": "mercury_ai.config.__init__",
+        "import": "mercury_ai.config.institutional_weights.INSTITUTIONAL_WEIGHTS_SUM"
     },
     {
         "module": "mercury_ai.core.analysis_pipeline",
@@ -2778,6 +3770,10 @@
     {
         "module": "mercury_ai.core.analysis_pipeline",
         "import": "uuid"
+    },
+    {
+        "module": "mercury_ai.core.analysis_pipeline",
+        "import": "logging"
     },
     {
         "module": "mercury_ai.core.analysis_pipeline",
@@ -2814,6 +3810,10 @@
     {
         "module": "mercury_ai.core.analysis_pipeline",
         "import": "mercury_ai.models.analysis_result.AnalysisResult"
+    },
+    {
+        "module": "mercury_ai.core.analysis_pipeline",
+        "import": "mercury_ai.models.risk_assessment.RiskAssessment"
     },
     {
         "module": "mercury_ai.core.analysis_pipeline",
@@ -2854,10 +3854,6 @@
     {
         "module": "mercury_ai.core.analysis_pipeline",
         "import": "mercury_ai.analysis.market_context_builder.MarketContextBuilder"
-    },
-    {
-        "module": "mercury_ai.core.analysis_pipeline",
-        "import": "mercury_ai.analysis.confluence_engine.ConfluenceEngine"
     },
     {
         "module": "mercury_ai.core.analysis_pipeline",
@@ -2938,6 +3934,22 @@
     {
         "module": "mercury_ai.core.analysis_pipeline",
         "import": "mercury_ai.analysis.institutional_trade_filter_engine.InstitutionalTradeFilterEngine"
+    },
+    {
+        "module": "mercury_ai.core.analysis_pipeline",
+        "import": "mercury_ai.analysis.confluence_engine.ConfluenceEngine"
+    },
+    {
+        "module": "mercury_ai.core.analysis_pipeline",
+        "import": "mercury_ai.analysis.confidence_engine.ConfidenceEngine"
+    },
+    {
+        "module": "mercury_ai.core.analysis_pipeline",
+        "import": "mercury_ai.analysis.confluence_score_engine.ConfluenceScoreEngine"
+    },
+    {
+        "module": "mercury_ai.core.analysis_pipeline",
+        "import": "mercury_ai.analysis.market_thesis_builder.MarketThesisBuilder"
     },
     {
         "module": "mercury_ai.core.analysis_pipeline",
@@ -3065,10 +4077,6 @@
     },
     {
         "module": "mercury_ai.core.export_center",
-        "import": "os"
-    },
-    {
-        "module": "mercury_ai.core.export_center",
         "import": "pathlib.Path"
     },
     {
@@ -3122,18 +4130,6 @@
     {
         "module": "mercury_ai.core.job_manager",
         "import": "threading"
-    },
-    {
-        "module": "mercury_ai.core.job_manager",
-        "import": "typing.List"
-    },
-    {
-        "module": "mercury_ai.core.job_manager",
-        "import": "typing.Dict"
-    },
-    {
-        "module": "mercury_ai.core.job_manager",
-        "import": "typing.Any"
     },
     {
         "module": "mercury_ai.core.job_manager",
@@ -3204,6 +4200,10 @@
         "import": "datetime.datetime"
     },
     {
+        "module": "mercury_ai.core.pipeline_audit_middleware",
+        "import": "datetime.timezone"
+    },
+    {
         "module": "mercury_ai.core.pipeline_executor",
         "import": "typing.Any"
     },
@@ -3257,10 +4257,6 @@
     },
     {
         "module": "mercury_ai.core.pipeline_profiler",
-        "import": "typing.List"
-    },
-    {
-        "module": "mercury_ai.core.pipeline_profiler",
         "import": "mercury_ai.models.profiler_models.StageProfile"
     },
     {
@@ -3269,11 +4265,31 @@
     },
     {
         "module": "mercury_ai.core.pipeline_profiler",
+        "import": "mercury_ai.core._stage_builder._StageBuilder"
+    },
+    {
+        "module": "mercury_ai.core.pipeline_profiler",
         "import": "json"
     },
     {
         "module": "mercury_ai.core.pipeline_profiler",
         "import": "dataclasses.asdict"
+    },
+    {
+        "module": "mercury_ai.core.project_state",
+        "import": "__future__.annotations"
+    },
+    {
+        "module": "mercury_ai.core.project_state",
+        "import": "json"
+    },
+    {
+        "module": "mercury_ai.core.project_state",
+        "import": "pathlib.Path"
+    },
+    {
+        "module": "mercury_ai.core.project_state",
+        "import": "typing.Any"
     },
     {
         "module": "mercury_ai.core.runtime_report",
@@ -3289,19 +4305,11 @@
     },
     {
         "module": "mercury_ai.core.runtime_report",
-        "import": "typing.Dict"
-    },
-    {
-        "module": "mercury_ai.core.runtime_report",
         "import": "typing.Any"
     },
     {
         "module": "mercury_ai.core.runtime_report",
         "import": "typing.Optional"
-    },
-    {
-        "module": "mercury_ai.core.security_center",
-        "import": "json"
     },
     {
         "module": "mercury_ai.core.security_center",
@@ -3350,6 +4358,14 @@
     {
         "module": "mercury_ai.core.startup",
         "import": "mercury_ai.providers.provider.MarketProvider"
+    },
+    {
+        "module": "mercury_ai.core._stage_builder",
+        "import": "__future__.annotations"
+    },
+    {
+        "module": "mercury_ai.core._stage_builder",
+        "import": "typing.List"
     },
     {
         "module": "mercury_ai.data.data_normalizer",
@@ -3517,7 +4533,7 @@
     },
     {
         "module": "mercury_ai.market.market_engine",
-        "import": "mercury_ai.providers.market_provider.MarketProvider"
+        "import": "mercury_ai.providers.market_provider.MercuryDataProvider"
     },
     {
         "module": "mercury_ai.market.market_engine",
@@ -3530,10 +4546,6 @@
     {
         "module": "mercury_ai.models.analysis_result",
         "import": "dataclasses.field"
-    },
-    {
-        "module": "mercury_ai.models.analysis_result",
-        "import": "typing.Any"
     },
     {
         "module": "mercury_ai.models.analysis_result",
@@ -3566,6 +4578,62 @@
     {
         "module": "mercury_ai.models.analysis_result",
         "import": "mercury_ai.models.smart_money.SmartMoneyAnalysis"
+    },
+    {
+        "module": "mercury_ai.models.analysis_result",
+        "import": "mercury_ai.models.market_regime.MarketRegime"
+    },
+    {
+        "module": "mercury_ai.models.analysis_result",
+        "import": "mercury_ai.models.confluence_result.ConfluenceResult"
+    },
+    {
+        "module": "mercury_ai.models.analysis_result",
+        "import": "mercury_ai.models.market_condition.MarketCondition"
+    },
+    {
+        "module": "mercury_ai.models.analysis_result",
+        "import": "mercury_ai.models.market_state.MarketState"
+    },
+    {
+        "module": "mercury_ai.models.analysis_result",
+        "import": "mercury_ai.models.candlestick_analysis.CandlestickAnalysis"
+    },
+    {
+        "module": "mercury_ai.models.analysis_result",
+        "import": "mercury_ai.models.volatility_analysis.VolatilityAnalysis"
+    },
+    {
+        "module": "mercury_ai.models.analysis_result",
+        "import": "mercury_ai.models.session_analysis.SessionAnalysis"
+    },
+    {
+        "module": "mercury_ai.models.analysis_result",
+        "import": "mercury_ai.models.support_resistance.SupportResistanceAnalysis"
+    },
+    {
+        "module": "mercury_ai.models.analysis_result",
+        "import": "mercury_ai.models.liquidity_result.LiquidityResult"
+    },
+    {
+        "module": "mercury_ai.models.analysis_result",
+        "import": "mercury_ai.models.risk_assessment.RiskAssessment"
+    },
+    {
+        "module": "mercury_ai.models.analysis_result",
+        "import": "mercury_ai.models.evidence_ranking.EvidenceRankingResult"
+    },
+    {
+        "module": "mercury_ai.models.analysis_result",
+        "import": "mercury_ai.models.volume_analysis.VolumeAnalysis"
+    },
+    {
+        "module": "mercury_ai.models.analysis_result",
+        "import": "mercury_ai.models.market_structure_profile.MarketStructureProfile"
+    },
+    {
+        "module": "mercury_ai.models.analysis_result",
+        "import": "mercury_ai.models.decision_result.DecisionResult"
     },
     {
         "module": "mercury_ai.models.benchmark_report",
@@ -3617,7 +4685,7 @@
     },
     {
         "module": "mercury_ai.models.confluence_result",
-        "import": "mercury_ai.models.analysis_result.AnalysisDirection"
+        "import": "mercury_ai.models.direction.AnalysisDirection"
     },
     {
         "module": "mercury_ai.models.confluence_score",
@@ -3704,6 +4772,10 @@
         "import": "mercury_ai.models.evidence_ranking.EvidenceRankingResult"
     },
     {
+        "module": "mercury_ai.models.decision_result",
+        "import": "mercury_ai.analysis.decision_explainability.DecisionExplainability"
+    },
+    {
         "module": "mercury_ai.models.decision_snapshot",
         "import": "dataclasses.dataclass"
     },
@@ -3758,6 +4830,38 @@
     {
         "module": "mercury_ai.models.decision_trace",
         "import": "mercury_ai.models.decision_node.DecisionNode"
+    },
+    {
+        "module": "mercury_ai.models.direction",
+        "import": "enum.Enum"
+    },
+    {
+        "module": "mercury_ai.models.equity_metrics",
+        "import": "dataclasses.dataclass"
+    },
+    {
+        "module": "mercury_ai.models.equity_metrics",
+        "import": "dataclasses.field"
+    },
+    {
+        "module": "mercury_ai.models.equity_metrics",
+        "import": "typing.Dict"
+    },
+    {
+        "module": "mercury_ai.models.equity_metrics",
+        "import": "typing.List"
+    },
+    {
+        "module": "mercury_ai.models.equity_metrics",
+        "import": "typing.Tuple"
+    },
+    {
+        "module": "mercury_ai.models.equity_metrics",
+        "import": "typing.Optional"
+    },
+    {
+        "module": "mercury_ai.models.equity_metrics",
+        "import": "pandas"
     },
     {
         "module": "mercury_ai.models.evidence",
@@ -3882,10 +4986,6 @@
     {
         "module": "mercury_ai.models.market_context",
         "import": "typing.List"
-    },
-    {
-        "module": "mercury_ai.models.market_context",
-        "import": "typing.Optional"
     },
     {
         "module": "mercury_ai.models.market_context",
@@ -4180,6 +5280,22 @@
         "import": "dataclasses.dataclass"
     },
     {
+        "module": "mercury_ai.models.risk_assessment",
+        "import": "dataclasses.field"
+    },
+    {
+        "module": "mercury_ai.models.risk_assessment",
+        "import": "typing.Dict"
+    },
+    {
+        "module": "mercury_ai.models.risk_assessment",
+        "import": "typing.Optional"
+    },
+    {
+        "module": "mercury_ai.models.risk_assessment",
+        "import": "typing.Tuple"
+    },
+    {
         "module": "mercury_ai.models.session_analysis",
         "import": "dataclasses.dataclass"
     },
@@ -4254,6 +5370,18 @@
     {
         "module": "mercury_ai.models.swing_analysis",
         "import": "typing.Optional"
+    },
+    {
+        "module": "mercury_ai.models.trade_filter_result",
+        "import": "dataclasses.dataclass"
+    },
+    {
+        "module": "mercury_ai.models.trade_filter_result",
+        "import": "dataclasses.field"
+    },
+    {
+        "module": "mercury_ai.models.trade_filter_result",
+        "import": "typing.Tuple"
     },
     {
         "module": "mercury_ai.models.trade_memory",
@@ -4429,6 +5557,10 @@
     },
     {
         "module": "mercury_ai.operations.demo_manager",
+        "import": "logging"
+    },
+    {
+        "module": "mercury_ai.operations.demo_manager",
         "import": "mercury_ai.core.analysis_pipeline.AnalysisPipeline"
     },
     {
@@ -4465,7 +5597,23 @@
     },
     {
         "module": "mercury_ai.providers.data_adapters",
+        "import": "logging"
+    },
+    {
+        "module": "mercury_ai.providers.data_adapters",
         "import": "mercury_ai.providers.data_interfaces.IDataProvider"
+    },
+    {
+        "module": "mercury_ai.providers.data_adapters",
+        "import": "mercury_ai.config.universe.ALL_SYMBOLS"
+    },
+    {
+        "module": "mercury_ai.providers.data_adapters",
+        "import": "mercury_ai.config.universe.FOREX_SYMBOLS"
+    },
+    {
+        "module": "mercury_ai.providers.data_adapters",
+        "import": "mercury_ai.config.universe.CRYPTO_SYMBOLS"
     },
     {
         "module": "mercury_ai.providers.data_interfaces",
@@ -4489,7 +5637,7 @@
     },
     {
         "module": "mercury_ai.providers.historical_replay_provider",
-        "import": "mercury_ai.providers.base_provider.MarketDataProvider"
+        "import": "typing.Optional"
     },
     {
         "module": "mercury_ai.providers.market_provider",
@@ -4541,51 +5689,7 @@
     },
     {
         "module": "mercury_ai.providers.mercury_data_provider",
-        "import": "typing.Dict"
-    },
-    {
-        "module": "mercury_ai.providers.mercury_data_provider",
-        "import": "pandas"
-    },
-    {
-        "module": "mercury_ai.providers.mercury_data_provider",
-        "import": "time"
-    },
-    {
-        "module": "mercury_ai.providers.mercury_data_provider",
-        "import": "logging"
-    },
-    {
-        "module": "mercury_ai.providers.mercury_data_provider",
-        "import": "functools.lru_cache"
-    },
-    {
-        "module": "mercury_ai.providers.mercury_data_provider",
-        "import": "mercury_ai.providers.data_interfaces.IDataProvider"
-    },
-    {
-        "module": "mercury_ai.providers.mercury_data_provider",
-        "import": "mercury_ai.providers.data_adapters.YahooAdapter"
-    },
-    {
-        "module": "mercury_ai.providers.mercury_data_provider",
-        "import": "mercury_ai.providers.data_adapters.PolygonAdapter"
-    },
-    {
-        "module": "mercury_ai.providers.mercury_data_provider",
-        "import": "mercury_ai.providers.data_adapters.TwelveDataAdapter"
-    },
-    {
-        "module": "mercury_ai.providers.mercury_data_provider",
-        "import": "mercury_ai.providers.data_adapters.AlphaVantageAdapter"
-    },
-    {
-        "module": "mercury_ai.providers.mercury_data_provider",
-        "import": "mercury_ai.providers.data_adapters.BinanceAdapter"
-    },
-    {
-        "module": "mercury_ai.providers.mercury_data_provider",
-        "import": "mercury_ai.providers.data_adapters.MetaTrader5Adapter"
+        "import": "mercury_ai.providers.market_provider.MercuryDataProvider"
     },
     {
         "module": "mercury_ai.providers.yahoo_finance_provider",
@@ -4597,15 +5701,11 @@
     },
     {
         "module": "mercury_ai.providers.yahoo_finance_provider",
-        "import": "mercury_ai.providers.base_provider.MarketDataProvider"
-    },
-    {
-        "module": "mercury_ai.providers.yahoo_finance_provider",
         "import": "mercury_ai.core.exceptions.MarketClosedException"
     },
     {
         "module": "mercury_ai.providers.tests.test_market_provider",
-        "import": "mercury_ai.providers.market_provider.MarketProvider"
+        "import": "mercury_ai.providers.market_provider.MercuryDataProvider"
     },
     {
         "module": "mercury_ai.sessions.market_sessions",
@@ -4661,10 +5761,6 @@
     },
     {
         "module": "mercury_ai.utils.performance_collector",
-        "import": "statistics"
-    },
-    {
-        "module": "mercury_ai.utils.performance_collector",
         "import": "contextlib.contextmanager"
     },
     {
@@ -4674,10 +5770,6 @@
     {
         "module": "mercury_ai.utils.performance_collector",
         "import": "typing.Tuple"
-    },
-    {
-        "module": "mercury_ai.utils.performance_collector",
-        "import": "typing.Optional"
     },
     {
         "module": "mercury_ai.utils.performance_collector",
@@ -4692,6 +5784,10 @@
         "import": "mercury_ai.models.performance.HotspotReport"
     },
     {
+        "module": "mercury_ai.utils.performance_collector",
+        "import": "mercury_ai.core._stage_builder._StageBuilder"
+    },
+    {
         "module": "mercury_ai.utils.regression_detector",
         "import": "json"
     },
@@ -4702,10 +5798,6 @@
     {
         "module": "mercury_ai.utils.regression_detector",
         "import": "typing.Dict"
-    },
-    {
-        "module": "mercury_ai.utils.regression_detector",
-        "import": "typing.Optional"
     },
     {
         "module": "mercury_ai.utils.regression_detector",
@@ -4748,28 +5840,12 @@
         "import": "typing.List"
     },
     {
-        "module": "mercury_ai.utils.report_generator",
-        "import": "mercury_ai.models.performance.PipelineMetric"
-    },
-    {
-        "module": "mercury_ai.utils.report_generator",
-        "import": "mercury_ai.models.stress_test.StressTestResult"
-    },
-    {
-        "module": "mercury_ai.utils.report_generator",
-        "import": "mercury_ai.models.regression.RegressionResult"
-    },
-    {
         "module": "mercury_ai.utils.stress_tester",
         "import": "time"
     },
     {
         "module": "mercury_ai.utils.stress_tester",
         "import": "tracemalloc"
-    },
-    {
-        "module": "mercury_ai.utils.stress_tester",
-        "import": "random"
     },
     {
         "module": "mercury_ai.utils.stress_tester",
@@ -4785,10 +5861,6 @@
     },
     {
         "module": "mercury_ai.utils.stress_tester",
-        "import": "typing.List"
-    },
-    {
-        "module": "mercury_ai.utils.stress_tester",
         "import": "mercury_ai.models.stress_test.StressTestResult"
     },
     {
@@ -4796,8 +5868,88 @@
         "import": "psutil"
     },
     {
-        "module": "mercury_ai.utils.system_monitor",
+        "module": "scripts.generate_benchmark_framework",
+        "import": "os"
+    },
+    {
+        "module": "scripts.prepare_replay_data",
+        "import": "pandas"
+    },
+    {
+        "module": "scripts.prepare_replay_data",
+        "import": "yfinance"
+    },
+    {
+        "module": "scripts.prepare_replay_data",
+        "import": "os"
+    },
+    {
+        "module": "scripts.prepare_replay_data",
+        "import": "sys"
+    },
+    {
+        "module": "scripts.prepare_replay_data",
+        "import": "datetime.datetime"
+    },
+    {
+        "module": "scripts.prepare_replay_data",
+        "import": "datetime.timedelta"
+    },
+    {
+        "module": "scripts.prepare_replay_data",
+        "import": "mercury_ai.config.universe.ALL_SYMBOLS"
+    },
+    {
+        "module": "scripts.prepare_replay_data",
+        "import": "mercury_ai.config.universe.FOREX_SYMBOLS"
+    },
+    {
+        "module": "scripts.prepare_replay_data",
+        "import": "mercury_ai.config.universe.CRYPTO_SYMBOLS"
+    },
+    {
+        "module": "scripts.prepare_replay_data",
+        "import": "argparse"
+    },
+    {
+        "module": "scripts.run_replay_3500",
+        "import": "pandas"
+    },
+    {
+        "module": "scripts.run_replay_3500",
+        "import": "os"
+    },
+    {
+        "module": "scripts.run_replay_3500",
+        "import": "sys"
+    },
+    {
+        "module": "scripts.run_replay_3500",
         "import": "time"
+    },
+    {
+        "module": "scripts.run_replay_3500",
+        "import": "datetime.datetime"
+    },
+    {
+        "module": "scripts.run_replay_3500",
+        "import": "mercury_ai.analysis.historical_replay_engine.HistoricalReplayEngine"
+    },
+    {
+        "module": "scripts.run_replay_3500",
+        "import": "mercury_ai.analysis.performance_engine.PerformanceEngine"
+    },
+    {
+        "module": "scripts.run_replay_3500",
+        "import": "mercury_ai.database.replay_storage.ReplayMetrics"
+    },
+    {
+        "module": "scripts.run_replay_3500",
+        "import": "mercury_ai.models.equity_metrics.AssetPerformance"
+    },
+    {
+        "module": "scripts.run_replay_3500",
+        "import": "mercury_ai.models.equity_metrics.UniversePerformance"
     },
     {
         "module": "tests.test_adaptive_weighting",
@@ -4910,6 +6062,14 @@
     {
         "module": "tests.test_broker_filtering",
         "import": "json"
+    },
+    {
+        "module": "tests.test_broker_filtering",
+        "import": "shutil"
+    },
+    {
+        "module": "tests.test_broker_filtering",
+        "import": "pathlib.Path"
     },
     {
         "module": "tests.test_broker_filtering",
@@ -5057,6 +6217,14 @@
     },
     {
         "module": "tests.test_determinism",
+        "import": "pandas"
+    },
+    {
+        "module": "tests.test_determinism",
+        "import": "numpy"
+    },
+    {
+        "module": "tests.test_determinism",
         "import": "mercury_ai.core.analysis_pipeline.AnalysisPipeline"
     },
     {
@@ -5065,7 +6233,7 @@
     },
     {
         "module": "tests.test_determinism",
-        "import": "mercury_ai.providers.yahoo_finance_provider.YahooFinanceProvider"
+        "import": "mercury_ai.data.providers.historical_data_provider.HistoricalDataProvider"
     },
     {
         "module": "tests.test_engine_performance_auditor",
@@ -5144,6 +6312,70 @@
         "import": "mercury_ai.analysis.health_checker.HealthChecker"
     },
     {
+        "module": "tests.test_institutional_backtest",
+        "import": "math"
+    },
+    {
+        "module": "tests.test_institutional_backtest",
+        "import": "time"
+    },
+    {
+        "module": "tests.test_institutional_backtest",
+        "import": "numpy"
+    },
+    {
+        "module": "tests.test_institutional_backtest",
+        "import": "pandas"
+    },
+    {
+        "module": "tests.test_institutional_backtest",
+        "import": "pytest"
+    },
+    {
+        "module": "tests.test_institutional_backtest",
+        "import": "mercury_ai.analysis.historical_replay_engine.HistoricalReplayEngine"
+    },
+    {
+        "module": "tests.test_institutional_backtest",
+        "import": "mercury_ai.analysis.replay_cache.ReplayCache"
+    },
+    {
+        "module": "tests.test_institutional_backtest",
+        "import": "mercury_ai.analysis.replay_batch_processor.ReplayBatchProcessor"
+    },
+    {
+        "module": "tests.test_institutional_backtest",
+        "import": "mercury_ai.analysis.replay_batch_processor.BatchReplayResult"
+    },
+    {
+        "module": "tests.test_institutional_backtest",
+        "import": "mercury_ai.analysis.replay_batch_processor.BatchReplayReport"
+    },
+    {
+        "module": "tests.test_institutional_backtest",
+        "import": "mercury_ai.analysis.risk_engine.RiskEngine"
+    },
+    {
+        "module": "tests.test_institutional_backtest",
+        "import": "mercury_ai.analysis.performance_engine.PerformanceEngine"
+    },
+    {
+        "module": "tests.test_institutional_backtest",
+        "import": "mercury_ai.models.equity_metrics.AssetPerformance"
+    },
+    {
+        "module": "tests.test_institutional_backtest",
+        "import": "mercury_ai.models.equity_metrics.UniversePerformance"
+    },
+    {
+        "module": "tests.test_institutional_backtest",
+        "import": "mercury_ai.models.risk_assessment.RiskAssessment"
+    },
+    {
+        "module": "tests.test_institutional_backtest",
+        "import": "mercury_ai.database.replay_storage.ReplayMetrics"
+    },
+    {
         "module": "tests.test_institutional_report_generator",
         "import": "mercury_ai.analysis.institutional_report_generator.InstitutionalReportGenerator"
     },
@@ -5158,6 +6390,14 @@
     {
         "module": "tests.test_job_manager",
         "import": "mercury_ai.core.job_manager.JobManager"
+    },
+    {
+        "module": "tests.test_live_monitor",
+        "import": "pytest"
+    },
+    {
+        "module": "tests.test_live_monitor",
+        "import": "mercury_ai.analysis.live_monitor.LiveMonitor"
     },
     {
         "module": "tests.test_live_monitor",
@@ -5276,6 +6516,22 @@
         "import": "time"
     },
     {
+        "module": "tests.test_performance_engine",
+        "import": "unittest"
+    },
+    {
+        "module": "tests.test_performance_engine",
+        "import": "numpy"
+    },
+    {
+        "module": "tests.test_performance_engine",
+        "import": "mercury_ai.analysis.performance_engine.PerformanceEngine"
+    },
+    {
+        "module": "tests.test_performance_engine",
+        "import": "mercury_ai.analysis.historical_replay_engine.ReplayMetrics"
+    },
+    {
         "module": "tests.test_performance_statistics",
         "import": "mercury_ai.analysis.performance_statistics.PerformanceStatistics"
     },
@@ -5310,6 +6566,10 @@
     {
         "module": "tests.test_pipeline_persistence",
         "import": "mercury_ai.data.market_data.MarketDataService"
+    },
+    {
+        "module": "tests.test_pipeline_persistence",
+        "import": "json"
     },
     {
         "module": "tests.test_probability_engine",
@@ -5384,6 +6644,30 @@
         "import": "mercury_ai.core.read_only.ReadOnlyViolation"
     },
     {
+        "module": "tests.test_regression_sprint18",
+        "import": "pandas"
+    },
+    {
+        "module": "tests.test_regression_sprint18",
+        "import": "pytest"
+    },
+    {
+        "module": "tests.test_regression_sprint18",
+        "import": "mercury_ai.models.market_structure_profile.MarketStructureProfile"
+    },
+    {
+        "module": "tests.test_regression_sprint18",
+        "import": "mercury_ai.providers.historical_replay_provider.HistoricalReplayProvider"
+    },
+    {
+        "module": "tests.test_regression_sprint18",
+        "import": "mercury_ai.core.analysis_pipeline.AnalysisPipeline"
+    },
+    {
+        "module": "tests.test_regression_sprint18",
+        "import": "mercury_ai.data.market_data.MarketDataService"
+    },
+    {
         "module": "tests.test_robustness",
         "import": "pytest"
     },
@@ -5445,6 +6729,14 @@
     },
     {
         "module": "tests.test_session_id",
+        "import": "pandas"
+    },
+    {
+        "module": "tests.test_session_id",
+        "import": "numpy"
+    },
+    {
+        "module": "tests.test_session_id",
         "import": "mercury_ai.core.analysis_pipeline.AnalysisPipeline"
     },
     {
@@ -5453,7 +6745,7 @@
     },
     {
         "module": "tests.test_session_id",
-        "import": "mercury_ai.providers.yahoo_finance_provider.YahooFinanceProvider"
+        "import": "mercury_ai.data.providers.historical_data_provider.HistoricalDataProvider"
     },
     {
         "module": "tests.test_session_manager",
@@ -5510,6 +6802,1430 @@
     {
         "module": "tests.test_weight_simulator",
         "import": "mercury_ai.analysis.weight_simulator.WeightSimulator"
+    },
+    {
+        "module": "tools.main",
+        "import": "scanner.ProjectScanner"
+    },
+    {
+        "module": "tools.main",
+        "import": "writer.InventoryWriter"
+    },
+    {
+        "module": "tools.models",
+        "import": "dataclasses.dataclass"
+    },
+    {
+        "module": "tools.models",
+        "import": "dataclasses.field"
+    },
+    {
+        "module": "tools.scanner",
+        "import": "pathlib.Path"
+    },
+    {
+        "module": "tools.scanner",
+        "import": "config.PROJECT_ROOT"
+    },
+    {
+        "module": "tools.scanner",
+        "import": "config.IGNORE_DIRS"
+    },
+    {
+        "module": "tools.scanner",
+        "import": "config.IGNORE_FILES"
+    },
+    {
+        "module": "tools.scanner",
+        "import": "config.SOURCE_EXTENSIONS"
+    },
+    {
+        "module": "tools.scanner",
+        "import": "models.FileInfo"
+    },
+    {
+        "module": "tools.scanner",
+        "import": "models.Inventory"
+    },
+    {
+        "module": "tools.writer",
+        "import": "json"
+    },
+    {
+        "module": "tools.writer",
+        "import": "dataclasses.asdict"
+    },
+    {
+        "module": "tools.writer",
+        "import": "pathlib.Path"
+    },
+    {
+        "module": "tools.writer",
+        "import": "config.PROJECT_ROOT"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.config",
+        "import": "os"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.config",
+        "import": "sys"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.config",
+        "import": "pathlib.Path"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.config",
+        "import": "datetime.datetime"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.main",
+        "import": "json"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.main",
+        "import": "subprocess"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.main",
+        "import": "sys"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.main",
+        "import": "time"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.main",
+        "import": "pathlib.Path"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.main",
+        "import": "config.PROJECT_ROOT"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.main",
+        "import": "config.MERCURY_AI_DIR"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.main",
+        "import": "config.TESTS_DIR"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.main",
+        "import": "config.AUDIT_OUTPUT_DIR"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.main",
+        "import": "config.AUDIT_TIMESTAMP"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.main",
+        "import": "config.REPORT_MD"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.main",
+        "import": "config.REPORT_JSON"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.main",
+        "import": "config.STATUS_PASS"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.main",
+        "import": "config.STATUS_FAIL"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.main",
+        "import": "config.STATUS_WARNING"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.main",
+        "import": "config.STATUS_INFO"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.main",
+        "import": "config.STATUS_INCONCLUSIVE"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.main",
+        "import": "config.CRITICAL"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.main",
+        "import": "config.HIGH"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.main",
+        "import": "config.MEDIUM"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.main",
+        "import": "config.LOW"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.main",
+        "import": "models.AuditFinding"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.main",
+        "import": "models.AuditSection"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.main",
+        "import": "models.AuditReport"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.main",
+        "import": "auditors.static_auditor"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.main",
+        "import": "auditors.contract_auditor"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.main",
+        "import": "auditors.dependency_auditor"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.main",
+        "import": "auditors.masking_auditor"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.main",
+        "import": "auditors.runtime_auditor"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.main",
+        "import": "auditors.flow_auditor"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.main",
+        "import": "auditors.test_auditor"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.main",
+        "import": "auditors.decision_auditor"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.main",
+        "import": "auditors.coverage_auditor"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.main",
+        "import": "auditors.integrity_auditor"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.main",
+        "import": "auditors.explainability_auditor"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.main",
+        "import": "auditors.data_auditor"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.main",
+        "import": "auditors.universe_auditor"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.main",
+        "import": "auditors.global_state_auditor"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.main",
+        "import": "auditors.determinism_auditor"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.main",
+        "import": "auditors.performance_auditor"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.main",
+        "import": "auditors.backtest_auditor"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.main",
+        "import": "auditors.report"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.models",
+        "import": "dataclasses.dataclass"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.models",
+        "import": "dataclasses.field"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.models",
+        "import": "datetime.datetime"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.models",
+        "import": "typing.Optional"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.backtest_auditor",
+        "import": "sys"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.backtest_auditor",
+        "import": "pathlib.Path"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.backtest_auditor",
+        "import": "tools.mercury_integrity_auditor.config.PROJECT_ROOT"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.backtest_auditor",
+        "import": "tools.mercury_integrity_auditor.config.MERCURY_AI_DIR"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.backtest_auditor",
+        "import": "tools.mercury_integrity_auditor.config.TESTS_DIR"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.backtest_auditor",
+        "import": "tools.mercury_integrity_auditor.config.STATUS_PASS"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.backtest_auditor",
+        "import": "tools.mercury_integrity_auditor.config.STATUS_FAIL"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.backtest_auditor",
+        "import": "tools.mercury_integrity_auditor.config.STATUS_WARNING"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.backtest_auditor",
+        "import": "tools.mercury_integrity_auditor.config.STATUS_INFO"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.backtest_auditor",
+        "import": "tools.mercury_integrity_auditor.config.STATUS_INCONCLUSIVE"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.backtest_auditor",
+        "import": "tools.mercury_integrity_auditor.config.CRITICAL"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.backtest_auditor",
+        "import": "tools.mercury_integrity_auditor.config.HIGH"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.backtest_auditor",
+        "import": "tools.mercury_integrity_auditor.config.MEDIUM"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.backtest_auditor",
+        "import": "tools.mercury_integrity_auditor.config.LOW"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.backtest_auditor",
+        "import": "tools.mercury_integrity_auditor.models.AuditFinding"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.backtest_auditor",
+        "import": "tools.mercury_integrity_auditor.models.AuditSection"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.backtest_auditor",
+        "import": "re"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.contract_auditor",
+        "import": "ast"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.contract_auditor",
+        "import": "sys"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.contract_auditor",
+        "import": "pathlib.Path"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.contract_auditor",
+        "import": "tools.mercury_integrity_auditor.config.PROJECT_ROOT"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.contract_auditor",
+        "import": "tools.mercury_integrity_auditor.config.MERCURY_AI_DIR"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.contract_auditor",
+        "import": "tools.mercury_integrity_auditor.config.STATUS_PASS"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.contract_auditor",
+        "import": "tools.mercury_integrity_auditor.config.STATUS_FAIL"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.contract_auditor",
+        "import": "tools.mercury_integrity_auditor.config.STATUS_WARNING"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.contract_auditor",
+        "import": "tools.mercury_integrity_auditor.config.STATUS_INFO"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.contract_auditor",
+        "import": "tools.mercury_integrity_auditor.config.CRITICAL"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.contract_auditor",
+        "import": "tools.mercury_integrity_auditor.config.HIGH"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.contract_auditor",
+        "import": "tools.mercury_integrity_auditor.config.MEDIUM"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.contract_auditor",
+        "import": "tools.mercury_integrity_auditor.config.LOW"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.contract_auditor",
+        "import": "tools.mercury_integrity_auditor.models.AuditFinding"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.contract_auditor",
+        "import": "tools.mercury_integrity_auditor.models.AuditSection"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.coverage_auditor",
+        "import": "json"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.coverage_auditor",
+        "import": "subprocess"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.coverage_auditor",
+        "import": "sys"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.coverage_auditor",
+        "import": "pathlib.Path"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.coverage_auditor",
+        "import": "tools.mercury_integrity_auditor.config.PROJECT_ROOT"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.coverage_auditor",
+        "import": "tools.mercury_integrity_auditor.config.MERCURY_AI_DIR"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.coverage_auditor",
+        "import": "tools.mercury_integrity_auditor.config.TESTS_DIR"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.coverage_auditor",
+        "import": "tools.mercury_integrity_auditor.config.STATUS_PASS"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.coverage_auditor",
+        "import": "tools.mercury_integrity_auditor.config.STATUS_FAIL"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.coverage_auditor",
+        "import": "tools.mercury_integrity_auditor.config.STATUS_WARNING"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.coverage_auditor",
+        "import": "tools.mercury_integrity_auditor.config.STATUS_INFO"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.coverage_auditor",
+        "import": "tools.mercury_integrity_auditor.config.CRITICAL"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.coverage_auditor",
+        "import": "tools.mercury_integrity_auditor.config.HIGH"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.coverage_auditor",
+        "import": "tools.mercury_integrity_auditor.config.MEDIUM"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.coverage_auditor",
+        "import": "tools.mercury_integrity_auditor.config.LOW"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.coverage_auditor",
+        "import": "tools.mercury_integrity_auditor.models.AuditFinding"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.coverage_auditor",
+        "import": "tools.mercury_integrity_auditor.models.AuditSection"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.data_auditor",
+        "import": "json"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.data_auditor",
+        "import": "sys"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.data_auditor",
+        "import": "pathlib.Path"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.data_auditor",
+        "import": "tools.mercury_integrity_auditor.config.PROJECT_ROOT"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.data_auditor",
+        "import": "tools.mercury_integrity_auditor.config.MERCURY_AI_DIR"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.data_auditor",
+        "import": "tools.mercury_integrity_auditor.config.STATUS_PASS"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.data_auditor",
+        "import": "tools.mercury_integrity_auditor.config.STATUS_FAIL"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.data_auditor",
+        "import": "tools.mercury_integrity_auditor.config.STATUS_WARNING"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.data_auditor",
+        "import": "tools.mercury_integrity_auditor.config.STATUS_INFO"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.data_auditor",
+        "import": "tools.mercury_integrity_auditor.config.STATUS_INCONCLUSIVE"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.data_auditor",
+        "import": "tools.mercury_integrity_auditor.config.CRITICAL"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.data_auditor",
+        "import": "tools.mercury_integrity_auditor.config.HIGH"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.data_auditor",
+        "import": "tools.mercury_integrity_auditor.config.MEDIUM"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.data_auditor",
+        "import": "tools.mercury_integrity_auditor.config.LOW"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.data_auditor",
+        "import": "tools.mercury_integrity_auditor.models.AuditFinding"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.data_auditor",
+        "import": "tools.mercury_integrity_auditor.models.AuditSection"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.decision_auditor",
+        "import": "ast"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.decision_auditor",
+        "import": "json"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.decision_auditor",
+        "import": "sys"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.decision_auditor",
+        "import": "pathlib.Path"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.decision_auditor",
+        "import": "tools.mercury_integrity_auditor.config.PROJECT_ROOT"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.decision_auditor",
+        "import": "tools.mercury_integrity_auditor.config.MERCURY_AI_DIR"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.decision_auditor",
+        "import": "tools.mercury_integrity_auditor.config.STATUS_PASS"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.decision_auditor",
+        "import": "tools.mercury_integrity_auditor.config.STATUS_FAIL"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.decision_auditor",
+        "import": "tools.mercury_integrity_auditor.config.STATUS_WARNING"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.decision_auditor",
+        "import": "tools.mercury_integrity_auditor.config.STATUS_INFO"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.decision_auditor",
+        "import": "tools.mercury_integrity_auditor.config.CRITICAL"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.decision_auditor",
+        "import": "tools.mercury_integrity_auditor.config.HIGH"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.decision_auditor",
+        "import": "tools.mercury_integrity_auditor.config.MEDIUM"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.decision_auditor",
+        "import": "tools.mercury_integrity_auditor.config.LOW"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.decision_auditor",
+        "import": "tools.mercury_integrity_auditor.models.AuditFinding"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.decision_auditor",
+        "import": "tools.mercury_integrity_auditor.models.AuditSection"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.dependency_auditor",
+        "import": "ast"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.dependency_auditor",
+        "import": "sys"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.dependency_auditor",
+        "import": "pathlib.Path"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.dependency_auditor",
+        "import": "tools.mercury_integrity_auditor.config.PROJECT_ROOT"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.dependency_auditor",
+        "import": "tools.mercury_integrity_auditor.config.MERCURY_AI_DIR"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.dependency_auditor",
+        "import": "tools.mercury_integrity_auditor.config.STATUS_PASS"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.dependency_auditor",
+        "import": "tools.mercury_integrity_auditor.config.STATUS_FAIL"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.dependency_auditor",
+        "import": "tools.mercury_integrity_auditor.config.STATUS_WARNING"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.dependency_auditor",
+        "import": "tools.mercury_integrity_auditor.config.STATUS_INFO"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.dependency_auditor",
+        "import": "tools.mercury_integrity_auditor.config.CRITICAL"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.dependency_auditor",
+        "import": "tools.mercury_integrity_auditor.config.HIGH"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.dependency_auditor",
+        "import": "tools.mercury_integrity_auditor.config.MEDIUM"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.dependency_auditor",
+        "import": "tools.mercury_integrity_auditor.config.LOW"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.dependency_auditor",
+        "import": "tools.mercury_integrity_auditor.models.AuditFinding"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.dependency_auditor",
+        "import": "tools.mercury_integrity_auditor.models.AuditSection"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.dependency_auditor",
+        "import": "importlib.metadata"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.determinism_auditor",
+        "import": "sys"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.determinism_auditor",
+        "import": "pathlib.Path"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.determinism_auditor",
+        "import": "tools.mercury_integrity_auditor.config.PROJECT_ROOT"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.determinism_auditor",
+        "import": "tools.mercury_integrity_auditor.config.MERCURY_AI_DIR"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.determinism_auditor",
+        "import": "tools.mercury_integrity_auditor.config.STATUS_PASS"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.determinism_auditor",
+        "import": "tools.mercury_integrity_auditor.config.STATUS_FAIL"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.determinism_auditor",
+        "import": "tools.mercury_integrity_auditor.config.STATUS_WARNING"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.determinism_auditor",
+        "import": "tools.mercury_integrity_auditor.config.STATUS_INFO"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.determinism_auditor",
+        "import": "tools.mercury_integrity_auditor.config.STATUS_INCONCLUSIVE"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.determinism_auditor",
+        "import": "tools.mercury_integrity_auditor.config.CRITICAL"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.determinism_auditor",
+        "import": "tools.mercury_integrity_auditor.config.HIGH"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.determinism_auditor",
+        "import": "tools.mercury_integrity_auditor.config.MEDIUM"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.determinism_auditor",
+        "import": "tools.mercury_integrity_auditor.config.LOW"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.determinism_auditor",
+        "import": "tools.mercury_integrity_auditor.models.AuditFinding"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.determinism_auditor",
+        "import": "tools.mercury_integrity_auditor.models.AuditSection"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.explainability_auditor",
+        "import": "json"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.explainability_auditor",
+        "import": "sys"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.explainability_auditor",
+        "import": "pathlib.Path"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.explainability_auditor",
+        "import": "tools.mercury_integrity_auditor.config.PROJECT_ROOT"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.explainability_auditor",
+        "import": "tools.mercury_integrity_auditor.config.MERCURY_AI_DIR"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.explainability_auditor",
+        "import": "tools.mercury_integrity_auditor.config.STATUS_PASS"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.explainability_auditor",
+        "import": "tools.mercury_integrity_auditor.config.STATUS_FAIL"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.explainability_auditor",
+        "import": "tools.mercury_integrity_auditor.config.STATUS_WARNING"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.explainability_auditor",
+        "import": "tools.mercury_integrity_auditor.config.STATUS_INFO"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.explainability_auditor",
+        "import": "tools.mercury_integrity_auditor.config.STATUS_INCONCLUSIVE"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.explainability_auditor",
+        "import": "tools.mercury_integrity_auditor.config.CRITICAL"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.explainability_auditor",
+        "import": "tools.mercury_integrity_auditor.config.HIGH"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.explainability_auditor",
+        "import": "tools.mercury_integrity_auditor.config.MEDIUM"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.explainability_auditor",
+        "import": "tools.mercury_integrity_auditor.config.LOW"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.explainability_auditor",
+        "import": "tools.mercury_integrity_auditor.models.AuditFinding"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.explainability_auditor",
+        "import": "tools.mercury_integrity_auditor.models.AuditSection"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.flow_auditor",
+        "import": "ast"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.flow_auditor",
+        "import": "sys"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.flow_auditor",
+        "import": "pathlib.Path"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.flow_auditor",
+        "import": "tools.mercury_integrity_auditor.config.PROJECT_ROOT"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.flow_auditor",
+        "import": "tools.mercury_integrity_auditor.config.MERCURY_AI_DIR"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.flow_auditor",
+        "import": "tools.mercury_integrity_auditor.config.STATUS_PASS"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.flow_auditor",
+        "import": "tools.mercury_integrity_auditor.config.STATUS_FAIL"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.flow_auditor",
+        "import": "tools.mercury_integrity_auditor.config.STATUS_WARNING"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.flow_auditor",
+        "import": "tools.mercury_integrity_auditor.config.STATUS_INFO"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.flow_auditor",
+        "import": "tools.mercury_integrity_auditor.config.CRITICAL"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.flow_auditor",
+        "import": "tools.mercury_integrity_auditor.config.HIGH"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.flow_auditor",
+        "import": "tools.mercury_integrity_auditor.config.MEDIUM"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.flow_auditor",
+        "import": "tools.mercury_integrity_auditor.config.LOW"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.flow_auditor",
+        "import": "tools.mercury_integrity_auditor.models.AuditFinding"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.flow_auditor",
+        "import": "tools.mercury_integrity_auditor.models.AuditSection"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.global_state_auditor",
+        "import": "json"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.global_state_auditor",
+        "import": "sys"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.global_state_auditor",
+        "import": "pathlib.Path"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.global_state_auditor",
+        "import": "tools.mercury_integrity_auditor.config.PROJECT_ROOT"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.global_state_auditor",
+        "import": "tools.mercury_integrity_auditor.config.MERCURY_AI_DIR"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.global_state_auditor",
+        "import": "tools.mercury_integrity_auditor.config.STATUS_PASS"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.global_state_auditor",
+        "import": "tools.mercury_integrity_auditor.config.STATUS_FAIL"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.global_state_auditor",
+        "import": "tools.mercury_integrity_auditor.config.STATUS_WARNING"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.global_state_auditor",
+        "import": "tools.mercury_integrity_auditor.config.STATUS_INFO"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.global_state_auditor",
+        "import": "tools.mercury_integrity_auditor.config.STATUS_INCONCLUSIVE"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.global_state_auditor",
+        "import": "tools.mercury_integrity_auditor.config.CRITICAL"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.global_state_auditor",
+        "import": "tools.mercury_integrity_auditor.config.HIGH"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.global_state_auditor",
+        "import": "tools.mercury_integrity_auditor.config.MEDIUM"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.global_state_auditor",
+        "import": "tools.mercury_integrity_auditor.config.LOW"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.global_state_auditor",
+        "import": "tools.mercury_integrity_auditor.models.AuditFinding"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.global_state_auditor",
+        "import": "tools.mercury_integrity_auditor.models.AuditSection"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.integrity_auditor",
+        "import": "hashlib"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.integrity_auditor",
+        "import": "json"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.integrity_auditor",
+        "import": "sys"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.integrity_auditor",
+        "import": "pathlib.Path"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.integrity_auditor",
+        "import": "tools.mercury_integrity_auditor.config.PROJECT_ROOT"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.integrity_auditor",
+        "import": "tools.mercury_integrity_auditor.config.MERCURY_AI_DIR"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.integrity_auditor",
+        "import": "tools.mercury_integrity_auditor.config.DOT_MERCURY_DIR"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.integrity_auditor",
+        "import": "tools.mercury_integrity_auditor.config.STATUS_PASS"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.integrity_auditor",
+        "import": "tools.mercury_integrity_auditor.config.STATUS_FAIL"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.integrity_auditor",
+        "import": "tools.mercury_integrity_auditor.config.STATUS_WARNING"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.integrity_auditor",
+        "import": "tools.mercury_integrity_auditor.config.STATUS_INFO"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.integrity_auditor",
+        "import": "tools.mercury_integrity_auditor.config.CRITICAL"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.integrity_auditor",
+        "import": "tools.mercury_integrity_auditor.config.HIGH"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.integrity_auditor",
+        "import": "tools.mercury_integrity_auditor.config.MEDIUM"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.integrity_auditor",
+        "import": "tools.mercury_integrity_auditor.config.LOW"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.integrity_auditor",
+        "import": "tools.mercury_integrity_auditor.models.AuditFinding"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.integrity_auditor",
+        "import": "tools.mercury_integrity_auditor.models.AuditSection"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.masking_auditor",
+        "import": "ast"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.masking_auditor",
+        "import": "sys"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.masking_auditor",
+        "import": "pathlib.Path"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.masking_auditor",
+        "import": "tools.mercury_integrity_auditor.config.PROJECT_ROOT"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.masking_auditor",
+        "import": "tools.mercury_integrity_auditor.config.MERCURY_AI_DIR"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.masking_auditor",
+        "import": "tools.mercury_integrity_auditor.config.STATUS_PASS"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.masking_auditor",
+        "import": "tools.mercury_integrity_auditor.config.STATUS_FAIL"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.masking_auditor",
+        "import": "tools.mercury_integrity_auditor.config.STATUS_WARNING"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.masking_auditor",
+        "import": "tools.mercury_integrity_auditor.config.STATUS_INFO"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.masking_auditor",
+        "import": "tools.mercury_integrity_auditor.config.CRITICAL"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.masking_auditor",
+        "import": "tools.mercury_integrity_auditor.config.HIGH"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.masking_auditor",
+        "import": "tools.mercury_integrity_auditor.config.MEDIUM"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.masking_auditor",
+        "import": "tools.mercury_integrity_auditor.config.LOW"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.masking_auditor",
+        "import": "tools.mercury_integrity_auditor.models.AuditFinding"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.masking_auditor",
+        "import": "tools.mercury_integrity_auditor.models.AuditSection"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.performance_auditor",
+        "import": "sys"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.performance_auditor",
+        "import": "pathlib.Path"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.performance_auditor",
+        "import": "tools.mercury_integrity_auditor.config.PROJECT_ROOT"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.performance_auditor",
+        "import": "tools.mercury_integrity_auditor.config.MERCURY_AI_DIR"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.performance_auditor",
+        "import": "tools.mercury_integrity_auditor.config.STATUS_PASS"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.performance_auditor",
+        "import": "tools.mercury_integrity_auditor.config.STATUS_FAIL"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.performance_auditor",
+        "import": "tools.mercury_integrity_auditor.config.STATUS_WARNING"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.performance_auditor",
+        "import": "tools.mercury_integrity_auditor.config.STATUS_INFO"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.performance_auditor",
+        "import": "tools.mercury_integrity_auditor.config.STATUS_INCONCLUSIVE"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.performance_auditor",
+        "import": "tools.mercury_integrity_auditor.config.CRITICAL"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.performance_auditor",
+        "import": "tools.mercury_integrity_auditor.config.HIGH"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.performance_auditor",
+        "import": "tools.mercury_integrity_auditor.config.MEDIUM"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.performance_auditor",
+        "import": "tools.mercury_integrity_auditor.config.LOW"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.performance_auditor",
+        "import": "tools.mercury_integrity_auditor.models.AuditFinding"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.performance_auditor",
+        "import": "tools.mercury_integrity_auditor.models.AuditSection"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.report",
+        "import": "json"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.report",
+        "import": "sys"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.report",
+        "import": "datetime.datetime"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.report",
+        "import": "pathlib.Path"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.report",
+        "import": "typing.Any"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.report",
+        "import": "tools.mercury_integrity_auditor.config.PROJECT_ROOT"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.report",
+        "import": "tools.mercury_integrity_auditor.config.AUDIT_OUTPUT_DIR"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.report",
+        "import": "tools.mercury_integrity_auditor.config.AUDIT_TIMESTAMP"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.report",
+        "import": "tools.mercury_integrity_auditor.models.AuditFinding"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.report",
+        "import": "tools.mercury_integrity_auditor.models.AuditReport"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.report",
+        "import": "tools.mercury_integrity_auditor.models.AuditSection"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.runtime_auditor",
+        "import": "subprocess"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.runtime_auditor",
+        "import": "sys"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.runtime_auditor",
+        "import": "time"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.runtime_auditor",
+        "import": "pathlib.Path"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.runtime_auditor",
+        "import": "tools.mercury_integrity_auditor.config.PROJECT_ROOT"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.runtime_auditor",
+        "import": "tools.mercury_integrity_auditor.config.STATUS_PASS"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.runtime_auditor",
+        "import": "tools.mercury_integrity_auditor.config.STATUS_FAIL"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.runtime_auditor",
+        "import": "tools.mercury_integrity_auditor.config.STATUS_WARNING"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.runtime_auditor",
+        "import": "tools.mercury_integrity_auditor.config.STATUS_INFO"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.runtime_auditor",
+        "import": "tools.mercury_integrity_auditor.config.CRITICAL"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.runtime_auditor",
+        "import": "tools.mercury_integrity_auditor.config.HIGH"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.runtime_auditor",
+        "import": "tools.mercury_integrity_auditor.config.MEDIUM"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.runtime_auditor",
+        "import": "tools.mercury_integrity_auditor.config.LOW"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.runtime_auditor",
+        "import": "tools.mercury_integrity_auditor.models.AuditFinding"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.runtime_auditor",
+        "import": "tools.mercury_integrity_auditor.models.AuditSection"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.static_auditor",
+        "import": "ast"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.static_auditor",
+        "import": "os"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.static_auditor",
+        "import": "sys"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.static_auditor",
+        "import": "pathlib.Path"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.static_auditor",
+        "import": "tools.mercury_integrity_auditor.config.PROJECT_ROOT"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.static_auditor",
+        "import": "tools.mercury_integrity_auditor.config.MERCURY_AI_DIR"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.static_auditor",
+        "import": "tools.mercury_integrity_auditor.config.STATUS_PASS"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.static_auditor",
+        "import": "tools.mercury_integrity_auditor.config.STATUS_FAIL"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.static_auditor",
+        "import": "tools.mercury_integrity_auditor.config.STATUS_WARNING"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.static_auditor",
+        "import": "tools.mercury_integrity_auditor.config.STATUS_INFO"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.static_auditor",
+        "import": "tools.mercury_integrity_auditor.config.STATUS_INCONCLUSIVE"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.static_auditor",
+        "import": "tools.mercury_integrity_auditor.config.CRITICAL"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.static_auditor",
+        "import": "tools.mercury_integrity_auditor.config.HIGH"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.static_auditor",
+        "import": "tools.mercury_integrity_auditor.config.MEDIUM"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.static_auditor",
+        "import": "tools.mercury_integrity_auditor.config.LOW"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.static_auditor",
+        "import": "tools.mercury_integrity_auditor.models.AuditFinding"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.static_auditor",
+        "import": "tools.mercury_integrity_auditor.models.AuditSection"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.test_auditor",
+        "import": "subprocess"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.test_auditor",
+        "import": "sys"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.test_auditor",
+        "import": "time"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.test_auditor",
+        "import": "pathlib.Path"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.test_auditor",
+        "import": "tools.mercury_integrity_auditor.config.PROJECT_ROOT"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.test_auditor",
+        "import": "tools.mercury_integrity_auditor.config.STATUS_PASS"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.test_auditor",
+        "import": "tools.mercury_integrity_auditor.config.STATUS_FAIL"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.test_auditor",
+        "import": "tools.mercury_integrity_auditor.config.STATUS_WARNING"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.test_auditor",
+        "import": "tools.mercury_integrity_auditor.config.STATUS_INFO"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.test_auditor",
+        "import": "tools.mercury_integrity_auditor.config.CRITICAL"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.test_auditor",
+        "import": "tools.mercury_integrity_auditor.config.HIGH"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.test_auditor",
+        "import": "tools.mercury_integrity_auditor.config.MEDIUM"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.test_auditor",
+        "import": "tools.mercury_integrity_auditor.config.LOW"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.test_auditor",
+        "import": "tools.mercury_integrity_auditor.models.AuditFinding"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.test_auditor",
+        "import": "tools.mercury_integrity_auditor.models.AuditSection"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.test_auditor",
+        "import": "re"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.universe_auditor",
+        "import": "sys"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.universe_auditor",
+        "import": "pathlib.Path"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.universe_auditor",
+        "import": "tools.mercury_integrity_auditor.config.PROJECT_ROOT"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.universe_auditor",
+        "import": "tools.mercury_integrity_auditor.config.MERCURY_AI_DIR"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.universe_auditor",
+        "import": "tools.mercury_integrity_auditor.config.STATUS_PASS"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.universe_auditor",
+        "import": "tools.mercury_integrity_auditor.config.STATUS_FAIL"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.universe_auditor",
+        "import": "tools.mercury_integrity_auditor.config.STATUS_WARNING"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.universe_auditor",
+        "import": "tools.mercury_integrity_auditor.config.STATUS_INFO"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.universe_auditor",
+        "import": "tools.mercury_integrity_auditor.config.STATUS_INCONCLUSIVE"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.universe_auditor",
+        "import": "tools.mercury_integrity_auditor.config.CRITICAL"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.universe_auditor",
+        "import": "tools.mercury_integrity_auditor.config.HIGH"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.universe_auditor",
+        "import": "tools.mercury_integrity_auditor.config.MEDIUM"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.universe_auditor",
+        "import": "tools.mercury_integrity_auditor.config.LOW"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.universe_auditor",
+        "import": "tools.mercury_integrity_auditor.models.AuditFinding"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.universe_auditor",
+        "import": "tools.mercury_integrity_auditor.models.AuditSection"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.__init__",
+        "import": ".static_auditor"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.__init__",
+        "import": ".contract_auditor"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.__init__",
+        "import": ".dependency_auditor"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.__init__",
+        "import": ".masking_auditor"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.__init__",
+        "import": ".runtime_auditor"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.__init__",
+        "import": ".flow_auditor"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.__init__",
+        "import": ".test_auditor"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.__init__",
+        "import": ".decision_auditor"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.__init__",
+        "import": ".coverage_auditor"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.__init__",
+        "import": ".integrity_auditor"
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.__init__",
+        "import": ".report"
     },
     {
         "module": "tools.project_mapper.architecture_audit",

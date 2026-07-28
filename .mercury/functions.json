@@ -8,7 +8,31 @@
     {
         "module": "main",
         "name": "main",
-        "line": 4,
+        "line": 13,
+        "args": 0
+    },
+    {
+        "module": "main",
+        "name": "_run_scan",
+        "line": 17,
+        "args": 0
+    },
+    {
+        "module": "resolve_merge_conflicts",
+        "name": "_has_real_markers",
+        "line": 49,
+        "args": 1
+    },
+    {
+        "module": "resolve_merge_conflicts",
+        "name": "resolve_conflicts_in_file",
+        "line": 62,
+        "args": 1
+    },
+    {
+        "module": "resolve_merge_conflicts",
+        "name": "main",
+        "line": 138,
         "args": 0
     },
     {
@@ -26,13 +50,19 @@
     {
         "module": "run_institutional_replay",
         "name": "load_local_data",
-        "line": 5,
+        "line": 12,
         "args": 1
     },
     {
         "module": "run_institutional_replay",
+        "name": "generate_performance_report",
+        "line": 26,
+        "args": 2
+    },
+    {
+        "module": "run_institutional_replay",
         "name": "run_institutional_replay",
-        "line": 18,
+        "line": 76,
         "args": 0
     },
     {
@@ -94,6 +124,36 @@
         "name": "perguntar_llm",
         "line": 16,
         "args": 1
+    },
+    {
+        "module": "test_bloco7_scenarios",
+        "name": "run_all_scenarios",
+        "line": 153,
+        "args": 0
+    },
+    {
+        "module": "test_bloco7_scenarios",
+        "name": "validate_consistency",
+        "line": 278,
+        "args": 1
+    },
+    {
+        "module": "test_bloco7_scenarios",
+        "name": "main",
+        "line": 349,
+        "args": 0
+    },
+    {
+        "module": "test_replay_quick",
+        "name": "main",
+        "line": 15,
+        "args": 0
+    },
+    {
+        "module": "validate_universe_parity",
+        "name": "validate_universe",
+        "line": 4,
+        "args": 0
     },
     {
         "module": "verify_assets",
@@ -164,7 +224,7 @@
     {
         "module": "app.dashboard.provider_health_panel",
         "name": "render_provider_health_dashboard",
-        "line": 7,
+        "line": 8,
         "args": 1
     },
     {
@@ -200,14 +260,56 @@
     {
         "module": "mercury_ai.analysis.benchmark_framework",
         "name": "__init__",
-        "line": 15,
-        "args": 1
+        "line": 92,
+        "args": 7
+    },
+    {
+        "module": "mercury_ai.analysis.benchmark_framework",
+        "name": "_run_single_symbol",
+        "line": 132,
+        "args": 2
+    },
+    {
+        "module": "mercury_ai.analysis.benchmark_framework",
+        "name": "_get_real_outcome",
+        "line": 174,
+        "args": 3
+    },
+    {
+        "module": "mercury_ai.analysis.benchmark_framework",
+        "name": "_apply_warm_cool_filter",
+        "line": 198,
+        "args": 4
+    },
+    {
+        "module": "mercury_ai.analysis.benchmark_framework",
+        "name": "_compute_buy_and_hold",
+        "line": 226,
+        "args": 3
+    },
+    {
+        "module": "mercury_ai.analysis.benchmark_framework",
+        "name": "_run_statistical_tests",
+        "line": 273,
+        "args": 3
     },
     {
         "module": "mercury_ai.analysis.benchmark_framework",
         "name": "run_benchmark",
-        "line": 24,
+        "line": 333,
         "args": 2
+    },
+    {
+        "module": "mercury_ai.analysis.benchmark_framework",
+        "name": "run_quick_benchmark",
+        "line": 442,
+        "args": 2
+    },
+    {
+        "module": "mercury_ai.analysis.benchmark_framework",
+        "name": "norm_sf",
+        "line": 302,
+        "args": 1
     },
     {
         "module": "mercury_ai.analysis.calibration_analyzer",
@@ -272,13 +374,19 @@
     {
         "module": "mercury_ai.analysis.confidence_engine",
         "name": "calculate",
-        "line": 13,
+        "line": 22,
+        "args": 3
+    },
+    {
+        "module": "mercury_ai.analysis.confidence_engine",
+        "name": "calibrate",
+        "line": 107,
         "args": 3
     },
     {
         "module": "mercury_ai.analysis.confidence_engine",
         "name": "_get_grade",
-        "line": 85,
+        "line": 136,
         "args": 2
     },
     {
@@ -296,19 +404,37 @@
     {
         "module": "mercury_ai.analysis.confluence_engine",
         "name": "__init__",
-        "line": 22,
-        "args": 1
+        "line": 42,
+        "args": 3
     },
     {
         "module": "mercury_ai.analysis.confluence_engine",
         "name": "analyze",
-        "line": 26,
+        "line": 50,
+        "args": 3
+    },
+    {
+        "module": "mercury_ai.analysis.confluence_helpers",
+        "name": "has_conflict",
+        "line": 12,
+        "args": 2
+    },
+    {
+        "module": "mercury_ai.analysis.confluence_helpers",
+        "name": "clamp_score",
+        "line": 17,
+        "args": 3
+    },
+    {
+        "module": "mercury_ai.analysis.confluence_helpers",
+        "name": "dominant_direction",
+        "line": 22,
         "args": 3
     },
     {
         "module": "mercury_ai.analysis.confluence_score_engine",
         "name": "calculate",
-        "line": 21,
+        "line": 17,
         "args": 2
     },
     {
@@ -362,31 +488,31 @@
     {
         "module": "mercury_ai.analysis.data_exporter",
         "name": "__init__",
-        "line": 13,
+        "line": 14,
         "args": 2
     },
     {
         "module": "mercury_ai.analysis.data_exporter",
         "name": "_export_to_formats",
-        "line": 19,
+        "line": 20,
         "args": 4
     },
     {
         "module": "mercury_ai.analysis.data_exporter",
         "name": "export_history",
-        "line": 42,
+        "line": 43,
         "args": 2
     },
     {
         "module": "mercury_ai.analysis.data_exporter",
         "name": "export_snapshots",
-        "line": 46,
+        "line": 47,
         "args": 2
     },
     {
         "module": "mercury_ai.analysis.data_exporter",
         "name": "export_all",
-        "line": 51,
+        "line": 52,
         "args": 1
     },
     {
@@ -400,6 +526,18 @@
         "name": "generate_report",
         "line": 23,
         "args": 2
+    },
+    {
+        "module": "mercury_ai.analysis.decision_resolver_engine",
+        "name": "resolve",
+        "line": 47,
+        "args": 5
+    },
+    {
+        "module": "mercury_ai.analysis.decision_result_builder",
+        "name": "build",
+        "line": 28,
+        "args": 1
     },
     {
         "module": "mercury_ai.analysis.decision_trace_engine",
@@ -530,61 +668,145 @@
     {
         "module": "mercury_ai.analysis.health_auditor",
         "name": "__init__",
-        "line": 10,
+        "line": 8,
         "args": 1
     },
     {
         "module": "mercury_ai.analysis.health_auditor",
         "name": "generate_report",
-        "line": 13,
+        "line": 11,
         "args": 1
     },
     {
         "module": "mercury_ai.analysis.health_checker",
         "name": "__init__",
-        "line": 22,
+        "line": 18,
         "args": 1
     },
     {
         "module": "mercury_ai.analysis.health_checker",
         "name": "check",
-        "line": 25,
+        "line": 21,
+        "args": 1
+    },
+    {
+        "module": "mercury_ai.analysis.historical_replay_engine",
+        "name": "__init__",
+        "line": 39,
+        "args": 2
+    },
+    {
+        "module": "mercury_ai.analysis.historical_replay_engine",
+        "name": "cache",
+        "line": 48,
+        "args": 1
+    },
+    {
+        "module": "mercury_ai.analysis.historical_replay_engine",
+        "name": "replay_stats",
+        "line": 52,
         "args": 1
     },
     {
         "module": "mercury_ai.analysis.historical_replay_engine",
         "name": "run_replay",
-        "line": 15,
-        "args": 4
+        "line": 56,
+        "args": 6
     },
     {
         "module": "mercury_ai.analysis.institutional_analytics_engine",
         "name": "__init__",
-        "line": 7,
-        "args": 3
+        "line": 19,
+        "args": 5
     },
     {
         "module": "mercury_ai.analysis.institutional_analytics_engine",
         "name": "_load_data",
-        "line": 11,
+        "line": 35,
+        "args": 1
+    },
+    {
+        "module": "mercury_ai.analysis.institutional_analytics_engine",
+        "name": "_load_replay_metrics",
+        "line": 80,
         "args": 1
     },
     {
         "module": "mercury_ai.analysis.institutional_analytics_engine",
         "name": "generate_quality_report",
-        "line": 48,
+        "line": 100,
         "args": 1
     },
     {
         "module": "mercury_ai.analysis.institutional_analytics_engine",
-        "name": "_get_engine_contribution",
-        "line": 61,
+        "name": "_overview_stats",
+        "line": 123,
         "args": 2
     },
     {
         "module": "mercury_ai.analysis.institutional_analytics_engine",
-        "name": "_get_top_patterns",
-        "line": 70,
+        "name": "_win_rate_analysis",
+        "line": 146,
+        "args": 2
+    },
+    {
+        "module": "mercury_ai.analysis.institutional_analytics_engine",
+        "name": "_risk_metrics",
+        "line": 177,
+        "args": 2
+    },
+    {
+        "module": "mercury_ai.analysis.institutional_analytics_engine",
+        "name": "_max_consecutive",
+        "line": 244,
+        "args": 2
+    },
+    {
+        "module": "mercury_ai.analysis.institutional_analytics_engine",
+        "name": "_engine_contribution",
+        "line": 260,
+        "args": 2
+    },
+    {
+        "module": "mercury_ai.analysis.institutional_analytics_engine",
+        "name": "_pattern_analysis",
+        "line": 285,
+        "args": 2
+    },
+    {
+        "module": "mercury_ai.analysis.institutional_analytics_engine",
+        "name": "_temporal_analysis",
+        "line": 305,
+        "args": 2
+    },
+    {
+        "module": "mercury_ai.analysis.institutional_analytics_engine",
+        "name": "_recent_trend",
+        "line": 329,
+        "args": 2
+    },
+    {
+        "module": "mercury_ai.analysis.institutional_analytics_engine",
+        "name": "_confidence_analysis",
+        "line": 351,
+        "args": 2
+    },
+    {
+        "module": "mercury_ai.analysis.institutional_analytics_engine",
+        "name": "_attribution_analysis",
+        "line": 373,
+        "args": 2
+    },
+    {
+        "module": "mercury_ai.analysis.institutional_analytics_engine",
+        "name": "export_report_json",
+        "line": 418,
+        "args": 2
+    },
+    {
+        "module": "mercury_ai.analysis.institutional_analytics_engine",
+        "name": "export_report_summary",
+        "line": 426,
         "args": 2
     },
     {
@@ -613,32 +835,68 @@
     },
     {
         "module": "mercury_ai.analysis.institutional_memory_engine",
+        "name": "__new__",
+        "line": 14,
+        "args": 1
+    },
+    {
+        "module": "mercury_ai.analysis.institutional_memory_engine",
         "name": "__init__",
-        "line": 7,
+        "line": 20,
+        "args": 2
+    },
+    {
+        "module": "mercury_ai.analysis.institutional_memory_engine",
+        "name": "_load_into_cache",
+        "line": 33,
+        "args": 1
+    },
+    {
+        "module": "mercury_ai.analysis.institutional_memory_engine",
+        "name": "_initialize_memory",
+        "line": 43,
+        "args": 1
+    },
+    {
+        "module": "mercury_ai.analysis.institutional_memory_engine",
+        "name": "flush",
+        "line": 49,
+        "args": 1
+    },
+    {
+        "module": "mercury_ai.analysis.institutional_memory_engine",
+        "name": "_load_memory",
+        "line": 75,
+        "args": 1
+    },
+    {
+        "module": "mercury_ai.analysis.institutional_memory_engine",
+        "name": "_save_memory",
+        "line": 79,
         "args": 2
     },
     {
         "module": "mercury_ai.analysis.institutional_memory_engine",
         "name": "_get_setup_key",
-        "line": 13,
+        "line": 86,
         "args": 3
     },
     {
         "module": "mercury_ai.analysis.institutional_memory_engine",
         "name": "get_consistency_score",
-        "line": 18,
+        "line": 91,
         "args": 3
     },
     {
         "module": "mercury_ai.analysis.institutional_memory_engine",
         "name": "record_decision",
-        "line": 43,
+        "line": 116,
         "args": 2
     },
     {
         "module": "mercury_ai.analysis.institutional_memory_engine",
         "name": "record_outcome",
-        "line": 61,
+        "line": 133,
         "args": 3
     },
     {
@@ -666,9 +924,15 @@
         "args": 1
     },
     {
+        "module": "mercury_ai.analysis.institutional_score_engine",
+        "name": "calculate",
+        "line": 25,
+        "args": 8
+    },
+    {
         "module": "mercury_ai.analysis.institutional_trade_filter_engine",
         "name": "evaluate",
-        "line": 11,
+        "line": 20,
         "args": 3
     },
     {
@@ -716,13 +980,25 @@
     {
         "module": "mercury_ai.analysis.live_monitor",
         "name": "__init__",
-        "line": 12,
-        "args": 2
+        "line": 8,
+        "args": 1
     },
     {
         "module": "mercury_ai.analysis.live_monitor",
-        "name": "run_cycle",
-        "line": 20,
+        "name": "start",
+        "line": 11,
+        "args": 1
+    },
+    {
+        "module": "mercury_ai.analysis.live_monitor",
+        "name": "stop",
+        "line": 14,
+        "args": 1
+    },
+    {
+        "module": "mercury_ai.analysis.live_monitor",
+        "name": "is_running",
+        "line": 18,
         "args": 1
     },
     {
@@ -793,26 +1069,20 @@
     },
     {
         "module": "mercury_ai.analysis.market_context_builder",
-        "name": "__init__",
-        "line": 22,
-        "args": 9
-    },
-    {
-        "module": "mercury_ai.analysis.market_context_builder",
         "name": "build",
-        "line": 32,
-        "args": 9
+        "line": 34,
+        "args": 11
     },
     {
         "module": "mercury_ai.analysis.market_regime_engine",
         "name": "analyze",
-        "line": 8,
+        "line": 16,
         "args": 5
     },
     {
         "module": "mercury_ai.analysis.market_state_engine",
         "name": "analyze",
-        "line": 15,
+        "line": 13,
         "args": 3
     },
     {
@@ -830,13 +1100,13 @@
     {
         "module": "mercury_ai.analysis.market_thesis_builder",
         "name": "__init__",
-        "line": 14,
-        "args": 1
+        "line": 17,
+        "args": 5
     },
     {
         "module": "mercury_ai.analysis.market_thesis_builder",
         "name": "build",
-        "line": 20,
+        "line": 29,
         "args": 3
     },
     {
@@ -866,25 +1136,31 @@
     {
         "module": "mercury_ai.analysis.mtf_engine",
         "name": "__init__",
-        "line": 18,
+        "line": 19,
         "args": 2
     },
     {
         "module": "mercury_ai.analysis.mtf_engine",
         "name": "analyze",
-        "line": 26,
+        "line": 27,
+        "args": 2
+    },
+    {
+        "module": "mercury_ai.analysis.mtf_engine",
+        "name": "_determine_trend",
+        "line": 74,
         "args": 2
     },
     {
         "module": "mercury_ai.analysis.mtf_engine",
         "name": "_build_consensus",
-        "line": 70,
+        "line": 84,
         "args": 2
     },
     {
         "module": "mercury_ai.analysis.mtf_engine",
         "name": "calculate_factor_alignment",
-        "line": 71,
+        "line": 85,
         "args": 1
     },
     {
@@ -960,6 +1236,48 @@
         "args": 1
     },
     {
+        "module": "mercury_ai.analysis.performance_engine",
+        "name": "__init__",
+        "line": 13,
+        "args": 2
+    },
+    {
+        "module": "mercury_ai.analysis.performance_engine",
+        "name": "calculate_asset_performance",
+        "line": 16,
+        "args": 3
+    },
+    {
+        "module": "mercury_ai.analysis.performance_engine",
+        "name": "calculate_universe_performance",
+        "line": 66,
+        "args": 2
+    },
+    {
+        "module": "mercury_ai.analysis.performance_engine",
+        "name": "_calculate_drawdown",
+        "line": 102,
+        "args": 2
+    },
+    {
+        "module": "mercury_ai.analysis.performance_engine",
+        "name": "_calculate_sharpe",
+        "line": 123,
+        "args": 2
+    },
+    {
+        "module": "mercury_ai.analysis.performance_engine",
+        "name": "_calculate_sortino",
+        "line": 129,
+        "args": 2
+    },
+    {
+        "module": "mercury_ai.analysis.performance_engine",
+        "name": "_empty_asset_performance",
+        "line": 137,
+        "args": 2
+    },
+    {
         "module": "mercury_ai.analysis.performance_statistics",
         "name": "__init__",
         "line": 5,
@@ -1016,26 +1334,134 @@
     {
         "module": "mercury_ai.analysis.ranking_engine",
         "name": "rank",
-        "line": 9,
+        "line": 14,
         "args": 2
     },
     {
-        "module": "mercury_ai.analysis.ranking_engine",
-        "name": "calculate_rank_score",
-        "line": 13,
+        "module": "mercury_ai.analysis.replay_batch_processor",
+        "name": "__init__",
+        "line": 68,
+        "args": 5
+    },
+    {
+        "module": "mercury_ai.analysis.replay_batch_processor",
+        "name": "run_batch",
+        "line": 87,
+        "args": 3
+    },
+    {
+        "module": "mercury_ai.analysis.replay_batch_processor",
+        "name": "_run_single_symbol",
+        "line": 162,
+        "args": 4
+    },
+    {
+        "module": "mercury_ai.analysis.replay_batch_processor",
+        "name": "_aggregate_cache_stats",
+        "line": 209,
         "args": 1
+    },
+    {
+        "module": "mercury_ai.analysis.replay_cache",
+        "name": "__init__",
+        "line": 29,
+        "args": 2
+    },
+    {
+        "module": "mercury_ai.analysis.replay_cache",
+        "name": "get",
+        "line": 36,
+        "args": 3
+    },
+    {
+        "module": "mercury_ai.analysis.replay_cache",
+        "name": "put",
+        "line": 47,
+        "args": 4
+    },
+    {
+        "module": "mercury_ai.analysis.replay_cache",
+        "name": "clear",
+        "line": 58,
+        "args": 1
+    },
+    {
+        "module": "mercury_ai.analysis.replay_cache",
+        "name": "hit_rate",
+        "line": 66,
+        "args": 1
+    },
+    {
+        "module": "mercury_ai.analysis.replay_cache",
+        "name": "size",
+        "line": 74,
+        "args": 1
+    },
+    {
+        "module": "mercury_ai.analysis.replay_cache",
+        "name": "stats",
+        "line": 80,
+        "args": 1
+    },
+    {
+        "module": "mercury_ai.analysis.replay_cache",
+        "name": "__len__",
+        "line": 91,
+        "args": 1
+    },
+    {
+        "module": "mercury_ai.analysis.replay_cache",
+        "name": "__contains__",
+        "line": 94,
+        "args": 2
     },
     {
         "module": "mercury_ai.analysis.risk_engine",
         "name": "__init__",
-        "line": 10,
+        "line": 36,
         "args": 1
     },
     {
         "module": "mercury_ai.analysis.risk_engine",
         "name": "assess",
-        "line": 13,
+        "line": 42,
+        "args": 7
+    },
+    {
+        "module": "mercury_ai.analysis.risk_engine",
+        "name": "assess_simple",
+        "line": 134,
+        "args": 7
+    },
+    {
+        "module": "mercury_ai.analysis.risk_engine",
+        "name": "_compute_var_cvar",
+        "line": 263,
+        "args": 2
+    },
+    {
+        "module": "mercury_ai.analysis.risk_engine",
+        "name": "_compute_kelly",
+        "line": 304,
         "args": 3
+    },
+    {
+        "module": "mercury_ai.analysis.risk_engine",
+        "name": "_compute_correlation_matrix",
+        "line": 347,
+        "args": 2
+    },
+    {
+        "module": "mercury_ai.analysis.risk_engine",
+        "name": "_pearson_correlation",
+        "line": 383,
+        "args": 2
+    },
+    {
+        "module": "mercury_ai.analysis.risk_engine",
+        "name": "_compute_stress_test",
+        "line": 404,
+        "args": 2
     },
     {
         "module": "mercury_ai.analysis.session_engine",
@@ -1094,43 +1520,43 @@
     {
         "module": "mercury_ai.analysis.support_resistance_analyzer",
         "name": "_detect_swings",
-        "line": 57,
+        "line": 60,
         "args": 2
     },
     {
         "module": "mercury_ai.analysis.support_resistance_analyzer",
         "name": "_cluster_zones",
-        "line": 67,
+        "line": 70,
         "args": 3
     },
     {
         "module": "mercury_ai.analysis.support_resistance_analyzer",
         "name": "_finalize_zone",
-        "line": 82,
+        "line": 85,
         "args": 2
     },
     {
         "module": "mercury_ai.analysis.support_resistance_analyzer",
         "name": "_score_zones",
-        "line": 94,
+        "line": 97,
         "args": 4
     },
     {
         "module": "mercury_ai.analysis.support_resistance_analyzer",
         "name": "_find_nearest_zones",
-        "line": 98,
+        "line": 101,
         "args": 3
     },
     {
         "module": "mercury_ai.analysis.support_resistance_analyzer",
         "name": "_detect_price_location",
-        "line": 106,
+        "line": 109,
         "args": 5
     },
     {
         "module": "mercury_ai.analysis.support_resistance_analyzer",
         "name": "_build_explanation",
-        "line": 111,
+        "line": 114,
         "args": 5
     },
     {
@@ -1148,13 +1574,13 @@
     {
         "module": "mercury_ai.analysis.swing_engine",
         "name": "detect_swings",
-        "line": 59,
+        "line": 65,
         "args": 2
     },
     {
         "module": "mercury_ai.analysis.swing_engine",
         "name": "analyze_sequence",
-        "line": 272,
+        "line": 283,
         "args": 2
     },
     {
@@ -1172,7 +1598,7 @@
     {
         "module": "mercury_ai.analysis.trade_outcome_engine",
         "name": "determine_outcome",
-        "line": 10,
+        "line": 9,
         "args": 2
     },
     {
@@ -1184,19 +1610,19 @@
     {
         "module": "mercury_ai.analysis.validation_engine",
         "name": "validate_all",
-        "line": 12,
+        "line": 11,
         "args": 3
     },
     {
         "module": "mercury_ai.analysis.validation_engine",
         "name": "_validate_evidence_consistency",
-        "line": 27,
+        "line": 26,
         "args": 2
     },
     {
         "module": "mercury_ai.analysis.validation_engine",
         "name": "_validate_context_consistency",
-        "line": 35,
+        "line": 34,
         "args": 2
     },
     {
@@ -1550,8 +1976,44 @@
     {
         "module": "mercury_ai.analysis.tests.test_benchmark_framework",
         "name": "test_benchmark_framework_execution",
-        "line": 3,
-        "args": 0
+        "line": 14,
+        "args": 1
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_benchmark_framework",
+        "name": "test_enhanced_report_fields",
+        "line": 25,
+        "args": 1
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_benchmark_framework",
+        "name": "test_statistical_test_result",
+        "line": 41,
+        "args": 1
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_benchmark_framework",
+        "name": "test_buy_and_hold_baseline",
+        "line": 60,
+        "args": 1
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_benchmark_framework",
+        "name": "test_quick_benchmark_compatibility",
+        "line": 72,
+        "args": 1
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_benchmark_framework",
+        "name": "test_warm_cool_filter",
+        "line": 82,
+        "args": 1
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_benchmark_framework",
+        "name": "test_multiple_symbols",
+        "line": 95,
+        "args": 1
     },
     {
         "module": "mercury_ai.analysis.tests.test_candlestick_engine",
@@ -1563,12 +2025,6 @@
         "module": "mercury_ai.analysis.tests.test_candlestick_engine",
         "name": "test_candlestick_engine_insufficient_data",
         "line": 30,
-        "args": 0
-    },
-    {
-        "module": "mercury_ai.analysis.tests.test_context_engine",
-        "name": "test_context_engine_aggregation",
-        "line": 8,
         "args": 0
     },
     {
@@ -1584,6 +2040,108 @@
         "args": 1
     },
     {
+        "module": "mercury_ai.analysis.tests.test_historical_replay_engine",
+        "name": "sample_df",
+        "line": 15,
+        "args": 0
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_historical_replay_engine",
+        "name": "test_default_cache",
+        "line": 32,
+        "args": 1
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_historical_replay_engine",
+        "name": "test_custom_cache",
+        "line": 37,
+        "args": 1
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_historical_replay_engine",
+        "name": "test_replay_stats_initial",
+        "line": 42,
+        "args": 1
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_historical_replay_engine",
+        "name": "test_run_replay_returns_list",
+        "line": 51,
+        "args": 2
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_historical_replay_engine",
+        "name": "test_run_replay_returns_replay_metrics",
+        "line": 56,
+        "args": 2
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_historical_replay_engine",
+        "name": "test_run_replay_insufficient_data_returns_empty",
+        "line": 62,
+        "args": 1
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_historical_replay_engine",
+        "name": "test_run_replay_empty_dataframe",
+        "line": 75,
+        "args": 1
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_historical_replay_engine",
+        "name": "test_run_replay_updates_stats",
+        "line": 81,
+        "args": 2
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_historical_replay_engine",
+        "name": "test_cache_populated_after_run",
+        "line": 93,
+        "args": 2
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_historical_replay_engine",
+        "name": "test_second_run_uses_cache",
+        "line": 100,
+        "args": 2
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_historical_replay_engine",
+        "name": "test_different_symbols_separate_cache",
+        "line": 116,
+        "args": 2
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_historical_replay_engine",
+        "name": "test_silent_mode_no_output",
+        "line": 133,
+        "args": 3
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_historical_replay_engine",
+        "name": "test_verbose_mode_has_output",
+        "line": 139,
+        "args": 3
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_historical_replay_engine",
+        "name": "test_n_candles_large",
+        "line": 150,
+        "args": 2
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_historical_replay_engine",
+        "name": "test_replay_stats_after_insufficient_data",
+        "line": 158,
+        "args": 1
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_historical_replay_engine",
+        "name": "test_metrics_have_expected_fields",
+        "line": 172,
+        "args": 2
+    },
+    {
         "module": "mercury_ai.analysis.tests.test_market_regime_engine",
         "name": "test_market_regime_compression",
         "line": 5,
@@ -1592,7 +2150,7 @@
     {
         "module": "mercury_ai.analysis.tests.test_market_regime_engine",
         "name": "test_market_regime_strong_uptrend",
-        "line": 19,
+        "line": 25,
         "args": 0
     },
     {
@@ -1636,6 +2194,570 @@
         "name": "test_price_action_engine_engulfing",
         "line": 11,
         "args": 1
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_replay_batch_processor",
+        "name": "sample_data_map",
+        "line": 19,
+        "args": 0
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_replay_batch_processor",
+        "name": "test_creation",
+        "line": 39,
+        "args": 1
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_replay_batch_processor",
+        "name": "test_frozen",
+        "line": 53,
+        "args": 1
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_replay_batch_processor",
+        "name": "test_with_error",
+        "line": 65,
+        "args": 1
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_replay_batch_processor",
+        "name": "test_creation",
+        "line": 80,
+        "args": 1
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_replay_batch_processor",
+        "name": "test_frozen",
+        "line": 96,
+        "args": 1
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_replay_batch_processor",
+        "name": "test_constructor",
+        "line": 115,
+        "args": 1
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_replay_batch_processor",
+        "name": "test_constructor_defaults",
+        "line": 120,
+        "args": 1
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_replay_batch_processor",
+        "name": "test_run_batch_empty_data_map",
+        "line": 125,
+        "args": 1
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_replay_batch_processor",
+        "name": "test_run_batch_single_symbol",
+        "line": 132,
+        "args": 2
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_replay_batch_processor",
+        "name": "test_run_batch_multiple_symbols",
+        "line": 152,
+        "args": 2
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_replay_batch_processor",
+        "name": "test_run_batch_all_success_no_errors",
+        "line": 171,
+        "args": 2
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_replay_batch_processor",
+        "name": "test_symbol_error_is_captured",
+        "line": 193,
+        "args": 2
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_replay_batch_processor",
+        "name": "test_partial_failure_mixed_results",
+        "line": 211,
+        "args": 2
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_replay_batch_processor",
+        "name": "test_aggregate_cache_stats_present",
+        "line": 238,
+        "args": 2
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_replay_batch_processor",
+        "name": "test_successful_and_failed_counts",
+        "line": 255,
+        "args": 2
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_replay_batch_processor",
+        "name": "test_total_wall_time",
+        "line": 273,
+        "args": 2
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_replay_cache",
+        "name": "test_put_and_get",
+        "line": 13,
+        "args": 1
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_replay_cache",
+        "name": "test_get_miss_returns_none",
+        "line": 19,
+        "args": 1
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_replay_cache",
+        "name": "test_contains",
+        "line": 23,
+        "args": 1
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_replay_cache",
+        "name": "test_different_symbols_same_index",
+        "line": 29,
+        "args": 1
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_replay_cache",
+        "name": "test_same_symbol_different_index",
+        "line": 36,
+        "args": 1
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_replay_cache",
+        "name": "test_overwrite_existing_key",
+        "line": 43,
+        "args": 1
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_replay_cache",
+        "name": "test_evicts_oldest_when_full",
+        "line": 54,
+        "args": 1
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_replay_cache",
+        "name": "test_get_refreshes_lru_order",
+        "line": 65,
+        "args": 1
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_replay_cache",
+        "name": "test_put_refreshes_lru_order",
+        "line": 78,
+        "args": 1
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_replay_cache",
+        "name": "test_maxsize_one",
+        "line": 87,
+        "args": 1
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_replay_cache",
+        "name": "test_initial_stats",
+        "line": 99,
+        "args": 1
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_replay_cache",
+        "name": "test_hit_rate",
+        "line": 108,
+        "args": 1
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_replay_cache",
+        "name": "test_hit_rate_zero_requests",
+        "line": 115,
+        "args": 1
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_replay_cache",
+        "name": "test_hit_rate_all_hits",
+        "line": 119,
+        "args": 1
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_replay_cache",
+        "name": "test_clear_resets_stats",
+        "line": 127,
+        "args": 1
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_replay_cache",
+        "name": "test_len",
+        "line": 138,
+        "args": 1
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_replay_cache",
+        "name": "test_concurrent_puts",
+        "line": 149,
+        "args": 1
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_replay_cache",
+        "name": "test_concurrent_gets_and_puts",
+        "line": 179,
+        "args": 1
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_replay_cache",
+        "name": "test_maxsize_zero_clamped_to_one",
+        "line": 218,
+        "args": 1
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_replay_cache",
+        "name": "test_negative_maxsize_clamped_to_one",
+        "line": 222,
+        "args": 1
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_replay_cache",
+        "name": "test_clear_empty_cache",
+        "line": 226,
+        "args": 1
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_replay_cache",
+        "name": "test_large_number_of_entries",
+        "line": 231,
+        "args": 1
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_replay_cache",
+        "name": "put_entries",
+        "line": 153,
+        "args": 3
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_replay_cache",
+        "name": "reader",
+        "line": 187,
+        "args": 0
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_replay_cache",
+        "name": "writer",
+        "line": 195,
+        "args": 0
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_risk_engine",
+        "name": "engine",
+        "line": 32,
+        "args": 0
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_risk_engine",
+        "name": "mock_context",
+        "line": 38,
+        "args": 0
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_risk_engine",
+        "name": "mock_evidence_bundle",
+        "line": 66,
+        "args": 0
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_risk_engine",
+        "name": "sample_returns_normal",
+        "line": 104,
+        "args": 0
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_risk_engine",
+        "name": "sample_returns_positive",
+        "line": 117,
+        "args": 0
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_risk_engine",
+        "name": "sample_returns_negative",
+        "line": 125,
+        "args": 0
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_risk_engine",
+        "name": "test_var_cvar_with_normal_returns",
+        "line": 139,
+        "args": 3
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_risk_engine",
+        "name": "test_var_cvar_with_positive_returns",
+        "line": 150,
+        "args": 3
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_risk_engine",
+        "name": "test_var_cvar_with_negative_returns",
+        "line": 157,
+        "args": 3
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_risk_engine",
+        "name": "test_var_cvar_empty_returns",
+        "line": 165,
+        "args": 2
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_risk_engine",
+        "name": "test_var_cvar_insufficient_returns",
+        "line": 171,
+        "args": 2
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_risk_engine",
+        "name": "test_var_cvar_zero_variance",
+        "line": 178,
+        "args": 2
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_risk_engine",
+        "name": "test_var_cvar_single_outlier",
+        "line": 186,
+        "args": 2
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_risk_engine",
+        "name": "test_kelly_default_params",
+        "line": 201,
+        "args": 2
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_risk_engine",
+        "name": "test_kelly_high_win_rate",
+        "line": 208,
+        "args": 2
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_risk_engine",
+        "name": "test_kelly_low_win_rate",
+        "line": 217,
+        "args": 2
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_risk_engine",
+        "name": "test_kelly_breakeven",
+        "line": 226,
+        "args": 2
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_risk_engine",
+        "name": "test_kelly_capped_at_max",
+        "line": 232,
+        "args": 2
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_risk_engine",
+        "name": "test_kelly_zero_payoff",
+        "line": 237,
+        "args": 2
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_risk_engine",
+        "name": "test_kelly_win_rate_clamped",
+        "line": 244,
+        "args": 2
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_risk_engine",
+        "name": "test_kelly_negative_win_rate_clamped",
+        "line": 250,
+        "args": 2
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_risk_engine",
+        "name": "test_correlation_two_assets_perfect_positive",
+        "line": 263,
+        "args": 2
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_risk_engine",
+        "name": "test_correlation_two_assets_perfect_negative",
+        "line": 278,
+        "args": 2
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_risk_engine",
+        "name": "test_correlation_three_assets",
+        "line": 287,
+        "args": 2
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_risk_engine",
+        "name": "test_correlation_single_asset",
+        "line": 309,
+        "args": 2
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_risk_engine",
+        "name": "test_correlation_empty_map",
+        "line": 315,
+        "args": 2
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_risk_engine",
+        "name": "test_correlation_insufficient_data",
+        "line": 320,
+        "args": 2
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_risk_engine",
+        "name": "test_correlation_unequal_lengths",
+        "line": 326,
+        "args": 2
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_risk_engine",
+        "name": "test_perfect_positive",
+        "line": 344,
+        "args": 2
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_risk_engine",
+        "name": "test_perfect_negative",
+        "line": 350,
+        "args": 2
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_risk_engine",
+        "name": "test_no_correlation",
+        "line": 356,
+        "args": 2
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_risk_engine",
+        "name": "test_constant_vector",
+        "line": 363,
+        "args": 2
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_risk_engine",
+        "name": "test_single_element",
+        "line": 370,
+        "args": 2
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_risk_engine",
+        "name": "test_stress_normal_volatility",
+        "line": 383,
+        "args": 2
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_risk_engine",
+        "name": "test_stress_high_volatility",
+        "line": 390,
+        "args": 2
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_risk_engine",
+        "name": "test_stress_low_volatility",
+        "line": 397,
+        "args": 2
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_risk_engine",
+        "name": "test_stress_zero_volatility",
+        "line": 404,
+        "args": 2
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_risk_engine",
+        "name": "test_stress_negative_volatility",
+        "line": 409,
+        "args": 2
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_risk_engine",
+        "name": "test_stress_capped_at_80_percent",
+        "line": 414,
+        "args": 2
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_risk_engine",
+        "name": "test_assess_basic",
+        "line": 427,
+        "args": 4
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_risk_engine",
+        "name": "test_assess_with_historical_returns",
+        "line": 450,
+        "args": 5
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_risk_engine",
+        "name": "test_assess_with_kelly_params",
+        "line": 463,
+        "args": 4
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_risk_engine",
+        "name": "test_assess_with_correlation",
+        "line": 477,
+        "args": 4
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_risk_engine",
+        "name": "test_assess_full",
+        "line": 491,
+        "args": 5
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_risk_engine",
+        "name": "test_assess_bearish_trend",
+        "line": 512,
+        "args": 4
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_risk_engine",
+        "name": "test_assess_risk_assessment_is_frozen",
+        "line": 523,
+        "args": 4
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_risk_engine",
+        "name": "test_assess_zero_atr",
+        "line": 537,
+        "args": 4
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_risk_engine",
+        "name": "test_assess_zero_price",
+        "line": 556,
+        "args": 4
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_risk_engine",
+        "name": "test_assess_no_volatility_evidence",
+        "line": 572,
+        "args": 3
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_risk_engine",
+        "name": "test_assess_empty_evidence_bundle",
+        "line": 592,
+        "args": 3
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_risk_engine",
+        "name": "test_kelly_extreme_values",
+        "line": 600,
+        "args": 2
+    },
+    {
+        "module": "mercury_ai.analysis.tests.test_risk_engine",
+        "name": "test_pearson_identical_vectors",
+        "line": 610,
+        "args": 2
     },
     {
         "module": "mercury_ai.analysis.tests.test_trend_engine",
@@ -1682,85 +2804,79 @@
     {
         "module": "mercury_ai.brain.explainability_engine",
         "name": "analyze",
-        "line": 12,
+        "line": 13,
         "args": 4
     },
     {
         "module": "mercury_ai.brain.institutional_brain",
         "name": "explain",
-        "line": 11,
-        "args": 2
-    },
-    {
-        "module": "mercury_ai.brain.institutional_brain",
-        "name": "_get_all_evidences",
-        "line": 32,
+        "line": 12,
         "args": 2
     },
     {
         "module": "mercury_ai.brain.mercury_decision_engine",
         "name": "__init__",
-        "line": 21,
+        "line": 50,
         "args": 3
     },
     {
         "module": "mercury_ai.brain.mercury_decision_engine",
         "name": "analyze",
-        "line": 34,
-        "args": 7
+        "line": 94,
+        "args": 4
     },
     {
         "module": "mercury_ai.brain.mercury_decision_engine",
         "name": "_analyze_logic",
-        "line": 40,
-        "args": 7
+        "line": 113,
+        "args": 4
     },
     {
         "module": "mercury_ai.brain.probability_engine",
         "name": "__init__",
-        "line": 12,
+        "line": 31,
         "args": 2
     },
     {
         "module": "mercury_ai.brain.probability_engine",
         "name": "analyze",
-        "line": 16,
+        "line": 34,
         "args": 6
     },
     {
         "module": "mercury_ai.brain.scanner",
         "name": "__init__",
-        "line": 16,
+        "line": 20,
         "args": 2
     },
     {
         "module": "mercury_ai.brain.scanner",
         "name": "scan",
-        "line": 43,
+        "line": 47,
         "args": 1
     },
     {
         "module": "mercury_ai.brain.scanner",
         "name": "_print_ranking",
-        "line": 163,
+        "line": 180,
         "args": 2
     },
     {
         "module": "mercury_ai.brain.scanner",
         "name": "_print_report",
-        "line": 198,
+        "line": 207,
         "args": 2
     },
     {
         "module": "mercury_ai.brain.scanner",
         "name": "_print_line",
-        "line": 259,
+        "line": 283,
         "args": 3
     },
     {
         "module": "mercury_ai.brain.scanner",
         "name": "_value",
-        "line": 267,
+        "line": 287,
         "args": 2
     },
     {
@@ -1772,56 +2888,50 @@
     {
         "module": "mercury_ai.brain.tests.test_mercury_decision_benchmark",
         "name": "test_decision_engine_benchmark",
-        "line": 12,
+        "line": 13,
         "args": 0
     },
     {
         "module": "mercury_ai.brain.tests.test_mercury_decision_engine",
         "name": "decision_engine",
-        "line": 14,
+        "line": 15,
         "args": 0
     },
     {
         "module": "mercury_ai.brain.tests.test_mercury_decision_engine",
         "name": "_create_context",
-        "line": 66,
+        "line": 67,
         "args": 0
     },
     {
         "module": "mercury_ai.brain.tests.test_mercury_decision_engine",
         "name": "test_decision_engine_buy_scenario",
-        "line": 80,
+        "line": 149,
         "args": 1
     },
     {
         "module": "mercury_ai.brain.tests.test_mercury_decision_engine",
         "name": "test_decision_engine_sell_scenario",
-        "line": 100,
+        "line": 179,
         "args": 1
     },
     {
         "module": "mercury_ai.brain.tests.test_mercury_decision_engine",
         "name": "test_decision_engine_wait_scenario",
-        "line": 118,
+        "line": 207,
         "args": 1
     },
     {
         "module": "mercury_ai.brain.tests.test_mercury_decision_engine",
         "name": "test_decision_engine_low_quality_scenario",
-        "line": 135,
+        "line": 224,
         "args": 1
     },
     {
         "module": "mercury_ai.brain.tests.test_probability_engine",
         "name": "test_probability_engine_calculation",
-        "line": 12,
+        "line": 8,
         "args": 0
-    },
-    {
-        "module": "mercury_ai.brain.tests.test_probability_engine",
-        "name": "__init__",
-        "line": 9,
-        "args": 2
     },
     {
         "module": "mercury_ai.calendar.economic_calendar",
@@ -1854,22 +2964,52 @@
         "args": 4
     },
     {
+        "module": "mercury_ai.config.universe",
+        "name": "get_asset",
+        "line": 432,
+        "args": 1
+    },
+    {
+        "module": "mercury_ai.config.universe",
+        "name": "get_enabled_symbols",
+        "line": 437,
+        "args": 1
+    },
+    {
+        "module": "mercury_ai.config.universe",
+        "name": "get_all_provider_symbols",
+        "line": 452,
+        "args": 0
+    },
+    {
+        "module": "mercury_ai.config.universe",
+        "name": "validate_symbol",
+        "line": 457,
+        "args": 1
+    },
+    {
+        "module": "mercury_ai.config.universe",
+        "name": "universe_summary",
+        "line": 462,
+        "args": 0
+    },
+    {
         "module": "mercury_ai.core.analysis_pipeline",
         "name": "__init__",
-        "line": 54,
+        "line": 59,
         "args": 3
     },
     {
         "module": "mercury_ai.core.analysis_pipeline",
         "name": "_record_telemetry",
-        "line": 110,
+        "line": 113,
         "args": 5
     },
     {
         "module": "mercury_ai.core.analysis_pipeline",
         "name": "analyze",
-        "line": 157,
-        "args": 4
+        "line": 159,
+        "args": 5
     },
     {
         "module": "mercury_ai.core.asset_registry",
@@ -1994,25 +3134,25 @@
     {
         "module": "mercury_ai.core.export_center",
         "name": "__init__",
-        "line": 13,
+        "line": 12,
         "args": 2
     },
     {
         "module": "mercury_ai.core.export_center",
         "name": "export_data",
-        "line": 18,
+        "line": 17,
         "args": 6
     },
     {
         "module": "mercury_ai.core.export_center",
         "name": "export_history",
-        "line": 55,
+        "line": 54,
         "args": 4
     },
     {
         "module": "mercury_ai.core.export_center",
         "name": "export_snapshots",
-        "line": 59,
+        "line": 58,
         "args": 4
     },
     {
@@ -2137,68 +3277,110 @@
     },
     {
         "module": "mercury_ai.core.pipeline_profiler",
-        "name": "__init__",
+        "name": "_finalize_stage",
         "line": 10,
         "args": 2
     },
     {
         "module": "mercury_ai.core.pipeline_profiler",
-        "name": "finalize",
-        "line": 19,
-        "args": 2
-    },
-    {
-        "module": "mercury_ai.core.pipeline_profiler",
         "name": "__init__",
-        "line": 32,
+        "line": 22,
         "args": 3
     },
     {
         "module": "mercury_ai.core.pipeline_profiler",
         "name": "start_pipeline",
-        "line": 39,
+        "line": 29,
         "args": 1
     },
     {
         "module": "mercury_ai.core.pipeline_profiler",
         "name": "end_pipeline",
-        "line": 46,
+        "line": 36,
         "args": 1
     },
     {
         "module": "mercury_ai.core.pipeline_profiler",
         "name": "start_stage",
-        "line": 50,
+        "line": 40,
         "args": 2
     },
     {
         "module": "mercury_ai.core.pipeline_profiler",
         "name": "end_stage",
-        "line": 61,
+        "line": 51,
         "args": 2
     },
     {
         "module": "mercury_ai.core.pipeline_profiler",
         "name": "stage",
-        "line": 69,
+        "line": 59,
         "args": 2
     },
     {
         "module": "mercury_ai.core.pipeline_profiler",
         "name": "summary",
-        "line": 76,
+        "line": 66,
         "args": 1
     },
     {
         "module": "mercury_ai.core.pipeline_profiler",
         "name": "json",
-        "line": 84,
+        "line": 74,
         "args": 1
     },
     {
         "module": "mercury_ai.core.pipeline_profiler",
         "name": "pretty_print",
-        "line": 89,
+        "line": 79,
+        "args": 1
+    },
+    {
+        "module": "mercury_ai.core.project_state",
+        "name": "__init__",
+        "line": 16,
+        "args": 2
+    },
+    {
+        "module": "mercury_ai.core.project_state",
+        "name": "metadata",
+        "line": 29,
+        "args": 1
+    },
+    {
+        "module": "mercury_ai.core.project_state",
+        "name": "json",
+        "line": 33,
+        "args": 1
+    },
+    {
+        "module": "mercury_ai.core.project_state",
+        "name": "documents",
+        "line": 37,
+        "args": 1
+    },
+    {
+        "module": "mercury_ai.core.project_state",
+        "name": "statistics",
+        "line": 41,
+        "args": 1
+    },
+    {
+        "module": "mercury_ai.core.project_state",
+        "name": "get",
+        "line": 44,
+        "args": 3
+    },
+    {
+        "module": "mercury_ai.core.project_state",
+        "name": "has",
+        "line": 47,
+        "args": 2
+    },
+    {
+        "module": "mercury_ai.core.project_state",
+        "name": "summary",
+        "line": 50,
         "args": 1
     },
     {
@@ -2216,25 +3398,25 @@
     {
         "module": "mercury_ai.core.security_center",
         "name": "__init__",
-        "line": 18,
+        "line": 17,
         "args": 1
     },
     {
         "module": "mercury_ai.core.security_center",
         "name": "log_event",
-        "line": 21,
+        "line": 20,
         "args": 5
     },
     {
         "module": "mercury_ai.core.security_center",
         "name": "generate_audit_trail",
-        "line": 25,
+        "line": 24,
         "args": 1
     },
     {
         "module": "mercury_ai.core.security_center",
         "name": "generate_security_report",
-        "line": 28,
+        "line": 27,
         "args": 1
     },
     {
@@ -2254,6 +3436,30 @@
         "name": "start",
         "line": 5,
         "args": 0
+    },
+    {
+        "module": "mercury_ai.core._stage_builder",
+        "name": "__init__",
+        "line": 17,
+        "args": 2
+    },
+    {
+        "module": "mercury_ai.core._stage_builder",
+        "name": "duration",
+        "line": 27,
+        "args": 1
+    },
+    {
+        "module": "mercury_ai.core._stage_builder",
+        "name": "memory_delta",
+        "line": 32,
+        "args": 1
+    },
+    {
+        "module": "mercury_ai.core._stage_builder",
+        "name": "percentage_of",
+        "line": 36,
+        "args": 2
     },
     {
         "module": "mercury_ai.data.data_normalizer",
@@ -2288,7 +3494,7 @@
     {
         "module": "mercury_ai.data.market_data",
         "name": "get_data",
-        "line": 114,
+        "line": 111,
         "args": 4
     },
     {
@@ -2461,26 +3667,50 @@
     },
     {
         "module": "mercury_ai.data.mercury_data_provider",
+        "name": "list_providers",
+        "line": 126,
+        "args": 1
+    },
+    {
+        "module": "mercury_ai.data.mercury_data_provider",
+        "name": "provider_status",
+        "line": 129,
+        "args": 2
+    },
+    {
+        "module": "mercury_ai.data.mercury_data_provider",
+        "name": "best_provider",
+        "line": 133,
+        "args": 2
+    },
+    {
+        "module": "mercury_ai.data.mercury_data_provider",
+        "name": "healthcheck",
+        "line": 150,
+        "args": 1
+    },
+    {
+        "module": "mercury_ai.data.mercury_data_provider",
         "name": "get_last_price",
-        "line": 121,
+        "line": 152,
         "args": 2
     },
     {
         "module": "mercury_ai.data.mercury_data_provider",
         "name": "get_symbols",
-        "line": 122,
+        "line": 153,
         "args": 1
     },
     {
         "module": "mercury_ai.data.mercury_data_provider",
         "name": "market_status",
-        "line": 127,
+        "line": 158,
         "args": 1
     },
     {
         "module": "mercury_ai.data.mercury_data_provider",
         "name": "healthcheck",
-        "line": 128,
+        "line": 159,
         "args": 1
     },
     {
@@ -2624,13 +3854,13 @@
     {
         "module": "mercury_ai.operations.demo_manager",
         "name": "__init__",
-        "line": 12,
+        "line": 13,
         "args": 1
     },
     {
         "module": "mercury_ai.operations.demo_manager",
         "name": "run_simulation",
-        "line": 20,
+        "line": 21,
         "args": 1
     },
     {
@@ -2684,61 +3914,61 @@
     {
         "module": "mercury_ai.providers.data_adapters",
         "name": "__init__",
-        "line": 9,
+        "line": 11,
         "args": 7
     },
     {
         "module": "mercury_ai.providers.data_adapters",
         "name": "check_health",
-        "line": 27,
+        "line": 29,
         "args": 1
     },
     {
         "module": "mercury_ai.providers.data_adapters",
         "name": "get_data",
-        "line": 33,
+        "line": 35,
         "args": 3
     },
     {
         "module": "mercury_ai.providers.data_adapters",
         "name": "__init__",
-        "line": 45,
+        "line": 47,
         "args": 1
     },
     {
         "module": "mercury_ai.providers.data_adapters",
         "name": "get_data",
-        "line": 72,
+        "line": 69,
         "args": 3
     },
     {
         "module": "mercury_ai.providers.data_adapters",
         "name": "__init__",
-        "line": 117,
+        "line": 114,
         "args": 1
     },
     {
         "module": "mercury_ai.providers.data_adapters",
         "name": "__init__",
-        "line": 132,
+        "line": 129,
         "args": 1
     },
     {
         "module": "mercury_ai.providers.data_adapters",
         "name": "__init__",
-        "line": 147,
+        "line": 144,
         "args": 1
     },
     {
         "module": "mercury_ai.providers.data_adapters",
         "name": "__init__",
-        "line": 162,
+        "line": 159,
         "args": 1
     },
     {
         "module": "mercury_ai.providers.data_adapters",
         "name": "__init__",
-        "line": 177,
+        "line": 174,
         "args": 1
     },
     {
@@ -2887,44 +4117,56 @@
     },
     {
         "module": "mercury_ai.providers.historical_replay_provider",
+        "name": "set_data",
+        "line": 11,
+        "args": 2
+    },
+    {
+        "module": "mercury_ai.providers.historical_replay_provider",
+        "name": "set_index",
+        "line": 15,
+        "args": 2
+    },
+    {
+        "module": "mercury_ai.providers.historical_replay_provider",
         "name": "get_data",
-        "line": 9,
+        "line": 19,
         "args": 4
     },
     {
         "module": "mercury_ai.providers.historical_replay_provider",
         "name": "is_available",
-        "line": 18,
+        "line": 33,
         "args": 1
     },
     {
         "module": "mercury_ai.providers.historical_replay_provider",
         "name": "supports_symbol",
-        "line": 21,
+        "line": 36,
         "args": 2
     },
     {
         "module": "mercury_ai.providers.historical_replay_provider",
         "name": "supports_market",
-        "line": 24,
+        "line": 39,
         "args": 2
     },
     {
         "module": "mercury_ai.providers.historical_replay_provider",
         "name": "supports_timeframe",
-        "line": 27,
+        "line": 42,
         "args": 2
     },
     {
         "module": "mercury_ai.providers.historical_replay_provider",
         "name": "max_history",
-        "line": 30,
+        "line": 45,
         "args": 1
     },
     {
         "module": "mercury_ai.providers.historical_replay_provider",
         "name": "source_name",
-        "line": 33,
+        "line": 48,
         "args": 1
     },
     {
@@ -2953,122 +4195,68 @@
     },
     {
         "module": "mercury_ai.providers.market_provider",
+        "name": "healthcheck",
+        "line": 80,
+        "args": 1
+    },
+    {
+        "module": "mercury_ai.providers.market_provider",
+        "name": "list_providers",
+        "line": 87,
+        "args": 1
+    },
+    {
+        "module": "mercury_ai.providers.market_provider",
         "name": "best_provider",
-        "line": 78,
+        "line": 93,
         "args": 2
     },
     {
         "module": "mercury_ai.providers.market_provider",
-        "name": "trigger_failover",
-        "line": 84,
-        "args": 2
-    },
-    {
-        "module": "mercury_ai.providers.market_provider",
-        "name": "connect",
-        "line": 102,
-        "args": 1
-    },
-    {
-        "module": "mercury_ai.providers.market_provider",
-        "name": "health",
-        "line": 108,
-        "args": 1
-    },
-    {
-        "module": "mercury_ai.providers.market_provider",
-        "name": "get_candles",
-        "line": 122,
-        "args": 5
-    },
-    {
-        "module": "mercury_ai.providers.market_provider",
-        "name": "get_history",
-        "line": 178,
-        "args": 3
-    },
-    {
-        "module": "mercury_ai.providers.market_provider",
-        "name": "get_last_price",
-        "line": 192,
-        "args": 2
-    },
-    {
-        "module": "mercury_ai.providers.market_provider",
-        "name": "market_status",
-        "line": 208,
-        "args": 2
-    },
-    {
-        "module": "mercury_ai.providers.mercury_data_provider",
-        "name": "__init__",
-        "line": 28,
-        "args": 1
-    },
-    {
-        "module": "mercury_ai.providers.mercury_data_provider",
-        "name": "register_provider",
-        "line": 40,
-        "args": 2
-    },
-    {
-        "module": "mercury_ai.providers.mercury_data_provider",
-        "name": "best_provider",
-        "line": 55,
-        "args": 2
-    },
-    {
-        "module": "mercury_ai.providers.mercury_data_provider",
         "name": "is_available",
-        "line": 64,
+        "line": 98,
         "args": 1
     },
     {
-        "module": "mercury_ai.providers.mercury_data_provider",
-        "name": "_get_best_provider",
-        "line": 83,
-        "args": 2
-    },
-    {
-        "module": "mercury_ai.providers.mercury_data_provider",
-        "name": "connect",
-        "line": 134,
-        "args": 1
-    },
-    {
-        "module": "mercury_ai.providers.mercury_data_provider",
-        "name": "health",
-        "line": 146,
-        "args": 1
-    },
-    {
-        "module": "mercury_ai.providers.mercury_data_provider",
-        "name": "get_candles",
-        "line": 165,
-        "args": 5
-    },
-    {
-        "module": "mercury_ai.providers.mercury_data_provider",
-        "name": "get_history",
-        "line": 237,
-        "args": 3
-    },
-    {
-        "module": "mercury_ai.providers.mercury_data_provider",
+        "module": "mercury_ai.providers.market_provider",
         "name": "get_data",
-        "line": 250,
+        "line": 110,
         "args": 4
     },
     {
-        "module": "mercury_ai.providers.mercury_data_provider",
+        "module": "mercury_ai.providers.market_provider",
+        "name": "connect",
+        "line": 138,
+        "args": 1
+    },
+    {
+        "module": "mercury_ai.providers.market_provider",
+        "name": "health",
+        "line": 144,
+        "args": 1
+    },
+    {
+        "module": "mercury_ai.providers.market_provider",
+        "name": "get_candles",
+        "line": 158,
+        "args": 5
+    },
+    {
+        "module": "mercury_ai.providers.market_provider",
+        "name": "get_history",
+        "line": 214,
+        "args": 3
+    },
+    {
+        "module": "mercury_ai.providers.market_provider",
         "name": "get_last_price",
-        "line": 270,
+        "line": 228,
         "args": 2
     },
     {
-        "module": "mercury_ai.providers.mercury_data_provider",
+        "module": "mercury_ai.providers.market_provider",
         "name": "market_status",
-        "line": 289,
+        "line": 244,
         "args": 2
     },
     {
@@ -3086,43 +4274,43 @@
     {
         "module": "mercury_ai.providers.yahoo_finance_provider",
         "name": "get_data",
-        "line": 7,
+        "line": 6,
         "args": 4
     },
     {
         "module": "mercury_ai.providers.yahoo_finance_provider",
         "name": "is_available",
-        "line": 20,
+        "line": 19,
         "args": 1
     },
     {
         "module": "mercury_ai.providers.yahoo_finance_provider",
         "name": "supports_symbol",
-        "line": 23,
+        "line": 22,
         "args": 2
     },
     {
         "module": "mercury_ai.providers.yahoo_finance_provider",
         "name": "supports_market",
-        "line": 26,
+        "line": 25,
         "args": 2
     },
     {
         "module": "mercury_ai.providers.yahoo_finance_provider",
         "name": "supports_timeframe",
-        "line": 29,
+        "line": 28,
         "args": 2
     },
     {
         "module": "mercury_ai.providers.yahoo_finance_provider",
         "name": "max_history",
-        "line": 32,
+        "line": 31,
         "args": 1
     },
     {
         "module": "mercury_ai.providers.yahoo_finance_provider",
         "name": "source_name",
-        "line": 35,
+        "line": 34,
         "args": 1
     },
     {
@@ -3181,38 +4369,32 @@
     },
     {
         "module": "mercury_ai.utils.performance_collector",
-        "name": "__init__",
+        "name": "_finalize_metric",
         "line": 10,
         "args": 2
     },
     {
         "module": "mercury_ai.utils.performance_collector",
-        "name": "finalize",
-        "line": 18,
-        "args": 2
-    },
-    {
-        "module": "mercury_ai.utils.performance_collector",
         "name": "__init__",
-        "line": 30,
+        "line": 21,
         "args": 2
     },
     {
         "module": "mercury_ai.utils.performance_collector",
         "name": "stage",
-        "line": 38,
+        "line": 29,
         "args": 2
     },
     {
         "module": "mercury_ai.utils.performance_collector",
         "name": "collect",
-        "line": 55,
+        "line": 46,
         "args": 1
     },
     {
         "module": "mercury_ai.utils.performance_collector",
         "name": "_flatten_stages",
-        "line": 70,
+        "line": 61,
         "args": 2
     },
     {
@@ -3242,55 +4424,73 @@
     {
         "module": "mercury_ai.utils.report_generator",
         "name": "__init__",
-        "line": 12,
+        "line": 9,
         "args": 3
     },
     {
         "module": "mercury_ai.utils.report_generator",
         "name": "generate_json",
-        "line": 22,
+        "line": 19,
         "args": 2
     },
     {
         "module": "mercury_ai.utils.report_generator",
         "name": "generate_csv",
-        "line": 26,
+        "line": 23,
         "args": 3
     },
     {
         "module": "mercury_ai.utils.report_generator",
         "name": "generate_markdown",
-        "line": 32,
+        "line": 29,
         "args": 2
     },
     {
         "module": "mercury_ai.utils.report_generator",
         "name": "generate_html",
-        "line": 44,
+        "line": 41,
         "args": 2
     },
     {
         "module": "mercury_ai.utils.stress_tester",
         "name": "__init__",
-        "line": 8,
+        "line": 7,
         "args": 2
     },
     {
         "module": "mercury_ai.utils.stress_tester",
         "name": "register_generator",
-        "line": 12,
+        "line": 11,
         "args": 3
     },
     {
         "module": "mercury_ai.utils.stress_tester",
         "name": "run",
-        "line": 15,
+        "line": 14,
         "args": 4
     },
     {
         "module": "mercury_ai.utils.system_monitor",
         "name": "get_metrics",
-        "line": 6,
+        "line": 5,
+        "args": 0
+    },
+    {
+        "module": "scripts.prepare_replay_data",
+        "name": "download_and_save",
+        "line": 18,
+        "args": 4
+    },
+    {
+        "module": "scripts.prepare_replay_data",
+        "name": "prepare_all_assets",
+        "line": 88,
+        "args": 3
+    },
+    {
+        "module": "scripts.run_replay_3500",
+        "name": "main",
+        "line": 19,
         "args": 0
     },
     {
@@ -3338,7 +4538,7 @@
     {
         "module": "tests.test_broker_filtering",
         "name": "test_scanner_broker_filtering",
-        "line": 7,
+        "line": 9,
         "args": 1
     },
     {
@@ -3434,7 +4634,7 @@
     {
         "module": "tests.test_determinism",
         "name": "test_determinism",
-        "line": 6,
+        "line": 8,
         "args": 0
     },
     {
@@ -3516,6 +4716,132 @@
         "args": 0
     },
     {
+        "module": "tests.test_institutional_backtest",
+        "name": "_make_ohlcv_df",
+        "line": 41,
+        "args": 2
+    },
+    {
+        "module": "tests.test_institutional_backtest",
+        "name": "_make_multi_symbol_data",
+        "line": 65,
+        "args": 2
+    },
+    {
+        "module": "tests.test_institutional_backtest",
+        "name": "build_multi_symbol_data",
+        "line": 457,
+        "args": 2
+    },
+    {
+        "module": "tests.test_institutional_backtest",
+        "name": "build_data_symbol_data",
+        "line": 462,
+        "args": 2
+    },
+    {
+        "module": "tests.test_institutional_backtest",
+        "name": "test_replay_produces_metrics",
+        "line": 78,
+        "args": 1
+    },
+    {
+        "module": "tests.test_institutional_backtest",
+        "name": "test_replay_metrics_are_finite",
+        "line": 92,
+        "args": 1
+    },
+    {
+        "module": "tests.test_institutional_backtest",
+        "name": "test_replay_updates_stats",
+        "line": 103,
+        "args": 1
+    },
+    {
+        "module": "tests.test_institutional_backtest",
+        "name": "test_cache_populated_after_replay",
+        "line": 121,
+        "args": 1
+    },
+    {
+        "module": "tests.test_institutional_backtest",
+        "name": "test_second_run_hits_cache",
+        "line": 131,
+        "args": 1
+    },
+    {
+        "module": "tests.test_institutional_backtest",
+        "name": "test_performance_from_replay_metrics",
+        "line": 153,
+        "args": 1
+    },
+    {
+        "module": "tests.test_institutional_backtest",
+        "name": "test_performance_fields_are_finite",
+        "line": 167,
+        "args": 1
+    },
+    {
+        "module": "tests.test_institutional_backtest",
+        "name": "test_batch_produces_universe_performance",
+        "line": 194,
+        "args": 1
+    },
+    {
+        "module": "tests.test_institutional_backtest",
+        "name": "test_batch_results_have_cache_stats",
+        "line": 212,
+        "args": 1
+    },
+    {
+        "module": "tests.test_institutional_backtest",
+        "name": "test_risk_assessment_from_replay",
+        "line": 232,
+        "args": 1
+    },
+    {
+        "module": "tests.test_institutional_backtest",
+        "name": "test_risk_assessment_fields_are_finite",
+        "line": 256,
+        "args": 1
+    },
+    {
+        "module": "tests.test_institutional_backtest",
+        "name": "test_flat_market",
+        "line": 288,
+        "args": 1
+    },
+    {
+        "module": "tests.test_institutional_backtest",
+        "name": "test_high_volatility",
+        "line": 307,
+        "args": 1
+    },
+    {
+        "module": "tests.test_institutional_backtest",
+        "name": "test_single_candle_dataframe",
+        "line": 343,
+        "args": 1
+    },
+    {
+        "module": "tests.test_institutional_backtest",
+        "name": "test_full_pipeline_single_symbol",
+        "line": 369,
+        "args": 1
+    },
+    {
+        "module": "tests.test_institutional_backtest",
+        "name": "test_full_pipeline_multi_symbol",
+        "line": 404,
+        "args": 1
+    },
+    {
+        "module": "tests.test_institutional_backtest",
+        "name": "test_pipeline_with_risk_on_all_symbols",
+        "line": 429,
+        "args": 1
+    },
+    {
         "module": "tests.test_institutional_report_generator",
         "name": "test_institutional_report_generator",
         "line": 3,
@@ -3535,8 +4861,14 @@
     },
     {
         "module": "tests.test_live_monitor",
-        "name": "test_live_monitor_cycle",
-        "line": 3,
+        "name": "test_live_monitor_import",
+        "line": 4,
+        "args": 0
+    },
+    {
+        "module": "tests.test_live_monitor",
+        "name": "test_live_monitor_instantiation",
+        "line": 10,
         "args": 0
     },
     {
@@ -3606,6 +4938,42 @@
         "args": 0
     },
     {
+        "module": "tests.test_performance_engine",
+        "name": "setUp",
+        "line": 7,
+        "args": 1
+    },
+    {
+        "module": "tests.test_performance_engine",
+        "name": "test_calculate_drawdown",
+        "line": 10,
+        "args": 1
+    },
+    {
+        "module": "tests.test_performance_engine",
+        "name": "test_calculate_sharpe",
+        "line": 21,
+        "args": 1
+    },
+    {
+        "module": "tests.test_performance_engine",
+        "name": "test_calculate_sortino",
+        "line": 32,
+        "args": 1
+    },
+    {
+        "module": "tests.test_performance_engine",
+        "name": "test_asset_performance_basic",
+        "line": 43,
+        "args": 1
+    },
+    {
+        "module": "tests.test_performance_engine",
+        "name": "test_universe_performance",
+        "line": 59,
+        "args": 1
+    },
+    {
         "module": "tests.test_performance_statistics",
         "name": "test_performance_statistics",
         "line": 3,
@@ -3634,6 +5002,72 @@
         "name": "test_read_only_mode",
         "line": 4,
         "args": 0
+    },
+    {
+        "module": "tests.test_regression_sprint18",
+        "name": "test_trend_field_exists_default",
+        "line": 27,
+        "args": 1
+    },
+    {
+        "module": "tests.test_regression_sprint18",
+        "name": "test_trend_field_custom_value",
+        "line": 33,
+        "args": 1
+    },
+    {
+        "module": "tests.test_regression_sprint18",
+        "name": "test_trend_field_bearish",
+        "line": 38,
+        "args": 1
+    },
+    {
+        "module": "tests.test_regression_sprint18",
+        "name": "test_trend_field_is_frozen",
+        "line": 43,
+        "args": 1
+    },
+    {
+        "module": "tests.test_regression_sprint18",
+        "name": "test_constructor_with_providers",
+        "line": 57,
+        "args": 1
+    },
+    {
+        "module": "tests.test_regression_sprint18",
+        "name": "test_constructor_missing_providers_raises",
+        "line": 66,
+        "args": 1
+    },
+    {
+        "module": "tests.test_regression_sprint18",
+        "name": "test_set_data_exists",
+        "line": 82,
+        "args": 1
+    },
+    {
+        "module": "tests.test_regression_sprint18",
+        "name": "test_set_index_exists",
+        "line": 88,
+        "args": 1
+    },
+    {
+        "module": "tests.test_regression_sprint18",
+        "name": "test_set_data_and_set_index_workflow",
+        "line": 94,
+        "args": 1
+    },
+    {
+        "module": "tests.test_regression_sprint18",
+        "name": "test_set_index_zero",
+        "line": 111,
+        "args": 1
+    },
+    {
+        "module": "tests.test_regression_sprint18",
+        "name": "test_get_data_without_set_data",
+        "line": 126,
+        "args": 1
     },
     {
         "module": "tests.test_robustness",
@@ -3692,7 +5126,7 @@
     {
         "module": "tests.test_session_id",
         "name": "test_session_id_consistency",
-        "line": 5,
+        "line": 7,
         "args": 0
     },
     {
@@ -3741,6 +5175,744 @@
         "module": "tests.test_weight_simulator",
         "name": "test_weight_simulator",
         "line": 3,
+        "args": 0
+    },
+    {
+        "module": "tools.main",
+        "name": "main",
+        "line": 5,
+        "args": 0
+    },
+    {
+        "module": "tools.scanner",
+        "name": "scan",
+        "line": 18,
+        "args": 1
+    },
+    {
+        "module": "tools.writer",
+        "name": "save",
+        "line": 13,
+        "args": 2
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.main",
+        "name": "ensure_output_dir",
+        "line": 55,
+        "args": 0
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.main",
+        "name": "run_audit_phase",
+        "line": 60,
+        "args": 2
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.main",
+        "name": "compute_verdict",
+        "line": 94,
+        "args": 1
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.main",
+        "name": "generate_markdown_report",
+        "line": 109,
+        "args": 1
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.main",
+        "name": "main",
+        "line": 178,
+        "args": 0
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.models",
+        "name": "pass_count",
+        "line": 34,
+        "args": 1
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.models",
+        "name": "fail_count",
+        "line": 38,
+        "args": 1
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.models",
+        "name": "warning_count",
+        "line": 42,
+        "args": 1
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.models",
+        "name": "info_count",
+        "line": 46,
+        "args": 1
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.models",
+        "name": "inconclusive_count",
+        "line": 50,
+        "args": 1
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.models",
+        "name": "total_findings",
+        "line": 64,
+        "args": 1
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.models",
+        "name": "total_pass",
+        "line": 68,
+        "args": 1
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.models",
+        "name": "total_fail",
+        "line": 72,
+        "args": 1
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.models",
+        "name": "total_warning",
+        "line": 76,
+        "args": 1
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.models",
+        "name": "total_critical",
+        "line": 80,
+        "args": 1
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.backtest_auditor",
+        "name": "_check_data_leakage",
+        "line": 38,
+        "args": 0
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.backtest_auditor",
+        "name": "_check_survivorship_bias",
+        "line": 127,
+        "args": 0
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.backtest_auditor",
+        "name": "_check_transaction_costs",
+        "line": 205,
+        "args": 0
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.backtest_auditor",
+        "name": "_check_overfitting",
+        "line": 277,
+        "args": 0
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.backtest_auditor",
+        "name": "_check_out_of_sample",
+        "line": 367,
+        "args": 0
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.backtest_auditor",
+        "name": "_check_walk_forward",
+        "line": 439,
+        "args": 0
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.backtest_auditor",
+        "name": "_check_monte_carlo",
+        "line": 492,
+        "args": 0
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.backtest_auditor",
+        "name": "_check_execution_simulation",
+        "line": 558,
+        "args": 0
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.backtest_auditor",
+        "name": "_check_position_sizing_risk",
+        "line": 652,
+        "args": 0
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.backtest_auditor",
+        "name": "_check_performance_metrics",
+        "line": 752,
+        "args": 0
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.backtest_auditor",
+        "name": "run",
+        "line": 844,
+        "args": 0
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.contract_auditor",
+        "name": "run",
+        "line": 109,
+        "args": 0
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.contract_auditor",
+        "name": "__init__",
+        "line": 74,
+        "args": 2
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.contract_auditor",
+        "name": "visit_ClassDef",
+        "line": 80,
+        "args": 2
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.coverage_auditor",
+        "name": "_run_coverage",
+        "line": 33,
+        "args": 0
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.coverage_auditor",
+        "name": "_analyze_coverage_data",
+        "line": 59,
+        "args": 1
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.coverage_auditor",
+        "name": "_find_untested_modules",
+        "line": 106,
+        "args": 0
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.coverage_auditor",
+        "name": "run",
+        "line": 147,
+        "args": 0
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.data_auditor",
+        "name": "_check_data_schema_validation",
+        "line": 34,
+        "args": 0
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.data_auditor",
+        "name": "_check_data_lineage",
+        "line": 78,
+        "args": 0
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.data_auditor",
+        "name": "_check_missing_data_handling",
+        "line": 118,
+        "args": 0
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.data_auditor",
+        "name": "_check_data_drift_detection",
+        "line": 162,
+        "args": 0
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.data_auditor",
+        "name": "_check_train_test_leakage",
+        "line": 198,
+        "args": 0
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.data_auditor",
+        "name": "_check_pii_handling",
+        "line": 259,
+        "args": 0
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.data_auditor",
+        "name": "run",
+        "line": 315,
+        "args": 0
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.decision_auditor",
+        "name": "_analyze_decision_file",
+        "line": 66,
+        "args": 1
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.decision_auditor",
+        "name": "run",
+        "line": 84,
+        "args": 0
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.decision_auditor",
+        "name": "__init__",
+        "line": 35,
+        "args": 1
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.decision_auditor",
+        "name": "visit_If",
+        "line": 40,
+        "args": 2
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.decision_auditor",
+        "name": "visit_Call",
+        "line": 47,
+        "args": 2
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.dependency_auditor",
+        "name": "_parse_requirements",
+        "line": 31,
+        "args": 0
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.dependency_auditor",
+        "name": "_get_installed_packages",
+        "line": 46,
+        "args": 0
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.dependency_auditor",
+        "name": "_collect_imports",
+        "line": 56,
+        "args": 1
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.dependency_auditor",
+        "name": "run",
+        "line": 77,
+        "args": 0
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.determinism_auditor",
+        "name": "_check_fixed_seeds",
+        "line": 33,
+        "args": 0
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.determinism_auditor",
+        "name": "_check_non_deterministic_ops",
+        "line": 105,
+        "args": 0
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.determinism_auditor",
+        "name": "_check_floating_point",
+        "line": 213,
+        "args": 0
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.determinism_auditor",
+        "name": "_check_external_dependencies",
+        "line": 261,
+        "args": 0
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.determinism_auditor",
+        "name": "_check_deterministic_replay",
+        "line": 308,
+        "args": 0
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.determinism_auditor",
+        "name": "_check_environment_isolation",
+        "line": 350,
+        "args": 0
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.determinism_auditor",
+        "name": "run",
+        "line": 416,
+        "args": 0
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.explainability_auditor",
+        "name": "_check_feature_importance",
+        "line": 33,
+        "args": 0
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.explainability_auditor",
+        "name": "_check_decision_logging",
+        "line": 68,
+        "args": 0
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.explainability_auditor",
+        "name": "_check_model_cards",
+        "line": 112,
+        "args": 0
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.explainability_auditor",
+        "name": "_check_counterfactual_explanations",
+        "line": 150,
+        "args": 0
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.explainability_auditor",
+        "name": "run",
+        "line": 183,
+        "args": 0
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.flow_auditor",
+        "name": "_find_class_in_project",
+        "line": 107,
+        "args": 1
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.flow_auditor",
+        "name": "run",
+        "line": 121,
+        "args": 0
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.flow_auditor",
+        "name": "__init__",
+        "line": 87,
+        "args": 1
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.flow_auditor",
+        "name": "visit_ClassDef",
+        "line": 91,
+        "args": 2
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.flow_auditor",
+        "name": "visit_FunctionDef",
+        "line": 102,
+        "args": 2
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.global_state_auditor",
+        "name": "_check_global_variables",
+        "line": 34,
+        "args": 0
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.global_state_auditor",
+        "name": "_check_singletons",
+        "line": 89,
+        "args": 0
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.global_state_auditor",
+        "name": "_check_global_config",
+        "line": 136,
+        "args": 0
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.global_state_auditor",
+        "name": "_check_runtime_state",
+        "line": 198,
+        "args": 0
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.global_state_auditor",
+        "name": "_check_thread_safety",
+        "line": 236,
+        "args": 0
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.global_state_auditor",
+        "name": "_check_state_persistence",
+        "line": 299,
+        "args": 0
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.global_state_auditor",
+        "name": "run",
+        "line": 342,
+        "args": 0
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.integrity_auditor",
+        "name": "_check_config_integrity",
+        "line": 33,
+        "args": 0
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.integrity_auditor",
+        "name": "_check_runtime_reports_integrity",
+        "line": 84,
+        "args": 0
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.integrity_auditor",
+        "name": "_check_dot_mercury_integrity",
+        "line": 186,
+        "args": 0
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.integrity_auditor",
+        "name": "_check_models_integrity",
+        "line": 252,
+        "args": 0
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.integrity_auditor",
+        "name": "_check_checksums",
+        "line": 336,
+        "args": 0
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.integrity_auditor",
+        "name": "run",
+        "line": 372,
+        "args": 0
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.masking_auditor",
+        "name": "run",
+        "line": 71,
+        "args": 0
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.masking_auditor",
+        "name": "__init__",
+        "line": 39,
+        "args": 3
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.masking_auditor",
+        "name": "visit_Import",
+        "line": 48,
+        "args": 2
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.masking_auditor",
+        "name": "visit_ImportFrom",
+        "line": 54,
+        "args": 2
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.masking_auditor",
+        "name": "visit_Call",
+        "line": 60,
+        "args": 2
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.masking_auditor",
+        "name": "visit_ExceptHandler",
+        "line": 65,
+        "args": 2
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.performance_auditor",
+        "name": "_check_algorithmic_complexity",
+        "line": 35,
+        "args": 0
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.performance_auditor",
+        "name": "_check_memory_usage",
+        "line": 125,
+        "args": 0
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.performance_auditor",
+        "name": "_check_io_blocking",
+        "line": 206,
+        "args": 0
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.performance_auditor",
+        "name": "_check_database_performance",
+        "line": 279,
+        "args": 0
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.performance_auditor",
+        "name": "_check_caching",
+        "line": 360,
+        "args": 0
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.performance_auditor",
+        "name": "_check_profiling_benchmarking",
+        "line": 415,
+        "args": 0
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.performance_auditor",
+        "name": "_check_critical_latency",
+        "line": 459,
+        "args": 0
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.performance_auditor",
+        "name": "_check_resource_utilization",
+        "line": 513,
+        "args": 0
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.performance_auditor",
+        "name": "run",
+        "line": 563,
+        "args": 0
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.report",
+        "name": "generate_html_report",
+        "line": 27,
+        "args": 1
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.report",
+        "name": "generate_executive_summary",
+        "line": 166,
+        "args": 1
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.report",
+        "name": "generate_consolidated_metrics",
+        "line": 224,
+        "args": 1
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.report",
+        "name": "save_all_reports",
+        "line": 279,
+        "args": 2
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.report",
+        "name": "run",
+        "line": 316,
+        "args": 1
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.runtime_auditor",
+        "name": "run",
+        "line": 31,
+        "args": 0
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.static_auditor",
+        "name": "_find_python_files",
+        "line": 34,
+        "args": 1
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.static_auditor",
+        "name": "_parse_file",
+        "line": 39,
+        "args": 1
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.static_auditor",
+        "name": "_count_lines",
+        "line": 49,
+        "args": 1
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.static_auditor",
+        "name": "run",
+        "line": 131,
+        "args": 0
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.static_auditor",
+        "name": "__init__",
+        "line": 59,
+        "args": 2
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.static_auditor",
+        "name": "visit_ClassDef",
+        "line": 72,
+        "args": 2
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.static_auditor",
+        "name": "visit_FunctionDef",
+        "line": 79,
+        "args": 2
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.static_auditor",
+        "name": "visit_AsyncFunctionDef",
+        "line": 90,
+        "args": 2
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.static_auditor",
+        "name": "visit_ExceptHandler",
+        "line": 99,
+        "args": 2
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.static_auditor",
+        "name": "visit_Import",
+        "line": 104,
+        "args": 2
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.static_auditor",
+        "name": "visit_ImportFrom",
+        "line": 109,
+        "args": 2
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.static_auditor",
+        "name": "_is_stub",
+        "line": 114,
+        "args": 2
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.test_auditor",
+        "name": "run",
+        "line": 31,
+        "args": 0
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.universe_auditor",
+        "name": "_check_universe_definition",
+        "line": 33,
+        "args": 0
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.universe_auditor",
+        "name": "_check_data_coverage",
+        "line": 80,
+        "args": 0
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.universe_auditor",
+        "name": "_check_liquidity_filters",
+        "line": 124,
+        "args": 0
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.universe_auditor",
+        "name": "_check_sector_diversification",
+        "line": 168,
+        "args": 0
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.universe_auditor",
+        "name": "_check_corporate_actions",
+        "line": 204,
+        "args": 0
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.universe_auditor",
+        "name": "_check_universe_rebalancing",
+        "line": 242,
+        "args": 0
+    },
+    {
+        "module": "tools.mercury_integrity_auditor.auditors.universe_auditor",
+        "name": "run",
+        "line": 278,
         "args": 0
     },
     {

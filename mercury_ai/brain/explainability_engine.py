@@ -42,8 +42,7 @@ class ExplainabilityEngine:
 
         return TradingExplanation(
             exec_summary=summary,
-            decision_rationale="Explained by ExplainabilityEngine",
-            market_context="Market context analyzed by pipeline",
+            decision_rationale="Explained by ExplainabilityEngine",            market_context="Market context analyzed by pipeline",
             trend_context="Trend context analyzed by pipeline",
             liquidity_context="Liquidity context analyzed by pipeline",
             structure_context="Structure context analyzed by pipeline",
@@ -52,8 +51,7 @@ class ExplainabilityEngine:
             smart_money_context="SMC analyzed by pipeline",
             confluence_context="Confluence analyzed by pipeline",
             risk_assessment=risk,
-            confidence_rationale=conf_expl,
-            bullish_factors=tuple(bullish),
+            confidence_rationale=conf_expl,            bullish_factors=tuple(bullish),
             bearish_factors=tuple(bearish),
             neutral_factors=tuple(neutral),
             conflicts=tuple(conflicts),
