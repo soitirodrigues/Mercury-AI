@@ -103,11 +103,13 @@ class LiquidityEngine:
 
         final_groups = []
 
-        # 2. Global Sliding Price Window
+        # 2. Global Sliding Price Window (optimized with cap to prevent O(n^3) blowup)
         n = len(highs)
+        # Cap cluster_candidate size to prevent pathological cases (e.g., identical prices)
+        max_cluster_size = min(n, self.maximum_touches * 10)
         for i in range(n):
             cluster_candidate = [highs[i]]
-            for j in range(i + 1, n):
+            for j in range(i + 1, min(i + max_cluster_size, n)):
                 avg_atr = (highs[i].atr + highs[j].atr) / 2
                 if (highs[j].price - highs[i].price) <= (avg_atr * self.atr_multiplier) or \
                    np.isclose(highs[j].price, highs[i].price, atol=avg_atr * self.atr_multiplier):
