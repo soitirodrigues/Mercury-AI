@@ -10,9 +10,9 @@ on:
 jobs:
   test:
     runs-on: windows-latest
-    shell: bash
-    continue_on_error:
-      always: true
+    defaults:
+      run:
+        shell: bash
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
@@ -30,19 +30,20 @@ jobs:
       
       - name: Run Regression Tests
         run: |
-          python -m pytest discover -s tests -p "*test.py" --cov=mercury_ai --cov-report=html
+          python -m pytest -s tests -p "*test.py" --cov=mercury_ai --cov-report=html
           python check_regression.py --threshold 0.1 --fail-on-threshold
         # Continue on error for now to see all test results
-        continue_on_error: true
+        continue-on-error: true
       
       - name: Performance Benchmarking
+        id: performance
         run: |
           python performance_benchmarking.py
-          if (python check_regression.py --threshold 0.1 --fail-on-threshold); then
+          if python check_regression.py --threshold 0.1 --fail-on-threshold; then
             echo "Performance within thresholds"
           else
-            echo "Performance regression detected" >> $GITHUB_OUTPUT
-        id: performance
+            echo "Performance regression detected" >> "$GITHUB_OUTPUT"
+          fi
         continue-on-error: true
       
       - name: Report Performance Results

@@ -105,7 +105,6 @@ class RiskEngine:
 
         # 5. Bloco 4: Stress Testing
         stress_loss = self._compute_stress_test(volatility / 100.0 if volatility > 0 else 0.01)
-
         return RiskAssessment(
             # Originais
             suggested_stop=float(stop),
