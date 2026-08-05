@@ -17,4 +17,3 @@ class LiveMonitor:
     @property
     def is_running(self) -> bool:
         return self._running
->>>>>>>>> Temporary merge branch 2

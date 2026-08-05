@@ -165,7 +165,6 @@ class HistoricalReplayEngine:
             metrics = ReplayMetrics(mae=mae, mfe=mfe, pl=pl, hit=hit)
             storage.save(snapshot.decision_result.audit_id, snapshot, metrics)
             all_metrics.append(metrics)
-<<<<<<< HEAD
 
         wall_time = time_module.perf_counter() - t_start
         cache_hits = self._cache.stats["hits"] - cache_hits_before
@@ -179,7 +178,4 @@ class HistoricalReplayEngine:
             "cache_hit_rate": self._cache.hit_rate,
         }
 
-=======
-        
->>>>>>> 67cc5c60936ff914a76d6d94a09c6422d147e02a
         return all_metrics

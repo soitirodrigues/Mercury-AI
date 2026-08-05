@@ -142,11 +142,7 @@ class MercuryScanner:
                     analysis
                 )
 
-<<<<<<<<< Temporary merge branch 1
-            except Exception as e:
-=========
             except (RuntimeError, ValueError, TypeError, KeyError, OSError, ConnectionError, TimeoutError) as e:
->>>>>>>>> Temporary merge branch 2
 
                 logger.error("=" * 80)
                 logger.error("ERRO DURANTE A ANÁLISE DE %s", symbol)
