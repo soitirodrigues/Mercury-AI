@@ -21,7 +21,10 @@ class MercuryScanner:
 
         # Provider central V1
         self.provider = MercuryDataProvider()
+<<<<<<< HEAD
         self.provider_manager = self.provider  # alias para compatibilidade com testes
+=======
+>>>>>>> 67cc5c60936ff914a76d6d94a09c6422d147e02a
 
         # Pipeline institucional
         self.pipeline = AnalysisPipeline(
@@ -142,7 +145,11 @@ class MercuryScanner:
                     analysis
                 )
 
+<<<<<<< HEAD
             except (RuntimeError, ValueError, TypeError, KeyError, OSError, ConnectionError, TimeoutError) as e:
+=======
+            except Exception as e:
+>>>>>>> 67cc5c60936ff914a76d6d94a09c6422d147e02a
 
                 logger.error("=" * 80)
                 logger.error("ERRO DURANTE A ANÁLISE DE %s", symbol)

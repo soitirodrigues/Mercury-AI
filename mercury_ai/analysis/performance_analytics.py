@@ -22,7 +22,11 @@ class PerformanceAnalytics:
             # Get historical data for trade analysis
             try:
                 df = self.market_service.get_data(symbol)
+<<<<<<< HEAD
             except (KeyError, IndexError, ValueError, ConnectionError, RuntimeError, MarketClosedException):
+=======
+            except (KeyError, IndexError, ValueError, ConnectionError, RuntimeError):
+>>>>>>> 67cc5c60936ff914a76d6d94a09c6422d147e02a
                 continue  # Skip if data cannot be retrieved
             
             # Normalize entry_time to match df index timezone

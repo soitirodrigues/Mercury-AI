@@ -1669,8 +1669,15 @@
         "context_version": "1.2.0",
         "weights_version": "1.2.0"
     },
+<<<<<<< HEAD:mercury_ai/database/snapshots/BTC-USD_2026-08-02T16-24-16.591911.json
     "audit_events": [],
     "session_id": "d921878c-8558-4efa-8a9e-a0484163a98e",
+=======
+    "audit_events": [
+        "Data quality issue detected"
+    ],
+    "session_id": "4909d345-4881-4991-9d94-0941452cc132",
+>>>>>>> 67cc5c60936ff914a76d6d94a09c6422d147e02a:mercury_ai/database/snapshots/BTCUSD_2025-01-02T00-05-00.json
     "evidence_ranking": {
         "ranked_evidences": [
             {

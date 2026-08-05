@@ -1913,7 +1913,11 @@
     "audit_events": [
         "Data quality issue detected"
     ],
+<<<<<<< HEAD:mercury_ai/database/snapshots/BTC-USD_2026-08-02T16-44-28.755982.json
     "session_id": "6404988d-b88d-4e13-828d-38e550c42e40",
+=======
+    "session_id": "4909d345-4881-4991-9d94-0941452cc132",
+>>>>>>> 67cc5c60936ff914a76d6d94a09c6422d147e02a:mercury_ai/database/snapshots/BTCUSD_2025-01-01T17-30-00.json
     "evidence_ranking": {
         "ranked_evidences": [
             {

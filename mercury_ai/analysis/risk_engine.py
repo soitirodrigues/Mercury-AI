@@ -81,6 +81,7 @@ class RiskEngine:
         volatility = atr / price * 100 if price > 0 else 0.0
 
         quality_res = self.quality.evaluate(list(evidence_bundle.evidences))
+<<<<<<< HEAD
         quality_score = (
             sum(e.quality_score for e in quality_res) / len(quality_res)
             if quality_res
@@ -106,6 +107,19 @@ class RiskEngine:
         # 5. Bloco 4: Stress Testing
         stress_loss = self._compute_stress_test(volatility / 100.0 if volatility > 0 else 0.01)
 
+=======
+        quality_score = sum(e.quality_score for e in quality_res) / len(quality_res) if quality_res else 50.0
+        
+        # Institutional Risk Score
+        # Fórmula: risco = 100 - (qualidade * 0.6 + min(rr * 10, 40))
+        # A qualidade das evidências tem peso maior (0.6)
+        # que o RR teórico (cap em 40).
+        # RR >= 4.0 já dá benefício máximo.
+        quality_component = quality_score * 0.6
+        rr_component = min(rr * 10, 40)
+        risk_score = 100 - (quality_component + rr_component)
+        
+>>>>>>> 67cc5c60936ff914a76d6d94a09c6422d147e02a
         return RiskAssessment(
             # Originais
             suggested_stop=float(stop),

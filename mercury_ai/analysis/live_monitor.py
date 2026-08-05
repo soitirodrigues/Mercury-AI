@@ -1,5 +1,6 @@
 import time
 import logging
+<<<<<<< HEAD
 
 
 class LiveMonitor:
@@ -17,3 +18,5 @@ class LiveMonitor:
     @property
     def is_running(self) -> bool:
         return self._running
+=======
+>>>>>>> 67cc5c60936ff914a76d6d94a09c6422d147e02a
