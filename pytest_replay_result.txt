@@ -1,0 +1,28 @@
+﻿============================= test session starts =============================
+platform win32 -- Python 3.11.9, pytest-9.1.1, pluggy-1.6.0 -- C:\Projetos\Mercury-AI\.venv\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Projetos\Mercury-AI
+plugins: anyio-4.14.2, timeout-2.4.0
+timeout: 300.0s
+timeout method: thread
+timeout func_only: False
+collecting ... collected 16 items
+
+mercury_ai/analysis/tests/test_historical_replay_engine.py::TestHistoricalReplayEngineConstructor::test_default_cache PASSED [  6%]
+mercury_ai/analysis/tests/test_historical_replay_engine.py::TestHistoricalReplayEngineConstructor::test_custom_cache PASSED [ 12%]
+mercury_ai/analysis/tests/test_historical_replay_engine.py::TestHistoricalReplayEngineConstructor::test_replay_stats_initial PASSED [ 18%]
+mercury_ai/analysis/tests/test_historical_replay_engine.py::TestHistoricalReplayEngineBasic::test_run_replay_returns_list PASSED [ 25%]
+mercury_ai/analysis/tests/test_historical_replay_engine.py::TestHistoricalReplayEngineBasic::test_run_replay_returns_replay_metrics PASSED [ 31%]
+mercury_ai/analysis/tests/test_historical_replay_engine.py::TestHistoricalReplayEngineBasic::test_run_replay_insufficient_data_returns_empty PASSED [ 37%]
+mercury_ai/analysis/tests/test_historical_replay_engine.py::TestHistoricalReplayEngineBasic::test_run_replay_empty_dataframe PASSED [ 43%]
+mercury_ai/analysis/tests/test_historical_replay_engine.py::TestHistoricalReplayEngineBasic::test_run_replay_updates_stats PASSED [ 50%]
+mercury_ai/analysis/tests/test_historical_replay_engine.py::TestReplayCacheIntegration::test_cache_populated_after_run PASSED [ 56%]
+mercury_ai/analysis/tests/test_historical_replay_engine.py::TestReplayCacheIntegration::test_second_run_uses_cache PASSED [ 62%]
+mercury_ai/analysis/tests/test_historical_replay_engine.py::TestReplayCacheIntegration::test_different_symbols_separate_cache PASSED [ 68%]
+mercury_ai/analysis/tests/test_historical_replay_engine.py::TestSilentMode::test_silent_mode_no_output PASSED [ 75%]
+mercury_ai/analysis/tests/test_historical_replay_engine.py::TestSilentMode::test_verbose_mode_has_output PASSED [ 81%]
+mercury_ai/analysis/tests/test_historical_replay_engine.py::TestReplayEdgeCases::test_n_candles_large PASSED [ 87%]
+mercury_ai/analysis/tests/test_historical_replay_engine.py::TestReplayEdgeCases::test_replay_stats_after_insufficient_data PASSED [ 93%]
+mercury_ai/analysis/tests/test_historical_replay_engine.py::TestReplayEdgeCases::test_metrics_have_expected_fields PASSED [100%]
+
+======================= 16 passed in 792.03s (0:13:12) ========================

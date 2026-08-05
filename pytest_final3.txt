@@ -1,0 +1,64 @@
+﻿..............................FFFFFFF................................... [ 51%]
+.....................................................................    [100%]
+================================== FAILURES ===================================
+E   Exception: No provider available for BTC-USD
+---------------------------- Captured stdout call -----------------------------
+Data quality issue for BTC-USD: Temporal gaps detected (Score: 0.4)
+Provider <mercury_ai.providers.yahoo_finance_provider.YahooFinanceProvider object at 0x000002A94F483910> falhou: DataFrame vazio para BTC-USD
+------------------------------ Captured log call ------------------------------
+ERROR    yfinance:history.py:296 $BTC-USD: possibly delisted; no price data found  (period=1mo) (Yahoo error = "1m data not available for startTime=1783225061 and endTime=1785903461. Only 8 days worth of 1m granularity data are allowed to be fetched per request.")
+C:\Projetos\Mercury-AI\mercury_ai\data\market_data.py:223: Exception: No provider available for BTC-USD
+E   Exception: No provider available for BTC-USD
+---------------------------- Captured stdout call -----------------------------
+Data quality issue for BTC-USD: Temporal gaps detected (Score: 0.4)
+Provider <mercury_ai.providers.yahoo_finance_provider.YahooFinanceProvider object at 0x000002A918618E10> falhou: DataFrame vazio para BTC-USD
+------------------------------ Captured log call ------------------------------
+ERROR    yfinance:history.py:296 $BTC-USD: possibly delisted; no price data found  (period=1mo) (Yahoo error = "1m data not available for startTime=1783225064 and endTime=1785903464. Only 8 days worth of 1m granularity data are allowed to be fetched per request.")
+C:\Projetos\Mercury-AI\mercury_ai\data\market_data.py:223: Exception: No provider available for BTC-USD
+E   Exception: No provider available for BTC-USD
+---------------------------- Captured stdout call -----------------------------
+Data quality issue for BTC-USD: Temporal gaps detected (Score: 0.4)
+Provider <mercury_ai.providers.yahoo_finance_provider.YahooFinanceProvider object at 0x000002A94BB25D50> falhou: DataFrame vazio para BTC-USD
+------------------------------ Captured log call ------------------------------
+ERROR    yfinance:history.py:296 $BTC-USD: possibly delisted; no price data found  (period=1mo) (Yahoo error = "1m data not available for startTime=1783225068 and endTime=1785903468. Only 8 days worth of 1m granularity data are allowed to be fetched per request.")
+C:\Projetos\Mercury-AI\mercury_ai\data\market_data.py:223: Exception: No provider available for BTC-USD
+E   Exception: No provider available for BTC-USD
+---------------------------- Captured stdout call -----------------------------
+Data quality issue for BTC-USD: Temporal gaps detected (Score: 0.4)
+Provider <mercury_ai.providers.yahoo_finance_provider.YahooFinanceProvider object at 0x000002A94F49F950> falhou: DataFrame vazio para BTC-USD
+------------------------------ Captured log call ------------------------------
+ERROR    yfinance:history.py:296 $BTC-USD: possibly delisted; no price data found  (period=1mo) (Yahoo error = "1m data not available for startTime=1783225071 and endTime=1785903471. Only 8 days worth of 1m granularity data are allowed to be fetched per request.")
+C:\Projetos\Mercury-AI\mercury_ai\data\market_data.py:223: Exception: No provider available for BTC-USD
+E   Exception: No provider available for BTC-USD
+---------------------------- Captured stdout call -----------------------------
+Data quality issue for BTC-USD: Temporal gaps detected (Score: 0.4)
+Provider <mercury_ai.providers.yahoo_finance_provider.YahooFinanceProvider object at 0x000002A921BCDD50> falhou: DataFrame vazio para BTC-USD
+------------------------------ Captured log call ------------------------------
+ERROR    yfinance:history.py:296 $BTC-USD: possibly delisted; no price data found  (period=1mo) (Yahoo error = "1m data not available for startTime=1783225075 and endTime=1785903475. Only 8 days worth of 1m granularity data are allowed to be fetched per request.")
+C:\Projetos\Mercury-AI\mercury_ai\data\market_data.py:223: Exception: No provider available for BTC-USD
+E   Exception: No provider available for BTC-USD
+---------------------------- Captured stdout call -----------------------------
+Data quality issue for BTC-USD: Temporal gaps detected (Score: 0.4)
+Provider <mercury_ai.providers.yahoo_finance_provider.YahooFinanceProvider object at 0x000002A921C03910> falhou: DataFrame vazio para BTC-USD
+------------------------------ Captured log call ------------------------------
+ERROR    yfinance:history.py:296 $BTC-USD: possibly delisted; no price data found  (period=1mo) (Yahoo error = "1m data not available for startTime=1783225079 and endTime=1785903479. Only 8 days worth of 1m granularity data are allowed to be fetched per request.")
+C:\Projetos\Mercury-AI\mercury_ai\data\market_data.py:223: Exception: No provider available for BTC-USD
+E   Exception: No provider available for BTC-USD
+---------------------------- Captured stdout call -----------------------------
+Data quality issue for BTC-USD: Temporal gaps detected (Score: 0.4)
+Data quality issue for ETH-USD: Temporal gaps detected (Score: 0.4)
+Provider <mercury_ai.providers.yahoo_finance_provider.YahooFinanceProvider object at 0x000002A926135390> falhou: DataFrame vazio para BTC-USD
+Provider <mercury_ai.providers.yahoo_finance_provider.YahooFinanceProvider object at 0x000002A926135390> falhou: DataFrame vazio para ETH-USD
+------------------------------ Captured log call ------------------------------
+ERROR    yfinance:history.py:296 $BTC-USD: possibly delisted; no price data found  (period=1mo) (Yahoo error = "1m data not available for startTime=1783225085 and endTime=1785903485. Only 8 days worth of 1m granularity data are allowed to be fetched per request.")
+ERROR    yfinance:history.py:296 $ETH-USD: possibly delisted; no price data found  (period=1mo) (Yahoo error = "1m data not available for startTime=1783225085 and endTime=1785903485. Only 8 days worth of 1m granularity data are allowed to be fetched per request.")
+C:\Projetos\Mercury-AI\mercury_ai\data\market_data.py:223: Exception: No provider available for BTC-USD
+=========================== short test summary info ===========================
+FAILED mercury_ai/analysis/tests/test_benchmark_framework.py::TestMercuryBenchmarkFramework::test_benchmark_framework_execution
+FAILED mercury_ai/analysis/tests/test_benchmark_framework.py::TestMercuryBenchmarkFramework::test_enhanced_report_fields
+FAILED mercury_ai/analysis/tests/test_benchmark_framework.py::TestMercuryBenchmarkFramework::test_statistical_test_result
+FAILED mercury_ai/analysis/tests/test_benchmark_framework.py::TestMercuryBenchmarkFramework::test_buy_and_hold_baseline
+FAILED mercury_ai/analysis/tests/test_benchmark_framework.py::TestMercuryBenchmarkFramework::test_quick_benchmark_compatibility
+FAILED mercury_ai/analysis/tests/test_benchmark_framework.py::TestMercuryBenchmarkFramework::test_warm_cool_filter
+FAILED mercury_ai/analysis/tests/test_benchmark_framework.py::TestMercuryBenchmarkFramework::test_multiple_symbols
+7 failed, 134 passed in 150.76s (0:02:30)

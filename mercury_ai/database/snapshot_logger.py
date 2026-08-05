@@ -25,6 +25,8 @@ def _sanitize_filename_component(value: str) -> str:
         raise ValueError("Componente de nome de arquivo não pode ser vazio.")
     # Substitui ':' por '-' (comum em timestamps ISO)
     safe = value.replace(":", "-")
+    # Substitui '=' por '_' (comum em símbolos do Yahoo Finance: GC=F, EURUSD=X)
+    safe = safe.replace("=", "_")
     # Rejeita path traversal explícito
     if ".." in safe or "/" in safe or "\\" in safe:
         raise ValueError(f"Componente de nome de arquivo inválido (path traversal): {value!r}")

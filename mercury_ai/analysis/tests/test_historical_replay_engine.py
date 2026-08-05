@@ -10,6 +10,10 @@ from mercury_ai.analysis.historical_replay_engine import HistoricalReplayEngine
 from mercury_ai.analysis.replay_cache import ReplayCache
 from mercury_ai.database.replay_storage import ReplayMetrics
 
+# Timeout estendido: run_replay executa pipeline.analyze() (~20+ engines pesados)
+# para cada candle. Com 100 candles + n_candles=5, são 35 iterações.
+pytestmark = pytest.mark.timeout(300)
+
 
 @pytest.fixture
 def sample_df():
@@ -50,12 +54,12 @@ class TestHistoricalReplayEngineBasic:
 
     def test_run_replay_returns_list(self, sample_df):
         engine = HistoricalReplayEngine()
-        metrics = engine.run_replay("TEST=X", sample_df, n_candles=5, silent=True)
+        metrics = engine.run_replay("TEST", sample_df, n_candles=5, silent=True)
         assert isinstance(metrics, list)
 
     def test_run_replay_returns_replay_metrics(self, sample_df):
         engine = HistoricalReplayEngine()
-        metrics = engine.run_replay("TEST=X", sample_df, n_candles=5, silent=True)
+        metrics = engine.run_replay("TEST", sample_df, n_candles=5, silent=True)
         if len(metrics) > 0:
             assert isinstance(metrics[0], ReplayMetrics)
 
@@ -80,7 +84,7 @@ class TestHistoricalReplayEngineBasic:
 
     def test_run_replay_updates_stats(self, sample_df):
         engine = HistoricalReplayEngine()
-        engine.run_replay("TEST=X", sample_df, n_candles=5, silent=True)
+        engine.run_replay("TEST", sample_df, n_candles=5, silent=True)
         stats = engine.replay_stats
         assert "total_candles" in stats
         assert "wall_time" in stats

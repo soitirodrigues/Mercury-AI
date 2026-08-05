@@ -5,11 +5,11 @@ from mercury_ai.analysis.historical_replay_engine import HistoricalReplayEngine
 def generate_deterministic_data(n_candles, seed=42):
     np.random.seed(seed)
     data = {
-        'Close': np.random.randn(n_candles).cumsum() + 100,
-        'High': np.random.randn(n_candles).cumsum() + 101,
-        'Low': np.random.randn(n_candles).cumsum() + 99,
-        'Open': np.random.randn(n_candles).cumsum() + 100,
-        'Volume': np.random.randint(1000, 5000, n_candles)
+        'close': np.random.randn(n_candles).cumsum() + 100,
+        'high': np.random.randn(n_candles).cumsum() + 101,
+        'low': np.random.randn(n_candles).cumsum() + 99,
+        'open': np.random.randn(n_candles).cumsum() + 100,
+        'volume': np.random.randint(1000, 5000, n_candles)
     }
     return pd.DataFrame(data, index=pd.date_range('2025-01-01', periods=n_candles, freq='5min'))
 

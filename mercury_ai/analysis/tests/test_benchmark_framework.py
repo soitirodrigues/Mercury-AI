@@ -1,11 +1,63 @@
-"""Testes para o MercuryBenchmarkFramework - Enhanced (Bloco 3)."""
+"""Testes para o MercuryBenchmarkFramework - Enhanced (Bloco 3).
+
+Os testes mockam o YahooFinanceProvider para evitar dependência de rede
+e a limitação do yfinance (1m data não disponível para crypto).
+"""
 import pytest
+import numpy as np
+import pandas as pd
+from unittest.mock import patch, MagicMock
 from mercury_ai.analysis.benchmark_framework import (
     MercuryBenchmarkFramework,
     EnhancedBenchmarkReport,
     StatisticalTestResult,
     BuyAndHoldBaseline,
 )
+
+
+def _make_synthetic_ohlcv(symbol: str = "BTC-USD", n: int = 100) -> pd.DataFrame:
+    """Cria DataFrame OHLCV sintético determinístico para testes.
+
+    Gera dados com tendência leve e ruído para que o pipeline de análise
+    e os cálculos de buy-and-hold tenham dados válidos.
+    """
+    rng = np.random.RandomState(hash(symbol) & 0xFFFFFFFF)
+    dates = pd.date_range("2024-01-01", periods=n, freq="5min")
+    base = 50000.0 if "BTC" in symbol else 3000.0
+    close = base * (1.0 + rng.randn(n).cumsum() * 0.001)
+    high = close * (1 + rng.rand(n) * 0.002)
+    low = close * (1 - rng.rand(n) * 0.002)
+    op = close * (1 + rng.randn(n) * 0.001)
+    volume = rng.randint(100, 10000, size=n).astype(float)
+    df = pd.DataFrame(
+        {"Open": op, "High": high, "Low": low, "Close": close, "Volume": volume},
+        index=dates,
+    )
+    df.index.name = "Datetime"
+    return df
+
+
+def _make_mock_provider():
+    """Cria um mock do YahooFinanceProvider que retorna dados sintéticos."""
+    mock = MagicMock()
+    mock.get_data = MagicMock(side_effect=lambda *a, **kw: _make_synthetic_ohlcv(a[0] if a else "BTC-USD"))
+    mock.is_available = MagicMock(return_value=True)
+    mock.supports_symbol = MagicMock(return_value=True)
+    mock.supports_market = MagicMock(return_value=True)
+    mock.supports_timeframe = MagicMock(return_value=True)
+    mock.max_history = MagicMock(return_value="10y")
+    mock.source_name = MagicMock(return_value="YahooFinanceMock")
+    return mock
+
+
+@pytest.fixture(autouse=True)
+def mock_yahoo_provider():
+    """Mocka YahooFinanceProvider em todos os testes deste módulo."""
+    with patch(
+        "mercury_ai.analysis.benchmark_framework.YahooFinanceProvider",
+        new_callable=lambda: _make_mock_provider,
+    ):
+        yield
 
 
 class TestMercuryBenchmarkFramework:
