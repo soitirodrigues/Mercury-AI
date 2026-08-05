@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 """
 Historical Replay Engine - Deterministic market replay (Sprint 1.9, Bloco 5)
 
@@ -14,9 +13,6 @@ Otimizações Bloco 5:
 """
 
 from typing import Dict, List, Optional
-=======
-from typing import List
->>>>>>> 67cc5c60936ff914a76d6d94a09c6422d147e02a
 
 import pandas as pd
 
@@ -40,7 +36,6 @@ class HistoricalReplayEngine:
     - Métricas de performance expostas via replay_stats
     """
 
-<<<<<<< HEAD
     def __init__(self, cache: ReplayCache = None):
         """
         Args:
@@ -132,44 +127,10 @@ class HistoricalReplayEngine:
 
             # Atualiza tempo determinístico
             current_time = pd.to_datetime(timestamps[i]).to_pydatetime()
-=======
-    def run_replay(self, symbol: str, full_df: pd.DataFrame, n_candles: int = 20) -> List[ReplayMetrics]:
-        # Mínimo para indicadores (EMA 50)
-        start_idx = 60
-        
-        # Pre-calculate rolling averages
-        avg_volume = full_df['volume'].rolling(20).mean()
-        avg_body = (full_df['close'] - full_df['open']).abs().rolling(20).mean()
-        
-        # Inicializa o provedor de dados histórico
-        provider = HistoricalReplayProvider() # Will need to adapt this to use provider in loop
-        
-        # Define o DataFrame completo no provedor
-        provider.set_data(full_df)
-        
-        # Injeta o provedor no pipeline
-        pipeline = AnalysisPipeline(market_service=MarketDataService(providers=[provider]), providers=[provider])
-        storage = ReplayStorage()
-        
-        all_metrics: List[ReplayMetrics] = []
-        total = len(full_df) - n_candles - start_idx
-        last_pct = 0
-        
-        for i in range(start_idx, len(full_df) - n_candles):
-            # Progress logging a cada 5%
-            pct = ((i - start_idx) * 100) // total
-            if pct >= last_pct + 5:
-                last_pct = pct
-                print(f"  Progresso: {pct}% ({i-start_idx}/{total} candles)")
-            # Update mock time
-            current_time = pd.to_datetime(full_df.index[i]).to_pydatetime()
->>>>>>> 67cc5c60936ff914a76d6d94a09c6422d147e02a
             DeterministicClock.set_time(current_time)
 
             # Atualiza o provedor com o índice atual
             provider.set_index(i)
-<<<<<<< HEAD
-
             # Verifica cache antes de executar pipeline
             cached_snapshot = self._cache.get(symbol, i)
             if cached_snapshot is not None:
@@ -194,23 +155,6 @@ class HistoricalReplayEngine:
             mae = (float(future_prices.min()) - entry_price) / entry_price
             mfe = (float(future_prices.max()) - entry_price) / entry_price
 
-=======
-            
-            # Executa o pipeline de forma determinística
-            # A pipeline.analyze() salva o snapshot e o armazena em last_snapshot.
-            # Pass pre-calculated metrics for the current slice
-            pipeline.analyze(symbol, avg_volume=avg_volume.iloc[:i+1], avg_body=avg_body.iloc[:i+1], silent=True)
-            snapshot = pipeline.last_snapshot
-            
-            # Recalcular métricas
-            entry_price = full_df['close'].iloc[i]
-            future_prices = full_df['close'].iloc[i+1:i+n_candles+1]
-            
-            pl = (future_prices.iloc[-1] - entry_price) / entry_price
-            mae = (future_prices.min() - entry_price) / entry_price
-            mfe = (future_prices.max() - entry_price) / entry_price
-            
->>>>>>> 67cc5c60936ff914a76d6d94a09c6422d147e02a
             decision = snapshot.decision_result.decision
             hit = False
             if decision == "BUY":
