@@ -80,6 +80,8 @@ def atomic_json_write(
         os.fsync(f.fileno())
 
     # Atomic replace with retry + exponential backoff
+    # On Windows, antivirus/Defender can delete the .tmp file between
+    # open() and os.replace(), so we re-create it on each retry if needed.
     for attempt in range(max_retries):
         try:
             os.replace(temp_path, path)
@@ -100,3 +102,9 @@ def atomic_json_write(
                     pass
                 raise
             time.sleep(backoff_base * (2 ** attempt))
+            # Re-create temp file if it was deleted (e.g. by antivirus)
+            if not os.path.exists(temp_path):
+                with open(temp_path, "w", encoding="utf-8") as f:
+                    json.dump(data, f, **dump_kwargs)
+                    f.flush()
+                    os.fsync(f.fileno())
