@@ -1,62 +1,14 @@
 import streamlit as st
 import sys
-import os
-import hashlib
-import hmac
+
+from app.auth import require_auth, render_logout_button
 
 st.set_page_config(page_title="Mercury Launcher", page_icon="🚀", layout="centered")
 
 # ------------------------------------------------------------------ #
-#  C4 — Autenticação por sessão (senha via variável de ambiente)
+#  C4 — Gate de autenticação
 # ------------------------------------------------------------------ #
-_MERCURY_AUTH_HASH = os.environ.get("MERCURY_AUTH_HASH", "")
-
-
-def _hash_password(password: str) -> str:
-    """Gera hash SHA-256 da senha."""
-    return hashlib.sha256(password.encode("utf-8")).hexdigest()
-
-
-def _check_auth() -> bool:
-    """Verifica se o usuário está autenticado nesta sessão."""
-    return st.session_state.get("authenticated", False)
-
-
-def _do_login(password: str) -> bool:
-    """Valida a senha contra o hash configurado e marca a sessão."""
-    if not _MERCURY_AUTH_HASH:
-        # Se nenhuma senha configurada, exibe aviso e bloqueia acesso
-        st.error(
-            "⚠️ Nenhuma senha configurada. Defina a variável de ambiente "
-            "`MERCURY_AUTH_HASH` com o hash SHA-256 da senha desejada."
-        )
-        return False
-    computed = _hash_password(password)
-    if hmac.compare_digest(computed, _MERCURY_AUTH_HASH):
-        st.session_state["authenticated"] = True
-        return True
-    return False
-
-
-def _do_logout():
-    """Remove a autenticação da sessão."""
-    st.session_state["authenticated"] = False
-    st.rerun()
-
-
-# Tela de login
-if not _check_auth():
-    st.title("🔒 Mercury AI Terminal — Autenticação")
-    st.markdown("### Centro de Operações Institucional")
-    st.markdown("---")
-    password = st.text_input("Senha de acesso:", type="password")
-    if st.button("Entrar"):
-        if _do_login(password):
-            st.success("Autenticado com sucesso!")
-            st.rerun()
-        else:
-            st.error("Senha incorreta.")
-    st.stop()
+require_auth()
 
 # ------------------------------------------------------------------ #
 #  Aplicação principal (após autenticação)
@@ -75,8 +27,7 @@ if st.sidebar.button("Auditoria e Configurações"):
     st.switch_page("app/terminal/pages/04_Auditoria_Configuracoes.py")
 
 st.sidebar.markdown("---")
-if st.sidebar.button("🔒 Logout"):
-    _do_logout()
+render_logout_button()
 
 st.markdown("---")
 col1, col2 = st.columns(2)

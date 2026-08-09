@@ -44,7 +44,7 @@ class MarketThesisBuilder:
             confidence=confidence_data,
             risk=risk_data,
             market_state=state_data,
-            confirmations=confirmations,
-            conflicts=conflicts,
+            confirmations=tuple(confirmations),
+            conflicts=tuple(conflicts),
             institutional_alignment=confidence_data.confidence_score > 60
         )

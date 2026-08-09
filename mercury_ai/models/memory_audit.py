@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import List
+from typing import Tuple
 import tracemalloc
 import time
 
@@ -15,4 +15,4 @@ class MemoryAuditResult:
     allocation_diff_size: int
     allocation_diff_count: int
     gc_count_diff: int
-    top_stats: List[str] # Detailed breakdown of allocation growth
+    top_stats: Tuple[str, ...] # Detailed breakdown of allocation growth

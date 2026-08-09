@@ -4,6 +4,30 @@ from mercury_ai.models.evidence import Evidence
 from mercury_ai.models.market_context import MarketContext
 from mercury_ai.analysis.adaptive_weight_engine import AdaptiveWeightEngine
 
+# Mapeamento de engine_name de produção → chave do AdaptiveWeightEngine.
+# O AdaptiveWeightEngine retorna apenas 5 chaves CamelCase:
+#   "Trend", "Liquidity", "Volatility", "Structure", "SmartMoney"
+# Engine_names que não têm correspondência direta recebem mapeamento
+# para a chave mais próxima do mesmo domínio analítico.
+ENGINE_NAME_TO_ADAPTIVE_KEY = {
+    "Trend": "Trend",
+    "TrendEngine": "Trend",
+    "MomentumEngine": "Trend",
+    "SmartMoney": "SmartMoney",
+    "SMEngine": "SmartMoney",
+    "VolumeEngine": "SmartMoney",
+    "StructureEngine": "Structure",
+    "SwingEngine": "Structure",
+    "FairValueGapEngine": "Structure",
+    "LiquidityEngine": "Liquidity",
+    "LiquidityEventEngine": "Liquidity",
+    "VolatilityEngine": "Volatility",
+    "RiskEngine": "Volatility",
+    "VWAPEngine": "Structure",
+    "ContextEngine": "Trend",
+    "ConsistencyEngine": "Trend",
+}
+
 class ConflictResolutionEngine:
     """
     Motor institucional de resolução de conflitos entre evidências baseada em pesos.
@@ -23,12 +47,11 @@ class ConflictResolutionEngine:
         # Aplicar pesos adaptativos
         weighted_evidences = []
         for e in evidences:
-            # Map engine name (e.g., "TrendEngine") to weight keys ("Trend")
-            # Remove 'Engine' suffix to match AdaptiveWeightEngine keys
-            weight_key = e.engine_name.replace('Engine', '')
+            # Mapeia engine_name de produção para chave do AdaptiveWeightEngine
+            weight_key = ENGINE_NAME_TO_ADAPTIVE_KEY.get(e.engine_name, e.engine_name)
             
-            # Fallback if specific engine weight not found
-            base_weight = weights.get(weight_key, weights.get(e.engine_name, 1.0))
+            # Fallback se o peso específico não for encontrado
+            base_weight = weights.get(weight_key, 1.0)
             weighted_evidences.append(replace(e, weight=e.weight * base_weight))
             
         bullish_evidences = [e for e in weighted_evidences if e.direction == "BULLISH"]

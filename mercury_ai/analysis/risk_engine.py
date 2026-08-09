@@ -16,6 +16,7 @@ from mercury_ai.models.market_context import MarketContext
 from mercury_ai.models.market_evidence_bundle import MarketEvidenceBundle
 from mercury_ai.models.risk_assessment import RiskAssessment
 from mercury_ai.analysis.evidence_quality_engine import EvidenceQualityEngine
+from mercury_ai.config.institutional_weights import INSTITUTIONAL_WEIGHTS
 from mercury_ai.config.risk import (
     VAR_CONFIDENCE_95,
     VAR_CONFIDENCE_99,
@@ -239,13 +240,13 @@ class RiskEngine:
 
         if evidence_bundle is None:
             vol_evidence = Evidence(
-                engine_name="VolatilityEngine",
+                engine_name="RiskEngine",
                 evidence_name="volatility_check",
                 direction="NEUTRAL",
                 strength=3.0,
                 confidence=80.0,
                 description="ATR-based volatility assessment",
-                weight=0.3,
+                weight=INSTITUTIONAL_WEIGHTS["volatility"],
             )
             evidence_bundle = MarketEvidenceBundle(
                 evidences=(vol_evidence,),

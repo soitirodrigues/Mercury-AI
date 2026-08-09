@@ -18,6 +18,9 @@ def test_determinism():
     }
     df = pd.DataFrame(data, index=pd.date_range('2025-01-01', periods=periods, freq='5min'))
     provider = HistoricalDataProvider(df)
+    # Avança o índice para o final do DataFrame (200 períodos)
+    # Sem isso, get_data retorna apenas 1 linha (iloc[:1])
+    provider.set_index(len(df) - 1)
     pipeline = AnalysisPipeline(
         market_service=MarketDataService(providers=[provider]),
         providers=[provider]

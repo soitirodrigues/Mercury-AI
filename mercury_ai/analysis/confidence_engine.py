@@ -4,6 +4,7 @@ from mercury_ai.models.confidence_result import ConfidenceResult
 from mercury_ai.analysis.evidence_query import EvidenceQuery
 from mercury_ai.models.market_state_enum import MarketStateEnum
 from mercury_ai.analysis.conflict_resolution_engine import ConflictResolutionEngine
+from mercury_ai.core.grade_system import calculate_grade
 from dataclasses import dataclass
 
 @dataclass(frozen=True)
@@ -112,13 +113,17 @@ class ConfidenceEngine:
         """
         Aplica calibração institucional com base na memória de consistência.
 
+        O ``consistency_score`` varia de 0.0 a 1.0, onde 0.5 é o valor
+        neutro (sem dados suficientes ou setup instável).  Ajustamos a
+        fórmula para que o ponto neutro seja 0.5:
+
         Fórmula:
-            final = confidence_score + (consistency_score * 10.0)
+            final = confidence_score + ((consistency_score - 0.5) * 10.0)
             final = clamp(final, 0.0, 100.0)
         """
         calibrated = (
             confidence_result.confidence_score
-            + (consistency_score * 10.0)
+            + ((consistency_score - 0.5) * 10.0)
         )
         calibrated = max(0.0, min(calibrated, 100.0))
 
@@ -134,7 +139,5 @@ class ConfidenceEngine:
         )
 
     def _get_grade(self, score: float) -> str:
-        if score > 80: return "A"
-        if score > 60: return "B"
-        if score > 40: return "C"
-        return "D"
+        """Delega para o sistema unificado de grades institucionais."""
+        return calculate_grade(score)

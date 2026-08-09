@@ -11,6 +11,12 @@ from mercury_ai.analysis.ranking_engine import RankingEngine
 from mercury_ai.brain.institutional_brain import InstitutionalBrain
 from mercury_ai.data.market_data import MarketDataService
 from mercury_ai.analysis.notification_center import NotificationCenter
+from mercury_ai.core.exceptions import (
+    MarketClosedException,
+    DataValidationError,
+    InvalidSymbolError,
+    ProviderError,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -142,7 +148,7 @@ class MercuryScanner:
                     analysis
                 )
 
-            except (RuntimeError, ValueError, TypeError, KeyError, OSError, ConnectionError, TimeoutError) as e:
+            except (MarketClosedException, DataValidationError, InvalidSymbolError, ProviderError, ConnectionError, TimeoutError, OSError, ValueError, KeyError) as e:
 
                 logger.error("=" * 80)
                 logger.error("ERRO DURANTE A ANÁLISE DE %s", symbol)

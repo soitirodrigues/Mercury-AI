@@ -1,4 +1,4 @@
-from typing import List
+from typing import Tuple
 from mercury_ai.models.evidence import Evidence
 from mercury_ai.models.market_context import MarketContext
 from mercury_ai.models.trading_explanation import TradingExplanation
@@ -8,7 +8,7 @@ class NarrativeEngine:
     Motor institucional de geração de narrativa determinística.
     """
 
-    def generate(self, decision: str, evidences: List[Evidence], 
+    def generate(self, decision: str, evidences: Tuple[Evidence, ...], 
                      context: MarketContext, confluence_score: float) -> TradingExplanation:
         
         # Identify factors by direction

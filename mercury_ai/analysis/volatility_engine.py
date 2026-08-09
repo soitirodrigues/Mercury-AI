@@ -4,6 +4,7 @@ from typing import List
 from mercury_ai.models.volatility_analysis import VolatilityAnalysis
 from mercury_ai.models.market_data import MarketData
 from mercury_ai.models.evidence import Evidence
+from mercury_ai.config.institutional_weights import INSTITUTIONAL_WEIGHTS
 
 
 ATR_LOW_RATIO = 0.8
@@ -168,19 +169,19 @@ class VolatilityEngine:
 
             Evidence(
 
-                "VolatilityEngine",
+                engine_name="VolatilityEngine",
 
-                "ATR",
+                evidence_name="ATR",
 
-                "NEUTRAL",
+                direction="NEUTRAL",
 
-                70.0,
+                strength=70.0,
 
-                85.0,
+                confidence=85.0,
 
-                f"ATR Ratio {ratio:.2f}",
+                description=f"ATR Ratio {ratio:.2f}",
 
-                20.0
+                weight=INSTITUTIONAL_WEIGHTS["volatility"],
 
             )
 

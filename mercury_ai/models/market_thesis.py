@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import List
+from typing import Tuple
 from mercury_ai.models.risk_assessment import RiskAssessment
 from mercury_ai.models.confidence_result import ConfidenceResult
 from mercury_ai.models.market_state import MarketState
@@ -11,7 +11,7 @@ class MarketThesis:
     confidence: ConfidenceResult
     risk: RiskAssessment
     market_state: MarketState
-    confirmations: List[str] = field(default_factory=list)
-    conflicts: List[str] = field(default_factory=list)
+    confirmations: Tuple[str, ...] = field(default_factory=tuple)
+    conflicts: Tuple[str, ...] = field(default_factory=tuple)
     institutional_alignment: bool = False
     opportunity_grade: str = "C"

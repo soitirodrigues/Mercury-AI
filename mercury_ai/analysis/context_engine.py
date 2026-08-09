@@ -108,7 +108,7 @@ class ContextEngine:
         trend = [
             e
             for e in evidences
-            if e.engine_name == "TrendEngine"
+            if e.engine_name == "Trend"
         ]
 
         momentum = [

@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import List
+from typing import Tuple
 
 from mercury_ai.models.market_data import MarketData
 from mercury_ai.models.evidence import Evidence
@@ -18,7 +18,7 @@ class MarketContext:
 
     market: MarketData
 
-    trend: List[Evidence]
+    trend: Tuple[Evidence, ...]
 
     price_action: PriceActionAnalysis
 

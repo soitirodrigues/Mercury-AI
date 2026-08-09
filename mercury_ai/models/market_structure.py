@@ -1,4 +1,5 @@
 from dataclasses import dataclass, field
+from typing import Tuple
 
 
 @dataclass(frozen=True)
@@ -17,4 +18,4 @@ class MarketStructure:
 
     confidence: int = 0
 
-    explanation: list[str] = field(default_factory=list)
+    explanation: Tuple[str, ...] = field(default_factory=tuple)

@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import List
+from typing import Tuple
 
 @dataclass(frozen=True)
 class DecisionInput:
@@ -8,7 +8,7 @@ class DecisionInput:
     confidence: float
     risk_score: float
     market_state: str
-    warnings: List[str] = field(default_factory=list)
-    blockers: List[str] = field(default_factory=list)
+    warnings: Tuple[str, ...] = field(default_factory=tuple)
+    blockers: Tuple[str, ...] = field(default_factory=tuple)
     opportunity_grade: str = "C"
     institutional_alignment: bool = False

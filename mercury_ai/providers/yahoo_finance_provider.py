@@ -127,7 +127,7 @@ class YahooFinanceProvider:
         - Sem NaN em colunas críticas (OHLC)
         """
         if df is None or df.empty:
-            raise DataValidationError(f"DataFrame vazio para {symbol}")
+            raise MarketClosedException(f"DataFrame vazio para {symbol}")
         if len(df) < 20:
             raise MarketClosedException(
                 f"Dados insuficientes ({len(df)} barras < 20) para {symbol}"

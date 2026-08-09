@@ -75,7 +75,7 @@ def mock_evidence_bundle():
         weight=0.3,
     )
     trend_evidence = Evidence(
-        engine_name="TrendEngine",
+        engine_name="Trend",
         evidence_name="trend_direction",
         direction="BULLISH",
         strength=7.0,
@@ -572,7 +572,7 @@ class TestEdgeCases:
     def test_assess_no_volatility_evidence(self, engine, mock_context):
         """Bundle sem evidência de volatilidade deve usar fallback."""
         trend_evidence = Evidence(
-            engine_name="TrendEngine",
+            engine_name="Trend",
             evidence_name="trend_only",
             direction="BULLISH",
             strength=5.0,

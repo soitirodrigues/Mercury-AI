@@ -14,6 +14,7 @@ from mercury_ai.analysis.performance_statistics import PerformanceStatistics
 from mercury_ai.analysis.engine_performance_auditor import EnginePerformanceAuditor
 from mercury_ai.analysis.institutional_report_generator import InstitutionalReportGenerator
 from mercury_ai.analysis.notification_center import NotificationCenter
+from app.auth import require_auth, render_logout_button
 from app.ui_utils import apply_design_system, display_metric
 
 # Notification Center Initialization
@@ -21,7 +22,9 @@ if 'notification_center' not in st.session_state:
     st.session_state.notification_center = NotificationCenter()
 
 st.set_page_config(page_title="Mercury AI Institutional", layout="wide")
+require_auth()
 apply_design_system()
+render_logout_button()
 
 st.title("🧠 Mercury AI | Dashboard Institucional")
 

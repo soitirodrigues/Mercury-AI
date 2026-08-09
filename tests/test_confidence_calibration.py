@@ -36,7 +36,7 @@ def test_confidence_calibration_optimal(base_context):
     
     res = engine.calculate(base_context, bundle)
     assert res.confidence_score > 80.0
-    assert res.confidence_grade == "A"
+    assert res.confidence_grade == "A+"
     assert res.is_high is True
 
 def test_confidence_calibration_pessimistic(base_context):

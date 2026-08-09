@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import Tuple
 
 from mercury_ai.models.market_structure import MarketStructure
 
@@ -9,7 +10,7 @@ class CHOCHResult:
     detected: bool
     direction: str
     confidence: int
-    explanation: list[str]
+    explanation: Tuple[str, ...]
 
 
 class CHOCHEngine:
@@ -22,11 +23,13 @@ class CHOCHEngine:
         explanation = []
 
         # -----------------------------
-        # Possível reversão para BAIXA
+        # CHOCH Bearish — reversão para BAIXA
+        # Market structure: lower_high AND lower_low
+        # O preço falha em fazer HH e quebra o último LL
         # -----------------------------
 
         if (
-            market_structure.higher_high
+            market_structure.lower_high
             and market_structure.lower_low
         ):
 
@@ -40,11 +43,13 @@ class CHOCHEngine:
             )
 
         # -----------------------------
-        # Possível reversão para ALTA
+        # CHOCH Bullish — reversão para ALTA
+        # Market structure: higher_high AND higher_low
+        # O preço falha em fazer LL e quebra o último HH
         # -----------------------------
 
         elif (
-            market_structure.lower_high
+            market_structure.higher_high
             and market_structure.higher_low
         ):
 
@@ -67,5 +72,5 @@ class CHOCHEngine:
             detected=detected,
             direction=direction,
             confidence=confidence,
-            explanation=explanation
+            explanation=tuple(explanation)
         )

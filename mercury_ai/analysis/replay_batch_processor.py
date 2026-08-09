@@ -17,7 +17,7 @@ import logging
 import json
 from concurrent.futures import ThreadPoolExecutor, as_completed, TimeoutError
 from dataclasses import dataclass, field
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple, Any
 
 import pandas as pd
 
@@ -38,7 +38,7 @@ class BatchReplayResult:
     metrics: Tuple[ReplayMetrics, ...]
     asset_performance: AssetPerformance
     wall_time: float
-    cache_stats: dict
+    cache_stats: Dict[str, Any]
     error: Optional[str] = None
 
 
@@ -188,7 +188,7 @@ class ReplayBatchProcessor:
                     sortino_ratio=0.0, equity_curve=()
                 ),
                 wall_time=time_module.perf_counter() - t0,
-                cache_stats=cache.stats,
+                cache_stats=dict(cache.stats),
                 error=str(e),
             )
 
@@ -203,7 +203,7 @@ class ReplayBatchProcessor:
             metrics=tuple(metrics),
             asset_performance=asset_perf,
             wall_time=wall_time,
-            cache_stats=cache.stats,
+            cache_stats=dict(cache.stats),
         )
 
     @staticmethod

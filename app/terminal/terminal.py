@@ -1,10 +1,13 @@
 import streamlit as st
+from app.auth import require_auth, render_logout_button
 from app.ui_utils import apply_design_system, display_status, display_card
 from mercury_ai.config import settings
 from mercury_ai.analysis.health_checker import HealthChecker
 
 st.set_page_config(page_title="Mercury Terminal", layout="wide", page_icon="🛡️")
+require_auth()
 apply_design_system()
+render_logout_button()
 
 st.title("🛡️ Mercury AI | Terminal Operacional")
 st.markdown("---")

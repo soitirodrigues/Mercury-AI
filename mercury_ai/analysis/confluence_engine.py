@@ -14,16 +14,25 @@ from mercury_ai.analysis.confluence_helpers import (
     dominant_direction,
 )
 
-# Institutional Weights
-INSTITUTIONAL_WEIGHTS = {
-    "LiquidityEngine": 25.0,
-    "SmartMoneyEngine": 20.0,
-    "MarketStructureIntelligenceEngine": 15.0,
-    "VolumeIntelligenceEngine": 10.0,
-    "TrendAnalyzer": 10.0,
-    "CandlestickEngine": 10.0,
-    "VolatilityEngine": 5.0,
-    "ConfluenceEngine": 5.0,
+# Mapeamento de engine_name de produção → domínio canônico (lowercase)
+# em INSTITUTIONAL_WEIGHTS (config.institutional_weights).
+# Garante que cada engine receba o peso institucional correto em vez
+# de cair no fallback 1.0.
+ENGINE_NAME_TO_DOMAIN = {
+    "Trend": "trend",
+    "SmartMoney": "smart_money",
+    "StructureEngine": "market_structure",
+    "SwingEngine": "market_structure",
+    "FairValueGapEngine": "market_structure",
+    "LiquidityEngine": "liquidity",
+    "LiquidityEventEngine": "liquidity",
+    "VolatilityEngine": "volatility",
+    "RiskEngine": "volatility",
+    "VolumeEngine": "smart_money",
+    "VWAPEngine": "support_resistance",
+    "MomentumEngine": "trend",
+    "ContextEngine": "market_condition",
+    "ConsistencyEngine": "market_condition",
 }
 
 class ConfluenceEngine:
@@ -52,16 +61,28 @@ class ConfluenceEngine:
         bearish_score = 0.0
         conflicting_signals = False
         contributions: list[InstitutionalContribution] = []
+        active_domains: set[str] = set()
 
         # Weighted Aggregation (usa pesos canônicos)
         for evidence in evidence_bundle.evidences:
-            weight = INSTITUTIONAL_WEIGHTS.get(evidence.engine_name, 1.0)
+            # MTFEngine prefixa engine_name com o timeframe (ex: "H1 - Trend").
+            # Removemos o prefixo para que o lookup em ENGINE_NAME_TO_DOMAIN
+            # encontre o domínio correto e a evidência não seja descartada.
+            clean_name = (
+                evidence.engine_name.split(" - ", 1)[-1]
+                if " - " in evidence.engine_name
+                else evidence.engine_name
+            )
+            domain = ENGINE_NAME_TO_DOMAIN.get(clean_name, "market_condition")
+            weight = INSTITUTIONAL_WEIGHTS.get(domain, 1.0)
             contribution = (evidence.strength / 100.0) * weight
 
             if evidence.direction == "BULLISH":
                 bullish_score += contribution
             elif evidence.direction == "BEARISH":
                 bearish_score += contribution
+
+            active_domains.add(domain)
 
             # Build per-engine contribution for explainability
             contributions.append(InstitutionalContribution(
@@ -106,7 +127,24 @@ class ConfluenceEngine:
             - conflict_penalty
         )
 
-        net_score = clamp_score(net_score, floor=5.0, ceiling=100.0)
+        # Normalização por domínios ativos:
+        # Nem sempre os 8 domínios institucionais têm evidências. Dividir o
+        # score por INSTITUTIONAL_WEIGHTS_SUM (100.0 fixo) subdimensiona o
+        # acordo quando poucos domínios estão ativos. Normalizamos pelo
+        # somatório de pesos dos domínios que efetivamente contribuíram.
+        active_weights_sum = sum(
+            INSTITUTIONAL_WEIGHTS.get(d, 0.0) for d in active_domains
+        )
+        if active_weights_sum <= 0.0:
+            active_weights_sum = INSTITUTIONAL_WEIGHTS_SUM
+
+        # Escala proporcional: se apenas parte dos domínios está ativa,
+        # amplificamos o score para a escala 0-100 completa, permitindo
+        # comparação justa entre cenários com diferentes números de evidências.
+        scale_factor = INSTITUTIONAL_WEIGHTS_SUM / active_weights_sum
+        normalized_score = net_score * scale_factor
+
+        normalized_score = clamp_score(normalized_score, floor=5.0, ceiling=100.0)
 
         # Determine dominant direction
         direction = dominant_direction(bullish_score, bearish_score)
@@ -119,10 +157,10 @@ class ConfluenceEngine:
                 buy_score=bullish_score,
                 sell_score=bearish_score,
                 neutral_score=0.0,
-                agreement_percentage=(net_score / INSTITUTIONAL_WEIGHTS_SUM) * 100.0,
+                agreement_percentage=(normalized_score / INSTITUTIONAL_WEIGHTS_SUM) * 100.0,
                 conflicting_signals=conflicting_signals,
                 independent_confirmations=len(evidence_bundle.evidences),
-                weighted_score=net_score,
+                weighted_score=normalized_score,
                 confidence=thesis.confidence.confidence_score,
                 dominant_direction=direction,
                 evidences=tuple(thesis.confirmations),

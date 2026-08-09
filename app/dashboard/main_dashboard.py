@@ -5,6 +5,7 @@ except ImportError:
 from mercury_ai.core.asset_registry import AssetRegistry
 from mercury_ai.providers.mercury_data_provider import MercuryDataProvider
 from mercury_ai.core.health_center import HealthCenter
+from app.auth import require_auth, render_logout_button
 from app.dashboard.asset_registry_panel import render_asset_registry_dashboard
 from app.dashboard.provider_health_panel import render_provider_health_dashboard
 from app.dashboard.observability_panel import render_observability_dashboard
@@ -15,6 +16,8 @@ def main():
     if st is None:
         return
     st.set_page_config(layout="wide", page_title="Mercury AI Institucional")
+    require_auth()
+    render_logout_button()
     
     # Initialize components
     registry = AssetRegistry()

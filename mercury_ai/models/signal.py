@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import List
+from typing import Tuple
 from mercury_ai.config.timeframes import DEFAULT_TIMEFRAME
 
 
@@ -27,6 +27,6 @@ class Signal:
 
     strategy: str = ""
 
-    evidences: List[str] = field(default_factory=list)
+    evidences: Tuple[str, ...] = field(default_factory=tuple)
 
     explanation: str = ""

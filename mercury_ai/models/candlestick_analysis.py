@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import Optional, List
+from typing import Optional, Tuple
 
 @dataclass(frozen=True)
 class CandlestickAnalysis:
@@ -13,5 +13,5 @@ class CandlestickAnalysis:
     explanation: Optional[str] = None
     context: Optional[str] = None
     context_score: Optional[float] = None
-    evidences: List[str] = field(default_factory=list)
+    evidences: Tuple[str, ...] = field(default_factory=tuple)
 

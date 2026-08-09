@@ -27,31 +27,33 @@ class SessionEngine:
         )
 
     def _detect_session(self, hour: int, evidences: List[str]) -> str:
-        # Horários UTC aproximados
-        if 21 <= hour < 24 or 0 <= hour < 1: # Sydney
-            evidences.append("Sessão de Sydney.")
-            return sessions.SYDNEY
-        elif 0 <= hour < 9: # Tokyo
-            evidences.append("Sessão de Tokyo.")
-            return sessions.TOKYO
-        elif 8 <= hour < 16: # London
+        # Horários UTC aproximados — prioriza sessões mais ativas
+        # London: 8-16 UTC | New York: 13-21 UTC | Tokyo: 0-9 UTC | Sydney: 21-6 UTC
+        if 8 <= hour < 16:  # London (mais ativa, tem prioridade sobre Tokyo no overlap 8-9)
             evidences.append("Sessão de Londres.")
             return sessions.LONDON
-        elif 13 <= hour < 21: # New York
+        elif 13 <= hour < 21:  # New York
             evidences.append("Sessão de Nova York.")
             return sessions.NEW_YORK
-        
-        evidences.append("Período de baixa liquidez.")
-        return "UNKNOWN"
+        elif 0 <= hour < 8:  # Tokyo (0-8, evitando overlap com London)
+            evidences.append("Sessão de Tokyo.")
+            return sessions.TOKYO
+        elif 21 <= hour < 24 or 0 <= hour < 0:  # Sydney (21-24 UTC)
+            evidences.append("Sessão de Sydney.")
+            return sessions.SYDNEY
+
+        evidences.append("Período de baixa liquidez — mercado fechado.")
+        return sessions.CLOSED
 
     def _detect_overlap(self, hour: int, evidences: List[str]) -> bool:
         # Overlaps comuns
-        if 13 <= hour < 16: # London / NY
-            evidences.append("Sobreposição Londres/Nova York.")
+        if 13 <= hour < 16:  # London / NY
+            evidences.append("Sobreposição Londres/Nova York — alta liquidez.")
             return True
-        elif 8 <= hour < 9: # Tokyo / London
+        elif 8 <= hour < 9:  # Tokyo / London
             evidences.append("Sobreposição Tokyo/Londres.")
             return True
+        evidences.append("Sem sobreposição de sessões.")
         return False
 
     def _calculate_quality(self, session: str, overlap: bool, evidences: List[str]) -> float:

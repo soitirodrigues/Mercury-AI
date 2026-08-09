@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Any, Dict
+from typing import Any, Mapping
 
 @dataclass(frozen=True)
 class PerformanceMetrics:
@@ -11,5 +11,5 @@ class PerformanceMetrics:
     missed_trades: int
     false_positives: int
     false_negatives: int
-    engine_responsibility: Dict[str, int]
-    evidence_responsibility: Dict[str, int]
+    engine_responsibility: Mapping[str, int]
+    evidence_responsibility: Mapping[str, int]

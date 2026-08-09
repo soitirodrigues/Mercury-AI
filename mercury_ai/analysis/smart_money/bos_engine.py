@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import Tuple
 
 from mercury_ai.models.market_structure import MarketStructure
 
@@ -8,7 +9,7 @@ class BOSResult:
     detected: bool
     direction: str
     confidence: int
-    explanation: list[str]
+    explanation: Tuple[str, ...]
 
 
 class BOSEngine:
@@ -57,5 +58,5 @@ class BOSEngine:
             detected=detected,
             direction=direction,
             confidence=confidence,
-            explanation=explanation,
+            explanation=tuple(explanation),
         )

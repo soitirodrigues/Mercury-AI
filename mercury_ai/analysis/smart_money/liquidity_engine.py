@@ -66,9 +66,9 @@ class LiquidityEngine:
                  profiler: Optional[PipelineProfiler] = None,
                  minimum_touches: int = 2,
                  maximum_touches: int = 10,
-                 atr_multiplier: float = 0.5,
+                 atr_multiplier: float = 0.75,
                  maximum_swing_distance: int = 50,
-                 minimum_strength: float = 0.5,
+                 minimum_strength: float = 0.3,
                  touch_weight: float = 0.3,
                  strength_weight: float = 0.2,
                  atr_consistency_weight: float = 0.2,
@@ -93,27 +93,28 @@ class LiquidityEngine:
         self.minimum_score = minimum_score
         self.evidence_weight = evidence_weight
         
-    def build_equal_high_groups(self, swings: List[Swing]) -> List[EqualHighGroup]:
-        highs = [s for s in swings if s.type == 'HIGH' and s.confirmed and s.strength >= self.minimum_strength]
-        if len(highs) < self.minimum_touches:
+    def _build_groups_for_type(self, swings: List[Swing], swing_type: str) -> List[EqualHighGroup]:
+        """Build equal-level groups for a given swing type ('HIGH' or 'LOW')."""
+        filtered = [s for s in swings if s.type == swing_type and s.confirmed and s.strength >= self.minimum_strength]
+        if len(filtered) < self.minimum_touches:
             return []
 
         # 1. Global sort by price AND index for determinism
-        highs.sort(key=lambda s: (s.price, s.index))
+        filtered.sort(key=lambda s: (s.price, s.index))
 
         final_groups = []
 
         # 2. Global Sliding Price Window (optimized with cap to prevent O(n^3) blowup)
-        n = len(highs)
+        n = len(filtered)
         # Cap cluster_candidate size to prevent pathological cases (e.g., identical prices)
         max_cluster_size = min(n, self.maximum_touches * 10)
         for i in range(n):
-            cluster_candidate = [highs[i]]
+            cluster_candidate = [filtered[i]]
             for j in range(i + 1, min(i + max_cluster_size, n)):
-                avg_atr = (highs[i].atr + highs[j].atr) / 2
-                if (highs[j].price - highs[i].price) <= (avg_atr * self.atr_multiplier) or \
-                   np.isclose(highs[j].price, highs[i].price, atol=avg_atr * self.atr_multiplier):
-                    cluster_candidate.append(highs[j])
+                avg_atr = (filtered[i].atr + filtered[j].atr) / 2
+                if (filtered[j].price - filtered[i].price) <= (avg_atr * self.atr_multiplier) or \
+                   np.isclose(filtered[j].price, filtered[i].price, atol=avg_atr * self.atr_multiplier):
+                    cluster_candidate.append(filtered[j])
                 else:
                     break
 
@@ -131,12 +132,12 @@ class LiquidityEngine:
                         if len(temp_cluster) > self.maximum_touches:
                             temp_cluster = temp_cluster[-self.maximum_touches:]
                         final_groups.append(EqualHighGroup(
-                            touches=temp_cluster, 
-                            prices=[s.price for s in temp_cluster],
-                            timestamps=[s.timestamp for s in temp_cluster], 
-                            indices=[s.index for s in temp_cluster],
-                            strengths=[s.strength for s in temp_cluster], 
-                            ATRs=[s.atr for s in temp_cluster]
+                            touches=list(temp_cluster), 
+                            prices=list(s.price for s in temp_cluster),
+                            timestamps=list(s.timestamp for s in temp_cluster), 
+                            indices=list(s.index for s in temp_cluster),
+                            strengths=list(s.strength for s in temp_cluster), 
+                            ATRs=list(s.atr for s in temp_cluster)
                         ))
                     k += 1
 
@@ -152,6 +153,12 @@ class LiquidityEngine:
                 unique_final_groups.append(g)
                 seen_group_ids.add(group_id)
         return unique_final_groups
+
+    def build_equal_high_groups(self, swings: List[Swing]) -> List[EqualHighGroup]:
+        return self._build_groups_for_type(swings, 'HIGH')
+
+    def build_equal_low_groups(self, swings: List[Swing]) -> List[EqualHighGroup]:
+        return self._build_groups_for_type(swings, 'LOW')
 
     def validate_equal_high_groups(self, groups: List[EqualHighGroup]) -> Tuple[List[EqualHighGroup], List[str]]:
         valid_groups = []
@@ -205,8 +212,10 @@ class LiquidityEngine:
             strength_score = m.average_strength * 100
             atr_score = max(0.0, min(100.0, (1.0 - m.ATR_consistency) * 100))
             epsilon = 1e-9
-            deviation_score = max(0.0, min(100.0, (1.0 - m.price_deviation / (m.average_ATR + epsilon)) * 100))
-            density_score = max(0.0, min(100.0, (1.0 - m.cluster_width / (m.age_in_swings + epsilon)) * 100))
+            # Deviation: normalize by atr_multiplier so high-volatility assets aren't over-penalized
+            deviation_score = max(0.0, min(100.0, (1.0 - m.price_deviation / (m.average_ATR * self.atr_multiplier + epsilon)) * 100))
+            # Density: use maximum_swing_distance as denominator (robust against age=0)
+            density_score = max(0.0, min(100.0, (1.0 - m.cluster_width / (self.maximum_swing_distance + epsilon)) * 100))
             final = (touch_score * self.touch_weight + strength_score * self.strength_weight + atr_score * self.atr_consistency_weight + deviation_score * self.deviation_weight + density_score * self.density_weight)
             final_score = float(max(self.minimum_score, min(self.maximum_score, final)))
             scores.append(EqualHighScore(
@@ -244,8 +253,32 @@ class LiquidityEngine:
             }
         )]
 
+    def generate_equal_low_evidence(self, selected_score: EqualHighScore) -> List[Evidence]:
+        return [Evidence(
+            engine_name="LiquidityEngine",
+            evidence_name="Equal Low Liquidity",
+            direction="BEARISH",
+            strength=selected_score.average_strength,
+            confidence=selected_score.final_score,
+            description=f"Equal Low cluster detected: {selected_score.touch_count} touches at {selected_score.average_price:.2f}.",
+            weight=self.evidence_weight,
+            metadata={
+                "touch_count": selected_score.touch_count,
+                "average_price": selected_score.average_price,
+                "average_strength": selected_score.average_strength,
+                "average_ATR": selected_score.average_ATR,
+                "age_in_swings": selected_score.age_in_swings,
+                "cluster_density": selected_score.cluster_density,
+                "final_score": selected_score.final_score
+            }
+        )]
+
     def analyze(self, df: pd.DataFrame, swings: List[Swing], profile: MarketStructureProfile, profiler: Optional[PipelineProfiler] = None) -> LiquidityResult:
-        executor = PipelineExecutor(profiler=profiler)
+        # Fix: use self.executor if available, otherwise create one with profiler
+        if self.executor is not None:
+            executor = self.executor
+        else:
+            executor = PipelineExecutor(profiler=profiler)
         
         # Contract Check: Inputs
         if not isinstance(swings, list) or (swings and not isinstance(swings[0], Swing)):
@@ -253,48 +286,86 @@ class LiquidityEngine:
 
         current_swing_index = swings[-1].index if swings else 0
         
-        # 1 Build Groups
-        groups = executor.execute("Build Groups", self.build_equal_high_groups, list, swings)
-        if not groups: return LiquidityResult(evidences=(), score=0.0, confidence=0.0, strength=0.0, metadata={})
+        # 1 Build Groups (Equal Highs + Equal Lows)
+        high_groups = executor.execute("Build High Groups", self.build_equal_high_groups, list, swings)
+        low_groups = executor.execute("Build Low Groups", self.build_equal_low_groups, list, swings)
+        if not high_groups and not low_groups:
+            return LiquidityResult(evidences=(), score=0.0, confidence=0.0, strength=0.0, metadata={})
         
         # 2 Validate Groups
-        valid_groups, _ = executor.execute("Validation", self.validate_equal_high_groups, tuple, groups)
-        if not valid_groups: return LiquidityResult(evidences=(), score=0.0, confidence=0.0, strength=0.0, metadata={})
+        valid_highs, _ = executor.execute("Validation Highs", self.validate_equal_high_groups, tuple, high_groups) if high_groups else ([], [])
+        valid_lows, _ = executor.execute("Validation Lows", self.validate_equal_high_groups, tuple, low_groups) if low_groups else ([], [])
+        if not valid_highs and not valid_lows:
+            return LiquidityResult(evidences=(), score=0.0, confidence=0.0, strength=0.0, metadata={})
         
         # 3 Build Metrics
-        metrics = executor.execute("Metrics", self.calculate_metrics, list, valid_groups, current_swing_index)
+        high_metrics = executor.execute("Metrics Highs", self.calculate_metrics, list, valid_highs, current_swing_index) if valid_highs else []
+        low_metrics = executor.execute("Metrics Lows", self.calculate_metrics, list, valid_lows, current_swing_index) if valid_lows else []
         
         # 4 Build Scores
-        scores = executor.execute("Scores", self.calculate_scores, list, metrics)
+        high_scores = executor.execute("Scores Highs", self.calculate_scores, list, high_metrics) if high_metrics else []
+        low_scores = executor.execute("Scores Lows", self.calculate_scores, list, low_metrics) if low_metrics else []
         
-        # 5 Select Best Group
-        selected = executor.execute("Selection", self.select_best_equal_high, (EqualHighScore, type(None)), scores)
-        if not selected: return LiquidityResult(evidences=(), score=0.0, confidence=0.0, strength=0.0, metadata={})
+        # 5 Select Best Group (per type)
+        selected_high = executor.execute("Selection Highs", self.select_best_equal_high, (EqualHighScore, type(None)), high_scores) if high_scores else None
+        selected_low = executor.execute("Selection Lows", self.select_best_equal_high, (EqualHighScore, type(None)), low_scores) if low_scores else None
+        if not selected_high and not selected_low:
+            return LiquidityResult(evidences=(), score=0.0, confidence=0.0, strength=0.0, metadata={})
         
-        # 6 Populate Profile
-        new_profile = executor.execute("Profile", self.populate_profile, MarketStructureProfile, profile, selected)
+        # 6 Generate Evidence (both types)
+        all_evidences = []
+        best_score = 0.0
+        best_strength = 0.0
+        best_count = 0
+        best_price = 0.0
+        if selected_high:
+            high_evidences = executor.execute("Evidence Highs", self.generate_equal_high_evidence, list, selected_high)
+            all_evidences.extend(high_evidences)
+            best_score = max(best_score, selected_high.final_score)
+            best_strength = max(best_strength, selected_high.average_strength)
+            best_count = max(best_count, selected_high.touch_count)
+            best_price = selected_high.average_price
+        if selected_low:
+            low_evidences = executor.execute("Evidence Lows", self.generate_equal_low_evidence, list, selected_low)
+            all_evidences.extend(low_evidences)
+            if selected_low.final_score > best_score:
+                best_score = selected_low.final_score
+                best_strength = selected_low.average_strength
+                best_count = selected_low.touch_count
+                best_price = selected_low.average_price
         
-        # 7 Generate Evidence
-        evidences = executor.execute("Evidence", self.generate_equal_high_evidence, list, selected)
+        # 7 Populate Profile (use best score)
+        best_selected = selected_high if (selected_high and (not selected_low or selected_high.final_score >= selected_low.final_score)) else selected_low
+        if best_selected:
+            new_profile = executor.execute("Profile", self.populate_profile, MarketStructureProfile, profile, best_selected)
         
         # 8 Build LiquidityResult
         return LiquidityResult(
-            evidences=tuple(evidences),
-            score=selected.final_score,
-            confidence=selected.final_score / 100.0,
-            strength=selected.average_strength,
+            evidences=tuple(all_evidences),
+            score=best_score,
+            confidence=best_score / 100.0,
+            strength=best_strength,
             metadata={
-                "count": selected.touch_count, 
-                "avg_price": selected.average_price,
+                "count": best_count, 
+                "avg_price": best_price,
+                "has_equal_highs": selected_high is not None,
+                "has_equal_lows": selected_low is not None,
             }
         )
 
     def analyze_tuple(self, df: pd.DataFrame, swings: List[Swing], profile: MarketStructureProfile, profiler: Optional[PipelineProfiler] = None) -> Tuple[LiquidityAnalysis, List[Evidence], MarketStructureProfile]:
         # Backward compatibility shim
         res = self.analyze(df, swings, profile, profiler)
-        from mercury_ai.models.liquidity_analysis import LiquidityAnalysis
-        analysis = LiquidityAnalysis(has_equal_highs=True, 
+        # Fix: set has_equal_highs based on whether evidences were found, not always True
+        has_equal_highs = len(res.evidences) > 0
+        analysis = LiquidityAnalysis(has_equal_highs=has_equal_highs, 
                                      confidence=res.confidence, 
                                      quality=res.strength, 
                                      evidences=res.evidences)
-        return analysis, list(res.evidences), profile # Returning original profile as simple shim
+        # Fix: populate the profile with equal_highs info and return the updated profile
+        if has_equal_highs and res.score > 0:
+            from mercury_ai.models.market_structure_profile import MarketStructureProfile as MSP
+            from dataclasses import replace as dc_replace
+            new_profile = dc_replace(profile, equal_highs=True, buy_side_liquidity=res.score, liquidity_cluster=res.strength)
+            return analysis, list(res.evidences), new_profile
+        return analysis, list(res.evidences), profile

@@ -18,7 +18,7 @@ import os
 import psutil
 import logging
 import numpy as np
-from typing import List, Dict, Optional, Tuple
+from typing import List, Dict, Optional, Tuple, Mapping
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass, field
 
@@ -65,10 +65,10 @@ class EnhancedBenchmarkReport:
     average_execution_time: float
     performance_metrics: PerformanceMetrics
     # Novos campos Bloco 3
-    asset_performances: Dict[str, AssetPerformance]
+    asset_performances: Mapping[str, AssetPerformance]
     universe_performance: Optional[UniversePerformance]
-    buy_and_hold_baselines: Dict[str, BuyAndHoldBaseline]
-    statistical_tests: Dict[str, StatisticalTestResult]
+    buy_and_hold_baselines: Mapping[str, BuyAndHoldBaseline]
+    statistical_tests: Mapping[str, StatisticalTestResult]
     warm_up_trades_excluded: int
     cool_down_trades_excluded: int
     total_wall_time: float

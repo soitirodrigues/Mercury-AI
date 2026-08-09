@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import Tuple
 
 
 @dataclass(frozen=True)
@@ -8,4 +9,4 @@ class SupportResistanceAnalysis:
     resistance: float
     distance_support: float
     distance_resistance: float
-    explanation: list[str]
+    explanation: Tuple[str, ...]

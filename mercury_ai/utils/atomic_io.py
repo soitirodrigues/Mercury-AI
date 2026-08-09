@@ -16,6 +16,7 @@ from __future__ import annotations
 import json
 import logging
 import os
+import tempfile
 import time
 from typing import Any
 
@@ -62,8 +63,6 @@ def atomic_json_write(
     OSError
         If all retry attempts fail.
     """
-    temp_path = f"{path}.tmp"
-
     # Ensure parent directory exists
     parent = os.path.dirname(path)
     if parent:
@@ -74,37 +73,49 @@ def atomic_json_write(
     if default is not None:
         dump_kwargs["default"] = default
 
-    with open(temp_path, "w", encoding="utf-8") as f:
-        json.dump(data, f, **dump_kwargs)
-        f.flush()
-        os.fsync(f.fileno())
-
-    # Atomic replace with retry + exponential backoff
-    # On Windows, antivirus/Defender can delete the .tmp file between
-    # open() and os.replace(), so we re-create it on each retry if needed.
+    # Each call gets a UNIQUE temp file via tempfile.mkstemp() to avoid
+    # collisions when multiple threads write to the same destination path
+    # concurrently (Windows WinError 32 on shared .json.tmp). The retry
+    # loop handles transient OSError on os.replace().
+    last_exc: Exception | None = None
     for attempt in range(max_retries):
+        fd = -1
+        temp_path = None
         try:
+            # Create a unique temp file in the same directory as the target
+            # (required for os.replace to work atomically on the same volume).
+            fd, temp_path = tempfile.mkstemp(
+                dir=parent or ".",
+                prefix=".tmp_",
+                suffix=".json",
+            )
+            os.close(fd)
+            fd = -1  # mark as closed
+
+            with open(temp_path, "w", encoding="utf-8") as f:
+                json.dump(data, f, **dump_kwargs)
+                f.flush()
+                os.fsync(f.fileno())
             os.replace(temp_path, path)
             return
-        except OSError as e:
+        except (OSError, PermissionError) as e:
+            last_exc = e
+            # Clean up this attempt's temp file
+            if temp_path is not None:
+                try:
+                    os.remove(temp_path)
+                except OSError:
+                    pass
             if attempt == max_retries - 1:
                 logger.error(
-                    "atomic_json_write: failed to replace %s after %d attempts: %s",
+                    "atomic_json_write: failed to write %s after %d attempts: %s",
                     path,
                     max_retries,
                     e,
                     exc_info=True,
                 )
-                # Clean up temp file on final failure
-                try:
-                    os.remove(temp_path)
-                except OSError:
-                    pass
                 raise
             time.sleep(backoff_base * (2 ** attempt))
-            # Re-create temp file if it was deleted (e.g. by antivirus)
-            if not os.path.exists(temp_path):
-                with open(temp_path, "w", encoding="utf-8") as f:
-                    json.dump(data, f, **dump_kwargs)
-                    f.flush()
-                    os.fsync(f.fileno())
+    # Should never reach here, but satisfy type checkers
+    if last_exc:
+        raise last_exc

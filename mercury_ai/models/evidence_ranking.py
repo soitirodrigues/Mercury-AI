@@ -1,11 +1,11 @@
 from dataclasses import dataclass
-from typing import List, Optional
+from typing import Tuple, Optional, Mapping
 from mercury_ai.models.evidence import Evidence
 
 @dataclass(frozen=True)
 class EvidenceRankingResult:
-    ranked_evidences: List[Evidence]
-    contribution_percentage: dict
+    ranked_evidences: Tuple[Evidence, ...]
+    contribution_percentage: Mapping[str, float]
     strongest_evidence: Evidence
     weakest_evidence: Evidence
     total_weight: float

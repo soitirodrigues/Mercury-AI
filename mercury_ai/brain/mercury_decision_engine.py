@@ -28,6 +28,7 @@ from mercury_ai.analysis.confluence_score_engine import ConfluenceScoreEngine
 from mercury_ai.analysis.decision_explainability import DecisionExplainability
 
 from mercury_ai.brain.probability_engine import ProbabilityEngine
+from mercury_ai.config import settings
 from mercury_ai.config.institutional_weights import (
     INSTITUTIONAL_WEIGHTS_NORMALIZED,
 )
@@ -74,7 +75,9 @@ class MercuryDecisionEngine:
         self.memory = InstitutionalMemoryEngine()
         self.narrative = NarrativeEngine()
         self.score_engine = InstitutionalScoreEngine()
-        self.decision_resolver = DecisionResolverEngine()
+        self.decision_resolver = DecisionResolverEngine(
+            min_threshold=settings.CONFLUENCE_MIN_THRESHOLD
+        )
         self.builder = DecisionResultBuilder()
 
         # ProbabilityEngine usa pesos canônicos normalizados
@@ -261,21 +264,24 @@ class MercuryDecisionEngine:
             is_valid=is_valid,
             opportunity_grade=probability_result.opportunity_grade,
             conflicting_signals=confluence_result.conflicting_signals,
+            confluence_score=confluence_result.weighted_score,
+            market_regime=context.market_regime,
         )
-
         final_decision = resolver_result.decision
-
-        if resolver_result.confidence_override is not None:
-            confidence_result = ConfidenceResult(
-                confidence_score=confidence_result.confidence_score,
-                final_confidence=resolver_result.confidence_override,
-                confidence_grade=self.confidence._get_grade(resolver_result.confidence_override),
-                is_high=resolver_result.confidence_override > 70,
-                average_quality=confidence_result.average_quality,
-                consensus_score=confidence_result.consensus_score,
-                market_score=confidence_result.market_score,
-                confirmation_count=confidence_result.confirmation_count,
-            )
+        # Quando o Resolver não define override (None), preserva o score do Confidence Engine
+        override = resolver_result.confidence_override
+        if override is None:
+            override = confidence_result.confidence_score
+        confidence_result = ConfidenceResult(
+            confidence_score=confidence_result.confidence_score,
+            final_confidence=override,
+            confidence_grade=self.confidence._get_grade(override),
+            is_high=override > 70,
+            average_quality=confidence_result.average_quality,
+            consensus_score=confidence_result.consensus_score,
+            market_score=confidence_result.market_score,
+            confirmation_count=confidence_result.confirmation_count,
+        )
 
         # =====================================================
         # 10.5) EXPLAINABILITY (coleta, nao altera nada)

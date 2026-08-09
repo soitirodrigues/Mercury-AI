@@ -15,7 +15,7 @@ class EvidenceQuery:
         """
         # Regra de negócio preservada: Baseada no alinhamento das médias
         for e in evidences:
-            if e.engine_name == "Trend" and e.evidence_name == "EMA Alignment":
+            if e.engine_name in ("Trend", "TrendEngine") and e.evidence_name == "EMA Alignment":
                 return e.direction
         return "NEUTRAL"
 
@@ -34,6 +34,6 @@ class EvidenceQuery:
         Regra: Alguma evidência de tendência possui força (strength) >= 80.
         """
         for e in evidences:
-            if e.engine_name == "Trend" and e.strength >= 80:
+            if e.engine_name in ("Trend", "TrendEngine") and e.strength >= 80:
                 return True
         return False

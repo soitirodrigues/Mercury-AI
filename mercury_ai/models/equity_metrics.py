@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import Dict, List, Tuple, Optional
+from typing import Tuple, Optional, Mapping
 import pandas as pd
 
 @dataclass(frozen=True)
@@ -29,5 +29,5 @@ class UniversePerformance:
     global_max_drawdown: float
     global_sharpe: float
     global_sortino: float
-    asset_stats: Dict[str, AssetPerformance]
+    asset_stats: Mapping[str, AssetPerformance]
     consolidated_equity_curve: Tuple[float, ...]

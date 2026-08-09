@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import List
+from typing import Tuple
 from enum import Enum
 from mercury_ai.utils.deterministic_clock import DeterministicClock
 from mercury_ai.config import settings
@@ -29,8 +29,8 @@ from mercury_ai.models.decision_result import DecisionResult
 class AnalysisResult:
     market: MarketData
     context: MarketContext
-    trend: List[Evidence]
-    mtf_evidences: List[Evidence]
+    trend: Tuple[Evidence, ...]
+    mtf_evidences: Tuple[Evidence, ...]
     smart_money: SmartMoneyAnalysis
     market_regime: MarketRegime
     confluence: ConfluenceResult

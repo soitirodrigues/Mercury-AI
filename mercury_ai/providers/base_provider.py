@@ -5,8 +5,10 @@ import pandas as pd
 # Regex whitelist para símbolos: letras, números, ponto, hífen, underline, até 20 chars
 _SYMBOL_RE = re.compile(r"^[A-Z0-9.\-_]{1,20}$")
 
-# Colunas OHLCV obrigatórias
-REQUIRED_OHLCV_COLUMNS = ("Open", "High", "Low", "Close", "Volume")
+# Colunas OHLCV obrigatórias (case-insensitive — aceita "open" ou "Open")
+REQUIRED_OHLCV_COLUMNS = ("Open", "High", "Low", "Close")
+# Volume é opcional (alguns feeds como TradingView nem sempre fornecem)
+OPTIONAL_OHLCV_COLUMNS = ("Volume",)
 
 
 def sanitize_symbol(symbol: str) -> str:
@@ -30,11 +32,21 @@ def sanitize_symbol(symbol: str) -> str:
     return cleaned
 
 
+def _find_column(df: pd.DataFrame, name: str) -> str | None:
+    """Encontra uma coluna de forma case-insensitive.
+
+    Retorna o nome real da coluna no DataFrame, ou None se não existir.
+    """
+    lower_map = {c.lower(): c for c in df.columns}
+    return lower_map.get(name.lower())
+
+
 def validate_ohlcv_schema(df: pd.DataFrame, symbol: str) -> pd.DataFrame:
     """Valida o schema de um DataFrame OHLCV.
 
     - Não vazio e mínimo de 20 barras
-    - Colunas OHLCV presentes
+    - Colunas OHLCV presentes (case-insensitive: aceita "open" ou "Open")
+    - Volume é opcional (não falha se ausente)
     - Tipos numéricos
     - Sem NaN em colunas críticas (OHLC)
 
@@ -45,15 +57,37 @@ def validate_ohlcv_schema(df: pd.DataFrame, symbol: str) -> pd.DataFrame:
         raise ValueError(f"DataFrame vazio para {symbol}")
     if len(df) < 20:
         raise ValueError(f"Dados insuficientes ({len(df)} barras < 20) para {symbol}")
-    missing = [c for c in REQUIRED_OHLCV_COLUMNS if c not in df.columns]
+
+    # Resolver nomes reais das colunas (case-insensitive)
+    resolved = {}
+    missing = []
+    for col in REQUIRED_OHLCV_COLUMNS:
+        real = _find_column(df, col)
+        if real is None:
+            missing.append(col)
+        else:
+            resolved[col] = real
     if missing:
         raise ValueError(f"Colunas ausentes {missing} para {symbol}")
-    for col in REQUIRED_OHLCV_COLUMNS:
-        if not pd.api.types.is_numeric_dtype(df[col]):
+
+    # Validar tipos numéricos (OHLC obrigatório)
+    for col, real in resolved.items():
+        if not pd.api.types.is_numeric_dtype(df[real]):
             raise ValueError(f"Coluna '{col}' não é numérica para {symbol}")
+
+    # Validar NaN apenas em OHLC (Volume é opcional)
     for col in ("Open", "High", "Low", "Close"):
-        if df[col].isna().any():
+        if df[resolved[col]].isna().any():
             raise ValueError(f"NaN encontrado em '{col}' para {symbol}")
+
+    # Volume opcional: se presente, valida tipo numérico e não-NaN
+    vol_col = _find_column(df, "Volume")
+    if vol_col is not None:
+        if not pd.api.types.is_numeric_dtype(df[vol_col]):
+            raise ValueError(f"Coluna 'Volume' não é numérica para {symbol}")
+        if df[vol_col].isna().any():
+            raise ValueError(f"NaN encontrado em 'Volume' para {symbol}")
+
     return df
 
 

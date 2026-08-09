@@ -16,7 +16,7 @@ import inspect
 from dataclasses import dataclass, field, asdict
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple, Set
+from typing import Any, Dict, List, Optional, Tuple, Set, Mapping
 from collections import defaultdict
 
 
@@ -42,19 +42,19 @@ class PipelineStage:
     excecoes: str  # Possible exceptions
     
     # Evidence
-    source_evidence: List[str] = field(default_factory=list)
-    runtime_telemetry: Optional[Dict[str, Any]] = None
+    source_evidence: Tuple[str, ...] = field(default_factory=tuple)
+    runtime_telemetry: Optional[Mapping[str, Any]] = None
 
 
 @dataclass(frozen=True)
 class PipelineTrace:
     """Complete pipeline trace result."""
-    stages: List[PipelineStage]
+    stages: Tuple[PipelineStage, ...]
     total_stages: int
     trace_timestamp: str
     mercury_ai_root: str
     verdict: str  # PASS, WARNING, FAIL
-    findings: List[str]
+    findings: Tuple[str, ...]
 
 
 class PipelineCertificationAuditor:
@@ -96,12 +96,12 @@ class PipelineCertificationAuditor:
         verdict = self._determine_verdict()
         
         trace = PipelineTrace(
-            stages=self.stages,
+            stages=tuple(self.stages),
             total_stages=len(self.stages),
             trace_timestamp=datetime.utcnow().isoformat() + "Z",
             mercury_ai_root=str(self.mercury_ai_root),
             verdict=verdict,
-            findings=self.findings
+            findings=tuple(self.findings)
         )
         
         return trace
@@ -386,7 +386,7 @@ class PipelineCertificationAuditor:
             objetos=objetos,
             contratos=contratos,
             excecoes=excecoes,
-            source_evidence=source_evidence,
+            source_evidence=tuple(source_evidence),
         )
     
     def _extract_entrada(self, method_node: ast.FunctionDef) -> str:
@@ -594,7 +594,7 @@ class PipelineCertificationAuditor:
             objetos="MISSING",
             contratos="MISSING",
             excecoes="MISSING",
-            source_evidence=[f"FILE NOT FOUND: {file_path}"],
+            source_evidence=tuple([f"FILE NOT FOUND: {file_path}"]),
         )
     
     def _create_error_stage(self, stage_def: Dict[str, Any], file_path: str, error: str) -> PipelineStage:
@@ -615,7 +615,7 @@ class PipelineCertificationAuditor:
             objetos="ERROR",
             contratos="ERROR",
             excecoes="ERROR",
-            source_evidence=[f"PARSE ERROR: {error}"],
+            source_evidence=tuple([f"PARSE ERROR: {error}"]),
         )
     
     def _verify_contracts(self):

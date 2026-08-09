@@ -4,6 +4,7 @@ import pandas as pd
 
 from mercury_ai.models.evidence import Evidence
 from mercury_ai.models.volume_profile import VolumeProfile
+from mercury_ai.config.institutional_weights import INSTITUTIONAL_WEIGHTS
 
 
 class VolumeIntelligenceEngine:
@@ -170,13 +171,13 @@ class VolumeIntelligenceEngine:
 
             evidences.append(
                 Evidence(
-                    "VolumeEngine",
-                    "Volume Spike",
-                    "NEUTRAL",
-                    60.0,
-                    70.0,
-                    "Volume acima da média",
-                    15.0
+                    engine_name="VolumeEngine",
+                    evidence_name="Volume Spike",
+                    direction="NEUTRAL",
+                    strength=60.0,
+                    confidence=70.0,
+                    description="Volume acima da média",
+                    weight=INSTITUTIONAL_WEIGHTS["smart_money"],
                 )
             )
 
@@ -186,13 +187,13 @@ class VolumeIntelligenceEngine:
 
             evidences.append(
                 Evidence(
-                    "VolumeEngine",
-                    "Absorption",
-                    "NEUTRAL",
-                    80.0,
-                    80.0,
-                    "Absorção institucional detectada",
-                    20.0
+                    engine_name="VolumeEngine",
+                    evidence_name="Absorption",
+                    direction="NEUTRAL",
+                    strength=80.0,
+                    confidence=80.0,
+                    description="Absorção institucional detectada",
+                    weight=INSTITUTIONAL_WEIGHTS["smart_money"],
                 )
             )
 

@@ -90,28 +90,44 @@ class InstitutionalMemoryEngine:
 
     def get_consistency_score(self, asset: str, evidences: tuple) -> float:
         """
-        Analisa o histórico e retorna um fator de reforço (-1.0 a 1.0).
+        Analisa o histórico e retorna um fator de reforço (0.0 a 1.0).
+
+        Quando não há dados suficientes (sem histórico ou sem outcomes
+        registrados), retorna 0.5 — valor neutro que não penaliza nem
+        reforça a decisão.  Quando há histórico, calcula a média dos
+        outcomes ajustada pela variância (penalizando setups instáveis).
         """
+        # Valor neutro quando não há dados suficientes para avaliar.
+        NEUTRAL_SCORE = 0.5
+
         setup_key = self._get_setup_key(asset, evidences)
-        
+
         with self._lock:
             memory = self._load_memory()
-            
+
         history = [m for m in memory if m['setup_key'] == setup_key]
         if not history:
-            return 0.0
-            
+            return NEUTRAL_SCORE
+
         outcomes = [m['outcome'] for m in history if 'outcome' in m]
         if not outcomes:
-            return 0.0
-            
+            return NEUTRAL_SCORE
+
         # Reforça sucesso, penaliza falha
         avg_outcome = sum(outcomes) / len(outcomes)
-        
+
         # Penality for high variance (instability)
-        variance = sum((o - avg_outcome)**2 for o in outcomes) / len(outcomes)
-        
-        return avg_outcome - (variance * 0.5)
+        variance = sum((o - avg_outcome) ** 2 for o in outcomes) / len(outcomes)
+
+        raw_score = avg_outcome - (variance * 0.5)
+
+        # Garante que o score fique no intervalo [0.0, 1.0].
+        # Se o cálculo resultar em valor <= 0 (setup muito instável),
+        # usamos o neutro 0.5 como piso de segurança.
+        if raw_score <= 0.0:
+            return NEUTRAL_SCORE
+
+        return max(0.0, min(1.0, raw_score))
 
     def record_decision(self, snapshot: DecisionSnapshot):
         setup_key = self._get_setup_key(snapshot.asset, snapshot.evidence_bundle.evidences)

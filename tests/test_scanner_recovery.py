@@ -1,6 +1,7 @@
 import pytest
 from unittest.mock import MagicMock
 from mercury_ai.brain.scanner import MercuryScanner
+from mercury_ai.core.exceptions import ProviderError
 
 def test_scanner_auto_recovery_triggers_failover():
     # Setup scanner with mocked pipeline and provider_manager
@@ -27,7 +28,7 @@ def test_scanner_auto_recovery_triggers_failover():
     mock_analysis.decision.wait_probability = 0.1
     mock_analysis.market_regime.regime = "BULLISH"
     
-    scanner.pipeline.analyze = MagicMock(side_effect=[Exception("Provider Failed"), mock_analysis])
+    scanner.pipeline.analyze = MagicMock(side_effect=[ProviderError("Provider Failed"), mock_analysis])
     
     # Mock printer methods
     scanner._print_report = MagicMock()

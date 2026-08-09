@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import List, Optional
+from typing import Tuple, Optional
 from mercury_ai.models.swing_analysis import Swing
 
 @dataclass(frozen=True)
@@ -30,7 +30,7 @@ class MarketStructureProfile:
     external_bos: bool = False
     last_confirmed_high: float = 0.0
     last_confirmed_low: float = 0.0
-    current_sequence: List[str] = field(default_factory=list)
+    current_sequence: Tuple[str, ...] = field(default_factory=tuple)
     # Estrutural
     bos: bool = False
     choch: bool = False

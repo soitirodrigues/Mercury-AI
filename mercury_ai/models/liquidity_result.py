@@ -1,5 +1,5 @@
-from dataclasses import dataclass
-from typing import Tuple, Any
+from dataclasses import dataclass, field
+from typing import Tuple, Any, Dict
 
 @dataclass(frozen=True)
 class LiquidityResult:
@@ -7,4 +7,4 @@ class LiquidityResult:
     score: float
     confidence: float
     strength: float
-    metadata: dict
+    metadata: Dict[str, Any] = field(default_factory=dict)

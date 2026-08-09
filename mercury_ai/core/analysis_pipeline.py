@@ -54,6 +54,8 @@ from mercury_ai.analysis.price_action_analyzer import PriceActionAnalyzer
 from mercury_ai.analysis.fair_value_gap_engine import FairValueGapEngine
 from mercury_ai.analysis.smart_money.order_block_engine import OrderBlockEngine
 from mercury_ai.core.runtime_report import RuntimeReport, TelemetryData
+from mercury_ai.core.pipeline_audit_middleware import PipelineAuditMiddleware
+from mercury_ai.core.audit_sink import MemoryAuditSink, AuditEvent
 ...
 class AnalysisPipeline:
 
@@ -64,6 +66,8 @@ class AnalysisPipeline:
         self.quality_engine = DataQualityEngine()
         self.executor = PipelineExecutor()
         self.profiler = PipelineProfiler("AnalysisPipeline")
+        self.audit_sink = MemoryAuditSink()
+        self.audit_middleware = PipelineAuditMiddleware(profiler=self.profiler, sink=self.audit_sink)
 
         self.runtime_report: Optional[RuntimeReport] = None
 
@@ -173,6 +177,73 @@ class AnalysisPipeline:
                 if not is_valid and not silent:
                     print(f"Data quality issue for {symbol}: {reason} (Score: {quality_score})")
             self._record_telemetry("DataQuality", start, df, is_valid)
+
+            # Graceful handling: se dados inválidos (vazio, NaN, etc.),
+            # retorna resultado WAIT em vez de propagar exceção.
+            if not is_valid:
+                decision = DecisionResult(
+                    decision='WAIT', grade='N/A', confidence=0.0, clarity=0.0, risk_score=0.0, score=0.0, quality=0.0,
+                    expected_strength=0.0, buy_probability=0.0, sell_probability=0.0, wait_probability=1.0,
+                    expected_risk=0.0, expected_reward=0.0, expected_drawdown=0.0, audit_id='DATA_QUALITY_FAIL',
+                    version_metadata=VersionMetadata(engine_version='1.0.0', pipeline_version='1.0.0', context_version='1.0.0', weights_version='1.0.0'),
+                    summary=f"Data quality issue: {reason}",
+                    explanation="Pipeline cannot proceed with invalid or insufficient data."
+                )
+                dummy_market = MarketData(symbol=symbol, timeframe=DEFAULT_TIMEFRAME, close=0.0, ema9=0.0, ema21=0.0, ema50=0.0,
+                                          rsi=0.0, atr=0.0, adx=0.0, macd=0.0, macd_signal=0.0,
+                                          bollinger_upper=0.0, bollinger_lower=0.0, volume=0.0)
+                snapshot = DecisionSnapshot(
+                    timestamp=DeterministicClock.utcnow().isoformat(), asset=symbol, timeframe=DEFAULT_TIMEFRAME,
+                    context=None, evidence_bundle=None, decision_result=decision,
+                    version_metadata=VersionMetadata(engine_version='1.0.0', pipeline_version='1.0.0', context_version='1.0.0', weights_version='1.0.0'),
+                    audit_events=("Data quality issue detected",),
+                    session_id=self.session_id
+                )
+                self.snapshot_logger.save(snapshot)
+                self.last_snapshot = snapshot
+                self.last_snapshots[symbol] = snapshot
+                self.profiler.end_pipeline()
+                return AnalysisResult(
+                    market=dummy_market, context=None, trend=[], mtf_evidences=[], smart_money=None, confluence=None,
+                    market_regime=None, market_condition=None, market_state=None,
+                    candlestick_analysis=None, volatility_analysis=None, session_analysis=None,
+                    support_resistance=None, liquidity_analysis=None, risk_assessment=None,
+                    evidence_ranking=None, volume_analysis=None, structure_analysis=None, decision=decision
+                )
+
+            # Proteção adicional: se DataFrame muito curto para detect_swings,
+            # também retorna WAIT (sem audit_event de qualidade, pois dados são válidos)
+            min_rows_required = 2 * self.structure_intel_engine.swing_engine.pivot_window + 1
+            if df is None or df.empty or len(df) < min_rows_required:
+                decision = DecisionResult(
+                    decision='WAIT', grade='N/A', confidence=0.0, clarity=0.0, risk_score=0.0, score=0.0, quality=0.0,
+                    expected_strength=0.0, buy_probability=0.0, sell_probability=0.0, wait_probability=1.0,
+                    expected_risk=0.0, expected_reward=0.0, expected_drawdown=0.0, audit_id='INSUFFICIENT_DATA',
+                    version_metadata=VersionMetadata(engine_version='1.0.0', pipeline_version='1.0.0', context_version='1.0.0', weights_version='1.0.0'),
+                    summary=f"Insufficient data: only {len(df) if df is not None else 0} rows (need {min_rows_required})",
+                    explanation="Pipeline cannot proceed with insufficient historical data."
+                )
+                dummy_market = MarketData(symbol=symbol, timeframe=DEFAULT_TIMEFRAME, close=0.0, ema9=0.0, ema21=0.0, ema50=0.0,
+                                          rsi=0.0, atr=0.0, adx=0.0, macd=0.0, macd_signal=0.0,
+                                          bollinger_upper=0.0, bollinger_lower=0.0, volume=0.0)
+                snapshot = DecisionSnapshot(
+                    timestamp=DeterministicClock.utcnow().isoformat(), asset=symbol, timeframe=DEFAULT_TIMEFRAME,
+                    context=None, evidence_bundle=None, decision_result=decision,
+                    version_metadata=VersionMetadata(engine_version='1.0.0', pipeline_version='1.0.0', context_version='1.0.0', weights_version='1.0.0'),
+                    audit_events=(),
+                    session_id=self.session_id
+                )
+                self.snapshot_logger.save(snapshot)
+                self.last_snapshot = snapshot
+                self.last_snapshots[symbol] = snapshot
+                self.profiler.end_pipeline()
+                return AnalysisResult(
+                    market=dummy_market, context=None, trend=[], mtf_evidences=[], smart_money=None, confluence=None,
+                    market_regime=None, market_condition=None, market_state=None,
+                    candlestick_analysis=None, volatility_analysis=None, session_analysis=None,
+                    support_resistance=None, liquidity_analysis=None, risk_assessment=None,
+                    evidence_ranking=None, volume_analysis=None, structure_analysis=None, decision=decision
+                )
 
             start = DeterministicClock.utcnow()
             with self.profiler.stage("Indicators"):
@@ -422,3 +493,50 @@ class AnalysisPipeline:
                 support_resistance=None, liquidity_analysis=None, risk_assessment=None,
                 evidence_ranking=None, volume_analysis=None, structure_analysis=None, decision=decision
             )
+
+        except Exception as exc:
+            # General pipeline error handler — captures audit event and returns WAIT
+            logging.exception("AnalysisPipeline error for symbol %s: %s", symbol, exc)
+            self.audit_sink.log(AuditEvent(
+                stage_name="AnalysisPipeline",
+                timestamp=DeterministicClock.utcnow().isoformat(),
+                success=False,
+                error_message=str(exc),
+                error_type=type(exc).__name__,
+            ))
+            decision = DecisionResult(
+                decision='WAIT', grade='N/A', confidence=0.0, clarity=0.0, risk_score=0.0, score=0.0, quality=0.0,
+                expected_strength=0.0, buy_probability=0.0, sell_probability=0.0, wait_probability=1.0,
+                expected_risk=0.0, expected_reward=0.0, expected_drawdown=0.0, audit_id='PIPELINE_ERROR',
+                version_metadata=VersionMetadata(engine_version='1.0.0', pipeline_version='1.0.0', context_version='1.0.0', weights_version='1.0.0'),
+                summary=str(exc),
+                explanation=f"Pipeline error: {type(exc).__name__}"
+            )
+            dummy_market = MarketData(symbol=symbol, timeframe=DEFAULT_TIMEFRAME, close=0.0, ema9=0.0, ema21=0.0, ema50=0.0,
+                                      rsi=0.0, atr=0.0, adx=0.0, macd=0.0, macd_signal=0.0,
+                                      bollinger_upper=0.0, bollinger_lower=0.0, volume=0.0)
+            snapshot = DecisionSnapshot(
+                timestamp=DeterministicClock.utcnow().isoformat(), asset=symbol, timeframe=DEFAULT_TIMEFRAME,
+                context=None, evidence_bundle=None, decision_result=decision,
+                version_metadata=VersionMetadata(engine_version='1.0.0', pipeline_version='1.0.0', context_version='1.0.0', weights_version='1.0.0'),
+                audit_events=("Pipeline Error",),
+                session_id=self.session_id
+            )
+            self.snapshot_logger.save(snapshot)
+            self.last_snapshot = snapshot
+            self.profiler.end_pipeline()
+            return AnalysisResult(
+                market=dummy_market, context=None, trend=[], mtf_evidences=[], smart_money=None, confluence=None,
+                market_regime=None, market_condition=None, market_state=None,
+                candlestick_analysis=None, volatility_analysis=None, session_analysis=None,
+                support_resistance=None, liquidity_analysis=None, risk_assessment=None,
+                evidence_ranking=None, volume_analysis=None, structure_analysis=None, decision=decision
+            )
+
+    def get_audit_events(self):
+        """Return all audit events captured by the pipeline."""
+        return self.audit_sink.get_events()
+
+    def get_failed_events(self):
+        """Return only failed audit events (errors)."""
+        return self.audit_sink.get_failed_events()
