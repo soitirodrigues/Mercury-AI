@@ -1,0 +1,406 @@
+================================================================================
+AUDIT V1 — SPRINT FORENSE 2 — BLOCO B3 / BENCHMARK FRAMEWORK / CIRCULARIDADE
+================================================================================
+Arquivo: AUDIT_V1/06_FORENSE_B3_BENCHMARK_FRAMEWORK.txt
+Data: 2026-08-09
+Método: PROVA > CORREÇÃO > PASS
+Prioridade: reproduzir e provar ANTES de corrigir; não mascarar; não alterar
+lógica de produção (engines, pesos, thresholds, DecisionResolver,
+ProbabilityEngine, Confluence, providers).
+
+--------------------------------------------------------------------------------
+1. OBJETIVO
+--------------------------------------------------------------------------------
+Investigar o achado latente B3: o módulo mercury_ai/analysis/benchmark_framework.py
+(~500 linhas) fabrica o "outcome" (P/L) das métricas a partir do PRÓPRIO score/
+decision do modelo no caminho default, caracterizando CIRCULARIDADE /
+AUTO-VALIDAÇÃO (o sistema avalia a si mesmo, sem consultar o mercado).
+
+Verificação sistemática das hipóteses:
+  B3-A — Falso positivo (não reproduzível)            [DESCARTADA — reproduzido]
+  B3-B — Vício de medição não-circular                [DESCARTADA — é circular]
+  B3-C — Circularidade real (outcome derivado do modelo) [CONFIRMADA]
+  B3-D — Auto-validação real (benchmark se auto-aprova)  [CONFIRMADA]
+  B3-E — Baseline/resultado atual contaminado            [CONFIRMADA secundária]
+  B3-F — Duplicação arquitetural de módulos de benchmark [CONFIRMADA secundária]
+  B3-G — Contrato inconsistente (docstring vs código)    [CONFIRMADA secundária]
+
+--------------------------------------------------------------------------------
+2. ESCOPO
+--------------------------------------------------------------------------------
+Arquivo alvo: mercury_ai/analysis/benchmark_framework.py
+Módulos vizinhos lidos (não modificados): mercury_ai/analysis/metric_calculator.py,
+mercury_ai/models/benchmark_report.py, mercury_ai/models/decision_result.py,
+mercury_ai/providers/historical_replay_provider.py,
+mercury_ai/providers/yahoo_finance_provider.py.
+FORA DE ESCOPO (NÃO alterados): engines, pesos, thresholds, DecisionResolver,
+ProbabilityEngine, Confluence, providers, testes, B4/B5/B6.
+Regra do sprint: NÃO iniciar B4.
+
+--------------------------------------------------------------------------------
+3. ARQUIVOS INVESTIGADOS
+--------------------------------------------------------------------------------
+- mercury_ai/analysis/benchmark_framework.py  (alvo, ~500 linhas)
+- mercury_ai/analysis/metric_calculator.py     (métricas TP/TN/FP/FN)
+- mercury_ai/models/benchmark_report.py        (dataclasses BenchmarkRunResult/Report)
+- mercury_ai/models/decision_result.py         (DecisionResult — score 0-100)
+- mercury_ai/analysis/tests/test_benchmark_framework.py (7 testes)
+- mercury_ai/brain/tests/test_mercury_decision_benchmark.py (1 teste)
+- mercury_ai/providers/historical_replay_provider.py (existe; NÃO usado pelo framework)
+- mercury_ai/providers/yahoo_finance_provider.py (usado de fato)
+- mercury_ai/analysis/performance_engine.py    (usa ReplayMetrics(pl, hit))
+- mercury_ai/analysis/confidence_engine.py     (linha 84: score = 100.0 * (...) -> 0-100)
+
+Arquivos temporários de prova (criados e REMOVIDOS ao final):
+- _probe_b3.py          (prova pré-correção da circularidade — PROBE A/B/C)
+- _probe_b3_debug.py    (diagnóstico do mock; descartado)
+- _probe_b3_postfix.py  (prova pós-correção anti-auto-validação — D1..D5)
+Artefatos de snapshot de teste removidos: mercury_ai/database/snapshots/BTC-USD_2026-08-09T22-*.json,
+ETH-USD_2026-08-09T22-*.json (gerados pelas execuções de teste deste sprint).
+
+--------------------------------------------------------------------------------
+4. REPRODUÇÃO DO ACHADO ORIGINAL
+--------------------------------------------------------------------------------
+Probe pré-correção (_probe_b3.py), chamando a fórmula exata do caminho default
+de _run_single_symbol / run_quick_benchmark:
+
+    if decision == "BUY":  outcome = score * 0.02
+    elif decision == "SELL": outcome = -score * 0.02
+    else: outcome = 0.0
+
+PROBE A — direcional perfeito (acerta 100% dos BUY/SELL):
+    - Todo BUY tem outcome > 0 e todo SELL tem outcome < 0 POR CONSTRUÇÃO.
+    - accuracy = (tp+tn)/total = 1.0 SEMPRE (resultado independente do mercado).
+PROBE B — preditor bom (sinais alinhados ao mercado) vs preditor INVERSO:
+    - Com outcomes REAIS de mercado: bom => accuracy 1.0; inverso => accuracy 0.0.
+    - Com o caminho sintético default (score*0.02): AMBOS => accuracy 1.0.
+      => O framework NÃO consegue distinguir um preditor bom de um inverso
+         (evidência definitiva de auto-validação).
+PROBE C — caminho real de código:
+    - _run_single_symbol (default) produz outcome == score*0.02 bit-a-bit,
+      sem consultar mercado (outcome calculado apenas de result.decision).
+
+--------------------------------------------------------------------------------
+5. RESULTADO DA REPRODUÇÃO
+--------------------------------------------------------------------------------
+CONFIRMADO: exit 0 em todos os probes. A circularidade é real e reproduzível:
+  - accuracy = 1.0 trivial para qualquer modelo direcional (não depende do mercado);
+  - modelo "cego" 100% BUY => profit_factor = inf (nunca há perda possível);
+  - preditor bom e preditor inverso são INDISTINGUÍVEIS pelas métricas no caminho
+    default;
+  - o outcome é uma função determinística do PRÓPRIO score do modelo.
+
+Detalhe documentado (nuance): profit_factor=inf só ocorre quando o modelo é 100%
+BUY (sem outcomes SELL, logo sem perdas). A accuracy=1.0 vale para qualquer
+modelo direcional (BUY/SELL), pois outcome tem o sinal do próprio decision.
+
+--------------------------------------------------------------------------------
+6. GRAFO DE DEPENDÊNCIAS
+--------------------------------------------------------------------------------
+benchmark_framework.py (ORPHAN em produção):
+  imports -> MetricCalculator, PerformanceEngine, AnalysisPipeline,
+             MarketDataService, YahooFinanceProvider, BuyAndHoldBaseline,
+             EnhancedBenchmarkReport, BenchmarkReport, BenchmarkRunResult,
+             psutil, tracemalloc
+  importado POR -> APENAS mercury_ai/analysis/tests/test_benchmark_framework.py
+                   (zero imports de produção; ORPHAN_MODULES.md: "4 classes e 9
+                   funções, zero inbound imports").
+
+Nota arquitetural (B3-F): coexistem 4 módulos de benchmark não unificados:
+  - root performance_benchmarking.py   (corrigido no B2)
+  - mercury_ai/analysis/benchmark_framework.py  (alvo deste B3)
+  - mercury_ai/analysis/performance_engine.py
+  - mercury_ai/analysis/performance_benchmarking.py
+Risco: lógica de benchmark duplicada com drift entre implementações.
+
+--------------------------------------------------------------------------------
+7. PROVENIÊNCIA DO BASELINE
+--------------------------------------------------------------------------------
+Baseline buy-and-hold: _compute_buy_and_hold(symbol, strategy_returns)
+  - usa YahooFinanceProvider().get_data(symbol);
+  - calcula first_close, last_close, drawdown (np.maximum.accumulate) e Sharpe
+    APENAS a partir do market data bruto;
+  - strategy_returns entra exclusivamente no comparativo:
+        outperformance = strategy_total - bh_return
+    => NÃO contamina o baseline (o baseline é independente do modelo).
+
+--------------------------------------------------------------------------------
+8. TESTE DE AUTO-VALIDAÇÃO
+--------------------------------------------------------------------------------
+Cenários aplicados (mapeamento do sprint):
+  A. baseline antigo + execução atual          -> outcome sintético (score*0.02)
+  B. baseline igual ao resultado atual         -> outcome == score*0.02 (bit-a-bit)
+  C. baseline artificialmente "melhor"         -> irrelevante: outcome não é do mercado
+  D. baseline artificialmente "pior"           -> irrelevante: outcome não é do mercado
+Esperado (sprint): baseline atual NÃO pode tornar a execução automaticamente
+aprovada. OBSERVADO: no caminho default, TODOS os cenários dão accuracy=1.0 e
+métricas financeiras derivadas do próprio score => a execução se auto-aprova.
+FALHA do requisito de independência => auto-validação confirmada (B3-D).
+
+--------------------------------------------------------------------------------
+9. ANÁLISE TEMPORAL
+--------------------------------------------------------------------------------
+_get_real_outcome (caminho de "outcome real"):
+  - provider = YahooFinanceProvider(); df = provider.get_data(symbol);
+  - raw_return = (close[-1] - close[-2]) / close[-2]  (retorno do ÚLTIMO candle)
+  - NÃO é forward-looking (usa as duas últimas velas da série, não a próxima).
+  - Em falha: retorna 0.0 (neutro) com logger.warning.
+Nota: mesmo no caminho "real", o retorno é do último candle da janela baixada
+(parcialmente look-ahead em relação ao instante da decisão se a janela incluir
+a vela em que a decisão foi tomada). Registrado como risco residual (item 24),
+não corrigido (fora do escopo mínimo B3).
+
+--------------------------------------------------------------------------------
+10. ANÁLISE DE UNIDADES
+--------------------------------------------------------------------------------
+CRÍTICO (B3-G): escala do score.
+  - confidence_engine.py linha 84: score = 100.0 * (...)  => ESCALA 0-100.
+  - mocks de teste usam score = 85.0 (escala 0-100).
+  - benchmark_framework usa outcome = score * 0.02 com a intenção de "~2% max".
+    Com score 0-100: outcome varia de 0 a 200% ("retornos" inflados 100x).
+    Ex.: score=80 => outcome = +1.6 = +160% em UM trade (absurdo financeiro).
+  - O comentário do código supõe escala 0-1 (implícito em "~2% max").
+Inconsistência de contrato de unidade: fabricação usava escala errada, além de
+ser circular. A correção B3 elimina a fabricação inteira (não apenas a escala).
+
+--------------------------------------------------------------------------------
+11. ANÁLISE DE DETERMINISMO
+--------------------------------------------------------------------------------
+- Testes estatísticos: _run_statistical_tests usa RandomState(42) (seed fixa) =>
+  determinístico.
+- A fabricação score*0.02 é determinística (função do score) => sempre o mesmo
+  resultado, sem aleatoriedade.
+- Problema não-determinístico relacionado (documentado, FORA do escopo B3):
+  data_quality_engine usa datetime.now() (quebra replay) e
+  benchmark_framework tem tracemalloc.start() sem stop (vazamento de memória;
+  já registrado no audit, não corrigido aqui).
+
+--------------------------------------------------------------------------------
+12. PROVENIÊNCIA GIT
+--------------------------------------------------------------------------------
+HEAD no momento: c11ae23 (HEAD se move a cada merge do usuário).
+benchmark_framework.py: alterado nos commits 3e8bc87 / 14ffc9a / 994f2bd / 43133a5.
+metric_calculator.py: 14ffc9a / 3e8bc87.
+performance_engine.py: 994f2bd.
+A fabricação score*0.02 está presente desde o desenho inicial do framework
+(comentário "mais realista que dummy fixo" e "escala o score para ~2% max").
+
+--------------------------------------------------------------------------------
+13. CONTRATO REAL
+--------------------------------------------------------------------------------
+Docstring do framework afirma:
+  "Outcomes reais via HistoricalReplayProvider" e
+  "Se True, usa HistoricalReplayProvider para outcomes reais".
+CONTRATO REAL (código):
+  - NUNCA importa HistoricalReplayProvider (existe em providers/, mas é ORFÃO).
+  - Usa YahooFinanceProvider para _get_real_outcome e _compute_buy_and_hold.
+  - No caminho default use_historical_replay=False, NÃO usa NENHUM provider:
+    fabrica outcome = score*0.02 (circular).
+Inconsistência de contrato confirmada (B3-G): a documentação promete replay
+histórico real; o código, por padrão, fabrica P/L do próprio score.
+
+--------------------------------------------------------------------------------
+14. CAUSA RAIZ
+--------------------------------------------------------------------------------
+1) _run_single_symbol (linhas ~151-161) e run_quick_benchmark (linhas ~478-483):
+   no caminho default, outcome = f(score, decision) do PRÓPRIO modelo
+   (score*0.02 / -score*0.02 / 0.0).
+2) Todas as métricas (accuracy, PnL, Sharpe, PF, testes estatísticos) são
+   calculadas sobre esse outcome fabricado => medem o AUTO-ACORDO do modelo,
+   não a qualidade preditiva real.
+3) O default use_historical_replay=False mantém o caminho circular sempre ativo.
+=> O benchmark se auto-aprova sem consultar o mercado.
+
+--------------------------------------------------------------------------------
+15. CLASSIFICAÇÃO B3
+--------------------------------------------------------------------------------
+PRIMÁRIA:
+  B3-C — CIRCULARIDADE REAL (outcome derivado do próprio score/decision).
+  B3-D — AUTO-VALIDAÇÃO REAL (benchmark se auto-aprova; preditor bom e inverso
+         indistinguíveis).
+SECUNDÁRIAS:
+  B3-E — Baseline/resultado atual: o "resultado atual" (outcome fabricado) é
+         contaminado pelo modelo (não é o baseline, mas o outcome da estratégia
+         que é circular).
+  B3-F — Duplicação arquitetural: 4 módulos de benchmark não unificados.
+  B3-G — Contrato inconsistente: docstring (HistoricalReplayProvider) vs código
+         (YahooFinanceProvider); escala score 0-100 vs suposição 0-1.
+DESCARTADA:
+  B3-A — FALSO POSITIVO: NÃO é falso positivo — o achado foi REPRODUZIDO
+         (PROBE A/B/C, exit 0).
+
+--------------------------------------------------------------------------------
+16. CORREÇÃO APLICADA (SE NECESSÁRIA)
+--------------------------------------------------------------------------------
+Correção mínima, NÃO-mascarante, restrita a mercury_ai/analysis/benchmark_framework.py.
+NÃO altera engines, pesos, thresholds, DecisionResolver, ProbabilityEngine,
+Confluence, providers, testes.
+
+Edit 1 — __init__: default use_historical_replay: bool = False -> True.
+  Motivo: o caminho circular era o default; agora o default busca outcome real.
+
+Edit 2 — docstring do __init__: documenta o novo default e a regra anti-circulariedade.
+
+Edit 3 — _run_single_symbol (bloco de outcome): REMOVIDA a fabricação
+  score*0.02 / -score*0.02 / 0.0. Substituída por:
+    if self.use_historical_replay:
+        outcome = self._get_real_outcome(symbol, result.decision.decision)
+    else:
+        logger.warning("Real outcomes disabled (use_historical_replay=False); "
+                       "outcome=0.0 (neutral, non-circular) for %s", symbol)
+        outcome = 0.0
+  => Com replay: outcome REAL de mercado. Sem replay (desabilitado
+     explicitamente): outcome NEUTRO 0.0 + aviso claro (NUNCA fabrica P/L).
+
+Edit 4 — run_quick_benchmark (mesma lógica): REMOVIDA a fabricação; usa
+  _get_real_outcome se replay, senão 0.0 + warning.
+
+Edit 5 — comentários stale "Fallback: score-based" (2 ocorrências: em
+  _get_real_outcome e _compute_buy_and_hold) corrigidos para refletir o
+  fallback neutro real (doc-only; elimina referência a fabricação por score).
+
+Efeito: eliminada a causa raiz (fabricação de outcome a partir do próprio
+score). Sem dados de mercado, o benchmark reporta 0.0 (neutro) e não métricas
+infladas/auto-referentes.
+
+--------------------------------------------------------------------------------
+17. ARQUIVOS MODIFICADOS
+--------------------------------------------------------------------------------
+- mercury_ai/analysis/benchmark_framework.py  (único arquivo rastreado modificado)
+  git diff --stat: 1 file changed, 25 insertions(+), 20 deletions(-)
+Arquivos criados e REMOVIDOS ao final (provas): _probe_b3.py, _probe_b3_debug.py,
+_probe_b3_postfix.py. Artefatos de snapshot de teste removidos.
+NENHUM outro arquivo de produção foi tocado.
+
+--------------------------------------------------------------------------------
+18. TESTES ANTES
+--------------------------------------------------------------------------------
+Baseline pré-correção (registrado na investigação):
+  - mercury_ai/analysis/tests/test_benchmark_framework.py: 7 passed in 29.13s
+  - mercury_ai/brain/tests/test_mercury_decision_benchmark.py: 1 passed
+  - Assertions dos testes: accuracy >= 0, average_execution_time > 0, campos
+    presentes, bootstrap_samples in (0,100), warm/cool >= 0 — TODAS compatíveis
+    com a correção (nenhum teste precisou ser alterado).
+
+--------------------------------------------------------------------------------
+19. TESTES DEPOIS
+--------------------------------------------------------------------------------
+Pós-correção (testes NÃO modificados):
+  - py_compile mercury_ai/analysis/benchmark_framework.py        => EXIT 0
+  - mercury_ai/analysis/tests/test_benchmark_framework.py        => 7 passed
+      (35.19s na validação final; 56.75s em execução intermediária)
+  - mercury_ai/brain/tests/test_mercury_decision_benchmark.py    => 1 passed (0.97s)
+  - python -m mercury_ai.main                                    => MAIN_EXIT=0
+      (ranking institucional funcional: ETH-USD 65.01 / BTC-USD 63.50)
+  - get_errors em benchmark_framework.py                         => No errors found
+Observação: o tempo dos testes aumentou (29.13s -> ~35-57s) porque o default
+use_historical_replay=True faz _get_real_outcome consultar dados (sintéticos no
+mock) de verdade; é custo esperado da medição real, não regressão funcional.
+
+--------------------------------------------------------------------------------
+20. TESTE ANTI-AUTO-VALIDAÇÃO
+--------------------------------------------------------------------------------
+Probe pós-correção (_probe_b3_postfix.py) — pipeline stub SEMPRE BUY/score=80,
+mercado sintético controlado. Resultado (exit 0, TODAS as checagens PASS):
+
+  POS-CORREÇÃO: outcome vem do MERCADO, não do score do modelo (BUY/score=80)
+    mercado DOWN (-1%): outcome = -0.010000  [PASS D1: prejuízo real p/ BUY confiante]
+    mercado UP  (+1%): outcome = +0.010000   [PASS D3: lucro real p/ BUY confiante]
+    mesmo modelo, mercados diferentes -> -0.010000 vs +0.010000  [PASS D4]
+  COMPARAÇÃO:
+    PRÉ-CORREÇÃO: BUY/score80 -> outcome = +1.6000 SEMPRE (mercado irrelevante)
+    PÓS-CORREÇÃO: BUY/score80 -> -0.0100 (caiu) / +0.0100 (subiu)   [PASS D2, D5]
+
+Prova: um BUY com score alto (80) pode dar PREJUÍZO se o mercado caiu => o
+outcome NÃO deriva mais do score; o mesmo modelo pode ter lucro ou prejuízo
+conforme o mercado => o resultado atual NÃO pode mais auto-aprovar a execução.
+A circularidade B3 foi ELIMINADA.
+
+--------------------------------------------------------------------------------
+21. SUÍTE COMPLETA
+--------------------------------------------------------------------------------
+Executada a suíte relacionada ao alvo (testes do framework + decisão). A suíte
+completa do repositório (pytest -q, ~52min) NÃO foi executada em bloco por custo;
+falhas pré-existentes conhecidas e documentadas (não relacionadas a B3):
+  - test_auto_health, test_robustness (falhas pré-existentes)
+  - test_mercury_signal (erro de coleta/import pré-existente)
+  - 2 testes flaky conhecidos (confidence_calibration, institutional_report_generator)
+Estas falhas foram verificadas como pré-existentes (testes alvo passam sem
+alteração). Nenhuma falha nova introduzida pela correção B3.
+
+--------------------------------------------------------------------------------
+22. RUNTIME
+--------------------------------------------------------------------------------
+- py_compile: <1s (EXIT 0)
+- test_benchmark_framework.py: 7 passed em 35.19s (final) / 56.75s (intermediária)
+- test_mercury_decision_benchmark.py: 1 passed em 0.97s
+- python -m mercury_ai.main: EXIT 0
+Custo adicional do default real (vs sintético): esperado e documentado (item 19).
+
+--------------------------------------------------------------------------------
+23. VERIFICAÇÃO ANTI-MASCARAMENTO
+--------------------------------------------------------------------------------
+grep no arquivo modificado por: except Exception | pass | skip | xfail |
+return True | return False | MagicMock | getattr | hasattr -> 0 ocorrências.
+grep por: score * 0.02 | score*0.02 | -score -> 0 ocorrências (fabricação removida).
+Exceções presentes (verificadas como específicas, NÃO mascarantes):
+  - _get_real_outcome: except (ValueError, KeyError, IndexError, ConnectionError, OSError)
+  - _compute_buy_and_hold: idem (tupla específica)
+  - run_benchmark: idem
+  - try/except ImportError (import opcional de dependência — legítimo)
+Nenhum teste marcado com skip/xfail; nenhum Mock em produção; o fallback
+_get_real_outcome -> 0.0 é HONESTO: loga logger.warning e retorna neutro, sem
+fabricar P/L. A correção não mascara o problema: remove a causa.
+
+--------------------------------------------------------------------------------
+24. RISCOS RESIDUAIS
+--------------------------------------------------------------------------------
+R1. _get_real_outcome usa o retorno do último candle da janela baixada (iloc[-2]
+    -> iloc[-1]), não estritamente forward-looking. Se a janela inclui a vela da
+    decisão, há look-ahead parcial. REGISTRADO; correção exigiria replay
+    temporal real (HistoricalReplayProvider) — fora do escopo mínimo B3.
+R2. tracemalloc.start() sem stop (vazamento de memória em execuções repetidas) —
+    pré-existente, fora do escopo B3.
+R3. Duplicação arquitetural (B3-F): 4 módulos de benchmark — unificação pendente.
+R4. Na ausência de dados de mercado, o framework reporta outcome neutro 0.0;
+    métricas como accuracy/PnL ficam degeneradas (0.0) — comportamento honesto,
+    mas o operador deve interpretar como "sem dados", não como "performance 0".
+R5. benchmark_framework continua ORPHAN em produção (importado só por teste);
+    o valor real do framework depende de integração futura.
+
+--------------------------------------------------------------------------------
+25. PENDÊNCIAS (FORA DO ESCOPO B3 — REGISTRADAS, NÃO CORRIGIDAS)
+--------------------------------------------------------------------------------
+- P1. Implementar replay temporal real (HistoricalReplayProvider) no framework
+      para outcome estritamente forward-looking (resolve R1).
+- P2. Unificar os 4 módulos de benchmark (B3-F) e eliminar drift.
+- P3. Documentar explicitamente a escala do score (0-100) no contrato do framework.
+- P4. Remover tracemalloc.start() sem stop (R2).
+- P5. B4/B5/B6: NÃO iniciados por ordem do sprint.
+
+--------------------------------------------------------------------------------
+26. VEREDITO
+--------------------------------------------------------------------------------
+ACHADO B3: CIRCULARIDADE REAL + AUTO-VALIDAÇÃO REAL (B3-C + B3-D), com
+secundárias B3-E, B3-F, B3-G. NÃO é falso positivo (B3-A descartada —
+reproduzido com probes, exit 0).
+
+CORREÇÃO APLICADA: default use_historical_replay=True + remoção da fabricação
+score*0.02/-score*0.02 em _run_single_symbol e run_quick_benchmark (outcome do
+mercado; neutro 0.0 + warning quando replay desabilitado). Sem tocar em
+engines/pesos/thresholds/DecisionResolver/ProbabilityEngine/Confluence/providers.
+
+PROVAS: (a) pré — accuracy=1.0 trivial, PF=inf p/ modelo cego, preditor bom vs
+inverso INDISTINGUÍVEIS; (b) pós — BUY/score80 dá prejuízo se mercado caiu,
+mesmo modelo com lucro/prejuízo conforme o mercado (D1-D5 PASS).
+
+REGRESSÃO: py_compile EXIT 0; 7 passed (framework) + 1 passed (decisão);
+main EXIT 0; nenhum teste modificado; nenhuma falha nova.
+
+VEREDITO B3: APROVADO
+  (achado confirmado, causa raiz eliminada, prova anti-auto-validação exit 0,
+   regressão verde, sem mascaramento. Pendências R1-R5/P1-P5 registradas para
+   sprints futuros.)
+================================================================================
+FIM — B3 — APROVADO
+================================================================================

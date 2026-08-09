@@ -91,6 +91,16 @@ class MercuryScanner:
             .get_assets_for_broker(active_broker)
         )
 
+        if not authorized_symbols:
+            logger.warning(
+                "Nenhum ativo autorizado para o broker '%s'. "
+                "Verifique data/brokers/%s.json "
+                "(perfil ativo: %s). Ranking vazio.",
+                active_broker,
+                active_broker,
+                active_profile,
+            )
+
         enabled_assets = [
             a
             for a in self.asset_registry.assets.values()

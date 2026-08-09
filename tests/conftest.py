@@ -49,15 +49,33 @@ def _backup_state(tmp_path):
 
 
 def _restore_state(backups):
-    """Restore all state files and directories from backups."""
+    """Restore all state files and directories from backups.
+
+    Para diretórios, usa "content-sync" (copia arquivo a arquivo) em vez de
+    remover e recriar o diretório raiz: no Windows, shutil.rmtree() pode falhar
+    com PermissionError (WinError 5) quando o diretório tem um handle aberto
+    (ex.: file watcher do editor), o que faria o backup de arquivos pré-
+    existentes (ex.: data/brokers/XP.json) ser silenciosamente perdido.
+    """
     for original_path, backup_path in backups.items():
         try:
             if original_path.is_file():
                 shutil.copy2(backup_path, original_path)
             elif original_path.is_dir():
-                if original_path.exists():
-                    shutil.rmtree(original_path)
-                shutil.copytree(backup_path, original_path)
+                if not original_path.exists():
+                    original_path.mkdir(parents=True, exist_ok=True)
+                # Remove apenas o conteúdo (não o diretório raiz).
+                for item in list(original_path.iterdir()):
+                    if item.is_dir():
+                        shutil.rmtree(item, ignore_errors=True)
+                    else:
+                        item.unlink(missing_ok=True)
+                # Recopia os arquivos do backup.
+                for item in backup_path.iterdir():
+                    if item.is_dir():
+                        shutil.copytree(item, original_path / item.name, dirs_exist_ok=True)
+                    else:
+                        shutil.copy2(item, original_path / item.name)
         except (OSError, shutil.Error):
             pass
 

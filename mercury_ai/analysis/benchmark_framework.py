@@ -91,7 +91,7 @@ class MercuryBenchmarkFramework:
 
     def __init__(
         self,
-        use_historical_replay: bool = False,
+        use_historical_replay: bool = True,
         warm_up_trades: int = 5,
         cool_down_trades: int = 3,
         max_workers: int = 4,
@@ -100,7 +100,10 @@ class MercuryBenchmarkFramework:
     ):
         """
         Args:
-            use_historical_replay: Se True, usa HistoricalReplayProvider para outcomes reais.
+            use_historical_replay: Se True (default), obtém outcome REAL de mercado
+                                   (via YahooFinanceProvider) — nunca deriva o outcome
+                                   do próprio score do modelo. Se False, outcome neutro
+                                   0.0 com aviso (correção B3: elimina auto-validação).
             warm_up_trades: Número de trades iniciais a descartar (cold-start).
             cool_down_trades: Número de trades finais a descartar.
             max_workers: Número de workers para execução paralela.
@@ -147,19 +150,18 @@ class MercuryBenchmarkFramework:
         if memory == 0:
             memory = float(process.memory_info().rss)
 
-        # Outcome real: usa o score como proxy de retorno normalizado
-        # Se use_historical_replay, tenta obter outcome do mercado real
+        # Outcome REAL de mercado (não circular). NUNCA deriva o outcome do
+        # próprio score/decision do modelo (evita auto-validação — achado B3).
         if self.use_historical_replay:
             outcome = self._get_real_outcome(symbol, result.decision.decision)
         else:
-            # Outcome baseado no score do modelo (mais realista que dummy fixo)
-            score = result.decision.score
-            if result.decision.decision == "BUY":
-                outcome = score * 0.02  # escala o score para ~2% max
-            elif result.decision.decision == "SELL":
-                outcome = -score * 0.02
-            else:
-                outcome = 0.0
+            # Replay desabilitado explicitamente: outcome NEUTRO (0.0) com aviso
+            # claro — NÃO fabrica P/L a partir do score do modelo.
+            logger.warning(
+                "Real outcomes disabled (use_historical_replay=False); "
+                "outcome=0.0 (neutral, non-circular) for %s", symbol
+            )
+            outcome = 0.0
 
         run_result = BenchmarkRunResult(
             timestamp=DeterministicClock.utcnow().isoformat(),
@@ -189,7 +191,8 @@ class MercuryBenchmarkFramework:
                 return raw_return
         except (ValueError, KeyError, IndexError, ConnectionError, OSError) as e:
             logger.warning(f"Could not get real outcome for {symbol}: {e}")
-        # Fallback: score-based
+        # Fallback: outcome NEUTRO (0.0) — sem dados de mercado disponíveis.
+        # NUNCA deriva o outcome do score/decision do modelo (correção B3).
         return 0.0
 
     # ------------------------------------------------------------------
@@ -258,7 +261,7 @@ class MercuryBenchmarkFramework:
                 )
         except (ValueError, KeyError, IndexError, ConnectionError, OSError) as e:
             logger.warning(f"Could not compute buy-and-hold baseline for {symbol}: {e}")
-        # Fallback: score-based
+        # Fallback: baseline NEUTRO (zeros) — sem dados de mercado (correção B3).
         return BuyAndHoldBaseline(
             symbol=symbol,
             total_return_pct=0.0,
@@ -474,13 +477,15 @@ class MercuryBenchmarkFramework:
 
             decisions.append(result.decision.decision)
             scores.append(result.decision.score)
-            # Outcome baseado no score (mais realista que dummy fixo)
-            score = result.decision.score
-            if result.decision.decision == "BUY":
-                outcomes.append(score * 0.02)
-            elif result.decision.decision == "SELL":
-                outcomes.append(-score * 0.02)
+            # Outcome REAL de mercado (não circular — B3). NUNCA deriva do
+            # próprio score do modelo. Sem replay -> neutro 0.0 com aviso.
+            if self.use_historical_replay:
+                outcomes.append(self._get_real_outcome(symbol, result.decision.decision))
             else:
+                logger.warning(
+                    "Real outcomes disabled (use_historical_replay=False); "
+                    "outcome=0.0 (neutral, non-circular) for %s", symbol
+                )
                 outcomes.append(0.0)
 
         metrics = MetricCalculator.calculate(decisions, outcomes, scores)
