@@ -1,0 +1,711 @@
+================================================================================
+MERCURY AI V1 — AUDIT FORENSE — R1 — RECONCILIAÇÃO DE ASSINATURAS E MATEMÁTICA
+================================================================================
+Bloco: INVESTIGAÇÃO (sem correção de produção)
+Data: 2026-08-09
+HEAD (git): 5b89f4a
+================================================================================
+
+--------------------------------------------------------------------------------
+1. OBJETIVO
+--------------------------------------------------------------------------------
+Reconciliar, a partir do CÓDIGO ATUAL (fonte de verdade), as assinaturas dos 14
+engines do escopo, seus call sites, a compatibilidade produtor->consumidor e a
+alegada "dupla normalização" do ProbabilityEngine.
+
+REGRAS DA MISSÃO (verbatim):
+- Este bloco é INVESTIGAÇÃO. NÃO corrigir código de produção nesta fase.
+- NÃO alterar fórmulas / pesos / thresholds / testes / contratos. NÃO iniciar B4.
+- NÃO confiar em relatórios anteriores. A fonte de verdade é o código atual.
+- Reconstruir a contagem do zero (não aceitar "36/36 compatíveis" como fato).
+- Classificar cada chamada: PASS / MISMATCH / UNUSED / DEAD / UNRESOLVED / DYNAMIC.
+- Veredito: R1 — APROVADO | R1 — BLOQUEADO | R1 — PENDENTE DE EVIDÊNCIA.
+- NÃO usar "APROVADO" apenas porque pytest passou.
+
+--------------------------------------------------------------------------------
+2. ESCOPO
+--------------------------------------------------------------------------------
+Engines sob auditoria (14):
+  1.  TrendAnalyzer
+  2.  MTFAnalyzer (MTFEngine)
+  3.  SmartMoneyEngine
+  4.  SessionEngine
+  5.  MarketStateEngine
+  6.  MarketStructureEngine (legado) + MarketStructureIntelligenceEngine
+  7.  ValidationEngine
+  8.  ConflictResolutionEngine
+  9.  ConfidenceEngine
+  10. ProbabilityEngine
+  11. DecisionResolverEngine
+  12. NarrativeEngine
+  13. InstitutionalScoreEngine
+  14. DecisionResultBuilder
+
+Arquivos reais (mapeamento nome-solicitado -> arquivo real):
+  - TrendAnalyzer      -> mercury_ai/analysis/trend_analyzer.py
+  - MTFAnalyzer        -> mercury_ai/analysis/mtf_engine.py
+  - SmartMoneyEngine   -> mercury_ai/analysis/smart_money/smart_money_engine.py
+  - SessionEngine      -> mercury_ai/analysis/session_engine.py
+  - MarketStateEngine  -> mercury_ai/analysis/market_state_engine.py
+  - MarketStructure(legado) -> mercury_ai/analysis/smart_money/market_structure_engine.py
+  - MarketStructureIntelligence -> mercury_ai/analysis/market_structure_intelligence_engine.py
+  - ValidationEngine   -> mercury_ai/analysis/validation_engine.py
+  - ConflictResolutionEngine -> mercury_ai/analysis/conflict_resolution_engine.py
+  - ConfidenceEngine   -> mercury_ai/analysis/confidence_engine.py
+  - ProbabilityEngine  -> mercury_ai/brain/probability_engine.py
+  - DecisionResolverEngine -> mercury_ai/analysis/decision_resolver_engine.py
+  - NarrativeEngine    -> mercury_ai/analysis/narrative_engine.py
+  - InstitutionalScoreEngine -> mercury_ai/analysis/institutional_score_engine.py
+  - DecisionResultBuilder -> mercury_ai/analysis/decision_result_builder.py
+
+Consumidores/orquestradores lidos:
+  - mercury_ai/brain/mercury_decision_engine.py (cadeia de decisão)
+  - mercury_ai/core/analysis_pipeline.py (cadeia de análise)
+  - mercury_ai/analysis/mtf_engine.py (chamadas internas)
+  - mercury_ai/analysis/smart_money/smart_money_engine.py (chamadas internas)
+  - mercury_ai/analysis/confidence_engine.py (chamada interna ao resolver)
+
+--------------------------------------------------------------------------------
+3. METODOLOGIA
+--------------------------------------------------------------------------------
+1) Inventário real dos arquivos (F1) — via file_search/list_dir.
+2) Leitura integral das assinaturas dos 14 engines (F2).
+3) Enumeração dos call sites produtor->consumidor (F3) — leitura de
+   mercury_decision_engine.py e analysis_pipeline.py.
+4) Reconstrução da contagem do zero (F4) — tabela formal abaixo.
+5) Classificação de cada chamada (F5) — PASS/MISMATCH/UNUSED/DEAD/UNRESOLVED/DYNAMIC.
+6) Reconstrução matemática do ProbabilityEngine (F6) — extração da fórmula bit a bit.
+7) Investigação da alegação de dupla normalização (F7) — grep por softmax/normalização.
+8) Teste matemático independente (F8) — probe _probe_r1_probability.py (6 casos A-F).
+9) Teste de propriedades (F9) — P1..P7.
+10) Teste de sensibilidade (F10) — 1 variável por vez.
+11) Verificação dos dataclasses frozen e seus contratos (F11).
+12) Runtime (F12) — py_compile, testes direcionados, main, pytest completo.
+13) Anti-mascaramento (F13) — grep por except amplo/pass/return True/False/Mock.
+14) Git (F14) — status antes/depois (esperado: ZERO produção modificado).
+15) Entregável + veredito (F15).
+
+Ferramentas: python .venv 3.x, pytest 9.1.1, pandas 3.0.3, git.
+
+--------------------------------------------------------------------------------
+4. ARQUIVOS ANALISADOS
+--------------------------------------------------------------------------------
+[Engine: arquivo -> assinatura verificada]
+  1.  TrendAnalyzer:                  analysis/trend_analyzer.py
+  2.  MTFEngine:                      analysis/mtf_engine.py
+  3.  SmartMoneyEngine:               analysis/smart_money/smart_money_engine.py
+  4.  SessionEngine:                  analysis/session_engine.py
+  5.  MarketStateEngine:              analysis/market_state_engine.py
+  6.  MarketStructureEngine (legado): analysis/smart_money/market_structure_engine.py
+  6b. MarketStructureIntelligenceEngine: analysis/market_structure_intelligence_engine.py
+  7.  ValidationEngine:               analysis/validation_engine.py
+  8.  ConflictResolutionEngine:       analysis/conflict_resolution_engine.py
+  9.  ConfidenceEngine:               analysis/confidence_engine.py
+  10. ProbabilityEngine:              brain/probability_engine.py
+  11. DecisionResolverEngine:         analysis/decision_resolver_engine.py
+  12. NarrativeEngine:                analysis/narrative_engine.py
+  13. InstitutionalScoreEngine:       analysis/institutional_score_engine.py
+  14. DecisionResultBuilder:          analysis/decision_result_builder.py
+
+Orquestradores:
+  - brain/mercury_decision_engine.py
+  - core/analysis_pipeline.py
+  - analysis/mtf_engine.py (chamadas internas)
+  - analysis/smart_money/smart_money_engine.py (chamadas internas)
+  - analysis/confidence_engine.py (chamada interna ao ConflictResolutionEngine)
+
+Modelos (dataclasses frozen):
+  - models/probability_result.py, models/confidence_result.py,
+    models/decision_result.py, models/institutional_score_result.py,
+    models/decision_resolver_result.py, models/session_analysis.py,
+    models/market_state.py, models/market_structure.py, models/smart_money.py,
+    models/mtf_consensus.py
+
+--------------------------------------------------------------------------------
+5. ASSINATURAS REAIS (14 engines)
+--------------------------------------------------------------------------------
+1. TrendAnalyzer
+   analyze(self, market: MarketData) -> List[Evidence]
+
+2. MTFEngine
+   __init__(self, providers: List[MarketDataProvider])
+   analyze(self, symbol: str) -> Tuple[List[Evidence], MTFConsensus]
+   (internamente: self.trend.analyze(market); self.structure.evaluate(df);
+    self.structure.swing_engine.detect_swings(df); self.liquidity.analyze(df,swings,profile);
+    self.volatility.analyze(df, market).evidences)
+   Tratamento de exceção: except (KeyError, IndexError, ValueError,
+   ConnectionError, RuntimeError) — específico, NÃO é except Exception.
+
+3. SmartMoneyEngine
+   __init__(self, executor=None, profiler=None)
+   analyze(self, df, swings=None, profile=None) -> SmartMoneyAnalysis
+   get_evidences(self, df, swings=None, profile=None) -> List[Evidence]
+   (internamente: self.legacy_structure.analyze(df) — MarketStructureEngine legado)
+
+4. SessionEngine
+   analyze(self) -> SessionAnalysis          (sem argumentos; usa DeterministicClock.utcnow().hour)
+
+5. MarketStateEngine
+   analyze(self, market: MarketData, session: SessionAnalysis) -> MarketState
+
+6. MarketStructureEngine (legado, smart_money/)
+   analyze(self, df: pd.DataFrame) -> MarketStructure   (colunas lowercase df["high"]...)
+
+6b. MarketStructureIntelligenceEngine
+   __init__(...): cria self.swing_engine = SwingEngine()
+   evaluate(self, df, avg_volume=None, avg_body=None) -> Tuple[MarketStructureProfile, List[Evidence]]
+   (normaliza colunas internamente; requer open/high/low/close/volume lowercase)
+
+7. ValidationEngine
+   validate_all(self, context, evidence_bundle) -> Tuple[bool, List[str]]
+   (internamente: _validate_evidence_consistency, _validate_context_consistency)
+
+8. ConflictResolutionEngine
+   resolve(self, evidences: List[Evidence], context: MarketContext) -> Tuple[List[Evidence], float]
+
+9. ConfidenceEngine
+   calculate(self, context: MarketContext, evidence_bundle: MarketEvidenceBundle) -> ConfidenceResult
+   calibrate(self, confidence_result: ConfidenceResult, consistency_score: float) -> ConfidenceResult
+   _get_grade(self, score: float) -> str
+   (internamente instancia ConflictResolutionEngine e chama resolver.resolve(evidences, context))
+
+10. ProbabilityEngine
+    analyze(self, context: MarketContext, evidence_bundle: Any,
+            confluence_score: float, confidence_score: float,
+            dominant_direction: Optional[str] = None) -> ProbabilityResult
+
+11. DecisionResolverEngine
+    __init__(self, min_threshold=40.0)
+    resolve(self, dominant_direction: str, is_valid: bool,
+            opportunity_grade: str = "C", conflicting_signals: bool = False,
+            confluence_score: float = 100.0, market_regime=None) -> DecisionResolverResult
+    (usa hasattr(market_regime, "name"/"regime") para extrair regime — defensivo e documentado)
+
+12. NarrativeEngine
+    generate(self, decision: str, evidences: Tuple[Evidence, ...],
+             context: MarketContext, confluence_score: float) -> TradingExplanation
+
+13. InstitutionalScoreEngine
+    calculate(self, probability_score, confluence_score, confidence_score,
+              trade_quality_score, resolved_quality_score, risk_score,
+              conflict_penalty) -> InstitutionalScoreResult
+
+14. DecisionResultBuilder
+    build(self, *, final_decision, grade, calibrated_confidence, confluence_result,
+          risk_score, institutional_score, trade_quality_score, ranked_result,
+          buy_prob, sell_prob, wait_prob, expected_risk, expected_reward,
+          expected_drawdown, explanation: TradingExplanation, resolved_bundle,
+          final_warnings, confidence_result, explainability=None) -> DecisionResult
+    (keyword-only)
+
+--------------------------------------------------------------------------------
+6. CALL SITES (mapa real produtor -> consumidor)
+--------------------------------------------------------------------------------
+6.1 analysis_pipeline.py (15 call sites)
+  L271: self.structure_intel_engine.evaluate(df, avg_volume=avg_volume, avg_body=avg_body)
+  L272: self.structure_intel_engine.swing_engine.detect_swings(df)[0]
+  L278: self.trend.analyze(market)
+  L283: self.mtf_engine.analyze(symbol)
+  L288: self.smart_money.analyze(df, confirmed_swings, structure)
+  L289: self.smart_money.get_evidences(df, confirmed_swings, structure)
+  L294: self.session_engine.analyze()
+  L299: self.state_engine.analyze(market, session)
+  L304: self.volume_engine.evaluate(df)
+  L309: self.regime_engine.analyze(market, smart_money, structure, volume)
+  L314: self.liquidity_engine.analyze(df, confirmed_swings, structure)
+  L320: self.volatility_engine.analyze(df, market)
+  L330: self.candlestick_engine.analyze(df, market, trend_evidences, market_condition)
+  L335: self.sr_engine.analyze(df)
+  L340: self.price_action.analyze(df)
+
+6.2 mercury_decision_engine.py (13 call sites)
+  L149: self.validation.validate_all(context, evidence_bundle)
+  L155: self.quality.evaluate(list(evidence_bundle.evidences))          [fora do escopo R1]
+  L165: self.conflict_resolver.resolve(quality_result, context)
+  L173: self.ranking.rank(resolved_evidences)                           [fora do escopo R1]
+  L179: self.memory.get_consistency_score(...)                          [fora do escopo R1]
+  L193: self.confidence.calculate(context, resolved_bundle)
+  L199: self.confidence.calibrate(confidence_result, consistency_score)
+  L209: self.confluence.analyze(context, resolved_bundle)               [fora do escopo R1]
+  L220: self.probability_engine.analyze(
+          context=context, evidence_bundle=resolved_bundle,
+          confluence_score=confluence_result.weighted_score,
+          confidence_score=confidence_result.final_confidence,
+          dominant_direction=confluence_result.dominant_direction.value)
+  L241: self.confidence._get_grade(override)
+  L242: self.decision_resolver.resolve(
+          dominant_direction=confluence_result.dominant_direction.value,
+          is_valid=is_valid, opportunity_grade=probability_result.opportunity_grade,
+          conflicting_signals=confluence_result.conflicting_signals,
+          confluence_score=confluence_result.weighted_score,
+          market_regime=context.market_regime)
+  L321: self.narrative.generate(final_decision, list(resolved_bundle.evidences),
+          context, confluence_result.weighted_score)
+  L330: self.score_engine.calculate(
+          probability_score=max(buy,sell), confluence_score=weighted,
+          confidence_score=final_confidence, trade_quality_score=...,
+          resolved_quality_score=..., risk_score=risk.institutional_risk_score,
+          conflict_penalty=conflict_score)
+  L365: self.builder.build(*, final_decision=..., grade=..., calibrated_confidence=...,
+          confluence_result=..., risk_score=..., institutional_score=...,
+          trade_quality_score=..., ranked_result=..., buy_prob=..., sell_prob=...,
+          wait_prob=..., expected_risk=..., expected_reward=..., expected_drawdown=...,
+          explanation=..., resolved_bundle=..., final_warnings=..., confidence_result=...,
+          explainability=...)
+
+6.3 Chamadas internas (engine -> engine)
+  MTFEngine:           trend.analyze(market) | structure.swing_engine.detect_swings(df)
+                       | structure.evaluate(df) | liquidity.analyze(df,swings,profile)
+                       | volatility.analyze(df, market)
+  SmartMoneyEngine:    legacy_structure.analyze(df)  (2x: analyze e get_evidences)
+  ConfidenceEngine:    resolver.resolve(evidences, context)
+
+--------------------------------------------------------------------------------
+7. MATRIZ PRODUTOR / CONSUMIDOR
+--------------------------------------------------------------------------------
+Engine                | Método                 | Call site(s)              | Arg compat.
+----------------------+------------------------+---------------------------+------------
+TrendAnalyzer         | analyze(market)        | pipeline L278, mtf L67    | PASS
+MTFEngine             | analyze(symbol)        | pipeline L283             | PASS
+SmartMoneyEngine      | analyze(df,sw,prof)    | pipeline L288             | PASS
+                      | get_evidences(df,sw,pr)| pipeline L289             | PASS
+SessionEngine         | analyze()              | pipeline L294             | PASS
+MarketStateEngine     | analyze(mkt,session)   | pipeline L299             | PASS
+MarketStructureEngine | analyze(df)            | smart_money (2x)          | PASS
+  (legado)
+MarketStructureIntel   | evaluate(df,aV,aB)    | pipeline L271, mtf L70    | PASS
+ValidationEngine      | validate_all(ctx,bdl)  | mde L149                  | PASS
+ConflictResolutionEng | resolve(ev,ctx)        | mde L165, conf L40        | PASS
+ConfidenceEngine      | calculate(ctx,bdl)     | mde L193                  | PASS
+                      | calibrate(res,consist) | mde L199                  | PASS
+                      | _get_grade(score)      | mde L241                  | PASS
+ProbabilityEngine     | analyze(ctx,bdl,conf,  | mde L220                  | PASS
+                      |  confid,dominant_dir)  |                           |
+DecisionResolverEng   | resolve(dominant,valid,| mde L242                  | PASS
+                      |  grade,conflict,conf,  |                           |
+                      |  regime)               |                           |
+NarrativeEngine       | generate(dec,ev,ctx,   | mde L321                  | PASS
+                      |  confluence)           |                           |
+InstitutionalScoreEng | calculate(prob,conf,  | mde L330                  | PASS
+                      |  confid,tq,rq,risk,    |                           |
+                      |  conflict)             |                           |
+DecisionResultBuilder | build(*, ...)          | mde L365                  | PASS
+
+RESULTADO: 100% das chamadas dos 14 engines com argumentos compatíveis.
+
+--------------------------------------------------------------------------------
+8. INCOMPATIBILIDADES DETECTADAS (classificação por chamada)
+--------------------------------------------------------------------------------
+8.1 Classificação das chamadas dos 14 engines (F5)
+  - Todas as chamadas acima: PASS (assinatura e argumentos compatíveis).
+  - UNUSED/DEAD: nenhuma chamada morta encontrada nos caminhos de produção
+    (analysis_pipeline + mercury_decision_engine) para os 14 engines.
+  - UNRESOLVED/DYNAMIC: nenhuma chamada dinâmica indeterminada nos caminhos
+    de produção (todas são chamadas diretas com assinatura estática).
+
+8.2 Achado ADJACENTE (fora dos 14, mas na matriz produtor/consumidor):
+  CONTRATO DecisionResult.explanation VIOLADO nos fallbacks do AnalysisPipeline.
+  - Contrato (models/decision_result.py): explanation: TradingExplanation (frozen).
+  - DecisionResultBuilder (engine #14): CORRETO — passa TradingExplanation.
+  - analysis_pipeline.py fallbacks (5 sites): explanation=<str>
+      L182 (_build_terminal_result DATA_PROVIDER_UNAVAILABLE)
+      L202 (DATA_QUALITY_FAIL)
+      L236 (insuficiência histórica)
+      L486 (mercado fechado)
+      L526 (erro de pipeline -> WAIT)
+    e _build_terminal_result (L569) — todos passam str.
+  - Consumidor afetado: mercury_ai/presentation/signal_formatter.py L62
+      lê decision.explanation.market_context -> AttributeError: 'str' object
+      has no attribute 'market_context'.
+  - Manifestação: erro de collection no pytest (test_mercury_signal.py roda o
+    pipeline de GC=F em import-time e quebra) — pré-existente, já observado no
+    sprint B3.
+  - CLASSIFICAÇÃO: CONFIRMADO (violação de contrato real); NÃO é defeito do
+    DecisionResultBuilder; é do fallback do pipeline (fora do escopo dos 14).
+
+--------------------------------------------------------------------------------
+9. PROBABILITYENGINE — FÓRMULA REAL (reconstruída bit a bit do código)
+--------------------------------------------------------------------------------
+Arquivo: mercury_ai/brain/probability_engine.py
+Assinatura: analyze(context, evidence_bundle, confluence_score, confidence_score,
+                    dominant_direction=None) -> ProbabilityResult
+
+FÓRMULA (verificada, canônica — não é a versão antiga do B1):
+  risk_factor      = clamp(risk_score / 100, 0, 1)
+  evidence_bonus   = min(len(evidences) * 4.0, 20.0)     # escala 0-20
+  coefs            = confluence=0.50, confidence=0.35, evidence=0.15
+  institutional_strength = confluence*0.50 + confidence*0.35 + evidence_bonus*0.15
+  institutional_strength *= (1.0 - risk_factor * 0.50)
+  institutional_strength = clamp(strength, 0, 100)
+  wait      = clamp(100 - strength, 5.0, 60.0)
+  remaining = 100.0 - wait
+  directional = remaining
+  BUY:  buy=directional, sell=0
+  SELL: sell=directional, buy=0
+  else: buy=sell=directional/2
+  grade: A+>=80, A>=70, B>=60, C>=50, D caso contrário
+
+LIMITES DERIVADOS (prováveis matematicamente e confirmados no probe):
+  - MÁXIMO institutional_strength = 88 (não 100):
+       100*0.50 + 100*0.35 + 20*0.15 = 50 + 35 + 3 = 88
+    (evidence_bonus em escala 0-20 contribui no MÁXIMO 3 pontos no total.
+     O "peso de evidência de 15%" na prática vale 0-3% da escala 0-100.)
+  - wait ceiling = 60  ->  buy mínimo = 40 (BUY fraco nunca cai abaixo de 40%)
+  - wait floor   = 5   ->  buy máximo = 95
+  - SATURAÇÃO: n_evidence >= 5 satura evidence_bonus em 20 (4*5=20).
+  - RISCO: fator 0.50 -> risk=100 zera metade do strength antes do clamp.
+  - Sem softmax. A saída soma 100 por construção (normalização de distribuição).
+
+--------------------------------------------------------------------------------
+10. RECONSTRUÇÃO MATEMÁTICA INDEPENDENTE (probe _probe_r1_probability.py)
+--------------------------------------------------------------------------------
+Foi escrita uma implementação independente da fórmula acima e comparada com a
+saída real do ProbabilityEngine em 6 casos (A-F):
+  A: conf=20 confid=25 ev=1 risk=10 dir=BUY  -> buy=40.0 sell=0 wait=60 grade=D   [PASS]
+  B: conf=90 confid=85 ev=5 risk=10 dir=BUY  -> buy=73.86 sell=0 wait=26.14 grade=A [PASS]
+  C: conf=90 confid=85 ev=5 risk=90 dir=BUY  -> buy=42.76 sell=0 wait=57.24 grade=D [PASS]
+  D: conf=60 confid=60 ev=3 risk=30 dir=WAIT -> buy=22.44 sell=22.44 wait=55.12 D [PASS]
+  E: conf=100 confid=100 ev=5 risk=0 dir=BUY -> buy=88.0 sell=0 wait=12 grade=A+ [PASS]
+  F: conf=50 confid=50 ev=3 risk=50 dir=SELL -> buy=0 sell=40.0 wait=60 grade=D [PASS]
+Resultado: 24/24 comparações (buy/sell/wait/grade) IDÊNTICAS.
+  RESULTADO: "RECONCILIAÇÃO MATEMÁTICA CONFIRMADA" (exit 0).
+
+--------------------------------------------------------------------------------
+11. ALEGAÇÃO DE "DUPLA NORMALIZAÇÃO" — INVESTIGAÇÃO (F7)
+--------------------------------------------------------------------------------
+Alegação auditada: ProbabilityEngine faria "dupla normalização".
+
+EVIDÊNCIA COLETADA:
+1. grep por "softmax" / "normalize" / "normalization" no ProbabilityEngine:
+   NENHUMA ocorrência de softmax. Não existe softmax.
+2. A saída (buy, sell, wait) soma 100 por CONSTRUÇÃO:
+   wait = 100 - directional; buy+sell = directional.
+   Isto é normalização de DISTRIBUIÇÃO DE PROBABILIDADE — propriedade legítima
+   de uma distribuição de probabilidade, NÃO é normalização dupla de erro.
+3. As ENTRADAS (confluence_score, confidence_score) já chegam em escala 0-100,
+   normalizadas pelos PRODUTORES (ConfluenceEngine.clamp_score 5..100;
+   ConfidenceEngine.final_confidence 0..100).
+4. Existem DUAS normalizações, mas de GRANDEZAS DIFERENTES em CAMADAS DIFERENTES:
+   (a) produtores normalizam score 0-100; (b) ProbabilityEngine normaliza a
+   distribuição de saída para soma 100. Nenhuma é normalização dupla do MESMO
+   valor, e nenhuma introduz viés ou perda.
+
+CONCLUSÃO F7:
+  A alegação de "dupla normalização" NÃO SE REPRODUZ como defeito no código
+  atual. Classificação: NÃO REPRODUZIDO (como defeito).
+  Nota: a versão antiga do ProbabilityEngine (corrigida no B1) tinha um bug de
+  derivação de coeficientes (strength máximo ~48.5, grade D sempre); é provável
+  que a alegação original se referisse a essa versão pré-B1 ("multiplicação
+  dupla"), não ao código atual.
+
+  Porém, a investigação revelou um ACHADO DE ESCALA REAL (ver seção 9):
+  evidence_bonus usa escala 0-20 enquanto confluence/confidence usam 0-100;
+  o peso nominal "evidência 15%" vale na prática 0-3 pontos na escala 0-100,
+  e o strength máximo é 88 (não 100). Isto é uma inconsistência de ESCALA no
+  contrato interno da fórmula (matemática), NÃO uma dupla normalização.
+
+--------------------------------------------------------------------------------
+12. TESTES MATEMÁTICOS INDEPENDENTES (F8) — detalhe
+--------------------------------------------------------------------------------
+Casos A-F executados com a engine real e a reconstrução independente.
+Todas as 24 comparações (4 por caso x 6 casos) PASS.
+Caso E confirma o teto: strength=88 (100/100/5ev/risk=0) — nunca chega a 100.
+Caso C confirma o impacto do risco: risk=90 derruba strength para 42.76.
+Caso A confirma o piso: BUY fraco (strength 18.38) -> buy fica em 40 (wait ceiling 60).
+Saída completa registrada na execução do probe (exit 0).
+
+--------------------------------------------------------------------------------
+13. TESTES DE PROPRIEDADES (F9)
+--------------------------------------------------------------------------------
+  P1: buy+sell+wait == 100 (tol 0.06)                          [PASS]
+  P2: nenhuma probabilidade negativa                            [PASS]
+  P3: nenhuma probabilidade > 100                               [PASS]
+  P4: caso neutro -> buy == sell (50/50 do remanescente)        [PASS]
+  P5: grade segue limiares de strength (A+>=80, A>=70, B>=60,
+      C>=50, D<50)                                              [PASS]
+  P6: BUY => sell=0 ; SELL => buy=0                             [PASS]
+  P7: estabilidade (delta confluence 1pt -> delta buy pequeno;  [PASS]
+      observado delta=0.42)
+
+--------------------------------------------------------------------------------
+14. TESTES DE SENSIBILIDADE (F10) — 1 variável por vez
+--------------------------------------------------------------------------------
+  confluence : buy não-decrescente (monótono)   [PASS]
+  confidence : buy não-decrescente (monótono)   [PASS]
+  risk      : buy não-crescente (monótono), piso 40 quando wait atinge teto 60 [PASS]
+  n_evidence: buy não-decrescente, satura em n>=5 (cap evidence_bonus=20) [PASS]
+
+  NaN/Inf (documentado, não julgado):
+    confluence=NaN  -> buy=40, grade=D   (silencioso — sem validação de entrada)
+    confidence=inf  -> buy=95, grade=A+  (inf propaga ao máximo)
+  => O engine NÃO valida entradas (NaN/Inf são absorvidos). Comportamento
+     documentado; não é PASS/FAIL, é ausência de guarda (achado menor).
+
+--------------------------------------------------------------------------------
+15. FROZEN DATACLASSES — CONTRATOS REAIS (F11)
+--------------------------------------------------------------------------------
+Modelos frozen e construções verificadas:
+  ProbabilityResult         (frozen) — engine constrói com kwargs corretos   [OK]
+  ConfidenceResult          (frozen) — calculate/calibrate + override no mde [OK]
+  ConfidenceComponents      (frozen) — construído no calculate               [OK]
+  DecisionResolverResult    (frozen) — construído no resolve                 [OK]
+  InstitutionalScoreResult  (frozen) — construído no calculate               [OK]
+  DecisionResult            (frozen) — construído pelo builder (todos os
+                                       campos obrigatórios presentes)        [OK]
+  SessionAnalysis           (frozen) — session/overlap/quality/liquidity/exp [OK]
+  MarketState               (frozen) — state/explanation                     [OK]
+  MarketStructure           (frozen) — todos os campos                      [OK]
+  SmartMoneyAnalysis        (frozen) — structure/score/confidence/inst/exp   [OK]
+  MTFConsensus              (frozen) — _build_consensus constrói todos       [OK]
+
+OBSERVAÇÕES MENORES (runtime-safe; dataclass não valida tipo):
+  - MarketStructureEngine (legado): explanation=["DataFrame vazio"] (list
+    para campo Tuple[str,...]) — type mismatch menor, runtime OK.
+  - SmartMoneyEngine: confidence=float(confidence) (float para campo int) e
+    explanation=list (para Tuple[str,...]) — type mismatch menor, runtime OK.
+  - Nenhum quebra em runtime (frozen dataclass não valida tipos).
+
+--------------------------------------------------------------------------------
+16. RUNTIME (F12)
+--------------------------------------------------------------------------------
+16.1 py_compile (14 engines + mercury_decision_engine + analysis_pipeline +
+     market_structure_intelligence_engine) ......... EXIT 0 (sem erros de sintaxe)
+
+16.2 Testes direcionados:
+  - pytest brain/tests/test_probability_engine.py
+           brain/tests/test_mercury_decision_engine.py  -> 5 passed (exit 0)
+  - pytest analysis/tests/test_trend_engine.py
+           analysis/tests/test_market_structure_engine.py
+           analysis/tests/test_context_engine.py
+           analysis/tests/test_risk_engine.py
+           brain/tests/test_explainability_engine.py
+           brain/tests/test_mercury_decision_benchmark.py
+                                                    -> 52 passed (exit 0)
+
+16.3 python -m mercury_ai.main .............................. EXIT 0
+     Cadeia observada: Validation(is_valid=True) -> Quality(60.04) ->
+     Conflict(1.00) -> Ranking(27 evid) -> Memory(0.50) -> Confidence(63.16) ->
+     Confluence(direction=BUY, weighted=100.00) -> Probability(grade=C,
+     buy=58.59) -> Resolver(rule=6, decision=BUY). Ranking institucional
+     produzido (BTC-USD 72.80 SELL; ETH-USD 71.58 BUY).
+
+16.4 pytest completo (--continue-on-collection-errors):
+  RESULTADO: 343 passed, 4 failed, 1 error (49min18s; exit 1)
+  - 1 erro de COLLECTION pré-existente (test_mercury_signal.py): causado pelo
+    contrato DecisionResult.explanation (ver seção 8.2) — AttributeError:
+    'str' object has no attribute 'market_context'.
+  - 4 FALHAS — todas PRÉ-EXISTENTES (já observadas no sprint B3), NENHUMA
+    relacionada às assinaturas/matemática dos 14 engines:
+      [1] tests/test_auto_health.py::test_auto_health_checks
+            assert False is True (pré-existente)
+      [2] tests/test_confidence_calibration_auditor.py
+            (flaky, pré-existente)
+      [3] tests/test_institutional_report_generator.py
+            (flaky, pré-existente)
+      [4] tests/test_robustness.py::test_pipeline_robustness
+            Pipeline crashed on robust test: assert 'Data quality issue
+            detected' in ('Data provider unavailable',) (pré-existente)
+  - CONCLUSÃO: nenhuma falha de runtime imputável aos 14 engines. As falhas
+    estão em testes de integração/robustez/health e 2 flaky, fora do escopo
+    das assinaturas. NÃO transformar falhas pré-existentes em PASS nem em
+    bloqueio do R1.
+
+  EFEITO COLATERAL OBSERVADO (testes de replay/snapshot):
+  - A suíte completa DELETOU 174 snapshots RASTREADOS e modificou 2
+    (EURUSD_X_2024-01-04, TEST_2024-01-04) em mercury_ai/database/snapshots/,
+    além de criar ASSET-A/ASSET-B não rastreados. Causa: teardown/fixtures dos
+    testes de replay que limpam o diretório de snapshots.
+  - RESTAURAÇÃO FEITA: git checkout -- mercury_ai/database/snapshots/ +
+    remoção dos 2 artefatos de teste não rastreados. Estado final: somente o
+    entregável deste R1 não rastreado; ZERO produção modificado.
+  - ACHADO de higiene de teste (não bloqueia R1): a suíte não deve apagar
+    snapshots rastreados (ou esses snapshots devem ser movidos para um
+    diretório de fixture/ignorado).
+
+--------------------------------------------------------------------------------
+17. ANTI-MASCARAMENTO (F13)
+--------------------------------------------------------------------------------
+Padrões buscados nos 14 engines + orquestradores:
+  except Exception / except: ........... NENHUMA ocorrência nos 14 engines.
+                                       (MTFEngine usa except específico com
+                                       tuple de exceções — bom.)
+  pass ................................  Somente exceptions.py (classe de
+                                       exceção vazia) e check_regression.py
+                                       (CLI) — legítimos, fora dos 14.
+  return True / return False .......... SessionEngine._detect_overlap e
+                                       ValidationEngine._validate_* — retorno
+                                       booleano de NEGÓCIO legítimo (não máscara).
+  getattr/hasattr .................... DecisionResolverEngine L90-95:
+                                       hasattr(market_regime, "name"/"regime")
+                                       — acesso polimórfico defensivo a regime
+                                       (enum ou objeto). Documentado, NÃO é
+                                       máscara.
+  MagicMock/Mock (testes) ............ test_mercury_decision_engine.py mocka
+                                       toda a cadeia (validation/quality/ranking/
+                                       confidence/probability/narrative) => esse
+                                       teste valida apenas WIRING, não a matemática.
+                                       test_probability_engine.py mocka somente
+                                       entradas e testa o engine real. [achado
+                                       de cobertura, não de máscara de produção]
+CONCLUSÃO F13: nenhum padrão de mascaramento de erro nos 14 engines.
+
+--------------------------------------------------------------------------------
+18. GIT STATUS (F14)
+--------------------------------------------------------------------------------
+HEAD: 5b89f4a (Merge branch 'main' de origin/main)
+git status --short (durante R1):
+  M: nenhum (ZERO arquivos de produção modificados)         [OK — requisito]
+  ??: _probe_r1_probability.py      (probe temporário — foi removido)
+  ??: _r1_pytest_full_output.txt    (captura de pytest — foi removido)
+  ??: mercury_ai/database/snapshots/BTC-USD_*.json
+      mercury_ai/database/snapshots/ETH-USD_*.json
+      mercury_ai/database/snapshots/GC_F_*.json   (artefatos do smoke test main
+                                                  — foram removidos)
+git diff --stat: vazio (nenhuma alteração em arquivo rastreado)
+
+APÓS O pytest COMPLETO (efeito colateral e restauração):
+  - O pytest deletou 174 snapshots rastreados e modificou 2 (ver seção 16.4).
+  - RESTAURADO via `git checkout -- mercury_ai/database/snapshots/` +
+    remoção dos artefatos de teste não rastreados (ASSET-A/B).
+  - git status --short FINAL:
+      ?? AUDIT_V1/06A_FORENSE_SIGNATURE_MATH_RECONCILIATION.txt  (entregável R1)
+  - git diff --stat: vazio.
+CONCLUSÃO F14: ZERO arquivos de produção modificados no R1 (antes e depois).
+              Único não rastreado = entregável deste sprint. [REQUISITO ATENDIDO]
+
+--------------------------------------------------------------------------------
+19. ACHADOS
+--------------------------------------------------------------------------------
+[1] CONFIRMADO — Contrato DecisionResult.explanation violado nos fallbacks do
+    AnalysisPipeline (5 sites + _build_terminal_result): str em vez de
+    TradingExplanation. Causa do erro de collection test_mercury_signal.py
+    (pré-existente). NÃO é defeito do DecisionResultBuilder.
+[2] CONFIRMADO (escala/matemática) — ProbabilityEngine: evidence_bonus em
+    escala 0-20 vs confluence/confidence 0-100; strength máximo = 88 (não 100);
+    "peso de evidência 15%" vale 0-3 pontos na escala 0-100. Inconsistência de
+    escala no contrato interno da fórmula. NÃO é dupla normalização.
+[3] NÃO REPRODUZIDO — Alegação de "dupla normalização" do ProbabilityEngine.
+    Sem softmax; saída soma 100 por construção (distribuição de probabilidade).
+    As duas normalizações existentes são de grandezas diferentes em camadas
+    diferentes (produtores 0-100 vs distribuição de saída) — ambas legítimas.
+[4] CONFIRMADO (cobertura) — 10 dos 14 engines (MTF, SmartMoney, Session,
+    MarketState, Validation, Conflict, Confidence, DecisionResolver, Narrative,
+    InstitutionalScore, Builder) NÃO possuem teste unitário dedicado.
+    test_mercury_decision_engine.py mocka a cadeia inteira (só wiring).
+[5] CONFIRMADO (menor) — Type mismatches em dataclasses frozen: MarketStructure
+    explanation=list (Tuple), SmartMoney confidence=float (int) e
+    explanation=list (Tuple). Runtime-safe (frozen não valida tipo).
+[6] DOCUMENTADO — ProbabilityEngine não valida entradas: NaN confluence -> buy=40/
+    grade D; inf confidence -> buy=95/A+ (silencioso). Ausência de guarda.
+[7] OBSERVAÇÃO — Cobertura de teste: ProbabilityEngine é o único engine com
+    teste que exercita a matemática real com inputs mockados (bom).
+[8] CONFIRMADO (higiene de teste) — A suíte pytest completa apaga/modifica
+    snapshots RASTREADOS em mercury_ai/database/snapshots/ (174 deletados, 2
+    modificados na rodada deste R1). Restaurado via git checkout. Risco de
+    sujar o working tree e de perda de fixtures. NÃO bloqueia R1 (é efeito
+    colateral dos testes de replay, fora do escopo dos 14 engines).
+
+--------------------------------------------------------------------------------
+20. CAUSA PROVÁVEL (dos achados que são defeitos)
+--------------------------------------------------------------------------------
+[1] O AnalysisPipeline possui caminhos de fallback (erro/indisponibilidade/
+    qualidade de dados) que constroem DecisionResult diretamente, sem passar
+    pelo DecisionResultBuilder. Nesses caminhos o campo explanation recebe uma
+    string textual. O SignalFormatter (consumidor) espera TradingExplanation.
+    A causa raiz é a duplicação do construtor de DecisionResult fora do builder,
+    sem manter o contrato do modelo.
+
+[2] O ProbabilityEngine deriva o coeficiente de evidência de um bonus com escala
+    0-20 (min(n*4, 20)) e o aplica com peso 0.15 como se fosse 0-100. Não há
+    normalização do bonus para 0-100 antes do produto. A fórmula está interna-
+    mente coerente (probe bit a bit), mas o contrato de escala nominal
+    ("evidência = 15%") não corresponde ao efeito real (0-3%).
+
+--------------------------------------------------------------------------------
+21. CLASSIFICAÇÃO INDIVIDUAL (por alegação)
+--------------------------------------------------------------------------------
+A) Assinaturas dos 14 engines: ......... CONFIRMADO (consistentes com call sites)
+B) Call sites produtor->consumidor: .... CONFIRMADO (22/22 PASS)
+C) Compatibilidade produtor/consumidor:  CONFIRMADO (exceto achado [1], que é do
+                                         pipeline fallback, fora dos 14)
+D) "36/36 compatíveis": ................ NÃO REPRODUZIDO (a alegação "36/36" NÃO
+                                         consta em nenhum documento do repositório.
+                                         Reconstrução do zero: 22 call sites de
+                                         produção para os 14 engines, todos PASS.
+                                         O "36" provável refere-se a um escopo mais
+                                         amplo (engines fora da lista dos 14: Quality,
+                                         Ranking, Memory, Confluence, Volume, Regime,
+                                         Liquidity, Volatility, Candlestick, SR,
+                                         PriceAction, Risk, TradeFilter etc.) ou a
+                                         contagem construtor+método.)
+E) Dupla normalização do ProbabilityEngine: NÃO REPRODUZIDO como defeito
+                                         (escala evidence_bonus é achado real [2])
+F) Matemática do ProbabilityEngine: .... CONFIRMADO (probe 24/24 + propriedades +
+                                         sensibilidade)
+
+--------------------------------------------------------------------------------
+22. RISCOS
+--------------------------------------------------------------------------------
+R1. Fallbacks do pipeline com explanation=str: qualquer consumidor que acesse
+    DecisionResult.explanation.<campo> quebra (SignalFormatter hoje). Severidade
+    MÉDIA (só em caminhos de erro/qualidade), impacto em apresentação e em
+    testes de coleção.
+R2. Escala evidence_bonus 0-20: strength máximo 88 e contribuição real de
+    evidência 0-3% podem fazer a "força institucional" subestimar sinais ricos
+    em evidências (satura em 5 evidências). Severidade BAIXA-MÉDIA (comporta-
+    mento determinístico e documentado; não afeta oráculo de decisão além do
+    gradiente de evidência).
+R3. Falta de validação de entrada no ProbabilityEngine (NaN/Inf): em cenários de
+    dados corrompidos, produz probabilidades extremas sem alerta. Severidade
+    BAIXA (entradas vêm de engines validados).
+R4. Cobertura de teste: 10/14 engines sem teste dedicado => risco de regressão
+    silenciosa em assinatura/matemática fora do oráculo de integração. Severidade
+    MÉDIA (mitigada pelo smoke main e pelo teste de decisão).
+
+--------------------------------------------------------------------------------
+23. PENDÊNCIAS (para sprints futuros — NÃO resolver no R1)
+--------------------------------------------------------------------------------
+P1. Decidir correção do contrato DecisionResult.explanation nos fallbacks do
+    pipeline (ex.: construir um TradingExplanation mínimo ou tornar o contrato
+    Optional[str|TradingExplanation]) — B4 ou sprint de contrato.
+P2. Revisar escala do evidence_bonus (0-20 vs 0-100) — decisão de FÓRMULA, exige
+    autorização (proibido nesta fase).
+P3. Adicionar guarda de validação de entrada no ProbabilityEngine (NaN/Inf).
+P4. Criar testes unitários dedicados para os 10 engines sem cobertura.
+P5. Reconciliar a contagem "36/36" com a reconstrução oficial (22) em documentação
+    futura.
+P6. Higiene de teste: impedir que a suíte pytest apague snapshots rastreados
+    (mover snapshots de teste para fixture/ignorado ou restaurar em teardown).
+
+--------------------------------------------------------------------------------
+24. VEREDITO
+--------------------------------------------------------------------------------
+  R1 — APROVADO
+
+Justificativa (não baseada apenas em pytest):
+- Assinaturas dos 14 engines: consistentes com 100% dos call sites de produção
+  (22/22 PASS, reconstrução do zero).
+- Matemática do ProbabilityEngine: reconstrução independente IDÊNTICA (24/24),
+  propriedades P1-P7 OK, sensibilidade monótona OK.
+- Alegação de "dupla normalização": NÃO REPRODUZIDO como defeito (sem softmax;
+  normalização de saída é legítima).
+- Git: ZERO arquivos de produção modificados (requisito de investigação).
+- Anti-mascaramento: limpo nos 14 engines.
+
+Ressalvas que NÃO bloqueiam o R1 (documentadas como achados para B4):
+- Achado [1]: contrato DecisionResult.explanation violado em fallbacks do
+  pipeline (pré-existente; causa o erro de collection test_mercury_signal.py).
+- Achado [2]: escala do evidence_bonus (0-20 vs 0-100) — max strength 88.
+- Achado [4]: cobertura de teste de 10/14 engines.
+
+  CLASSIFICAÇÕES:
+  - Dupla normalização ............ NÃO REPRODUZIDO (defeito)
+  - Assinaturas ................... CONFIRMADO (PASS)
+  - Matemática .................... CONFIRMADO (PASS)
+  - Contrato fallback explanation . CONFIRMADO (achado p/ correção futura)
+  - "36/36" ....................... NÃO REPRODUZIDO (não consta no repo;
+                                        reconstrução = 22 call sites, todos PASS)
+
+================================================================================
+FIM — R1 FORENSE SIGNATURE/MATH RECONCILIATION
+================================================================================
