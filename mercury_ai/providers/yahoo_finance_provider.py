@@ -11,8 +11,10 @@ from mercury_ai.core.exceptions import MarketClosedException, DataValidationErro
 
 logger = logging.getLogger(__name__)
 
-# Regex whitelist para símbolos: letras, números, ponto, hífen, underline, até 20 chars
-_SYMBOL_RE = re.compile(r"^[A-Z0-9.\-_]{1,20}$")
+# Regex whitelist para símbolos: letras, números, ponto, hífen, underline, '=' (separador
+# oficial de forex/commodity do Yahoo, ex.: EURUSD=X, CL=F), até 20 chars.
+# Segurança: continua rejeitando path traversal (/, \, ..) e caracteres especiais.
+_SYMBOL_RE = re.compile(r"^[A-Z0-9.\-_=]{1,20}$")
 
 # Colunas OHLCV obrigatórias
 _REQUIRED_COLUMNS = ("Open", "High", "Low", "Close", "Volume")

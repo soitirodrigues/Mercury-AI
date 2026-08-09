@@ -11,6 +11,7 @@ class AuditEvent:
     error_message: Optional[str] = None
     error_type: Optional[str] = None
     duration_ms: Optional[float] = None
+    symbol: Optional[str] = None
 
 
 class AuditSink(ABC):

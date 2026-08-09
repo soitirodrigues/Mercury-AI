@@ -1,0 +1,816 @@
+================================================================================
+SPRINT FORENSE 1 — BLOCO 2 — AUDITORIA DE INTEGRIDADE OPERACIONAL PÓS-GATE
+MERURY AI V1 — RELATÓRIO 05 — AUDIT_V1/05_FORENSIC_OPERATIONAL_INTEGRITY.txt
+================================================================================
+MODO: SOMENTE LEITURA (NENHUM CÓDIGO DE PRODUÇÃO FOI ALTERADO)
+REGRAS: NÃO corrigir; NÃO criar V2; NÃO criar módulos; NÃO refatorar.
+Quando um teste falha, PARAR a investigação daquele item, registrar evidência e
+continuar somente onde for seguro.
+Data de execução: (ver seção 19 — EVIDÊNCIAS DE EXECUÇÃO)
+
+LEGENDA DE SEVERIDADE
+  [CRÍTICO]  = compromete a operação/integridade de forma imediata e relevante
+  [ALTO]     = falha estrutural verificada com impacto direto na confiabilidade
+  [MÉDIO]    = divergência/risco verificado, impacto condicional ou latente
+  [BAIXO]    = inconsistência/ruído sem impacto funcional imediato
+  [INFO]     = fato observado/documentado, sem risco direto
+
+FORMATO DE CADA ACHADO: EVIDÊNCIA / IMPACTO / ARQUIVO / LINHA / STATUS
+STATUS = VERIFICADO (evidência de execução/código) — NADA FOI CORRIGIDO NESTE BLOCO.
+
+
+--------------------------------------------------------------------------------
+1. UNIVERSO OFICIAL
+--------------------------------------------------------------------------------
+
+ACHADO [INFO]: Universo oficial é FONTE ÚNICA e contém 63 ativos.
+  EVIDÊNCIA: mercury_ai/config/universe.py — OPERATIONAL_UNIVERSE (linha 399)
+    = FOREX_UNIVERSE (27) + CRYPTO_UNIVERSE (10) + STOCK_UNIVERSE (23)
+    + COMMODITY_UNIVERSE (3). ALL_SYMBOLS (linha 414) filtra enabled=True.
+    Contagem confirmada por leitura integral do arquivo (52-389).
+  IMPACTO: Nenhum. Universo único, sem fonte concorrente.
+  ARQUIVO: mercury_ai/config/universe.py  LINHA: 399-414
+  STATUS: VERIFICADO — SEM ACHADO DE RISCO.
+
+ACHADO [BAIXO]: Documentação interna divergente da implementação.
+  EVIDÊNCIA: comentário da linha 49 "UNIVERSO OFICIAL — 27 FOREX + 10 CRIPTO =
+    37 ATIVOS" (ignora STOCK/COMMODITY) e docstring da linha 39 "market: str
+    # FOREX ou CRYPTO" (não cita STOCK/COMMODITY).
+  IMPACTO: Documentação enganosa para manutenção; sem efeito funcional.
+  ARQUIVO: mercury_ai/config/universe.py  LINHA: 39, 49
+  STATUS: VERIFICADO — NÃO CORRIGIDO (read-only).
+
+ACHADO [BAIXO]: Duas convenções de nomenclatura de mercado no mesmo arquivo.
+  EVIDÊNCIA: SYMBOLS_BY_MARKET (linhas 421-425) usa chaves "STOCKS" e
+    "COMMODITIES"; get_symbols_for_market (linhas 441-448) compara
+    market.upper() == "STOCK" / "COMMODITY" (singular). Market values do
+    UniverseAsset são "STOCK"/"COMMODITY" (linhas 257, 379).
+  IMPACTO: Consumidor que use SYMBOLS_BY_MARKET["STOCK"] obtém KeyError;
+    consumidor que compare market com "STOCKS" não casa. Risco latente de lookup.
+  ARQUIVO: mercury_ai/config/universe.py  LINHA: 421-425 vs 441-448
+  STATUS: VERIFICADO — NÃO CORRIGIDO (read-only).
+
+
+--------------------------------------------------------------------------------
+2. ATIVOS AUTORIZADOS
+--------------------------------------------------------------------------------
+
+ACHADO [INFO]: Autorização por broker = 2 ativos de 63 (3,2% do universo).
+  EVIDÊNCIA: data/brokers/XP.json = ["BTC-USD", "ETH-USD"] (lido na auditoria).
+    get_assets_for_broker (asset_registry.py:115) lê data/brokers/{broker}.json.
+    Config: config.json OPERATIONAL_PROFILE.active="Demo", broker="XP".
+  IMPACTO: Nenhum — autorização intencional do broker XP (correção do Bloco 1).
+  ARQUIVO: data/brokers/XP.json ; mercury_ai/core/asset_registry.py  LINHA: 115
+  STATUS: VERIFICADO — SEM ACHADO DE RISCO.
+
+ACHADO [BAIXO]: Teste destrói configuração de broker de produção.
+  EVIDÊNCIA: tests/test_broker_filtering.py grava ["BTC-USD","AAPL","EURUSD"]
+    em data/brokers/XP.json (linhas 25-29) e no finally EXECUTA
+    broker_file.unlink() (linha 55), apagando o XP.json real. Teste passou e o
+    XP.json teve de ser RESTAURADO manualmente após a execução.
+  IMPACTO: Rodar a suíte sem cuidado deixa o scanner sem ativos autorizados.
+  ARQUIVO: tests/test_broker_filtering.py  LINHA: 25-29, 55
+  STATUS: VERIFICADO — ARQUIVO RESTAURADO MANUALMENTE NESTA AUDITORIA.
+
+
+--------------------------------------------------------------------------------
+3. ATIVOS REALMENTE ANALISADOS
+--------------------------------------------------------------------------------
+
+ACHADO [INFO]: Fluxo Demo/XP analisa apenas BTC-USD e ETH-USD (2 de 63).
+  EVIDÊNCIA: Execução real de `python -m mercury_ai.main` (seção 19): 2 ativos
+    analisados, ambos ADICIONADOS ao ranking (ETH 66.07, BTC 62.08), ambos WAIT.
+  IMPACTO: Nenhum — comportamento esperado dado broker XP. Mas o "universo
+    operacional efetivo" é 2 ativos; os 61 restantes nunca são exercitados pelo
+    scanner (cobertura de código/regressão concentrada em BTC/ETH).
+  ARQUIVO: mercury_ai/brain/scanner.py (scan) ; data/brokers/XP.json
+  STATUS: VERIFICADO — SEM ACHADO DE RISCO (registrado por cobertura).
+
+ACHADO [BAIXO]: Ordem de análise vem do estado da execução anterior.
+  EVIDÊNCIA: ETH-USD analisado antes de BTC-USD nas duas runs; registry
+    previous_score = ETH 64.25 > BTC 61.93 (estado pré-run). Ver seção 11.
+  IMPACTO: Determinismo de ORDEM não garantido; ordem depende de last_operated/
+    previous_score persistidos.
+  ARQUIVO: mercury_ai/brain/scanner.py  LINHA: ~72-81
+  STATUS: VERIFICADO — NÃO CORRIGIDO (read-only).
+
+
+--------------------------------------------------------------------------------
+4. CLASSIFICAÇÃO DOS ATIVOS
+--------------------------------------------------------------------------------
+
+ACHADO [MÉDIO]: Registry classifica BTC-USD/ETH-USD como market="Stocks"
+  enquanto o universo oficial os classifica como market="CRYPTO".
+  EVIDÊNCIA: data/asset_registry.json — BTC-USD e ETH-USD têm
+    "category": "Cripto" mas "market": "Stocks". Universe: CRYPTO_UNIVERSE
+    market="CRYPTO" (universe.py:200-205). Default do Asset é market="Stocks"
+    (asset_registry.py:17).
+  IMPACTO: HOJE sem efeito funcional (scanner não filtra por market e Yahoo
+    cobre todos os símbolos). PORÉM qualquer consumo futuro de
+    registry.assets[*].market (suporte de provider, sessão, alavancagem,
+    relatório por classe) produziria classificação incorreta (cripto como ação).
+  ARQUIVO: data/asset_registry.json ; mercury_ai/core/asset_registry.py:17
+  STATUS: VERIFICADO — NÃO CORRIGIDO (read-only).
+
+ACHADO [INFO]: Motor de sessão orientado a FX aplicado a cripto 24/7.
+  EVIDÊNCIA: session_engine.py detecta Sydney/Tokyo/London/NY por hora UTC e
+    atribui quality/liquidity (10-100). BTC/ETH negociam 24/7; às 22h UTC o
+    motor classifica SYDNEY quality=10/liquidity=20 mesmo com mercado aberto.
+  IMPACTO: Penalização artificial de liquidez em horário "fora de sessão FX"
+    para ativos 24/7 (cripto). Alimenta MarketState/Confidence (ver seção 8/15).
+  ARQUIVO: mercury_ai/analysis/session_engine.py  LINHA: 12-60
+  STATUS: VERIFICADO — NÃO CORRIGIDO (read-only).
+
+
+--------------------------------------------------------------------------------
+5. DATA PROVIDER
+--------------------------------------------------------------------------------
+
+ACHADO [ALTO]: Health check dos providers é FICTÍCIO (sempre True).
+  EVIDÊNCIA: BaseAdapter.check_health() → return True (data_adapters.py:34-36),
+    herdado por todos os 6 adapters. Probe A (execução real):
+    healthcheck = {'Yahoo': True, 'Polygon': True, 'TwelveData': True,
+    'AlphaVantage': True, 'Binance': True, 'MetaTrader5': True} — inclusive os
+    5 stubs que retornam DataFrame vazio.
+  IMPACTO: "Saúde" não reflete disponibilidade real; seleção de provider não é
+    confiável; falha real do Yahoo nunca é detectada por este mecanismo.
+  ARQUIVO: mercury_ai/providers/data_adapters.py  LINHA: 34-36
+  STATUS: VERIFICADO (probe A) — NÃO CORRIGIDO (read-only).
+
+ACHADO [INFO]: best_provider = Yahoo para BTC-USD/ETH-USD.
+  EVIDÊNCIA: _get_best_provider → min(priority) entre saudáveis que suportam o
+    símbolo; Yahoo priority=1 e registrado primeiro. Probe A:
+    best_provider(BTC-USD) -> Yahoo (priority=1).
+  IMPACTO: Nenhum — esperado.
+  ARQUIVO: mercury_ai/providers/market_provider.py  LINHA: 47-54
+  STATUS: VERIFICADO — SEM ACHADO DE RISCO.
+
+ACHADO [ALTO]: Sem cache/retry no caminho ativo; método com cache é morto.
+  EVIDÊNCIA: MercuryDataProvider.get_data (market_provider.py:86-92) comenta
+    "sem cache/retry" e chama provider.get_data(symbol, interval) 1x.
+    get_candles (com @lru_cache e retries) existe (linha ~120) mas NÃO é usado
+    pelo fluxo do scanner/pipeline. MTF dispara 5 chamadas de rede por símbolo
+    por execução (M1/M5/M15/H1/H4).
+  IMPACTO: Cada execução refaz todas as chamadas de rede; sem tolerância a
+    falhas transitórias no caminho ativo.
+  ARQUIVO: mercury_ai/providers/market_provider.py  LINHA: 86-92, 120+
+  STATUS: VERIFICADO — NÃO CORRIGIDO (read-only).
+
+ACHADO [MÉDIO]: Parâmetro `period` é IGNORADO em todas as rotas.
+  EVIDÊNCIA: MercuryDataProvider.get_data ignora period (só passa symbol+interval
+    ao provider). YahooAdapter.get_data usa yf.download(period="5d", interval=...)
+    hardcoded (data_adapters.py:~79). Probe A: get_data("BTC-USD", interval="15m",
+    period="1mo") retornou 430 barras (5 dias) e não ~2880 (1 mês). MTF pede
+    period="1mo" (mtf_engine.py:36) e recebe 5 dias em todos os TFs:
+    M1=6445, M5=1290, M15=430, H1=108, H4=27 barras.
+  IMPACTO: MTF H4 opera com apenas ~27 barras (~4,5 dias), profundidade
+    insuficiente para análise institucional de 4h; intenção de 1 mês não é
+    atendida.
+  ARQUIVO: mercury_ai/providers/market_provider.py:86-92 ;
+            mercury_ai/providers/data_adapters.py:~79 ;
+            mercury_ai/data/market_data.py:~130-150
+  STATUS: VERIFICADO (probe A) — NÃO CORRIGIDO (read-only).
+
+ACHADO [ALTO]: trigger_failover é no-op (não troca provider).
+  EVIDÊNCIA: trigger_failover (market_provider.py:100-114) apenas loga e retorna
+    len(healthy) > 1; não seleciona outro provider nem reinicia operação.
+    Scanner chama trigger_failover no except (scanner.py:~170), mas o pipeline
+    engole exceções (ver seção 13), então o failover raramente é acionado — e
+    quando seria, não faz nada.
+  IMPACTO: Alta Disponibilidade ilusória; falha de provider não é mitigada.
+  ARQUIVO: mercury_ai/providers/market_provider.py  LINHA: 100-114
+  STATUS: VERIFICADO — NÃO CORRIGIDO (read-only).
+
+ACHADO [INFO]: YahooAdapter retorna índice tz-aware (UTC) sem conversão explícita.
+  EVIDÊNCIA: Probe A — dtype datetime64[s, UTC], tz=timezone.utc, monotônico,
+    sem duplicatas, sem ordenação explícita (vem ordenado do yfinance).
+  IMPACTO: Nenhum no fluxo atual; convenção implícita (não documentada).
+  ARQUIVO: mercury_ai/providers/data_adapters.py (YahooAdapter.get_data)
+  STATUS: VERIFICADO — SEM ACHADO DE RISCO.
+
+
+--------------------------------------------------------------------------------
+6. DATA QUALITY
+--------------------------------------------------------------------------------
+
+ACHADO [INFO]: Qualidade de dados de produção PASSA para BTC-USD/ETH-USD reais.
+  EVIDÊNCIA: Probe A — DataQualityEngine.validate (data/data_quality_engine.py):
+    BTC-USD e ETH-USD → valid=True score=1.0 "Data quality pass"; 1290 barras
+    5m; 0 NaN; 0 Inf; 0 duplicata; 0 gap>15m; 0 low>high; 0 preço/volume
+    negativo; índice monotônico.
+  IMPACTO: Nenhum — qualidade real adequada no momento da auditoria.
+  ARQUIVO: mercury_ai/data/data_quality_engine.py  LINHA: 13-65
+  STATUS: VERIFICADO (probe A) — SEM ACHADO DE RISCO.
+
+ACHADO [MÉDIO]: TESTE DE DATA QUALITY TESTA O MÓDULO ERRADO (duplicata morta).
+  EVIDÊNCIA: tests/test_data_quality_engine.py linha 4 importa
+    "mercury_ai.analysis.data_quality_engine" (duplicata com generate_report),
+    enquanto o pipeline usa "mercury_ai.data.data_quality_engine" (com validate).
+    São classes distintas em arquivos distintos; o teste usa generate_report()
+    que NÃO existe no motor de produção.
+  IMPACTO: Regressões no motor de qualidade REAL não são detectadas pelo teste;
+    o teste dá falso verde sobre código morto.
+  ARQUIVO: tests/test_data_quality_engine.py:4 ; mercury_ai/analysis/
+    data_quality_engine.py:18 (morto) vs mercury_ai/data/data_quality_engine.py:18
+  STATUS: VERIFICADO (teste passou, mas cobre o módulo errado) — NÃO CORRIGIDO.
+
+ACHADO [BAIXO]: Threshold de gaps fixo (>15min) inadequado a timeframes altos.
+  EVIDÊNCIA: validate() rejeita quando time_diffs > Timedelta(minutes=15)
+    (data/data_quality_engine.py:~44). Para H1/H4 (MTF) e ativos com pausa
+    (23 stocks do universo) gaps naturais excedem 15min.
+  IMPACTO: Falso negativo potencial de qualidade para stocks/commodities com
+    pausa (fim de semana, sessão de bolsa) ou para candles > 15m.
+  ARQUIVO: mercury_ai/data/data_quality_engine.py  LINHA: ~44
+  STATUS: VERIFICADO (leitura de código) — NÃO CORRIGIDO (read-only).
+
+ACHADO [BAIXO]: Normalizador duplica colunas nos dois padrões de case.
+  EVIDÊNCIA: data_normalizer.py:60-70 cria Open/High/Low/Close/Volume além de
+    open/high/low/close/volume → df do pipeline com 10 colunas. Necessário
+    porque candlestick_engine usa 'Close'/'Open' (maiúsculo, candlestick_engine
+    .py:33-36). Shim frágil: motor que bypassar o normalizer quebra.
+  IMPACTO: Memória desperdiçada e risco de inconsistência se algum motor
+    ignorar o normalizer; sem erro funcional hoje (indicadores usam minúsculas,
+    DQ valida minúsculas).
+  ARQUIVO: mercury_ai/data/data_normalizer.py  LINHA: 60-70
+  STATUS: VERIFICADO — NÃO CORRIGIDO (read-only).
+
+
+--------------------------------------------------------------------------------
+7. LOOK-AHEAD
+--------------------------------------------------------------------------------
+
+ACHADO [INFO]: NENHUM padrão de look-ahead futuro encontrado no código ativo.
+  EVIDÊNCIA: grep em todo mercury_ai/**/*.py por shift(-1), bfill(, center=True:
+    0 ocorrências. Indicadores usam ewm/rolling com janela TRAILING
+    (indicator_engine.py). Swing detection exige janela esquerda E direita
+    completas: loop range(pivot_window, len(df)-pivot_window)
+    (swing_engine.py:211-230) — o pivô mais recente fica pivot_window barras
+    antes do fim; nunca usa barras além do final do dataset.
+  IMPACTO: Nenhum — sem vazamento de futuro nos motores.
+  ARQUIVO: (varredura) mercury_ai/** ; swing_engine.py:211-230 ;
+            indicator_engine.py (ewm/rolling)
+  STATUS: VERIFICADO — SEM ACHADO DE RISCO.
+
+ACHADO [INFO/BAIXO]: Viés de barra corrente (não-look-ahead, mas present-bias).
+  EVIDÊNCIA: Pipeline e MTF analisam dados AO VIVO; a última vela pode estar
+    em formação (incompleta) e todos os indicadores incluem essa barra final.
+  IMPACTO: Sinais podem refletir o candle em curso (otimismo de present-bias);
+    não é vazamento de futuro, mas reduz a robustez dos sinais em tempo real.
+  ARQUIVO: mercury_ai/core/analysis_pipeline.py (get_data + indicadores no df vivo)
+  STATUS: VERIFICADO — NÃO CORRIGIDO (read-only).
+
+
+--------------------------------------------------------------------------------
+8. DETERMINISMO
+--------------------------------------------------------------------------------
+
+ACHADO [INFO]: Pipeline é DETERMINÍSTICO para os MESMOS dados na MESMA hora.
+  EVIDÊNCIA: Probe B (provider fake com dados fixos; 2 análises consecutivas):
+    IDÊNTICO em decisão (WAIT), score (67.274508), confidence (0.713555),
+    buy/sell/wait (40/0/60), regime (CONSOLIDATION), cadeia de decisão (9
+    passos idênticos), grade (D), 32 evidências, sessão (LONDON), audit_id
+    (hash idêntico).
+  IMPACTO: Nenhum — determinismo de algoritmo confirmado.
+  ARQUIVO: (probe B em %TEMP%) ; mercury_ai/core/analysis_pipeline.py
+  STATUS: VERIFICADO — SEM ACHADO DE RISCO.
+
+ACHADO [ALTO]: Sessão depende do relógio REAL → não-determinismo temporal.
+  EVIDÊNCIA: SessionEngine.analyze() SEM argumentos usa
+    DeterministicClock.utcnow().hour (session_engine.py:12). DeterministicClock
+    só recebe set_time em historical_replay_engine.py:130; no fluxo normal do
+    scanner/main usa datetime.now(timezone.utc) (deterministic_clock.py:24).
+    Probe B (mesma base sintética, horas diferentes): 15h→LONDON overlap
+    quality=100/liquidity=100; 22h→SYDNEY quality=10/liquidity=20.
+    A cadeia até a decisão é: session → market_state_engine (usa overlap e
+    liquidity_score>=90, market_state_engine.py:62-74) → MarketState →
+    confidence_engine (LOW_LIQUIDITY -0.15, HIGH_VOLATILITY -0.05, OPEN +0.1,
+    confidence_engine.py:64-70) → confidence → decisão.
+  IMPACTO: O MESMO ativo com os MESMOS dados pode gerar decisão/confiança
+    DIFERENTE conforme a hora do dia em que o scanner roda (ex.: 15h vs 22h
+    UTC). Replay histórico fixa set_time, mas o fluxo operacional (main) não.
+  ARQUIVO: mercury_ai/analysis/session_engine.py:12 ; mercury_ai/analysis/
+    market_state_engine.py:62-74 ; mercury_ai/analysis/confidence_engine.py:64-70
+  STATUS: VERIFICADO (probe B) — NÃO CORRIGIDO (read-only).
+
+ACHADO [BAIXO]: Dados do MTF são buscados ao vivo a cada run → drift entre runs.
+  EVIDÊNCIA: Execução dupla do main (seção 19): BTC 62.08 (run1) → 62.00 (run2);
+    ETH 66.07 em ambas. Decisões idênticas (WAIT). Drift de ~0.08 vem do
+    refresh dos dados de rede, não do algoritmo (probe B prova determinismo).
+  IMPACTO: Comparar runs consecutivas como "replay" é inválido; apenas o
+    determinismo condicional aos dados é garantido.
+  ARQUIVO: mercury_ai/analysis/mtf_engine.py (5 chamadas de rede/run)
+  STATUS: VERIFICADO (execução dupla) — SEM ACHADO DE RISCO adicional.
+
+ACHADO [INFO]: update_asset_stats usa time.time() (relógio real) mesmo em replay.
+  EVIDÊNCIA: asset_registry.py:97 — last_operated = time.time() (não
+    DeterministicClock). 
+  IMPACTO: Timestamp do registry não reproduzível em replay; cosmético.
+  ARQUIVO: mercury_ai/core/asset_registry.py  LINHA: 96-98
+  STATUS: VERIFICADO — SEM ACHADO DE RISCO relevante.
+
+
+--------------------------------------------------------------------------------
+9. DECISION INTEGRITY
+--------------------------------------------------------------------------------
+
+ACHADO [MÉDIO]: Confluence do resultado final usa bundle DIFERENTE do da decisão.
+  EVIDÊNCIA: Dentro do MercuryDecisionEngine, confluence é calculado com
+    resolved_bundle (após conflict resolution + ranking) — mercury_decision_engine
+    .py (step 8). Após a persistência, o pipeline recalcula
+    confluence = decision_engine.confluence.analyze(context, evidence_bundle)
+    com o bundle COMPLETO (sem resolução) — analysis_pipeline.py:430-432.
+  IMPACTO: AnalysisResult.confluence pode divergir do confluence interno da
+    decisão quando há evidências removidas/alteradas pelo conflict resolver.
+    Hoje, para BTC/ETH (sem conflito), os valores coincidem; a divergência é
+    estrutural e latente.
+  ARQUIVO: mercury_ai/core/analysis_pipeline.py:430-432 ;
+            mercury_ai/brain/mercury_decision_engine.py (step 8)
+  STATUS: VERIFICADO — NÃO CORRIGIDO (read-only).
+
+ACHADO [MÉDIO]: BUG DE TIPO — AnalysisResult.confluence é uma TUPLA.
+  EVIDÊNCIA: confluence = self.decision_engine.confluence.analyze(...) retorna
+    tuple[ConfluenceResult, list[InstitutionalContribution]], e é atribuído
+    diretamente a AnalysisResult.confluence (analysis_pipeline.py:430-438).
+    Probe B: type(result.confluence) == 'tuple'; conteúdo
+    (buy_score=408.17, sell=0.0, weighted=100.0, direction=BUY).
+  IMPACTO: Qualquer consumidor que acesse result.confluence.buy_score /
+    .weighted_score obtém AttributeError (tuple não tem atributos). Latente
+    hoje: scanner e brain.explain não usam result.confluence. Dashboard/API
+    futuros quebrariam. Nota: buy_score bruto = 408.17 (>100) — score cru não
+    clampado, escala inconsistente com weighted_score (0-100).
+  ARQUIVO: mercury_ai/core/analysis_pipeline.py  LINHA: 430-438
+  STATUS: VERIFICADO (probe B) — NÃO CORRIGIDO (read-only).
+
+ACHADO [INFO]: Resolver produz decisão coerente com o modelo documentado.
+  EVIDÊNCIA: BTC-USD/ETH-USD → grade D → regra 4 → WAIT (chain "9.Resolver:
+    rule=4, decision=WAIT"). Em probe B (dados sintéticos): direction BUY,
+    weighted 100, porém grade D → regra 4 → WAIT (confluência forte, mas
+    oportunidade rebaixada → WAIT). Regras 1-8 verificadas em
+    decision_resolver_engine.py.
+  IMPACTO: Nenhum — decisão segue as regras declaradas.
+  ARQUIVO: mercury_ai/analysis/decision_resolver_engine.py (regras 1-8)
+  STATUS: VERIFICADO — SEM ACHADO DE RISCO.
+
+ACHADO [INFO]: Cadeia de decisão (explainability) reproduz os 9 passos reais.
+  EVIDÊNCIA: chain contém Validation, Quality, Conflict, Ranking, Memory,
+    Confidence, Confluence, Probability, Resolver com valores numéricos que
+    batem com os logs internos do engine.
+  IMPACTO: Nenhum — boa rastreabilidade.
+  ARQUIVO: mercury_ai/brain/mercury_decision_engine.py (steps 1-13)
+  STATUS: VERIFICADO — SEM ACHADO DE RISCO.
+
+
+--------------------------------------------------------------------------------
+10. EXPLAINABILITY
+--------------------------------------------------------------------------------
+
+ACHADO [INFO]: Camada de explicação funciona e é consumida pelo scanner.
+  EVIDÊNCIA: InstitutionalBrain.explain() imprime Decisão/Score/Confiança/
+    Probabilidades/Regime/Cadeia; _print_report imprime contributions por
+    engine (peso, raw, weighted, direção, confiança) e cadeia.
+  IMPACTO: Nenhum — explicabilidade operacional presente.
+  ARQUIVO: mercury_ai/brain/institutional_brain.py ; mercury_ai/brain/scanner.py
+    (_print_report)
+  STATUS: VERIFICADO — SEM ACHADO DE RISCO.
+
+ACHADO [BAIXO]: Numeração duplicada na impressão da cadeia.
+  EVIDÊNCIA: Output real: "1. 1.Validation: is_valid=True" — scanner usa
+    enumerate(i,1) + step já prefixado ("1.Validation:") em scanner.py:_print_report.
+  IMPACTO: Apenas cosmético na saída.
+  ARQUIVO: mercury_ai/brain/scanner.py (_print_report) ; mercury_ai/brain/
+    mercury_decision_engine.py (chain)
+  STATUS: VERIFICADO — NÃO CORRIGIDO (read-only).
+
+ACHADO [BAIXO]: Duas abstrações distintas chamadas "explainability".
+  EVIDÊNCIA: brain/explainability_engine.py (testada em test_explainability_engine)
+    vs analysis/decision_explainability.py (dataclass puro usado no DecisionResult).
+  IMPACTO: Confusão de nomenclatura para manutenção; sem efeito funcional.
+  ARQUIVO: mercury_ai/brain/explainability_engine.py ;
+            mercury_ai/analysis/decision_explainability.py
+  STATUS: VERIFICADO — NÃO CORRIGIDO (read-only).
+
+
+--------------------------------------------------------------------------------
+11. RANKING
+--------------------------------------------------------------------------------
+
+ACHADO [INFO]: Ranking final ordena apenas ativos qualificados (score >= 40).
+  EVIDÊNCIA: scanner só faz analyses.append(analysis) se score >= min_quality
+    (scanner.py:141-149); RankingEngine.rank ordena por decision.score desc
+    (ranking_engine.py:14-20). Execução real: 1. ETH 66.07, 2. BTC 62.08.
+  IMPACTO: Nenhum — ranking usa score da run atual (sem valores obsoletos).
+  ARQUIVO: mercury_ai/analysis/ranking_engine.py  LINHA: 14-20
+  STATUS: VERIFICADO — SEM ACHADO DE RISCO.
+
+ACHADO [BAIXO]: Ordem de ANÁLISE (não do ranking) usa estado entre execuções.
+  EVIDÊNCIA: enabled_assets.sort(key=(-favorite, -last_operated, -previous_score,
+    -priority, -liquidity, spread)) (scanner.py:72-81) lê campos persistidos do
+    registry da run anterior.
+  IMPACTO: A ordem em que os ativos são analisados muda conforme a run
+    anterior; se o primeiro falhar, a priorização é reordenada. Não afeta o
+    ranking final (que usa score atual), mas afeta determinismo de ordem.
+  ARQUIVO: mercury_ai/brain/scanner.py  LINHA: 72-81
+  STATUS: VERIFICADO — NÃO CORRIGIDO (read-only).
+
+ACHADO [MÉDIO]: update_asset_stats grava previous_score SEMPRE (inclusive 0).
+  EVIDÊNCIA: scanner chama update_asset_stats(symbol, score) ANTES do filtro
+    score<40 (scanner.py:131-136); asset_registry.py:96-98 grava previous_score
+    e last_operated. Um DATA_QUALITY_FAIL/PIPELINE_ERROR (score=0) zera o
+    previous_score do ativo → na próxima run ele é ordenado por último.
+  IMPACTO: Falha transitória degrada prioridade futura do ativo no registry
+    (contaminação de estado entre execuções).
+  ARQUIVO: mercury_ai/brain/scanner.py:131-136 ; mercury_ai/core/asset_registry
+    .py:96-98
+  STATUS: VERIFICADO — NÃO CORRIGIDO (read-only).
+
+
+--------------------------------------------------------------------------------
+12. CACHE / PERSISTÊNCIA
+--------------------------------------------------------------------------------
+
+ACHADO [INFO]: Snapshots são write-only no fluxo (sem contaminação).
+  EVIDÊNCIA: DecisionSnapshotLogger.save grava mercury_ai/database/snapshots/
+    {asset}_{ts}.json (atômico, sanitizado). O pipeline NUNCA lê snapshots
+    (list_snapshots/load_snapshot são para ferramentas externas).
+  IMPACTO: Nenhum — persistência sem leitura = sem feedback de estado.
+  ARQUIVO: mercury_ai/database/snapshot_logger.py (save)
+  STATUS: VERIFICADO — SEM ACHADO DE RISCO.
+
+ACHADO [BAIXO]: runtime_report acumula arquivos na raiz sem rotação.
+  EVIDÊNCIA: analysis_pipeline.py:462 — atomic_json_write(
+    f"runtime_report_{symbol}_{ts}.json") no CWD a cada análise. Dezenas de
+    arquivos runtime_report_* já existem na raiz do repositório.
+  IMPACTO: Poluição de diretório; sem limpeza/rotação.
+  ARQUIVO: mercury_ai/core/analysis_pipeline.py  LINHA: 462
+  STATUS: VERIFICADO — NÃO CORRIGIDO (read-only).
+
+ACHADO [BAIXO]: lru_cache existe mas não é usado no caminho ativo.
+  EVIDÊNCIA: MercuryDataProvider.get_candles é @lru_cache(maxsize=128) com
+    retries (market_provider.py:120+), mas get_data (usado pelo fluxo) não
+    passa por ele → nenhum cache efetivo.
+  IMPACTO: Redes desnecessárias por execução; cache morto.
+  ARQUIVO: mercury_ai/providers/market_provider.py  LINHA: 120+
+  STATUS: VERIFICADO — NÃO CORRIGIDO (read-only).
+
+ACHADO [INFO]: Registry e memória usam escrita atômica thread-safe.
+  EVIDÊNCIA: asset_registry._atomic_write (temp + os.replace + fsync);
+    InstitutionalMemoryEngine.flush idem.
+  IMPACTO: Nenhum — boa prática.
+  ARQUIVO: mercury_ai/core/asset_registry.py ; mercury_ai/analysis/
+    institutional_memory_engine.py
+  STATUS: VERIFICADO — SEM ACHADO DE RISCO.
+
+
+--------------------------------------------------------------------------------
+13. ERROS SILENCIOSOS
+--------------------------------------------------------------------------------
+
+ACHADO [ALTO]: Pipeline ENGOLHE todas as exceções e retorna WAIT (exit 0).
+  EVIDÊNCIA: analysis_pipeline.py:497-540 — except Exception → DecisionResult
+    WAIT audit_id='PIPELINE_ERROR', score=0, salva snapshot com context=None e
+    NÃO re-levanta. logging.exception + audit_sink registram, mas o main
+    continua e retorna 0.
+  IMPACTO: EXATAMENTE o alerta do usuário: `main` retorna exit 0 mesmo com
+    falha real de análise. "Exit 0" NÃO é prova de que V1 está aprovado.
+  ARQUIVO: mercury_ai/core/analysis_pipeline.py  LINHA: 497-540
+  STATUS: VERIFICADO — NÃO CORRIGIDO (read-only).
+
+ACHADO [ALTO]: DATA_QUALITY_FAIL e PIPELINE_ERROR viram score 0 → "DESCARTADO".
+  EVIDÊNCIA: DATA_QUALITY_FAIL (analysis_pipeline.py:182-228) e INSUFFICIENT_DATA
+    (:232-240) retornam WAIT score=0; scanner vê score 0 < 40 → "DESCARTADO
+    PELO SCANNER" sem indicar o erro (scanner.py:141-144). PIPELINE_ERROR só
+    loga traceback em stderr.
+  IMPACTO: Falha de análise de um ativo é silenciosamente convertida em
+    "ativo descartado"; o operador não vê o motivo no fluxo normal.
+  ARQUIVO: mercury_ai/core/analysis_pipeline.py:182-240, 497-540 ;
+            mercury_ai/brain/scanner.py:141-144
+  STATUS: VERIFICADO — NÃO CORRIGIDO (read-only).
+
+ACHADO [ALTO]: MTF engole falhas de timeframe em silêncio.
+  EVIDÊNCIA: mtf_engine.py (~linha 60) — except (KeyError, IndexError,
+    ValueError, ConnectionError, RuntimeError): continue. Timeframes com
+    dados inválidos ou erros de rede somem do consensus sem aviso.
+  IMPACTO: MTF consensus pode ser calculado com H1/H4 ausentes sem
+    notificação; decisão usa consenso incompleto.
+  ARQUIVO: mercury_ai/analysis/mtf_engine.py  LINHA: ~57-62
+  STATUS: VERIFICADO — NÃO CORRIGIDO (read-only).
+
+ACHADO [ALTO]: Health check sempre True + stubs selecionáveis → failover
+  entrega WAIT silencioso.
+  EVIDÊNCIA: se o Yahoo falhar, _get_best_provider cai em Polygon (prio 2,
+    stub) → get_data retorna DataFrame vazio → DQ falha → WAIT score 0
+    (DESCARTADO). Combinado com seções 5 e 14.
+  IMPACTO: Degradação silenciosa sem troca real de provedor.
+  ARQUIVO: mercury_ai/providers/market_provider.py:47-54 ;
+            mercury_ai/providers/data_adapters.py (stubs)
+  STATUS: VERIFICADO — NÃO CORRIGIDO (read-only).
+
+ACHADO [MÉDIO]: audit_sink registra falhas mas scanner nunca as consulta.
+  EVIDÊNCIA: pipeline.get_failed_events() existe (analysis_pipeline.py:543-546),
+    mas o scanner nunca chama; eventos de erro em memória são perdidos ao fim
+    do processo.
+  IMPACTO: Nenhuma observabilidade de falhas no nível do scanner/operador.
+  ARQUIVO: mercury_ai/core/analysis_pipeline.py:543-546 ; mercury_ai/brain/
+    scanner.py (sem consumo)
+  STATUS: VERIFICADO — NÃO CORRIGIDO (read-only).
+
+
+--------------------------------------------------------------------------------
+14. STUBS E MÓDULOS DUPLICADOS
+--------------------------------------------------------------------------------
+
+ACHADO [ALTO]: 5 dos 6 adapters são STUBS que retornam DataFrame vazio.
+  EVIDÊNCIA: PolygonAdapter, TwelveDataAdapter, AlphaVantageAdapter,
+    BinanceAdapter, MetaTrader5Adapter herdam BaseAdapter.get_data →
+    pd.DataFrame() (data_adapters.py:34-36/BaseAdapter; classes em 95-165).
+    check_health True. Apenas YahooAdapter implementa get_data real.
+  IMPACTO: "Failover" para qualquer outro provider produziria análise com
+    dados vazios → WAIT silencioso. A lista de 6 providers é majoritariamente
+    decorativa.
+  ARQUIVO: mercury_ai/providers/data_adapters.py  LINHA: 22-36, 95-165
+  STATUS: VERIFICADO — NÃO CORRIGIDO (read-only).
+
+ACHADO [BAIXO]: Dois MercuryDataProvider (providers/ vs data/).
+  EVIDÊNCIA: providers/mercury_data_provider.py é usado pelo scanner;
+    data/mercury_data_provider.py é importado apenas por
+    provider_priority_engine.py (fora do caminho do scanner). Classes com o
+    mesmo nome em módulos diferentes.
+  IMPACTO: Confusão de manutenção e risco de importar o módulo errado.
+  ARQUIVO: mercury_ai/providers/mercury_data_provider.py ;
+            mercury_ai/data/mercury_data_provider.py ;
+            mercury_ai/analysis/provider_priority_engine.py:3
+  STATUS: VERIFICADO — NÃO CORRIGIDO (read-only).
+
+ACHADO [INFO]: Duplicata DataQualityEngine (analysis/ vs data/) — ver seção 6.
+  EVIDÊNCIA: analysis/data_quality_engine.py (generate_report, morto) vs
+    data/data_quality_engine.py (validate, produção).
+  IMPACTO: Teste cobre o módulo errado (ver seção 6).
+  ARQUIVO: mercury_ai/analysis/data_quality_engine.py ; mercury_ai/data/
+    data_quality_engine.py
+  STATUS: VERIFICADO — NÃO CORRIGIDO (read-only).
+
+ACHADO [INFO]: get_candles com @lru_cache é método morto (ver seção 12).
+  ARQUIVO: mercury_ai/providers/market_provider.py:120+
+
+
+--------------------------------------------------------------------------------
+15. FX
+--------------------------------------------------------------------------------
+
+ACHADO [INFO]: FX (27 pares) está no universo, mas NENHUM par é analisado
+  no fluxo Demo/XP (broker XP autoriza só BTC-USD/ETH-USD).
+  EVIDÊNCIA: data/brokers/XP.json; universo FOREX 27 pares (universe.py:52-192).
+  IMPACTO: Nenhum — esperado dado o broker; FX permanece sem exercício de
+  regressão no fluxo operacional.
+  ARQUIVO: mercury_ai/config/universe.py ; data/brokers/XP.json
+  STATUS: VERIFICADO — SEM ACHADO DE RISCO.
+
+ACHADO [MÉDIO]: Motor de sessão é orientado a FX e aplicado a cripto 24/7.
+  EVIDÊNCIA: session_engine.py mapeia hora UTC → Sydney/Tokyo/London/NY e
+    penaliza fora de janela (quality 10, liquidity 20). BTC/ETH (cripto) não
+    fecham; às 22h UTC recebem SYDNEY quality=10 mesmo com mercado ativo
+    (probe B). A cadeia session→MarketState→confidence ajusta a confiança
+    (market_state_engine.py:62-74; confidence_engine.py:64-70).
+  IMPACTO: Penalização artificial de confiança em cripto fora do horário FX;
+    classificação de mercado (cripto vs FX) deveria condicionar a lógica de
+    sessão.
+  ARQUIVO: mercury_ai/analysis/session_engine.py:12-60 ; mercury_ai/analysis/
+    market_state_engine.py:62-74
+  STATUS: VERIFICADO (probe B) — NÃO CORRIGIDO (read-only).
+
+ACHADO [BAIXO]: Bug lógico no _detect_session (branch Sydney morto).
+  EVIDÊNCIA: session_engine.py:30 — "elif 21 <= hour < 24 or 0 <= hour < 0:"
+    (0<=hour<0 é sempre falso). A branch Tokyo (0<=hour<8) captura 0-7h antes
+    de Sydney, contrariando o docstring ("Sydney 21-6").
+  IMPACTO: Sydney efetivamente só 21-23h; horas 0-7h → Tokyo. Comportamento
+    divergente da documentação.
+  ARQUIVO: mercury_ai/analysis/session_engine.py  LINHA: 18-36
+  STATUS: VERIFICADO — NÃO CORRIGIDO (read-only).
+
+ACHADO [INFO]: supported_markets dos providers não é usado na seleção.
+  EVIDÊNCIA: _get_best_provider filtra por supported_assets apenas
+    (market_provider.py:47-54); supported_markets (Yahoo: ["Forex","Stocks",
+    "Commodities","Crypto"]) não é consultado em lugar nenhum da seleção.
+  IMPACTO: Campo morto; sem efeito funcional.
+  ARQUIVO: mercury_ai/providers/market_provider.py:47-54 ;
+            mercury_ai/providers/data_adapters.py (YahooAdapter)
+  STATUS: VERIFICADO — NÃO CORRIGIDO (read-only).
+
+
+--------------------------------------------------------------------------------
+16. MEMÓRIA INSTITUCIONAL
+--------------------------------------------------------------------------------
+
+ACHADO [INFO]: Memória institucional é INERTE no fluxo atual (consistência=0.5).
+  EVIDÊNCIA: get_consistency_score retorna NEUTRAL_SCORE=0.5 sempre que não há
+    entries com 'outcome' (institutional_memory_engine.py:66-83). record_decision
+    grava entries SEM 'outcome' (linhas 98-109) → histórico nunca tem outcomes
+    no fluxo operacional → consistency sempre 0.5 (confirmado na cadeia:
+    "5.Memory: consistency=0.50" nas duas runs).
+  IMPACTO: A memória não influencia a decisão (neutra); o mecanismo existe,
+    mas está desconectado de outcomes reais.
+  ARQUIVO: mercury_ai/analysis/institutional_memory_engine.py:66-109
+  STATUS: VERIFICADO — SEM ACHADO DE RISCO (mas recurso não exercitado).
+
+ACHADO [INFO]: record_decision NUNCA persiste no fluxo normal.
+  EVIDÊNCIA: record_decision marca _dirty (institutional_memory_engine.py:104-106)
+    mas flush() só é chamado em replay_batch_processor.py:147. No scanner/main,
+    nada chama flush → arquivo data/institutional_memory.json permanece [] 
+    (verificado na auditoria).
+  IMPACTO: Nenhuma contaminação entre processos (bom), mas também nenhuma
+    memória persistida (recurso não funciona no fluxo operacional).
+  ARQUIVO: mercury_ai/analysis/institutional_memory_engine.py (flush não
+    chamado); mercury_ai/analysis/replay_batch_processor.py:147
+  STATUS: VERIFICADO — NÃO CORRIGIDO (read-only).
+
+ACHADO [BAIXO]: memory_path relativo depende do CWD.
+  EVIDÊNCIA: InstitutionalMemoryEngine.__init__ default
+    memory_path="data/institutional_memory.json" (linha 11) — caminho relativo;
+    executar de outro diretório cria/usa outro arquivo.
+  IMPACTO: "Memória" pode variar conforme diretório de execução.
+  ARQUIVO: mercury_ai/analysis/institutional_memory_engine.py  LINHA: 11
+  STATUS: VERIFICADO — NÃO CORRIGIDO (read-only).
+
+
+--------------------------------------------------------------------------------
+17. BACKTEST / REPLAY
+--------------------------------------------------------------------------------
+
+ACHADO [INFO]: Backtest/replay não são invocados pelo fluxo operacional.
+  EVIDÊNCIA: historical_replay_engine, replay_batch_processor, performance_engine
+    existem, mas main.py → MercuryScanner().scan() não os utiliza (fluxo em
+    tempo real).
+  IMPACTO: Nenhum — os módulos ficam fora do caminho crítico do scanner.
+  ARQUIVO: mercury_ai/main.py ; mercury_ai/brain/scanner.py
+  STATUS: VERIFICADO — SEM ACHADO DE RISCO.
+
+ACHADO [BAIXO]: Replay fixa o relógio, mas sessão e registry usam tempos reais.
+  EVIDÊNCIA: set_time só em historical_replay_engine.py:130 (replay). Contudo
+    SessionEngine consome DeterministicClock (ok no replay se set_time chamado
+    antes), e update_asset_stats usa time.time() real (asset_registry.py:97) —
+    o registry não é reproduzível em replay.
+  IMPACTO: Backtest/replay reproduz a análise, mas o estado persistido
+    (registry) usa hora real → inconsistência de reexecução.
+  ARQUIVO: mercury_ai/analysis/historical_replay_engine.py:130 ;
+            mercury_ai/core/asset_registry.py:97
+  STATUS: VERIFICADO — NÃO CORRIGIDO (read-only).
+
+ACHADO [INFO]: Execução dupla do mesmo cenário ≈ idêntica (ver seção 19).
+  EVIDÊNCIA: run1 vs run2 do main: mesmas decisões (WAIT/WAIT), regime igual
+    (COMPRESSION), scores com drift de ~0.08 (BTC 62.08→62.00) por dados de
+    rede ao vivo, não por algoritmo.
+  IMPACTO: Nenhum risco adicional; registrado para a matriz.
+  STATUS: VERIFICADO — SEM ACHADO DE RISCO.
+
+
+--------------------------------------------------------------------------------
+18. MATRIZ DE RISCOS (CONSOLIDADA)
+--------------------------------------------------------------------------------
+
+SEV    | AREA                  | ACHADO                                     | IMPACTO
+-------|-----------------------|--------------------------------------------|--------------------------------------------
+ALTO   | Data Provider (5)     | Health check fictício (sempre True)        | Seleção de provider não reflete disponibilidade
+ALTO   | Data Provider (5)     | trigger_failover é no-op                    | Alta disponibilidade ilusória
+ALTO   | Data Provider (5)     | Sem cache/retry no caminho ativo            | Redes repetidas sem tolerância a falhas
+ALTO   | Erros silenciosos(13)| Pipeline engole Exception → WAIT exit 0     | Exit 0 NÃO prova aprovação (alerta do usuário)
+ALTO   | Erros silenciosos(13)| DQ_FAIL/PIPELINE_ERROR → score0 "DESCARTADO"| Falha de ativo vira descarte sem aviso
+ALTO   | Erros silenciosos(13)| MTF engole falhas de timeframe              | Consensus com TFs ausentes sem notificação
+ALTO   | Stubs (14)           | 5/6 adapters retornam df vazio (saudáveis)  | Failover real entrega WAIT silencioso
+ALTO   | Determinismo (8)     | Sessão depende do relógio real → decisão    | Mesmo dado gera decisão diferente por hora
+       |                      |   varia com a hora (propaga até confiança)  |
+MEDIO  | Classificação (4)    | registry market="Stocks" vs universe CRYPTO | Classificação incorreta se consumida
+MEDIO  | Data Provider (5)    | Parâmetro period ignorado (MTF 5d/1mo)      | H4 com ~27 barras (profundidade insuficiente)
+MEDIO  | Data Quality (6)     | Teste DQ testa duplicata morta (analysis/)  | Regressão real de qualidade não é pega
+MEDIO  | Decision Integrity(9)| Confluence final usa bundle diferente       | Divergência estrutural latente
+MEDIO  | Decision Integrity(9)| result.confluence é TUPLA (bug de tipo)     | AttributeError em consumidores futuros
+MEDIO  | Erros silenciosos(13)| audit_sink nunca consultado pelo scanner    | Falhas sem observabilidade
+MEDIO  | Ranking (11)         | update_asset_stats grava score 0            | Falha degrada prioridade futura no registry
+MEDIO  | FX (15)              | Sessão FX aplicada a cripto 24/7            | Confiança penalizada fora do horário FX
+BAIXO  | Documentação (1)     | Comentários "37 ativos" desatualizados      | Documentação enganosa
+BAIXO  | Nomenclatura (1)     | STOCKS/COMMODITIES vs STOCK/COMMODITY       | KeyError latente em lookup por mercado
+BAIXO  | Ativos autorizados(2)| test_broker_filtering destrói XP.json       | Suíte apaga config de produção
+BAIXO  | Data Quality (6)     | Gap threshold fixo >15m                     | Falso negativo para stocks/TFs altos
+BAIXO  | Look-ahead (7)       | Viés de barra corrente (present-bias)       | Sinal reflete candle em formação
+BAIXO  | Determinismo (8)     | Drift de dados ao vivo entre runs           | Comparação run-a-run como replay inválida
+BAIXO  | Expl. (10)           | Numeração dupla na cadeia; 2 "explainability"| Cosmético/confusão
+BAIXO  | Ranking (11)         | Ordem de análise usa estado da run anterior | Ordem não determinística
+BAIXO  | Persistência (12)    | runtime_report acumula na raiz; lru_cache    | Poluição; cache morto
+BAIXO  | Memória (16)         | memory_path relativo (CWD-dependente)        | "Memória" varia com diretório
+BAIXO  | FX (15)              | Branch Sydney morta (0<=hour<0)              | Comportamento diverge da documentação
+
+Total: 1 achado [CRÍTICO] não identificado; 8 [ALTO]; 8 [MÉDIO]; 15 [BAIXO];
+restante [INFO] registrado nas seções. Nenhum teste falhou (não foi necessário
+PARAR itens por falha — ver seção 19).
+
+
+--------------------------------------------------------------------------------
+19. EVIDÊNCIAS DE EXECUÇÃO
+--------------------------------------------------------------------------------
+
+(a) python -m mercury_ai.main (execução REAL, rede, CWD = raiz do repo)
+  RUN 1: EXIT CODE = 0
+    - 2 ativos analisados: ETH-USD (score 66.07, WAIT) e BTC-USD (62.08, WAIT)
+    - Ambos "ADICIONADO AO RANKING" (>= 40)
+    - Regime: COMPRESSION (ambos); Decisão: WAIT; Rule: 4; Grade: D
+    - Chain exemplo (ETH): Quality avg=59.48, Memory consistency=0.50,
+      Confidence final=70.21, Confluence direction=BUY weighted=100.00,
+      Probability grade=D buy=40 sell=0, Resolver rule=4 WAIT
+    - Ranking: 1. ETH-USD 66.07 | 2. BTC-USD 62.08
+
+  RUN 2 (execução dupla do mesmo cenário): EXIT CODE = 0
+    - ETH-USD 66.07 (idêntico) | BTC-USD 62.00 (vs 62.08 — drift ~0.08 por
+      dados de rede ao vivo)
+    - Decisões idênticas (WAIT/WAIT), regime idêntico (COMPRESSION)
+    - Observação: registry previous_score atualizado entre runs (estado).
+
+(b) PROBE A (provider + data quality reais, CWD temp, PYTHONPATH=repo)
+    - healthcheck: 6/6 True (inclusive stubs)
+    - best_provider: Yahoo (priority=1)
+    - BTC-USD / ETH-USD: 1290 barras 5m; colunas lowercase; índice tz-aware
+      UTC; monotônico; 0 dups/NaN/Inf/gaps; DQ validate = True score 1.0
+    - period ignorado: 15m com period="1mo" → 430 barras (5d)
+    - MTF (period=1mo real recebido = 5d): M1=6445, M5=1290, M15=430, H1=108,
+      H4=27 barras
+
+(c) PROBE B (determinismo com dados fixos + tipo do confluence + sessão)
+    - 2 análises consecutivas (dados idênticos): TODOS os campos IDÊNTICOS
+      (decisão, score 67.274508, conf 0.713555, chain, 32 evidências) →
+      DETERMINÍSTICO sob mesmos dados + mesma hora
+    - type(result.confluence) = 'tuple' (BUG confirmado); buy_score bruto
+      408.17 > 100
+    - Sessão por hora (mesma base): 15h→LONDON q=100/l=100; 22h→SYDNEY
+      q=10/l=20 → dependência temporal confirmada e propagável (ver seção 8)
+
+(d) TESTES EXISTENTES (pytest, venv, CWD raiz): 12 passed in 5.27s
+    - tests/test_scanner_recovery.py ............ PASS
+    - tests/test_scanner_priority.py ............ PASS
+    - tests/test_asset_registry.py .............. PASS
+    - tests/test_broker_filtering.py ............ PASS (MAS deletou XP.json;
+      restaurado manualmente)
+    - tests/test_data_quality_engine.py .......... PASS (mas testa a duplicata
+      analysis/ — módulo errado)
+    - mercury_ai/brain/tests/test_explainability_engine.py ..... PASS
+    - mercury_ai/brain/tests/test_mercury_decision_engine.py ... PASS (4)
+    NENHUM TESTE FALHOU → não foi necessário PARAR nenhum item por falha.
+
+(e) PY_COMPILE PRODUÇÃO: TOTAL=271 FAIL=0 (todos os .py sob mercury_ai)
+
+(f) ESTADO: arquivos de estado (asset_registry.json, XP.json, config.json,
+    institutional_memory.json) foram BACKUP antes e RESTAURADOS após as
+    execuções (proteção da regra read-only sobre dados de produção).
+
+OBSERVAÇÃO DE INTEGRIDADE: todos os artefatos acima foram produzidos em
+%TEMP% (probes) ou na raiz do repo (main, conforme solicitado); nenhum
+arquivo .py de produção foi alterado.
+
+
+--------------------------------------------------------------------------------
+20. CONCLUSÃO
+--------------------------------------------------------------------------------
+
+O Mercury AI V1, após o GATE (Bloco 1), ESTÁ FUNCIONANDO APARENTEMENTE:
+`python -m mercury_ai.main` retorna exit 0, analisa 2 ativos (BTC-USD,
+ETH-USD), produz ranking, os 12 testes-alvo passam e os 271 arquivos de
+produção compilam.
+
+PORÉM, a auditoria de integridade operacional (read-only) identificou que a
+saúde interna NÃO está íntegra:
+
+1. "Exit 0" NÃO é prova de aprovação. O pipeline engole todas as exceções e as
+   converte em WAIT com score 0 (PIPELINE_ERROR/DATA_QUALITY_FAIL), que viram
+   "DESCARTADO PELO SCANNER". Uma falha real de análise não interrompe o run
+   nem aparece como erro no fluxo normal — exatamente o risco apontado.
+
+2. A camada de dados tem fundação frágil: health check fictício (6/6 True),
+   failover no-op, 5/6 providers são stubs que retornam df vazio, e o
+   parâmetro `period` é ignorado (MTF opera com 5 dias de dados; H4 com ~27
+   barras). Qualquer degradação real do Yahoo resultaria em WAIT silencioso.
+
+3. Não-determinismo temporal: a sessão (baseada no relógio real) alimenta o
+   MarketState e a confiança — o mesmo ativo com os mesmos dados pode ter
+   decisão/confiança diferentes conforme a hora de execução (probe B: LONDON
+   q=100 vs SYDNEY q=10). O determinismo só é garantido sob os MESMOS dados e
+   na MESMA hora (probe B confirmou determinismo de algoritmo).
+
+4. Divergências e bugs latentes: AnalysisResult.confluence é uma TUPLA (bug de
+   tipo) e usa um bundle diferente do usado pela decisão; testes de data
+   quality testam a duplicata morta (analysis/), não o motor de produção;
+   registry classifica cripto como "Stocks"; memória institucional é inerte
+   (sempre 0.5, nunca persiste no fluxo normal).
+
+5. Sem look-ahead futuro detectado (bons padrões de janela trailing e de
+   confirmação de pivôs), mas há viés de barra corrente (present-bias).
+
+RECOMENDAÇÃO (para blocos futuros, NÃO executada aqui): tratar como
+prioritários os achados [ALTO] de 13 (erros silenciosos/exit 0), 5 e 14
+(health/failover/stubs/period) e 8 (sessão temporal), e corrigir os
+[MÉDIO] de 9 (confluence tupla/divergência) e 6 (teste de módulo errado).
+
+DECISÃO DE GATE DESTE BLOCO: NÃO declarar "V1 aprovado" com base em exit 0.
+O sistema "funciona aparentemente, mas internamente incorreto/ frágil" nas
+áreas acima. Os achados foram registrados sem qualquer correção, conforme a
+regra do Bloco 2 (read-only).
+
+================================================================================
+FIM DO RELATÓRIO 05 — BLOCO 2 ENCERRADO. NENHUM CÓDIGO DE PRODUÇÃO FOI ALTERADO.
+================================================================================

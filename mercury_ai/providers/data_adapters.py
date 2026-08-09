@@ -24,11 +24,16 @@ class BaseAdapter:
         self.supported_assets = assets
         self.request_limit = limit
         self.priority = priority
+        # Apenas adapters com implementação real de get_data são "implemented".
+        # Stubs (herdeiros que não sobrescrevem get_data) são indisponíveis.
+        self.is_implemented = False
 
 
     def check_health(self):
 
-        return True
+        # Saúde honesta: um adapter sem implementação real (stub) NÃO está
+        # disponível, mesmo que registrado no catálogo de providers.
+        return self.is_implemented
 
 
 
@@ -64,6 +69,9 @@ class YahooAdapter(BaseAdapter):
             1000,
             1
         )
+
+        # Único adapter com implementação real de get_data no V1.
+        self.is_implemented = True
 
 
     def get_data(

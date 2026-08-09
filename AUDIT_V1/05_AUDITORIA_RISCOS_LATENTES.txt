@@ -1,0 +1,569 @@
+================================================================================
+ AUDITORIA DOS RISCOS LATENTES DO CAMINHO REAL
+ Mercury AI — V1 (Sprint Forense 2, Bloco 2 — Fase 2)
+================================================================================
+ Arquivo: 05_AUDITORIA_RISCOS_LATENTES.txt
+ Data    : sessão forense — Bloco 2 (read-only, NENHUMA correção aplicada)
+ Critério de evidência: E0 (suspeita estática) / E1 (código) / E2 (cadeia de
+ chamadas) / E3 (reproduzido em execução) / E4 (reproduzido + impacto na decisão)
+ SOMENTE E3/E4 = "BUG COMPROVADO".
+ Regra desta auditoria: ZERO alteração em código de produção, ZERO fallback,
+ ZERO mascaramento, ZERO mudança de fórmula/peso/limiar. "Compilou" e
+ "teste passou" NÃO são prova.
+================================================================================
+
+--------------------------------------------------------------------------------
+ 1. RESUMO EXECUTIVO
+--------------------------------------------------------------------------------
+
+ TOTAL DE ACHADOS (todas as evidências E0–E4): 28
+  - BUGS COMPROVADOS (E3/E4)      : 7
+      * CRÍTICO  : 2
+      * ALTO     : 4
+      * MÉDIO    : 0
+      * BAIXO    : 1
+  - RISCOS NÃO COMPROVADOS (E0–E2): 21 (ver seção 13)
+
+ PRINCIPAL DESCOBERTA (CRÍTICA):
+   O caminho real de decisão NUNCA produz BUY/SELL. A ProbabilityEngine
+   calcula institutional_strength com coeficientes cujo MÁXIMO matemático é
+   48.5 (< 50), então a grade de probabilidade é SEMPRE "D", e a Regra 4 do
+   DecisionResolver (grade D → WAIT) bloqueia TODA decisão. Comprovado por:
+   (a) matemática dos coeficientes (E1), (b) execução real: BTC-USD com
+   confluence=100.0, confiança=69.49 e 30 evidências → grade D → WAIT (E3/E4),
+   (c) replay de jan/2024: 91/91 decisões WAIT, 0 trades (E3),
+   (d) produção: BTC-USD e ETH-USD → WAIT (E3).
+
+ CONFIRMAÇÕES SECUNDÁRIAS RELEVANTES:
+   - O benchmark de performance da raiz (performance_benchmarking.py) NÃO
+     EXECUTA: ImportError na linha 5 reproduzido (E3).
+   - O benchmark interno (benchmark_framework.py) fabrica o "outcome" a partir
+     do próprio score do modelo (outcome = score*0.02), auto-avaliação circular
+     (E3/E4).
+   - A regra de data quality "gap > 15min" reprova dados 5m de AÇÕES reais
+     (AAPL: 4 gaps, máx 17h35m → is_valid=False, score 0.4) → qualquer ação
+     autorizada seria bloqueada para WAIT DATA_QUALITY_FAIL (E3/E4, latente).
+   - DataQuality (produção) exige colunas MINÚSCULAS; YahooFinanceProvider
+     (benchmark) entrega UPPERCASE; a compatibilidade só existe via
+     DataNormalizer, que DUPLICA os dois casos (shim frágil) (E1/E3).
+   - O sistema NÃO é determinístico em produção: DeterministicClock.set_time()
+     só é chamado no replay; em produção cai no relógio real, e a sessão
+     (hora) altera estado → confiança → decisão (E3 da Fase 1: LONDON q100 vs
+     SYDNEY q10 às 22h).
+   - AnalysisResult.confluence é uma TUPLA (ConfluenceResult, contributions),
+     não um ConfluenceResult (E3/E4).
+
+ PERGUNTAS-CHAVE RESPONDIDAS (ver seção 15 para o veredito):
+   - Caminho real comprovado: SIM, reconstruído integralmente via
+     decision_chain (seção 11).
+   - Caminho real produz sinais executáveis: NÃO — nunca (bug B1).
+
+--------------------------------------------------------------------------------
+ 2. ADAPTIVE WEIGHT ENGINE
+--------------------------------------------------------------------------------
+
+ Arquivo real: mercury_ai/analysis/adaptive_weight_engine.py (singular;
+ o nome "adaptive_weighting_engine" do pedido NÃO existe).
+
+ O QUE FAZ:
+   - Classe AdaptiveWeightEngine.calculate_weights(context) → dict com 5 chaves
+     CamelCase: {"Trend": 1.0, "Liquidity": 1.0, "Volatility": 1.0,
+     "Structure": 1.0, "SmartMoney": 1.0}, ajustadas por REGIME:
+       * trend forte (up/down): Trend*1.5 (cap 2.0), Structure*1.2 (cap 1.8)
+       * consolidação/acumulação/distribuição: Liquidity*1.5 (cap 2.0),
+         SmartMoney*1.3 (cap 1.8)
+       * expansão: Volatility*1.8 (cap 2.5), Trend*0.5 (piso 0.3)
+   - O ajuste por SESSÃO está COMENTADO ("O contexto precisa ter informação
+     de sessão") → adaptação por sessão NÃO implementada (stub).
+   - Usa hasattr(market_regime, 'regime') para resolver o regime.
+
+ ONDE É USADO (cadeia de chamadas, E1/E2):
+   - ÚNICO importador: mercury_ai/analysis/conflict_resolution_engine.py
+       L5  : from mercury_ai.analysis.adaptive_weight_engine import AdaptiveWeightEngine
+       L36 : self.adaptive_weights = AdaptiveWeightEngine()
+       L45 : weights = self.adaptive_weights.calculate_weights(context)
+   - ConflictResolutionEngine.resolve() aplica e.weight = e.weight * base_weight
+     (L~54) e decide quais evidências "prevalecem" + conflict_score.
+
+ NÃO É USADO EM:
+   - ConfluenceEngine (usa INSTITUTIONAL_WEIGHTS por domínio)
+   - ProbabilityEngine (usa INSTITUTIONAL_WEIGHTS_NORMALIZED)
+   - ConfluenceScoreEngine (usa INSTITUTIONAL_WEIGHTS)
+   - InstitutionalScoreEngine
+
+ EFEITO REAL NA DECISÃO:
+   - O AdaptiveWeightEngine altera (a) o conflict_score
+     (→ consensus_factor → ConfidenceEngine) e (b) quais evidências sobrevivem
+     (prevailed → ranking → confluence/probability).
+   - PORÉM o Confluence agrega por evidence.STRENGTH × peso do DOMÍNIO
+     (INSTITUTIONAL_WEIGHTS) e NÃO usa evidence.weight → os pesos adaptativos
+     NÃO entram diretamente na agregação de confluência.
+
+ CLASSIFICAÇÃO: IMPLEMENTADO E OPERACIONAL, mas apenas dentro do
+ ConflictResolutionEngine. NÃO é o sistema de pesos do Confluence/Score/
+ Probability. Configura um SEGUNDO sistema de pesos paralelo ao
+ institutional_weights.py (ver seção 10). A parte "adaptativa por sessão"
+ está INCOMPLETA (comentada).
+
+ Achado: A-1 (E2) — dois sistemas de pesos coexistindo; AdaptiveWeightEngine
+ não é a fonte dos pesos que determinam a confluência/score final.
+
+--------------------------------------------------------------------------------
+ 3. ESCALA DE CONFIDENCE
+--------------------------------------------------------------------------------
+
+ Tabela de escalas (Arquivo | Linha | Variável | Escala esperada | Escala real |
+ Conversão | Risco):
+
+ | Arquivo | Linha | Variável | Escala esperada | Escala real | Conversão | Risco |
+ |---|---|---|---|---|---|---|
+ | analysis/confidence_engine.py | ~92-98 | score = 100*(0.25qf+0.45cf+0.30mf) | 0-100 | 0-100 | — | — |
+ | analysis/confidence_engine.py | ~100 | is_high = score > 70 | 0-100 vs limiar 70 | 0-100 | correto | — |
+ | analysis/confidence_engine.py | ~112-128 | calibrate: final = conf + (cons-0.5)*10 | 0-100 | 0-100 | clamp 0-100 | — |
+ | analysis/confidence_engine.py | ~143 | _get_grade → calculate_grade | 0-100 | 0-100 | correto | — |
+ | brain/probability_engine.py | ~105-117 | confluence_coef=0.35, confidence_coef=0.105, evidence_coef=0.15 | soma coefs ≤ 1.0 | 0.605 | — | VER B1 |
+ | analysis/decision_result_builder.py | ~120-124 | DecisionResult.confidence = calibrated/100.0 | 0-1 | 0-1 | /100 (documentado "DESIGN NOTE") | consumidor que não multiplique por 100 |
+ | brain/scanner.py | L243 | exibe decision.confidence*100 | 0-100 | 0-1*100 | correto | — |
+ | brain/institutional_brain.py | L40 | exibe confidence*100 | 0-100 | 0-1*100 | correto | — |
+ | presentation/signal_formatter.py | ~13-15 | if confidence <= 1: confidence *= 100 | 0-1 | 0-1 | guard heurístico | detecta escala por VALOR (frágil) |
+ | analysis/confidence_calibration_auditor.py | ~40,46 | lê decision_result['confidence'] | 0-1 | 0-1 (armazenado) | — | consistente com o armazenado |
+
+ CONFIRMAÇÕES (E1/E3):
+   - ConfidenceEngine produz 0-100 (BTC: final=69.49 no chain).
+   - DecisionResult.confidence é 0-1 (BTC: 0.6949 = 69.49/100) — conversão única
+     no DecisionResultBuilder (design documentado).
+   - Replay armazena 0-1 (avg_confidence=0.671 em 91 registros) — consistente.
+   - O scanner e o institutional_brain multiplicam por 100 corretamente.
+   - A escala NÃO causa erro de exibição hoje. O risco é LATENTE: dois padrões
+     no mesmo sistema (0-1 no modelo vs 0-100 nas engines/cadeia) e um guard
+     heurístico `confidence <= 1` no SignalFormatter que detecta escala por
+     magnitude (E1/E3 observado, sem falha reproduzida).
+
+ GRADE — DUPLICIDADE:
+   - Grade de CONFIANÇA (calculate_grade, usado só no ConfidenceEngine) e grade
+     de PROBABILIDADE (grading A-D inline na ProbabilityEngine) são SISTEMAS
+     DIFERENTES. DecisionResult.grade = grade de PROBABILIDADE (confirmado pela
+     cadeia: "8.Probability: grade=D" → "9.Resolver: rule=4" → grade D).
+   - Exemplo: BTC confiança 69.49 → calculate_grade = "B", mas grade de
+     probabilidade = "D". Dois "grades" divergentes para o mesmo ativo.
+
+ Achado: A-2 (E1/E3) — escala dupla de confidence documentada mas frágil
+ (guard por magnitude) + grade duplicada (confiança vs probabilidade).
+
+--------------------------------------------------------------------------------
+ 4. DATA QUALITY E TEMPORAL GAPS
+--------------------------------------------------------------------------------
+
+ Motor de produção: mercury_ai/data/data_quality_engine.py
+ (o pipeline importa de data/ — analysis_pipeline.py L8).
+ A versão mercury_ai/analysis/data_quality_engine.py é DUPLICATA não usada
+ pela produção (E1).
+
+ REGRA DE GAP (E1): `time_diffs > pd.Timedelta(minutes=15)` → retorna
+ (False, 0.4, "Temporal gaps detected"). O score 0.4 é um CÓDIGO de falha
+ (cada falha tem score fixo: vazio=0.0, NaN=0.1, duplicata=0.2, vol negativo=
+ 0.3, gap=0.4, outlier z>5=0.5), NÃO uma nota de qualidade contínua.
+
+ EFEITO NO CAMINHO REAL (E2/E3):
+   - is_valid=False → o pipeline retorna cedo: audit_id="DATA_QUALITY_FAIL",
+     score=0, decision=WAIT. NÃO chega ao DecisionEngine.
+   - O is_valid do DataQuality é SEPARADO do is_valid do ValidationEngine
+     (que chega à Regra 1 do resolver e só checa bounds 0-100 de
+     strength/confidence + presença de market).
+
+ REPRODUÇÃO (E3/E4):
+   - DataFrame limpo 5m contíguo → is_valid=True, score=1.0.
+   - DataFrame com gap > 15min (simula overnight) → is_valid=False, score=0.4,
+     "Temporal gaps detected".
+   - AAPL 5m REAL (Yahoo): 390 barras em 5 dias, 4 gaps > 15min, máximo de
+     17h35m (overnight/fim de semana). Após normalização →
+     is_valid=False, score=0.4, "Temporal gaps detected".
+
+ IMPACTO LATENTE (E4): qualquer AÇÃO autorizada na corretora (dados 5m com
+ horário de pregão) seria reprovada pelo DataQuality e bloqueada para WAIT
+ DATA_QUALITY_FAIL. Hoje só BTC-USD e ETH-USD estão autorizados (24/7, sem
+ gaps), por isso o problema não se manifesta em produção — mas é estrutural:
+ a regra de gap foi calibrada para cripto/24h, não para equities.
+
+ Achado: B4 (ver seção 12) — regra de gap incompatível com ações 5m.
+
+--------------------------------------------------------------------------------
+ 5. CLOSE vs Close
+--------------------------------------------------------------------------------
+
+ MAPEAMENTO DE CASO (E1/E3):
+   - YahooAdapter (runtime, via MercuryDataProvider) → RAW MINÚSCULO:
+     ['close','high','low','open','volume'] (1296 barras, BTC 5m).
+   - YahooFinanceProvider (benchmark) → RAW MAIÚSCULO:
+     ['Open','High','Low','Close','Volume','Dividends','Stock Splits']
+     (1296 barras, BTC 5m).
+   - data/data_quality_engine.py (produção) EXIGE MINÚSCULO: se recebe
+     maiúsculo → (False, 0.0, "Missing columns: ['open','high','low','close']")
+     (reproduzido com o raw do YahooFinanceProvider).
+   - candlestick_engine.py usa MAIÚSCULO ('Close'/'Open').
+   - DataNormalizer.normalize: (1) lowercases tudo, (2) completa, (3) DUPLICA
+     adicionando Open/High/Low/Close/Volume → df com AMBOS os casos.
+   - Com o normalizador: DQ (minúsculo) ✓ e candlestick (maiúsculo) ✓.
+
+ CONCLUSÃO (E1/E3):
+   - A inconsistência de caso close/Close é REAL e é mascarada APENAS pelo
+     DataNormalizer, que duplica os dois padrões. É um shim de compatibilidade
+     frágil: qualquer motor/consome raw sem normalizar com o caso errado →
+     KeyError ou reprovação de qualidade.
+   - O raw do YahooFinanceProvider (benchmark) é incompatível com o DQ de
+     produção antes da normalização — dependência obrigatória do shim.
+   - Colunas extras ('Dividends','Stock Splits') sobrevivem à normalização e
+     permanecem no DataFrame downstream.
+
+ Achado: A-3 (E1/E3) — caso de colunas inconsistente entre providers/engines,
+ corrigido apenas pelo shim DataNormalizer (fragilidade latente).
+
+--------------------------------------------------------------------------------
+ 6. DATETIME NÃO DETERMINÍSTICO
+--------------------------------------------------------------------------------
+
+ CLASSIFICAÇÃO (A–G) — fontes de hora não-determinísticas:
+   A. Relógio real no CAMINHO DE DECISÃO:
+      - utils/deterministic_clock.py L25: fallback datetime.now(timezone.utc)
+        quando _current_time não setado. DeterministicClock.set_time() é
+        chamado APENAS em analysis/historical_replay_engine.py L130.
+        Em PRODUÇÃO o relógio é o real → sessão→estado→confiança variam com a
+        hora. (E3 da Fase 1: 15h LONDON q100 vs 22h SYDNEY q10, mesma base.)
+   B. Relógio real em estado persistido:
+      - core/asset_registry.py L107: last_operated = time.time() em
+        update_asset_stats — muta o registry e afeta a ORDENAÇÃO do scanner
+        (sort por -last_operated). (E1)
+   C. Relógio real em logs/telemetria (não afetam a decisão):
+      - core/health_center.py L16, core/observability_center.py L30,
+        core/pipeline_audit_middleware.py L22/L42,
+        database/history_logger.py L36, execution/brokers/demo_broker.py L20,
+        execution/order_executor.py L39, execution/order_types.py L84,
+        news/news_provider.py L8, providers/market_provider.py L186-190,
+        utils/report_generator.py L16.
+   D. Relógio real em módulo não usado no caminho:
+      - sessions/market_sessions.py L9/L27 (datetime.utcnow().hour) — importado
+        apenas pelo próprio teste.
+      - analysis/data_quality_engine.py L36 (datetime.now(), versão duplicata
+        morta).
+
+ CONCLUSÃO (E1/E3):
+   - O determinismo só existe no modo replay (set_time). Em produção, a MESMA
+     base de dados analisada em horas diferentes produz sessão/estado/confiança
+     DIFERENTES → decisão não-reproduzível entre execuções de horas distintas.
+   - O "relógio determinístico" é determinístico APENAS sob replay; em produção
+     é relógio real disfarçado.
+
+ Achado: B6 (ver seção 12) — determinismo apenas no replay; produção usa
+ relógio real e é dependente da hora.
+
+--------------------------------------------------------------------------------
+ 7. BENCHMARK
+--------------------------------------------------------------------------------
+
+ EXISTEM DOIS SISTEMAS DE BENCHMARK, AMBOS PROBLEMÁTICOS:
+
+ (a) performance_benchmarking.py (raiz):
+   - Importa `from mercury_ai.brain import PipelineExecutor` (L5) — NÃO EXISTE
+     nesse namespace (PipelineExecutor está em core/pipeline_executor.py e não
+     é reexportado). REPRODUZIDO: ImportError na linha 5, exit 1 (E3).
+   - Mesmo que o import funcionasse: PipelineExecutor NÃO tem
+     load_data/validate/process/generate_report (só execute) e o contexto
+     `with PipelineStageTimer(...)` referencia símbolo inexistente → crash.
+   - load_historical_metrics() itera `data.items()` dos runtime_reports, mas o
+     JSON tem chaves "symbol" e "stages" (não nomes de engines) → baseline
+     incorreta/inexistente; sem baseline → check_regression retorna False →
+     "passa" sem medir nada (E1).
+   - O script NÃO roda o pipeline real (MercuryScanner→AnalysisPipeline).
+
+ (b) benchmark_framework.py (mercury_ai/analysis, MercuryBenchmarkFramework):
+   - Importado APENAS por tests/test_benchmark_framework.py → ATIVO SOMENTE EM
+     TESTE, nunca usado em produção (E2).
+   - FABRICA O OUTCOME a partir do próprio score do modelo (E1/E3/E4):
+       if not use_historical_replay (default):
+         BUY  → outcome = score * 0.02
+         SELL → outcome = -score * 0.02
+         WAIT → outcome = 0.0
+     Reproduzido (probe): score 80/BUY → outcome 1.6; 90/SELL → -1.8;
+     99/WAIT → 0.0. Ou seja, acurácia/precision/F1/PnL medem o próprio modelo
+     contra si mesmo — auto-avaliação circular. A docstring afirma "Outcomes
+     reais via HistoricalReplayProvider (não mais dummy 0.01/-0.01)", mas o
+     caminho default ainda é fabricado (só mudou a escala de 0.01 fixo para
+     0.02*score).
+   - _get_real_outcome (caminho "real") usa YahooFinanceProvider.get_data() com
+     os DOIS ÚLTIMOS candles atuais → retorno do candle que JÁ estava no input
+     do pipeline (não é forward/out-of-sample; é "mesmo barra") (E1).
+   - Fallback amplo (except → return 0.0) mascara falhas de obtenção de outcome.
+
+ Achado: B2 (E3/E4) — benchmark da raiz quebrado (ImportError reproduzido).
+ Achado: B3 (E3/E4) — benchmark interno circular (outcome fabricado do score).
+
+--------------------------------------------------------------------------------
+ 8. CÓDIGO POTENCIALMENTE MORTO
+--------------------------------------------------------------------------------
+
+ CLASSIFICAÇÃO (E1/E2):
+  DEFINITIVAMENTE MORTO (não importado por nenhum módulo de produção):
+   - performance_benchmarking.py (raiz): só __main__; quebra no import (B2).
+   - providers/future_broker_provider.py, future_polygon_provider.py,
+     future_tradingview_provider.py: NENHUM import em todo o repo → "futuros".
+   - providers/mercury_data_provider.py: re-export apenas
+     (`# noqa: F401`); a implementação está em providers/market_provider.py.
+   - analysis/confidence_calibration_auditor.py: não aparece no caminho de
+     decisão; só referenciado por scripts de análise.
+  POTENCIALMENTE MORTO / DUPLICADO:
+   - analysis/data_quality_engine.py: duplicata de data/data_quality_engine.py;
+     produção importa de data/ (E1).
+   - data/mercury_data_provider.py: duplicata; importado apenas por
+     analysis/provider_priority_engine.py (fora do scanner) (E1/E2).
+   - analysis/adaptive_weight_engine.py: ativo, mas SOMENTE dentro do
+     ConflictResolutionEngine (E2).
+   - evidence_engine.calculate_agreement(): método calculado e DESCARTADO
+     (dead code intra-módulo) — da Fase 1 (E1).
+   - providers/market_provider.py get_candles(@lru_cache): não está no fluxo
+     ativo de get_data (E1).
+  ATIVO SOMENTE EM TESTE:
+   - benchmark_framework.py (MercuryBenchmarkFramework) — só teste (E2).
+   - sessions/market_sessions.py — só teste (E1).
+  ATIVO SOMENTE EM BACKTEST:
+   - providers/historical_replay_provider.py + historical_replay_engine.py
+     (set_time) — fora do fluxo de produção (E2).
+  OBS: "compila" não é prova de vida — todos os acima passam py_compile.
+
+--------------------------------------------------------------------------------
+ 9. PROVIDERS
+--------------------------------------------------------------------------------
+
+ QUAL FONTE DE DADOS REAL ALIMENTA A DECISÃO (E2/E3):
+   - MercuryScanner.__init__: self.provider = MercuryDataProvider()
+     (providers/mercury_data_provider.py → re-export de
+      providers/market_provider.py).
+   - pipeline = AnalysisPipeline(market_service=MarketDataService(
+       provider=self.provider), providers=[self.provider]).
+   - MarketDataService.get_data: provider_manager.best_provider(symbol) →
+     YahooAdapter (sempre, priority 1 registrado 1º) → get_data(symbol, "5m")
+     SEM period → normaliza.
+   - CONFIRMADO em execução: best_provider("BTC-USD") = YahooAdapter,
+     raw ['close','high','low','open','volume'].
+
+ PROBLEMAS (E1/E3 da Fase 1):
+   - healthcheck() retorna 6/6 True (adapters herdados retornam True cegamente)
+     → "saúde" fictícia.
+   - trigger_failover() apenas loga e retorna len(healthy)>1 (no-op) → não há
+     failover real; Yahoo é sempre escolhido por min(priority).
+   - get_data ignora period (o period="1mo" do MTF é descartado; resultado
+     H4=27 barras na Fase 1).
+   - Providers futuros (future_*) não são plugados.
+   - YahooFinanceProvider (benchmark) é um provider DIFERENTE, com colunas
+     UPPERCASE e outra lógica — duplicidade de "provider Yahoo".
+
+ Achado: B11 (E3) — healthcheck fictício + failover no-op; fonte única Yahoo.
+
+--------------------------------------------------------------------------------
+ 10. DUPLICAÇÕES
+--------------------------------------------------------------------------------
+
+ 1. DataQualityEngine: data/data_quality_engine.py (produção) vs
+    analysis/data_quality_engine.py (duplicata, não usada). (E1)
+ 2. MercuryDataProvider: providers/market_provider.py (implementação real),
+    providers/mercury_data_provider.py (re-export), data/mercury_data_provider.py
+    (duplicata usada só por provider_priority_engine). (E1/E2)
+ 3. Sistemas de PESOS: AdaptiveWeightEngine (5 chaves CamelCase, escala 1–2.5,
+    usado só no ConflictResolution) vs INSTITUTIONAL_WEIGHTS (8 domínios,
+    0-100, usado em Confluence/Probability/ConfluenceScore) — dois sistemas
+    paralelos de priorização (E1/E2). Mapeamentos paralelos:
+    ENGINE_NAME_TO_ADAPTIVE_KEY (16 entradas) vs ENGINE_NAME_TO_DOMAIN
+    (13 entradas) — risco de drift (E1).
+ 4. Confluência DUPLA: ConfluenceEngine (agrega evidence.strength × peso do
+    domínio) vs ConfluenceScoreEngine (calcula a partir do CONTEXTO, booleanos,
+    mesmos INSTITUTIONAL_WEIGHTS). Dois "confluence_score" distintos
+    (weighted_score vs clarity_score) coexistem; a tese usa clarity_score, o
+    resolver/probability usam weighted_score (E1/E2).
+ 5. ConfidenceEngine/ConflictResolutionEngine executados MÚLTIPLAS vezes por
+    decisão: ConflictResolution roda ~3× (MercuryDecisionEngine step 3 + dentro
+    de confidence.calculate ×2 — uma no ConfidenceEngine do decision engine e
+    outra no do MarketThesisBuilder); ConfidenceEngine.calculate roda ≥2×
+    (step 7 + dentro do confluence). Determinístico, mas duplica computação e
+    amplia risco de estado (E2).
+ 6. Grade duplicada: calculate_grade (confiança) vs grading inline A-D
+    (probabilidade) (E1/E2).
+ 7. Sessão duplicada: sessions/market_sessions.py (relógio real, não usado) vs
+    analysis/session_engine.py (DeterministicClock, usado) (E1).
+
+--------------------------------------------------------------------------------
+ 11. RECONSTRUÇÃO DA DECISÃO REAL (BTC-USD e ETH-USD)
+--------------------------------------------------------------------------------
+
+ Execução real: AnalysisPipeline (wiring MercuryScanner), silent=True.
+ Resultados reproduzidos nesta auditoria (E3/E4):
+
+ BTC-USD:
+   - decision=WAIT | grade=D | confidence(0-1)=0.6949 | score=62.07
+   - clarity=100.0 | buy/sell/wait = 40.0 / 0.0 / 60.0
+   - type(res.confluence)=tuple  (BUG B5)
+   - CADEIA:
+      1. Validation: is_valid=True
+      2. Quality: avg=60.39
+      3. Conflict: score=1.00
+      4. Ranking: 30 evidencias
+      5. Memory: consistency=0.50
+      6. Confidence: final=69.49
+      7. Confluence: direction=BUY, weighted=100.00
+      8. Probability: grade=D, buy=40.00, sell=0.00
+      9. Resolver: rule=4, decision=WAIT
+
+ ETH-USD:
+   - decision=WAIT | grade=D | confidence(0-1)=0.6850 | score=61.88
+   - clarity=100.0 | buy/sell/wait = 0.0 / 40.0 / 60.0
+   - type(res.confluence)=tuple  (BUG B5)
+   - CADEIA:
+      1. Validation: is_valid=True
+      2. Quality: avg=60.06
+      3. Conflict: score=1.00
+      4. Ranking: 29 evidencias
+      5. Memory: consistency=0.50
+      6. Confidence: final=68.50
+      7. Confluence: direction=SELL, weighted=100.00
+      8. Probability: grade=D, buy=0.00, sell=40.00
+      9. Resolver: rule=4, decision=WAIT
+
+ RECONSTRUÇÃO MANUAL (bate com a execução):
+   - Confluence weighted=100.00 (perfeita, 100%) e direção definida.
+   - ProbabilityEngine: institutional_strength =
+       confluence*0.35 + confidence*0.105 + evidence_bonus*0.15
+     BTC: 100*0.35 + 69.49*0.105 + 20*0.15 = 35.00 + 7.30 + 3.00 = 45.30
+       (evidence_bonus = min(30*4, 20) = 20) → < 50 → grade D ✓
+     ETH: 100*0.35 + 68.50*0.105 + 20*0.15 = 35.00 + 7.19 + 3.00 = 45.19 → D ✓
+   - wait_probability = clamp(max(5, 100-45.30), 60) = 60 → directional=40 →
+     BUY 40 / SELL 0 (BTC); SELL 40 / BUY 0 (ETH) ✓
+   - Resolver: opportunity_grade == "D" → Regra 4 → WAIT ✓
+
+ CONCLUSÃO: o caminho real foi RECONSTRUÍDO e o resultado é reproduzível
+ (dados iguais → mesma cadeia). PORÉM a cadeia comprova o bug B1: mesmo com
+ confluence máxima (100.0), confiança alta (69.49/68.50) e 29-30 evidências,
+ a grade de probabilidade é D e a decisão é SEMPRE WAIT.
+
+--------------------------------------------------------------------------------
+ 12. BUGS COMPROVADOS (E3/E4)
+--------------------------------------------------------------------------------
+
+ ID | Sev | Arquivo | Linha | Problema | Evidência | Reprodução | Impacto | Correção (NÃO aplicada)
+ ----|-----|---------|-------|----------|-----------|------------|---------|--------------------------
+ B1 | CRÍTICO | brain/probability_engine.py + analysis/decision_resolver_engine.py | prob ~105-117 (coefs) / ~170-190 (grade); resolver L159-163 (regra 4) | institutional_strength max = 100*0.35 + 100*0.105 + 20*0.15 = 48.5 < 50 → grade SEMPRE D → Regra 4 (grade D → WAIT) bloqueia toda decisão | E1 (matemática dos coefs) + E3/E4 (cadeia real) | BTC confluence 100.0/conf 69.49/30 ev → grade D → WAIT; ETH idem; replay 91/91 WAIT; produção BTC/ETH WAIT | O sistema NUNCA gera BUY/SELL; sinais executáveis impossíveis; acurácia/estatísticas sem sentido (0 trades) | Recalibrar coeficientes para que o máximo > 50, ou revisar limiar/regra 4 (fora deste escopo)
+ B2 | CRÍTICO | performance_benchmarking.py | L5 | ImportError: cannot import name 'PipelineExecutor' from 'mercury_ai.brain' | E3 | Executado: ImportError, exit 1 | O benchmark de performance da raiz NÃO roda nunca; "check de regressão" é inoperante | Importar de core.pipeline_executor (e corrigir métodos/contexto inexistentes)
+ B3 | ALTO | analysis/benchmark_framework.py | L151-161 (outcome) / L176-190 (_get_real_outcome) | outcome FABRICADO do próprio score (BUY: score*0.02; SELL: -score*0.02; WAIT: 0.0); caminho "real" usa retorno do último candle já visto (não forward) | E1 + E3/E4 | Probe: score80/BUY→1.6; 90/SELL→-1.8; 99/WAIT→0.0 | Acurácia/PnL medem o modelo contra si mesmo (circular); importado só por teste, nunca usado em produção | Obter outcome forward out-of-sample real
+ B4 | ALTO | data/data_quality_engine.py | regra gap (time_diffs > 15min) | Dados 5m de AÇÕES têm gaps overnight > 15min → is_valid=False, score 0.4 → WAIT DATA_QUALITY_FAIL | E1 + E3/E4 | AAPL 5m real: 390 barras, 4 gaps, máx 17h35m → is_valid=False após normalização | Qualquer ação autorizada seria bloqueada; regra calibrada só para cripto 24/7 | Permitir gaps estruturais de pregão ou ajustar intervalo/regra (fora do escopo)
+ B5 | ALTO | core/analysis_pipeline.py | L430-432 | AnalysisResult.confluence recebe TUPLA (ConfluenceResult, contributions) em vez de ConfluenceResult | E3/E4 | type(res.confluence) == tuple (BTC e ETH) | Consumidor que acesse .weighted_score → AttributeError; contrato de tipo violado | Atribuir apenas o ConfluenceResult (ou ajustar o modelo)
+ B6 | ALTO | utils/deterministic_clock.py + analysis/session_engine.py + analysis/confidence_engine.py | det_clock L25; session L12; confidence L64-70 | DeterministicClock.set_time só no replay → produção usa relógio REAL → sessão→estado→confiança variam com a hora | E1 + E3 (Fase 1: 15h LONDON q100 vs 22h SYDNEY q10) | Mesma base em horas diferentes → confiança/estado diferentes | Decisão não-reproduzível entre execuções de horas distintas; determinismo só no backtest | Fixar relógio também em produção (injetar), ou documentar não-determinismo
+ B11 | BAIXO | providers/market_provider.py | healthcheck/trigger_failover | healthcheck 6/6 True fictício (adapters herdam True); trigger_failover no-op; Yahoo sempre escolhido | E3 (Fase 1) | healthcheck() = 6/6 True; failover não troca de provider | Falsa sensação de redundância; sem failover real | Implementar health/failover reais
+
+ TOTAL COMPROVADOS: 7 (2 CRÍTICO, 4 ALTO, 0 MÉDIO, 1 BAIXO).
+
+--------------------------------------------------------------------------------
+ 13. RISCOS NÃO COMPROVADOS (E0–E2)
+--------------------------------------------------------------------------------
+
+ A-1 (E2) Dupla execução de ConflictResolutionEngine/ConfidenceEngine por
+     decisão (custo; risco se houver estado mutável).
+ A-2 (E2) Dois sistemas de pesos (AdaptiveWeight vs INSTITUTIONAL_WEIGHTS);
+     AdaptiveWeight não entra na confluência/score final.
+ A-3 (E1/E3) Caso de colunas close/Close inconsistente, mascarado apenas pelo
+     DataNormalizer (shim frágil).
+ A-4 (E1/E2) Duplicidade de confluência (ConfluenceEngine vs
+     ConfluenceScoreEngine) com dois scores distintos (weighted vs clarity).
+ A-5 (E2) Grade duplicada (confiança vs probabilidade); DecisionResult.grade =
+     grade de probabilidade.
+ A-6 (E1/E3) Escala dupla de confidence (0-1 vs 0-100) + guard heurístico
+     `confidence <= 1` no SignalFormatter (sem falha reproduzida).
+ A-7 (E1) audit_id = sha256(asset+timeframe+len(evidências)) — NÃO único por
+     decisão (mesmo ativo/contagem → mesmo id) — risco para memória/backtest.
+ A-8 (E1/E2) institutional_memory_engine inerte (consistency sempre 0.5,
+     nunca persiste em produção) — memória sem efeito.
+ A-9 (E2) benchmark_framework usa YahooFinanceProvider (UPPERCASE) incompatível
+     com DQ (lowercase) sem normalizador → risco de WAIT em massa no benchmark.
+ A-10 (E1) Mapeamentos de engine→domínio paralelos (16 vs 13) com risco de
+     drift (ENGINE_NAME_TO_ADAPTIVE_KEY vs ENGINE_NAME_TO_DOMAIN).
+ A-11 (E1) normalizer mantém colunas extras ('Dividends','Stock Splits') no df
+     downstream.
+ A-12 (E1) Pipeline engole exceções → PIPELINE_ERROR WAIT score 0 e main sai com
+     exit 0 (mascaramento de erro) — confirmado na Fase 1 (E3) mas sem decisão
+     divergente observada nesta auditoria.
+ A-13 (E2) period ignorado no caminho provider_manager (MTF H4=27 barras).
+
+--------------------------------------------------------------------------------
+ 14. O QUE NÃO FOI POSSÍVEL COMPROVAR
+--------------------------------------------------------------------------------
+
+ 1. Não foi possível executar o MercuryBenchmarkFramework completo em produção
+    (ele não roda em produção; só em teste) — a fabricação de outcome foi
+    comprovada por execução isolada do método (B3).
+ 2. Não foi possível confirmar, por execução de produção, que uma AÇÃO
+    autorizada seria bloqueada (hoje só BTC/ETH autorizados) — comprovado por
+    dados reais de AAPL via DQ (B4), mas sem efeito em decisão de produção.
+ 3. A "duplicidade de confluência" (weighted vs clarity) não teve impacto
+    divergente observado na decisão real nesta execução (ambos 100 no caso
+    atual).
+ 4. O efeito real do healthcheck fictício/failover no-op em cenário de falha do
+    Yahoo não foi testado (exigiria indisponibilidade controlada).
+ 5. A não-uniqueidade do audit_id não foi ligada a uma falha observada de
+    memória/backtest (só risco estrutural).
+ 6. Não foi possível demonstrar divergência entre o confluence final (bundle
+    completo) e o da decisão (resolved_bundle) porque, nos casos atuais, a
+    agregação retornou 100.00 nos dois.
+
+--------------------------------------------------------------------------------
+ 15. VEREDITO FORENSE — 10 PERGUNTAS OBJETIVAS
+--------------------------------------------------------------------------------
+
+ Q1. O caminho real de decisão é executado conforme documentado (python main.py)?
+     NÃO. Não existe main.py na raiz (só mercury_ai/main.py e tools/). O caminho
+     real é python -m mercury_ai.main → MercuryScanner().scan(). (E1)
+ Q2. O AdaptiveWeightEngine influencia a decisão final?
+     PARCIAL. Influencia o conflict_score e a seleção de evidências no
+     ConflictResolutionEngine, mas NÃO é o sistema de pesos do Confluence/
+     Score/Probability. A parte por sessão está incompleta (comentada). (E2)
+ Q3. A escala de confidence é consistente em todo o caminho?
+     NÃO de forma única: engines 0-100 vs DecisionResult 0-1 (conversão /100
+     documentada no builder); consumidores atuais exibem corretamente, mas há
+     guard heurístico por magnitude. (E1/E3)
+ Q4. A qualidade de dados bloqueia corretamente entradas inválidas?
+     SIM para o caso verificado (gap>15min → is_valid=False → WAIT
+     DATA_QUALITY_FAIL), MAS a regra reprova AÇÕES 5m reais (gaps de pregão),
+     bloqueando o universo de equities. (E3/E4)
+ Q5. As colunas close/Close são consistentes entre providers e engines?
+     NÃO. Providers entregam casos diferentes (YahooAdapter minúsculo;
+     YahooFinanceProvider maiúsculo); engines exigem casos diferentes (DQ
+     minúsculo; candlestick maiúsculo). Só o DataNormalizer (shim) reconcilia. (E1/E3)
+ Q6. O sistema é determinístico (mesma entrada → mesma decisão)?
+     NÃO em produção: relógio real (set_time só no replay) → sessão/estado/
+     confiança variam com a hora. Determinístico apenas sob replay. (E3 Fase 1)
+ Q7. O benchmark valida a performance contra baseline independente?
+     NÃO. Benchmark da raiz quebrado (ImportError); benchmark interno fabrica
+     outcome do próprio score (circular); nenhum baseline independente. (E3/E4)
+ Q8. Há código morto que parece ativo?
+     SIM. analysis/data_quality_engine.py, data/mercury_data_provider.py,
+     future_* providers, sessions/market_sessions.py, get_candles, e o próprio
+     performance_benchmarking.py (que parece benchmark mas nunca roda). (E1/E2)
+ Q9. O provider real é único e confiável?
+     NÃO. Único (Yahoo) com healthcheck fictício 6/6 True e failover no-op; sem
+     redundância real. (E3)
+ Q10. A decisão real é reproduzível e produz sinais executáveis?
+     Reproduzível: SIM (cadeia reconstruída e batida — seção 11).
+     Sinais executáveis: NÃO — o caminho NUNCA produz BUY/SELL (BUG B1),
+     comprovado por execução (confluence 100.0 ainda → grade D → WAIT) e pelo
+     replay (91/91 WAIT, 0 trades).
+
+ VEREDITO FINAL:
+   - O caminho real foi COMPROVADO e RECONSTRUÍDO (Q10 reproduzível).
+   - O caminho real é NÃO-EXECUTÁVEL como gerador de sinais: B1 (crítico)
+     impede qualquer BUY/SELL; B2 (crítico) invalida o benchmark de
+     performance; B3-B6 (altos) comprometem a validade do benchmark interno,
+     bloqueiam equities e quebram determinismo/contrato de tipos.
+   - As estatísticas institucionais (91 sinais, acurácia 0.0, avg_confidence
+     0.671) são ARTIFICIAIS: 100% WAIT, 0 trades — o sistema não negocia.
+   - NENHUMA correção foi aplicada (escopo read-only). O que precisa ser
+     corrigido no próximo bloco está detalhado na seção 12 (IDs B1–B6, B11).
+
+================================================================================
+ FIM DO RELATÓRIO — Bloco 2, Fase 2 (05_AUDITORIA_RISCOS_LATENTES.txt)
+ Bloco 3 NÃO foi iniciado.
+================================================================================

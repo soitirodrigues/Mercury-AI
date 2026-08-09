@@ -117,8 +117,17 @@ class MercuryDataProvider:
         provider = self._get_best_provider(symbol)
         return provider.get_data(symbol, interval)
 
-    # ---------------------------------------------------------    def trigger_failover(self, reason: str = "") -> bool:
+    # ---------------------------------------------------------
 
+    def trigger_failover(self, reason: str = "") -> bool:
+        """Failover honesto (ACHADO 5).
+
+        Reporta se existe provider funcional de contingência. Com a correção do
+        ACHADO 4, adapters stub não são 'healthy'; portanto, quando apenas o Yahoo
+        (primário) está implementado, este método retorna False e registra que NÃO
+        há provider secundário funcional — em vez de simular failover para um stub
+        que devolveria um DataFrame vazio.
+        """
         logger.warning(f"Failover requested: {reason}")
 
         healthy = self._healthy_providers()

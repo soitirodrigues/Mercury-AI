@@ -1,0 +1,377 @@
+================================================================================
+ SPRINT FORENSE 1 — FECHAMENTO DO GATE V1
+ ARQUIVO: 03_GATE_V1_FECHAMENTO.txt
+================================================================================
+
+OBJETIVO
+--------
+Comprovar, através de EXECUÇÃO REAL e evidências reproduzíveis, o que ainda
+impede (ou não impede) declarar o Mercury AI V1 operacional de ponta a ponta.
+Investigação READ-ONLY: NENHUM arquivo de produção foi alterado. Todos os
+probes foram executados a partir de diretório temporário (efeitos colaterais
+do pipeline caem fora do repositório).
+
+METODOLOGIA
+-----------
+1. Definiram-se 10 critérios objetivos do Gate (C1..C10).
+2. Construiu-se uma suíte de probes reproduzíveis em
+   %TEMP%\mercury_gate_probe.py (C1..C9) + %TEMP%\mercury_gate_c10.py (C10).
+3. Cada critério foi executado no interpretador real do venv:
+   C:\Projetos\Mercury-AI\.venv\Scripts\python.exe
+4. Evidência bruta = saída capturada dos comandos (transcrita neste relatório).
+5. Classificação por critério: PASS / FAIL / PARCIAL / BLOQUEADO.
+
+AMBIENTE
+--------
+- Data/hora de execução: 2026-08-09 ~02:42–02:44 (Windows)
+- Repositório: C:\Projetos\Mercury-AI
+- Python: .venv do projeto (pip 26.1.2)
+- Rede: DISPONÍVEL (yfinance conectou, ver C9)
+- Config ativa: OPERATIONAL_PROFILE.active=Demo, broker=XP (config.json)
+
+================================================================================
+ RESUMO EXECUTIVO — VEREDITO
+================================================================================
+
+VEREDITO: NÃO é possível declarar o Mercury AI V1 operacional de ponta a ponta
+no estado atual. O BLOQUEADOR OPERACIONAL é ÚNICO e preciso:
+
+    data/brokers/ está VAZIA  →  get_assets_for_broker("XP") retorna []
+    →  scanner.py filtra a.symbol in authorized_symbols ([])  →  0 ativos
+    →  "python -m mercury_ai.main" termina com exit 0 SEM ANALISAR NADA.
+
+Porém, é igualmente COMPROVADO que o núcleo FUNCIONA de ponta a ponta: com um
+provider real (Yahoo), o pipeline completo produziu decisão válida em dados
+reais de BTC-USD em 23,46s (C10), sem NaN nem valores impossíveis. Ou seja: a
+capacidade de análise EXISTE; o que falta é o arquivo de autorização do broker
+(e a correção de 3 itens secundários, listados abaixo).
+
+CRITÉRIOS DO GATE — RESUMO
+--------------------------
+  C1  requirements.txt instalável ............ FAIL
+  C2  Todos os .py compilam .................. FAIL (5 arquivos, todos mortos)
+  C3  Entry python -m mercury_ai.main ........ PARCIAL (exit 0, mas 0 ativos)
+  C4  Entry performance_benchmarking ......... FAIL (NameError, exit 1)
+  C5  Seleção de ativos (registry+broker) .... BLOQUEADO (broker vazio)
+  C6  Disponibilidade de dados (providers) ... PASS funcional / risco latente
+  C7  DataQualityEngine vs dados reais FX .... PARCIAL (rejeita gaps FX)
+  C8  Pipeline core (dados contínuos) ........ PASS
+  C9  Provider Yahoo conecta (rede) .......... PASS
+  C10 Pipeline completo com dados REAIS ...... PASS
+
+BLOQUEADORES PARA O GATE (em ordem de impacto)
+-----------------------------------------------
+  1. [BLOQUEIA] data/brokers/XP.json ausente → scanner analisa ZERO ativos (C3+C5).
+  2. [BLOQUEIA instalação] requirements.txt com conflito de merge aninhado (C1).
+  3. [BLOQUEIA entrada] mercury_ai.performance_benchmarking quebra com NameError (C4).
+  4. [Risco latente] 5 dos 6 adaptadores são stubs que retornam DataFrame vazio (C6).
+  5. [Restrição] DataQualityEngine rejeita dados reais de FX 5min (gaps de fim de
+     semana → "Temporal gaps detected") — universo FX ficaria sempre em WAIT (C7).
+
+================================================================================
+ CRITÉRIOS DO GATE — EVIDÊNCIAS DETALHADAS
+================================================================================
+
+--------------------------------------------------------------------------------
+ C1 — requirements.txt instalável
+--------------------------------------------------------------------------------
+Comando:
+    .venv\Scripts\python.exe -m pip install -r requirements.txt --dry-run
+
+Saída (tail do erro):
+    ERROR: Invalid requirement: '<<<<<<< HEAD': Expected package name at the
+    start of dependency specifier
+        <<<<<<< HEAD
+        ^ (from line 9 of C:\Projetos\Mercury-AI\requirements.txt)
+    exit_code = 1
+
+Evidência de código (requirements.txt, linhas 9-18):
+    <<<<<<< HEAD
+    psutil
+    scipy
+    openai
+    pytest
+    =======
+    <<<<<<< HEAD
+    psutil
+    =======
+    >>>>>>> 3e8bc87dc84ef379614a58c33a5424c354f3cf06
+    >>>>>>> 67cc5c60936ff914a76d6d94a09c6422d147e02a
+
+CLASSIFICAÇÃO: FAIL (CONFIRMADO — conflito de merge NESTED nunca resolvido).
+Impacto: impossível instalar/atualizar dependências via requirements.txt.
+
+--------------------------------------------------------------------------------
+ C2 — Todos os .py compilam (py_compile)
+--------------------------------------------------------------------------------
+Comando (dentro do probe):
+    py_compile de mercury_ai\** + tools\mercury_integrity_auditor\** (302 arquivos)
+
+Saída:
+    arquivos .py escaneados = 302
+    VERDITO: FAIL (5 arquivos não compilam)
+      FAIL: tools\mercury_integrity_auditor\contract_audit.py     -> SyntaxError
+      FAIL: tools\mercury_integrity_auditor\dependency_audit.py   -> SyntaxError
+      FAIL: tools\mercury_integrity_auditor\final_report.py       -> SyntaxError
+      FAIL: tools\mercury_integrity_auditor\runtime_audit.py      -> SyntaxError
+      FAIL: tools\mercury_integrity_auditor\static_audit.py       -> SyntaxError
+
+CLASSIFICAÇÃO: FAIL, mas NÃO-BLOQUEANTE: os 5 arquivos são artefatos
+markdown-style (relatórios) com extensão .py, NUNCA importados por nenhum
+módulo (comprovado na Fase 2). Os 297 restantes compilam.
+
+--------------------------------------------------------------------------------
+ C3 — Entry principal: python -m mercury_ai.main
+--------------------------------------------------------------------------------
+Comando:
+    .venv\Scripts\python.exe -m mercury_ai.main
+
+Saída (stderr, resumo):
+    MERCURY AI SCANNER
+    RANKING INSTITUCIONAL DE OPORTUNIDADES
+    (sem nenhuma linha "Analisando ...")
+    exit_code = 0
+
+Medição adicional: linhas 'Analisando...' = 0
+
+CLASSIFICAÇÃO: PARCIAL — o entry executa sem erro (exit 0), mas NÃO analisa
+nenhum ativo. A causa raiz é C5 (broker vazio → authorized_symbols = []).
+
+--------------------------------------------------------------------------------
+ C4 — Entry: python -m mercury_ai.performance_benchmarking
+--------------------------------------------------------------------------------
+Comando:
+    .venv\Scripts\python.exe -m mercury_ai.performance_benchmarking
+
+Saída:
+    Traceback (most recent call last):
+      File "mercury_ai\performance_benchmarking.py", line 13, in <module>
+        check_regression()
+      File "mercury_ai\performance_benchmarking.py", line 8, in check_regression
+        if threshold_exceeded:
+           ^^^^^^^^^^^^^^^^^^
+    NameError: name 'threshold_exceeded' is not defined
+    exit_code = 1
+
+CLASSIFICAÇÃO: FAIL (CONFIRMADO — módulo mutilado/placeholder com NameError).
+
+--------------------------------------------------------------------------------
+ C5 — Seleção de ativos: asset_registry + get_assets_for_broker
+--------------------------------------------------------------------------------
+Comando (probe em subprocesso com cwd = repositório, fiel ao main):
+    python %TEMP%\...\_c5_inner.py
+
+Saída:
+    total_assets_registry = 2
+       BTC-USD enabled= True profile= Demo provider= Yahoo market= Stocks
+       ETH-USD enabled= True profile= Demo provider= Yahoo market= Stocks
+    ativos Demo enabled = 2
+    get_assets_for_broker(XP) -> []
+    autorizados_XP = 0
+    data/brokers contém: []
+
+Cadeia exata no scanner.py (linhas 61-87):
+    active_profile = config["OPERATIONAL_PROFILE"]["active"]        # "Demo"
+    active_broker  = config["OPERATIONAL_PROFILE"]["broker"]        # "XP"
+    authorized_symbols = asset_registry.get_assets_for_broker("XP") # []
+    enabled_assets = [a for a in registry.assets.values()
+                      if a.enabled
+                      and a.profile == active_profile
+                      and a.symbol in authorized_symbols]            # []
+    symbols = []  →  loop "Analisando ..." nunca executa
+
+CLASSIFICAÇÃO: BLOQUEADO (CONFIRMADO). Há 2 ativos habilitados no perfil Demo,
+mas o arquivo data/brokers/XP.json não existe (pasta vazia), então
+get_assets_for_broker retorna [] e o scanner não autoriza nenhum símbolo.
+Observação: BTC-USD/ETH-USD estão com market="Stocks" (miscategorizados como
+ações, não cripto) — não bloqueia a análise (Yahoo os suporta), mas é
+inconsistência de dados de registro.
+
+--------------------------------------------------------------------------------
+ C6 — Disponibilidade de dados: adaptadores, prioridades, stubs
+--------------------------------------------------------------------------------
+Comando (dentro do probe):
+    MercuryDataProvider() + _get_best_provider("BTC-USD") + get_data("BTC-USD")
+
+Saída:
+    adaptadores registrados = 6
+      YahooAdapter        prio=1 get_data_override=True  assets=64
+      PolygonAdapter      prio=2 get_data_override=False assets=10
+      TwelveDataAdapter   prio=3 get_data_override=False assets=28
+      AlphaVantageAdapter prio=4 get_data_override=False assets=64
+      BinanceAdapter      prio=1 get_data_override=False assets=10
+      MetaTrader5Adapter  prio=5 get_data_override=False assets=28
+    _get_best_provider('BTC-USD') -> YahooAdapter (prio 1)
+    mp.get_data('BTC-USD') -> shape=(1221, 5) linhas=1221
+      colunas: ['close','high','low','open','volume']
+
+Análise:
+- SÓ o YahooAdapter implementa get_data real (yfinance). Os outros 5 herdam
+  BaseAdapter.get_data → pd.DataFrame() vazio (STUBS).
+- _get_best_provider escolhe min(priority) entre os "saudáveis" que suportam o
+  símbolo; como BaseAdapter.check_health() retorna True SEMPRE, todos são
+  sempre candidatos.
+- Empate Yahoo(1) vs Binance(1) → min() retorna o PRIMEIRO registrado = Yahoo
+  → para BTC-USD e ETH-USD (e qualquer símbolo), o fluxo ativo cai SEMPRE no
+  Yahoo, que tem dados reais. Portanto o problema dos stubs NÃO bloqueia o
+  funcionamento atual — é um RISCO LATENTE (viraria bloqueio se o Yahoo fosse
+  removido/desabilitado ou se um símbolo não coberto por Yahoo fosse usado).
+
+CLASSIFICAÇÃO: PASS funcional no caminho ativo / RISCO LATENTE (stubs).
+
+--------------------------------------------------------------------------------
+ C7 — DataQualityEngine vs dados reais de FX (parquet EURUSD=X, 5min)
+--------------------------------------------------------------------------------
+Comando (dentro do probe):
+    pd.read_parquet(data\replay\EURUSD=X\data.parquet)
+    DataQualityEngine().validate(df)
+
+Saída:
+    linhas=6077 colunas=['close','high','low','open','volume'] índice=Datetime
+    is_valid=False quality=0.4 reason=Temporal gaps detected
+
+Análise:
+- O validador de produção rejeita gaps de tempo > 15min. Dados reais de FX
+  5min contêm gaps de fim de semana → TODO o universo FX cairia em
+  WAIT/DATA_QUALITY_FAIL no cenário real. (Fase 2 já havia constatado isto;
+  aqui foi re-executado e reproduzido.)
+- IMPORTANTE: o mesmo validador ACEITA dados reais de cripto 24/7 (ver C10,
+  quality=1.0).
+
+CLASSIFICAÇÃO: PARCIAL — gate funciona como projetado, mas impõe restrição
+real ao universo FX.
+
+--------------------------------------------------------------------------------
+ C8 — Pipeline core com dados contínuos determinísticos
+--------------------------------------------------------------------------------
+Comando (dentro do probe): AnálisePipeline.analyze("EURUSD=X") com 1200 candles
+5min contínuos gerados com seed 42.
+
+Saída:
+    DataQualityEngine: is_valid=True quality=1.0 reason=Data quality pass
+    tempo_total=17.758s
+    decision=WAIT score=66.28780206060605 confidence=0.6992312484848484
+    clarity=100.0 risk=42.91272727272727 quality=80.0 grade=D
+    buy_probability=40.0 sell_probability=0.0 wait_probability=60.0
+    PROBLEMAS: NENHUM
+
+DETERMINISMO (evidência reproduzível): este critério foi executado DUAS VEZES
+(02:42 e 02:43) e produziu score/confidence/quality IDÊNTICOS
+(66.28780206060605), idênticos também ao valor da Fase 2. Prova de
+reprodutibilidade bit a bit do pipeline com a mesma entrada.
+
+CLASSIFICAÇÃO: PASS (CONFIRMADO) — núcleo gera decisão válida, sem NaN/Inf,
+probabilidades somam 100 (40+0+60), confidence em escala 0-1.
+
+--------------------------------------------------------------------------------
+ C9 — Provider Yahoo conecta (rede)
+--------------------------------------------------------------------------------
+Comando (probe interno): yf.download('BTC-USD', period='5d', interval='5m')
+
+Saída:
+    YFINANCE_OK linhas= 1221
+    colunas= [('Close','BTC-USD'),('High','BTC-USD'),('Low','BTC-USD'),
+              ('Open','BTC-USD'),('Volume','BTC-USD')]
+    primeiro_indice= 2026-08-05 00:00:00+00:00
+    exit_code = 0
+
+CLASSIFICAÇÃO: PASS — conectividade de rede e provider Yahoo funcionam de
+verdade; dados reais de mercado foram baixados.
+
+--------------------------------------------------------------------------------
+ C10 — Pipeline COMPLETO com dados REAIS (Yahoo → qualidade → decisão)
+--------------------------------------------------------------------------------
+Comando: AnálisePipeline.analyze("BTC-USD") usando MercuryDataProvider() real
+(fluxo idêntico ao do scanner, apenas com o símbolo injetado diretamente).
+
+Saída:
+    _get_best_provider('BTC-USD') = YahooAdapter
+    dados brutos Yahoo: linhas=1221 colunas=['close','high','low','open','volume']
+    DataQualityEngine.validate(real) -> is_valid=True quality=1.0 reason=Data quality pass
+    tempo_total=23.461s
+    decision=WAIT score=61.849317625000005 confidence=0.686633675
+    clarity=100.0 risk=84.27374999999999 quality=80.0 grade=D
+    buy_probability=0.0 sell_probability=40.0 wait_probability=60.0
+    PROBLEMAS: NENHUM
+
+CLASSIFICAÇÃO: PASS (CONFIRMADO) — É a prova decisiva de que o fluxo
+ponta-a-ponta (buscar dados reais → validar qualidade → pipeline de 25 passos →
+decisão com probabilidades coerentes) FUNCIONA. O único elo que impede o
+scanner de chegar até aqui é a autorização do broker (C5).
+
+================================================================================
+ O QUE FOI COMPROVADO POR EXECUÇÃO REAL
+================================================================================
+1. O núcleo de análise produz decisão válida em dados contínuos (C8).
+2. O fluxo ponta-a-ponta funciona com dados REAIS de mercado (C10).
+3. O provider Yahoo conecta e baixa dados reais (C9).
+4. A seleção de provider escolhe o Yahoo (primeiro registrado, prioridade 1)
+   e ele tem get_data real (C6).
+5. O scanner executa sem erro, mas analisa 0 ativos por falta de autorização
+   do broker (C3+C5).
+6. A instalação de dependências está quebrada por conflito de merge em
+   requirements.txt (C1).
+7. A entrada de benchmark quebra com NameError (C4).
+8. O gate de qualidade rejeita dados reais de FX 5min com gaps (C7).
+9. Reproducibilidade: duas execuções de C8 → resultados idênticos (determinismo).
+
+================================================================================
+ O QUE NÃO FOI COMPROVADO / PENDENTE
+================================================================================
+- Não foi comprovado o comportamento do scanner com um broker file PRESENTE
+  (não criamos data/brokers/XP.json por ser alteração de produção).
+- Não foi testado o ranking institucional impresso no final (não há ativos
+  analisados para rankear no fluxo real).
+- Não foi comprovado o comportamento do MetaTrader5Adapter (não há terminal).
+- Não foi validada a persistência de memória institucional com dados reais de
+  múltiplos ciclos de varredura.
+
+================================================================================
+ AÇÕES NECESSÁRIAS PARA DECLARAR O GATE V1 OPERACIONAL (recomendadas, NÃO executadas)
+================================================================================
+(Para fins de fechamento do gate — fora do escopo desta investigação read-only.)
+1. [BLOQUEADOR PRINCIPAL] Criar data/brokers/XP.json autorizando os símbolos
+   do perfil Demo (ex.: BTC-USD, ETH-USD). Sem isso, o scanner sempre analisa 0.
+2. Corrigir o conflito de merge aninhado em requirements.txt (linhas 9-18).
+3. Corrigir/restaurar mercury_ai/performance_benchmarking.py (NameError
+   threshold_exceeded) ou removê-lo do entry do gate.
+4. Decidir o destino dos 5 artefatos .py não-compiláveis em
+   tools/mercury_integrity_auditor/ (renomear para .md ou mover para docs/).
+5. Definir política para dados FX 5min (limiar de gaps) ou limitar o universo
+   operacional a cripto 24/7 no perfil ativo.
+6. (Risco latente) Implementar ou desregistrar os 5 adaptadores stub; fazer
+   check_health() refletir estado real.
+
+================================================================================
+ REPRODUÇÃO (como reexecutar cada evidência)
+================================================================================
+1. Probe C1..C9:
+     %TEMP%\mercury_gate_probe.py
+     .venv\Scripts\python.exe %TEMP%\mercury_gate_probe.py
+2. Probe C10:
+     .venv\Scripts\python.exe %TEMP%\mercury_gate_c10.py
+3. C3 isolado:
+     .venv\Scripts\python.exe -m mercury_ai.main
+4. C4 isolado:
+     .venv\Scripts\python.exe -m mercury_ai.performance_benchmarking
+5. C1 isolado:
+     .venv\Scripts\python.exe -m pip install -r requirements.txt --dry-run
+
+Todos os probes executam em workdir temporário; nenhum arquivo do repositório
+é alterado (confirmado via git status limpo após a execução).
+
+================================================================================
+ VEREDITO FINAL
+================================================================================
+O Mercury AI V1 POSSUI um núcleo de análise funcional e comprovado por
+execução real (C8, C9, C10). Entretanto, NO ESTADO ATUAL, NÃO PODE ser
+declarado operacional de ponta a ponta: o scanner executa sem analisar NENHUM
+ativo (broker file ausente — C5) e há 3 impedimentos adicionais de hygiene
+(C1 requirements quebrado, C4 benchmark quebrado, C2 artefatos não-compiláveis).
+
+PARA LIBERAR O GATE, o item crítico é o data/brokers/XP.json; os demais são
+correções pontuais de hygiene. Com o broker autorizando os 2 ativos Demo, a
+evidência C10 indica que a varredura produziria decisões reais no tempo/qualidade
+observados (~23s por ativo, decisão WAIT, sem NaN).
+
+                                                                        — FIM —

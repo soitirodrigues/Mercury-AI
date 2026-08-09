@@ -1,0 +1,584 @@
+================================================================================
+ SPRINT FORENSE 2 — BLOCO B2 — INVESTIGAÇÃO E CORREÇÃO DO PRÓXIMO BLOQUEADOR
+ Mercury AI — V1 (Falha do teste test_weight_simulator: "No provider available")
+================================================================================
+ Arquivo : AUDIT_V1/06_GATE_B2_FORENSE.txt
+ Data    : 2026-08-09 (sessão forense, Sprint Forense 2)
+ Escopo  : Investigar, PROVAR e corrigir SOMENTE o bloqueador B2 deste sprint:
+           tests/test_weight_simulator.py::test_weight_simulator → falha com
+           "Exception: No provider available for EURUSD=X".
+           Este bloco deve PROVAR ou REFUTAR a classificação do relatório B1
+           (06_GATE_B1_CORRECTION.txt, seção 13.3) que rotulou esta falha como
+           "PREEXISTENTE e AMBIENTAL".
+ Regra   : REGRA ZERO (ler código atual antes de editar). NÃO inventar.
+           NÃO adicionar try/except para esconder erro. NÃO criar provider
+           artificial. NÃO usar fallback para Yahoo Finance. NÃO substituir
+           símbolo silenciosamente. NÃO alterar regras de negócio apenas para
+           fazer teste passar. NÃO adicionar EURUSD=X ao universo (já existe).
+ Status  : VER SEÇÃO 18 (VEREDITO)
+ Entregável: SOMENTE este arquivo + resultado de validação real.
+ NÃO iniciar Bloco 3 (próximo bloqueador). Classificar outros bloqueadores
+ apenas (FASE 4), sem corrigir.
+
+================================================================================
+ 1. STATUS DO BLOCO B2
+================================================================================
+Status B2: CORRIGIDO
+
+O bloqueador B2 (falha do teste test_weight_simulator) foi:
+  (a) REPRODUZIDO de forma determinística;
+  (b) CAUSA RAIZ PROVADA por execução real (não é ambiental);
+  (c) CORRIGIDO de forma mínima e observável (1 caractere na regex);
+  (d) VALIDADO por execução real (teste-alvo PASSED + 45 testes de
+      não-regressão sem falhas + main.py EXIT=0).
+
+A classificação do relatório B1 ("falha PREEXISTENTE e ambiental") foi:
+  - REFUTADA na dimensão "ambiental": NÃO é falha de rede/ambiente. É um bug
+    de código determinístico (regressão do commit 14ffc9a).
+  - CONFIRMADA na dimensão "preexistente": o defeito é anterior a este bloco
+    e independe da correção B1; porém é um BUG REAL de código, não um
+    "problema de provedor/rede no ambiente" como afirmado no B1.
+
+================================================================================
+ 2. EVIDÊNCIA ORIGINAL (ACHADO DO RELATÓRIO B1)
+================================================================================
+Relatório B1 (06_GATE_B1_CORRECTION.txt, seção 13.3), texto original:
+
+  "13.3 Falha analisada (NÃO relacionada a esta correção):
+       - tests/test_weight_simulator.py::test_weight_simulator
+         Motivo: "Exception: No provider available for EURUSD=X" em
+         mercury_ai/data/market_data.py:223 — falha de PROVEDOR DE DADOS/
+         rede no ambiente (símbolo de teste sem provider disponível).
+         Caminho de execução: test_weight_simulator → WeightSimulator →
+         EnginePerformanceAuditor → market_data. NENHUMA dependência de
+         probability_engine.py. Falha PREEXISTENTE e ambiental (reproduzível
+         independentemente desta correção)."
+
+O erro original capturado:
+  Exception: No provider available for EURUSD=X
+
+================================================================================
+ 3. REPRODUÇÃO (EXECUÇÃO REAL, ANTES DA CORREÇÃO)
+================================================================================
+Comando:
+  .\.venv\Scripts\python.exe -m pytest tests/test_weight_simulator.py -vv
+
+Resultado (antes da correção):
+  tests/test_weight_simulator.py::test_weight_simulator FAILED
+  ____________________________ test_weight_simulator ____________________________
+      def test_weight_simulator():
+          simulator = WeightSimulator()
+  >       report = simulator.simulate()
+  tests\test_weight_simulator.py:5
+  mercury_ai\analysis\weight_simulator.py:16: in simulate
+      perf_data = self.auditor.audit_engines()
+  mercury_ai\analysis\engine_performance_auditor.py:13: in audit_engines
+      performance_data = {t['timestamp'] + t['asset']: t for t in
+                          self.analytics.analyze_performance()}
+  mercury_ai\analysis\performance_analytics.py:24: in analyze_performance
+      df = self.market_service.get_data(symbol)
+  mercury_ai\data\market_data.py: get_data
+  ...
+  Exception: No provider available for EURUSD=X
+  ============================= 1 failed in 49.05s ==============================
+
+Reprodução determinística: SIM (100% das execuções, exit 1).
+
+================================================================================
+ 4. STACK TRACE COMPLETO (CADEIA DE CHAMADAS)
+================================================================================
+test_weight_simulator.py::test_weight_simulator
+  └─ WeightSimulator.simulate()                          weight_simulator.py:16
+       └─ EnginePerformanceAuditor.audit_engines()       engine_performance_auditor.py:13
+            └─ PerformanceAnalytics.analyze_performance() performance_analytics.py:24
+                 ├─ para cada snapshot: symbol = data['asset']  →  'EURUSD=X'
+                 └─ MarketDataService.get_data('EURUSD=X')    market_data.py
+                      └─ loop providers:
+                           ├─ YahooFinanceProvider.supports_symbol('EURUSD=X') → False
+                           │    (regex whitelist rejeita '=' → DataValidationError)
+                           └─ (sem outro provider)
+                      └─ raise Exception(f"No provider available for {symbol}")
+                                                          market_data.py:223
+            (o except-tuple de analyze_performance captura apenas
+             KeyError/IndexError/ValueError/ConnectionError/RuntimeError/
+             MarketClosedException — NÃO captura Exception genérica)
+  └─ Exception propaga → teste FALHA
+
+Ponto de ruptura real: a regex de sanitização do YahooFinanceProvider.
+
+================================================================================
+ 5. CAUSA RAIZ (PROVADA)
+================================================================================
+5.1 O separador '=' é OFICIAL no Yahoo Finance
+  - Símbolos forex usam o formato "{PAR}=X"  (ex.: EURUSD=X, USDJPY=X)
+  - Símbolos de commodity futura usam "{TICKER}=F" (ex.: CL=F, SI=F, GC=F)
+  - Yahoo retorna dados reais para esses formatos (provado em 5.3).
+
+5.2 A regex whitelist do YahooFinanceProvider NÃO permite '='
+  Arquivo : mercury_ai/providers/yahoo_finance_provider.py
+  Linha   : 15 (antes da correção)
+  Código  : _SYMBOL_RE = re.compile(r"^[A-Z0-9.\-_]{1,20}$")
+  Efeito  : _sanitize_symbol('EURUSD=X') → DataValidationError
+            supports_symbol('EURUSD=X') → False
+            get_data('EURUSD=X') → DataValidationError (nunca busca dados)
+
+5.3 O universo operacional oficial exige '=' em 31 de 64 ativos (48%)
+  Probe real (probe_b2_divergence.py, antes da correção):
+    ALL_SYMBOLS count: 64
+    Símbolos com "=" (forex/commodity): 31
+    Suportados pelo YahooFinanceProvider: 33
+    REJEITADOS pelo YahooFinanceProvider: 31
+      FOREX      : 28 totais, 28 rejeitados (EURUSD=X, GBPCAD=X, ...)
+      CRYPTO     : 10 totais,  0 rejeitados
+      STOCKS     : 23 totais,  0 rejeitados
+      COMMODITIES:  3 totais,  3 rejeitados (CL=F, SI=F, GC=F)
+    Sanitize EURUSD=X FALHOU: DataValidationError "Símbolo não passou
+    whitelist regex: 'EURUSD=X'"
+    Sanitize GC=F FALHOU: DataValidationError "Símbolo não passou
+    whitelist regex: 'GC=F'"
+
+5.4 NÃO é ambiental — prova por execução REAL de rede (probe_b2_network.py)
+  [1] yf.download('EURUSD=X', period='5d', interval='5m')
+      -> retornou 1422 linhas de dados reais (colunas Close/High/Low/Open/
+         Volume para EURUSD=X)  ← o Yahoo TEM os dados
+  [2] YahooAdapter (mercury_ai/providers/data_adapters.py, usado em produção
+      pelo scanner via MercuryDataProvider)
+      -> supported_assets inclui EURUSD=X: True; is_implemented: True;
+         get_data retornou 1422 linhas  ← o MESMO símbolo funciona pelo
+         outro provider Yahoo
+  [3] YahooFinanceProvider (mercury_ai/providers/yahoo_finance_provider.py)
+      -> supports_symbol('EURUSD=X'): False
+         supports_symbol('BTC-USD'):  True
+         get_data('EURUSD=X') ERRO: DataValidationError: "Símbolo não passou
+         whitelist regex: 'EURUSD=X'"  ← SÓ este provider falha
+
+  Conclusão: a rede e o Yahoo funcionam; o símbolo é oficial; o ÚNICO ponto
+  de falha é a regex de sanitização do YahooFinanceProvider.
+
+5.5 É uma REGRESSÃO de código (git forense)
+  - 3e8bc87 (backup-local, variante ANTIGA) — mercury_ai/providers/
+    yahoo_finance_provider.py NÃO possuía regex:
+        def supports_symbol(self, symbol: str) -> bool:
+            return True                       ← incondicional (sem whitelist)
+        (get_data passava o símbolo direto ao yf.Ticker → EURUSD=X funcionava)
+  - 14ffc9a ("Mercury AI V1 - Atualização completa") — INTRODUZIU a regex
+    whitelist ^[A-Z0-9.\-_]{1,20}$ que exclui '='. MESMO commit que
+    introduziu o bug B1 (confluence_coef). Regressão dupla no mesmo commit.
+  - 14ffc9a e 3e8bc87 são duas variantes do mesmo commit (mesma mensagem,
+    mesmo autor "soiti rodrigues", mesmo timestamp "Sun Jul 19 05:25:54 2026
+    -0300"). A variante 14ffc9a sobreviveu no main e carrega o defeito.
+
+================================================================================
+ 6. CONTRATO AFETADO
+================================================================================
+Contrato: YahooFinanceProvider.get_data(symbol) deve entregar OHLCV válido
+para QUALQUER símbolo oficial do universo operacional Mercury AI V1.
+
+Impacto quantificado:
+  - 31 de 64 símbolos oficiais (48%) são REJEITADOS pelo YahooFinanceProvider
+    (28/28 forex + 3/3 commodities). Para esses ativos o provider declara
+    "não suporta" e MarketDataService levanta "No provider available".
+
+Consumidores de produção que passam símbolos oficiais ao YahooFinanceProvider
+e, portanto, eram afetados (todos os 31 ativos com '=' ficavam indisponíveis):
+  - mercury_ai/core/job_manager.py        → JobManager._execute_tasks itera
+    SUPPORTED_ASSETS.values() (64 ativos, incluindo 28 forex + 3 commodities)
+    e analisa cada um com YahooFinanceProvider.
+  - mercury_ai/operations/demo_manager.py → DemoOperationsManager.
+    run_simulation itera SUPPORTED_ASSETS.values() (mesmo padrão).
+  - mercury_ai/analysis/benchmark_framework.py → usa YahooFinanceProvider.
+  - mercury_ai/analysis/performance_analytics.py → usa YahooFinanceProvider
+    (caminho que expôs o bug no teste).
+  - mercury_ai/analysis/confidence_calibration_auditor.py → usa
+    YahooFinanceProvider.
+
+SUPPORTED_ASSETS (config/universe.py:420) — fonte única da verdade:
+  SUPPORTED_ASSETS = {
+      "FOREX": FOREX_SYMBOLS,        # 28 pares, todos com '=X'
+      "CRYPTO": CRYPTO_SYMBOLS,      # 10
+      "COMMODITIES": COMMODITY_SYMBOLS,  # 3, todos com '=F'
+      "INDICES": [],
+      "STOCKS": STOCK_SYMBOLS,       # 23
+  }
+
+Contrato NÃO testado (segurança da correção):
+  - NÃO existe tests/test_yahoo*.py.
+  - NENHUM teste asserta a REJEIÇÃO de '=' pelo YahooFinanceProvider.
+  - tests/test_market_resilience.py usa "TEST" (passa na regex) e mocks;
+    usa "EURUSD=X" apenas no caminho mockado. Compatível com a correção.
+  - tests/test_pipeline_persistence.py e test_demo_page.py usam "EURUSD=X"
+    via pipeline; passaram na não-regressão (seção 10/14).
+
+================================================================================
+ 7. ARQUIVOS INVESTIGADOS
+================================================================================
+  - tests/test_weight_simulator.py               (teste-alvo)
+  - mercury_ai/analysis/weight_simulator.py      (simulate → audit_engines)
+  - mercury_ai/analysis/engine_performance_auditor.py (audit_engines)
+  - mercury_ai/analysis/performance_analytics.py (analyze_performance +
+    except-tuple sem Exception genérica)
+  - mercury_ai/data/market_data.py               (get_data → raise Exception)
+  - mercury_ai/providers/yahoo_finance_provider.py  (CAUSA RAIZ — regex)
+  - mercury_ai/providers/data_adapters.py        (YahooAdapter — divergência)
+  - mercury_ai/config/universe.py                (universo oficial; '=' oficial)
+  - mercury_ai/config/assets.py                  (compatibilidade; SUPPORTED_ASSETS)
+  - mercury_ai/core/job_manager.py               (consumidor produção)
+  - mercury_ai/operations/demo_manager.py        (consumidor produção)
+  - mercury_ai/analysis/benchmark_framework.py   (consumidor produção)
+  - mercury_ai/brain/scanner.py                  (usa YahooAdapter, não este bug)
+  - mercury_ai/database/snapshot_logger.py       (trata '=' no filename → '_')
+  - tests/test_market_resilience.py, test_pipeline_persistence.py,
+    test_demo_page.py, test_confidence_calibration_auditor.py,
+    test_benchmark_integration.py, test_engine_performance_auditor.py,
+    test_performance_analytics.py (não-regressão)
+
+================================================================================
+ 8. ARQUIVOS MODIFICADOS (CORREÇÃO)
+================================================================================
+SOMENTE UM arquivo foi modificado:
+  mercury_ai/providers/yahoo_finance_provider.py
+
+Nenhum outro arquivo foi alterado (ver seções 8b e 16).
+
+================================================================================
+ 9. ALTERAÇÕES EXATAS (DIFF RESUMIDO)
+================================================================================
+git diff mercury_ai/providers/yahoo_finance_provider.py:
+
+  -# Regex whitelist para símbolos: letras, números, ponto, hífen, underline,
+  -# até 20 chars
+  -_SYMBOL_RE = re.compile(r"^[A-Z0-9.\-_]{1,20}$")
+  +# Regex whitelist para símbolos: letras, números, ponto, hífen, underline,
+  +# '=' (separador oficial de forex/commodity do Yahoo, ex.: EURUSD=X, CL=F),
+  +# até 20 chars.
+  +# Segurança: continua rejeitando path traversal (/, \, ..) e caracteres
+  +# especiais.
+  +_SYMBOL_RE = re.compile(r"^[A-Z0-9.\-_=]{1,20}$")
+
+Resumo: adição do caractere '=' à classe de caracteres da whitelist (1
+caractere de código) + atualização do comentário. Nenhuma outra linha de
+código foi tocada.
+
+================================================================================
+ 8b. O QUE NÃO FOI ALTERADO (PRESERVAÇÃO DE CONTRATOS / REGRAS DO BLOCO)
+================================================================================
+Regras do bloco B2 seguidas explicitamente (NÃO aplicadas):
+  - NÃO adicionado try/except para esconder erro:
+      market_data.py e performance_analytics.py INALTERADOS (a exceção
+      genérica continua propagando para estados de erro legítimos).
+  - NÃO criado provider artificial:
+      nenhum provider novo; nenhum provider_mock/injetado.
+  - NÃO usado fallback para Yahoo Finance:
+      nenhum fallback adicionado em market_data/performance_analytics.
+  - NÃO substituído símbolo silenciosamente:
+      nenhum mapeamento de EURUSD=X → outro símbolo.
+  - NÃO adicionado EURUSD=X ao universo (ele JÁ é oficial em universe.py).
+  - NÃO alterado o teste test_weight_simulator.py (sintoma, não alvo).
+  - NÃO alteradas regras de negócio, Modelo C, probability_engine (B1),
+    decision_chain, explainability.
+
+Arquivos NÃO alterados (lista explícita):
+  mercury_ai/data/market_data.py
+  mercury_ai/analysis/performance_analytics.py
+  mercury_ai/analysis/weight_simulator.py
+  mercury_ai/analysis/engine_performance_auditor.py
+  tests/test_weight_simulator.py
+  mercury_ai/config/universe.py
+  mercury_ai/config/assets.py
+  mercury_ai/providers/data_adapters.py
+  mercury_ai/brain/probability_engine.py (B1 — fechado, não reaberto)
+  mercury_ai/core/job_manager.py, mercury_ai/operations/demo_manager.py
+  mercury_ai/analysis/benchmark_framework.py (B3 pendente — não corrigir)
+
+================================================================================
+ 10. TESTES EXECUTADOS (VALIDAÇÃO POR EXECUÇÃO REAL)
+================================================================================
+10.1 py_compile (sintaxe do arquivo alterado):
+       .\.venv\Scripts\python.exe -m py_compile
+           mercury_ai/providers/yahoo_finance_provider.py
+       PYCOMPILE_EXIT=0
+
+10.2 Probe OFFLINE pós-correção (probe_b2_fix_offline.py):
+       VEREDITO_PROBE=OK  (exit 0)
+       [1] Símbolos oficiais representativos:
+             EURUSD=X, USDJPY=X, GBPUSD=X, BRL=X, CL=F, SI=F, GC=F,
+             BTC-USD, ETH-USD, AAPL, PETR4.SA → supports_symbol=True (todos)
+       [2] Rejeições de segurança (continuam False):
+             ../etc/passwd, ..\..\x, A/B, A\B, SYMBOL;DROP, A$B, AB CD,
+             A#B, A*B → supports_symbol=False (todos)  ✓ segurança preservada
+       [3] Cobertura do universo oficial:
+             TOTAL=64  SUPPORTED=64  REJECTED=0  (antes: 33/31)
+       [4] Símbolos de snapshot do teste: EURUSD=X, EURUSD_X, SYM-A, TEST,
+             BTC-USD → supports_symbol=True
+
+10.3 TESTE-ALVO (o que falhava):
+       .\.venv\Scripts\python.exe -m pytest tests/test_weight_simulator.py
+           -v --no-header -p no:cacheprovider
+       tests/test_weight_simulator.py::test_weight_simulator PASSED
+       ============================ 1 passed in 84.19s =========================
+       EXIT=0
+       (84s: itera ~300 snapshots e faz chamadas reais ao Yahoo para os
+        símbolos únicos; símbolos falsos retornam vazio → MarketClosedException
+        → pulados com graça)
+
+10.4 Suíte RELACIONADA (provider/dados/performance, 13 arquivos):
+       -v --no-header -p no:cacheprovider:
+       tests/test_market_resilience.py
+       tests/test_demo_page.py
+       tests/test_demo_operations.py
+       tests/test_job_manager.py
+       tests/test_pipeline_persistence.py
+       tests/test_performance_analytics.py
+       tests/test_engine_performance_auditor.py
+       tests/test_confidence_calibration_auditor.py
+       tests/test_benchmark_integration.py
+       mercury_ai/analysis/tests/test_benchmark_framework.py
+       tests/test_data_provider_manager.py
+       tests/test_provider_priority_engine.py
+       tests/test_asset_registry.py
+       Resultado: 22 passed in 611.53s (0:10:11)  EXIT=0
+
+10.5 Suíte BRAIN + RAIZ da cadeia de decisão:
+       mercury_ai/brain/tests/
+       tests/test_probability_engine.py
+       tests/test_determinism.py
+       tests/test_regression_sprint18.py
+       tests/test_conflict_resolution.py
+       test_bloco7_scenarios.py
+       Resultado: 23 passed in 15.17s  EXIT=0
+       (inclui o teste do B1 test_probability_engine → confirma que B1 NÃO
+        regrediu com a correção B2)
+
+10.6 get_errors (análise estática VS Code) no arquivo alterado:
+       No errors found.
+
+10.7 import real:
+       import mercury_ai.providers.yahoo_finance_provider → OK (via probes)
+
+TOTAL DE NÃO-REGRESSÃO EXECUTADA: 1 (teste-alvo) + 22 (relacionada) + 23
+(brain/raiz) = 46 execuções de teste, 0 falhas.
+
+================================================================================
+ 11. EXIT CODES
+================================================================================
+  py_compile (arquivo alterado)      : 0
+  probe_b2_fix_offline.py            : 0 (VEREDITO_PROBE=OK)
+  pytest test_weight_simulator.py    : 0 (1 passed)
+  pytest suíte relacionada (13 files): 0 (22 passed)
+  pytest brain + raiz                : 0 (23 passed)
+  python -m mercury_ai.main          : 0
+  import performance_benchmarking    : 1 (B2 da auditoria — pendente, NÃO é
+                                        o B2 deste bloco; só classificado)
+
+================================================================================
+ 12. RESULTADO DO main.py
+================================================================================
+Comando: .\.venv\Scripts\python.exe -m mercury_ai.main
+MAIN_EXIT=0
+
+Saída observada:
+  INFO mercury_ai.brain.scanner: MERCURY AI SCANNER
+  INFO mercury_ai.brain.scanner: RANKING INSTITUCIONAL DE OPORTUNIDADES
+  (sem erros, sem "No provider available")
+
+O entry point roda MercuryScanner().scan() e terminou com exit 0 — sem
+regressão. O ranking sai vazio porque a configuração de produção atual
+(profile "Demo", broker "XP", config.json) não tem ativos habilitados no
+registry para esse perfil/broker — condição pré-existente de configuração,
+independente do B2.
+
+================================================================================
+ 13. RESULTADO DO SCANNER (PRODUÇÃO REAL)
+================================================================================
+main.py instancia e executa o scanner real:
+  scanner = MercuryScanner(); scanner.scan()
+  - Provider central: MercuryDataProvider (usa YahooAdapter de data_adapters
+    — provider de PRODUÇÃO do scanner, que já suportava '=' e 'EURUSD=X').
+  - O scanner filtra enabled_assets por (enabled, profile == "Demo",
+    symbol in authorized_symbols do broker "XP").
+  - Na config atual: ranking vazio (nenhum ativo habilitado p/ Demo/XP) —
+    comportamento pré-existente, sem relação com o B2.
+  - EXIT=0, sem "No provider available".
+
+Impacto real da correção B2 no scanner: o scanner usa YahooAdapter (não
+YahooFinanceProvider), logo NÃO era afetado pelo bug. A correção B2 beneficia
+os demais consumidores (JobManager, DemoOperationsManager, BenchmarkFramework,
+PerformanceAnalytics, ConfidenceCalibrationAuditor) que usam
+YahooFinanceProvider — estes agora conseguem obter dados dos 31 símbolos
+oficiais com '='.
+
+================================================================================
+ 14. RESULTADO DA SUÍTE RAIZ (SÍNTESE)
+================================================================================
+Execução real com .\.venv\Scripts\python.exe -m pytest:
+
+  14.1 Teste-alvo (bloqueador B2):
+       tests/test_weight_simulator.py::test_weight_simulator → PASSED (84.19s)
+
+  14.2 Suíte relacionada (provider/dados/performance):
+       22 passed (611.53s) — inclui market_resilience, demo_page,
+       demo_operations, job_manager, pipeline_persistence, performance_
+       analytics, engine_performance_auditor, confidence_calibration_auditor,
+       benchmark_integration, benchmark_framework, data_provider_manager,
+       provider_priority_engine, asset_registry.
+
+  14.3 Suíte brain + raiz da cadeia de decisão:
+       23 passed (15.17s) — inclui probability_engine (B1), determinism,
+       regression_sprint18, conflict_resolution, bloco7_scenarios.
+
+  14.4 TOTAL: 46 execuções, 0 falhas, 0 erros. NÃO-REGRESSÃO COMPLETA.
+
+  NOTA: o B1 reportou "16 passed, 1 failed" na raiz, com a única falha sendo
+  test_weight_simulator classificada como ambiental. Agora essa falha está
+  CORRIGIDA e a raiz fica 100% verde nas suítes executadas.
+
+================================================================================
+ 15. ERROS OCULTOS ENCONTRADOS (FASE 7 — REGISTRO APENAS)
+================================================================================
+15.1 Nenhum erro oculto foi INTRODUZIDO pela correção B2.
+    A correção é direta (1 caractere na whitelist); nenhum try/except/
+    fallback/getattr/hasattr foi adicionado. Nenhum estado de erro é mascarado.
+
+15.2 Erro oculto menor pré-existente (registrado, NÃO corrigido — fora do
+    escopo B2):
+    - mercury_ai/execution/order_executor.py:255-259 (_check_symbol_authorized):
+      "except Exception: return" — se a leitura do registry falhar, permite a
+      execução MAS não loga nada (o comentário diz "permite mas loga", porém
+      não há chamada de logging). Erro oculto de baixo risco (silencioso).
+    - Não é bloqueador de B2; não afeta a cadeia do teste-alvo.
+
+15.3 Broad catches intencionais verificados (OK — não são erros ocultos):
+    - core/pipeline_audit_middleware.py:37 — loga e RE-LEVANTA.
+    - core/pipeline_executor.py:33 — envolve em PipelineContractError.
+    - core/analysis_pipeline.py:509 — handler geral: logging.exception +
+      audit_sink + retorna WAIT (estado de erro visível, não mascarado).
+    - utils/stress_tester.py:34 — coleta exceções para análise.
+    - execution/order_executor.py:326 (_save) — re-levanta após unlink.
+    - providers/future_tradingview_provider.py:122/130 — rede/auth, re-levanta.
+
+================================================================================
+ 16. ERROS/BLOQUEADORES NÃO CORRIGIDOS POR ESCOPO (FASE 4 — CLASSIFICAÇÃO)
+================================================================================
+Classificação dos demais bloqueadores da auditoria 05_AUDITORIA_RISCOS_
+LATENTES.txt (seção 12). NENHUM foi corrigido. NENHUM é [B2-DEPENDÊNCIA]
+(nenhum depende do fix da regex do B2):
+
+  [B1] CRÍTICO — probability_engine.py WAIT sempre
+       → JÁ CORRIGIDO no bloco B1 (06_GATE_B1_CORRECTION.txt). Fechado.
+
+  [B2-AUDITORIA] CRÍTICO — performance_benchmarking.py:5
+       ImportError: cannot import name 'PipelineExecutor' from
+       'mercury_ai.brain'  → CONFIRMADO PRESENTE nesta sessão (exit 1).
+       → Escopo DISTINTO do B2 deste sprint (tarefa B2 = test_weight_simulator).
+       → NÃO corrigido. Permanecerá para bloco próprio.
+
+  [B3] ALTO — analysis/benchmark_framework.py
+       outcome FABRICADO do próprio score (BUY: score*0.02; SELL: -score*0.02;
+       WAIT: 0.0) → avaliação circular. NÃO corrigido.
+
+  [B4] ALTO — data/data_quality_engine.py
+       regra de gap (> 15min) reprova ações 5m (gaps overnight legítimos).
+       NÃO corrigido.
+
+  [B5] ALTO — core/analysis_pipeline.py (L430-432)
+       AnalysisResult.confluence recebe TUPLA em vez de ConfluenceResult.
+       NÃO corrigido.
+
+  [B6] ALTO — utils/deterministic_clock.py + analysis/session_engine.py +
+       analysis/confidence_engine.py
+       DeterministicClock.set_time só no replay → produção usa relógio real →
+       decisão não reproduzível entre execuções. NÃO corrigido.
+
+  [B11] BAIXO — providers/market_provider.py
+       healthcheck 6/6 fictício; trigger_failover no-op; Yahoo sempre escolhido.
+       NÃO corrigido.
+
+  [FORA DO ESCOPO] confidence_calibration_auditor.py — assume confiança 0-1 vs
+       ConfidenceEngine 0-100 (escala). NÃO corrigido.
+
+  [FORA DO ESCOPO] historical_replay_engine.py (~155) —
+       self._cache.stats.get("misses_before", 0) nunca setado. NÃO corrigido.
+
+  [FORA DO ESCOPO] order_executor.py:255-259 — except sem log (ver seção 15.2).
+
+  Divergência arquitetural registrada (ACHADO, não corrigido): existem DOIS
+  providers Yahoo no sistema:
+    - YahooFinanceProvider (yahoo_finance_provider.py) — usado por JobManager,
+      DemoOperationsManager, BenchmarkFramework, PerformanceAnalytics,
+      ConfidenceCalibrationAuditor. Tinha a regex bugada (CORRIGIDA no B2).
+    - YahooAdapter (data_adapters.py) — usado pelo scanner via
+      MercuryDataProvider. Já suportava '=' (is_implemented=True).
+  Recomendação (fora do escopo): consolidar a lógica de sanitização/suporte
+  de símbolos entre os dois providers para evitar divergências futuras.
+
+================================================================================
+ 17. GIT STATUS
+================================================================================
+  HEAD         : a369e8a (Merge branch 'main' de origin/main)
+  Branch       : main
+  Corretiva B1 : já commitada no HEAD (probability_engine + test) —
+                 árvore de trabalho limpa em relação ao B1.
+  Corretiva B2 : M mercury_ai/providers/yahoo_finance_provider.py (única
+                 modificação não commitada desta sessão).
+  Untracked    : snapshots gerados por execuções de teste com rede
+                 (mercury_ai/database/snapshots/*.json) e arquivos de saída
+                 de validação (b2_*.txt, probe_b2_*.py) — artefatos locais,
+                 não commitados.
+
+  git log --oneline -1 -- mercury_ai/brain/probability_engine.py:
+    a369e8a (HEAD -> main) Merge branch 'main' ...  (B1 já no HEAD)
+
+================================================================================
+ 18. VEREDITO
+================================================================================
+O bloqueador B2 (falha do teste test_weight_simulator, "No provider available
+for EURUSD=X") foi:
+
+  (a) REPRODUZIDO de forma determinística (exit 1, 100% das execuções).
+  (b) CAUSA RAIZ PROVADA por execução real:
+        - YahooFinanceProvider._sanitize_symbol usa regex
+          ^[A-Z0-9.\-_]{1,20}$ que NÃO permite '=';
+        - '=' é o separador OFICIAL de forex/commodity do Yahoo (EURUSD=X,
+          CL=F, SI=F, GC=F) e o universo oficial tem 31/64 ativos com '=';
+        - yf.download('EURUSD=X') retorna 1422 linhas reais e o YahooAdapter
+          (produção) busca o mesmo símbolo com sucesso → NÃO é problema de
+          rede/ambiente;
+        - supports_symbol('EURUSD=X') = False → MarketDataService levanta
+          Exception genérica → não capturada pelo except-tuple de
+          analyze_performance → teste quebra.
+  (c) CLASSIFICAÇÃO DO B1 REFUTADA: a falha NÃO é "ambiental". É um bug de
+      código determinístico — regressão introduzida no commit 14ffc9a
+      (mesmo commit do bug B1; antes, em 3e8bc87, supports_symbol retornava
+      True incondicionalmente). É "preexistente" no sentido cronológico,
+      mas é um DEFEITO DE CÓDIGO, não um problema de ambiente/rede.
+  (d) CORRIGIDO de forma mínima e observável: adição de '=' à whitelist
+      regex (^[A-Z0-9.\-_=]{1,20}$) em mercury_ai/providers/
+      yahoo_finance_provider.py (linha 15), preservando a segurança
+      (path traversal '/', '\', '..' e caracteres especiais continuam
+      rejeitados — 9 casos verificados) e TODOS os contratos.
+  (e) VALIDADO por EXECUÇÃO REAL:
+        - test_weight_simulator.py::test_weight_simulator → PASSED (84.19s);
+        - probe offline → 64/64 símbolos do universo suportados, 0 rejeitados;
+        - suíte relacionada → 22 passed (611.53s);
+        - suíte brain + raiz → 23 passed (15.17s) (B1 não regrediu);
+        - python -m mercury_ai.main → EXIT=0;
+        - get_errors → 0 erros no arquivo alterado;
+        - total: 46 execuções de teste, 0 falhas.
+
+Nenhum erro foi mascarado. Nenhum contrato foi quebrado. Nenhum provider
+artificial/fallback/substituição de símbolo foi utilizado. As regras do
+bloco foram seguidas integralmente.
+
+================================================================================
+ VEREDITO FINAL: B2 CORRIGIDO — GATE B2 APROVADO
+ (para o BLOCO B2 — INVESTIGAÇÃO E CORREÇÃO DO PRÓXIMO BLOQUEADOR)
+================================================================================
+A falha "No provider available for EURUSD=X" foi comprovada como bug real
+de código (regressão do commit 14ffc9a), NÃO ambiental, e foi corrigida de
+forma mínima e validada por execução real.
+
+Pendências de escopo distinto permanecem para os blocos seguintes (B2-
+AUDITORIA/performance_benchmarking ImportError, B3 benchmark circular,
+B4 data_quality gap, B5 confluence tupla, B6 determinismo produção, B11
+healthcheck) — não invalidam o fechamento deste bloco. Bloco 3 NÃO iniciado.
+================================================================================

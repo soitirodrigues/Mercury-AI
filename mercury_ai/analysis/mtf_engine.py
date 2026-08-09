@@ -29,6 +29,11 @@ class MTFEngine:
         # Combina timeframes institucionais relevantes
         timeframes = ["M1", "M5", "M15", "H1", "H4"]
         
+        # Observabilidade: registra explicitamente o status de cada timeframe.
+        # Valores: processed | rejected (dados curtos) | absent (sem dados) | error.
+        timeframe_status = {}
+        timeframe_errors = {}
+        
         # Structure to hold evidences grouped by engine for consensus
         # engine_results[engine_name][timeframe] = direction
         engine_results = {
@@ -42,7 +47,14 @@ class MTFEngine:
             interval = YFINANCE_INTERVALS[tf]
             try:
                 df = self.market_service.get_data(symbol, interval=interval, period="1mo")
+                if df is None or df.empty:
+                    # Sem dados do provider para este timeframe: ausência registrada,
+                    # NÃO tratada como "processado".
+                    timeframe_status[tf] = "absent"
+                    continue
                 if len(df) < 20:
+                    # Dados insuficientes: timeframe rejeitado explicitamente.
+                    timeframe_status[tf] = "rejected"
                     continue
                     
                 indicator_data = self.indicators.calculate(df)
@@ -66,10 +78,19 @@ class MTFEngine:
                         e = replace(e, timeframe=tf)
                         all_evidences.append(e)
 
-            except (KeyError, IndexError, ValueError, ConnectionError, RuntimeError):
+                timeframe_status[tf] = "processed"
+
+            except (KeyError, IndexError, ValueError, ConnectionError, RuntimeError) as exc:
+                # Falha NÃO silenciosa: status 'error' + mensagem registrada.
+                timeframe_status[tf] = "error"
+                timeframe_errors[tf] = f"{type(exc).__name__}: {exc}"
                 continue
                 
-        return all_evidences, self._build_consensus(engine_results)
+        return all_evidences, self._build_consensus(
+            engine_results,
+            timeframe_status=timeframe_status,
+            timeframe_errors=timeframe_errors,
+        )
 
     def _determine_trend(self, evs: List[Evidence]) -> str:
         """Agrega a direção dominante de uma lista de Evidence pelo campo direction."""
@@ -81,7 +102,16 @@ class MTFEngine:
             return "BEARISH"
         return "NEUTRAL"
 
-    def _build_consensus(self, engine_results: dict) -> MTFConsensus:
+    def _build_consensus(
+        self,
+        engine_results: dict,
+        timeframe_status: dict = None,
+        timeframe_errors: dict = None,
+    ) -> MTFConsensus:
+        if timeframe_status is None:
+            timeframe_status = {}
+        if timeframe_errors is None:
+            timeframe_errors = {}
         def calculate_factor_alignment(results: dict) -> float:
             trends = list(results.values())
             bullish = trends.count("BULLISH")
@@ -119,5 +149,7 @@ class MTFEngine:
             volatility_alignment=volatility_alignment,
             dominant_trend=global_bias,
             institutional_consensus_strength=float(abs(bullish - bearish)),
-            summary=f"Bias: {global_bias}. Alignment: {alignment_score:.1f}%. Conflict: {conflict_score:.1f}%."
+            summary=f"Bias: {global_bias}. Alignment: {alignment_score:.1f}%. Conflict: {conflict_score:.1f}%.",
+            timeframe_status=timeframe_status,
+            timeframe_errors=timeframe_errors,
         )

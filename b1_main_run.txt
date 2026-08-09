@@ -1,0 +1,21 @@
+﻿.\.venv\Scripts\python.exe : INFO:mercury_ai.brain.scanner:====================
+========================================
+No linha:1 caractere:40
++ ... ercury-AI'; .\.venv\Scripts\python.exe -m mercury_ai.main 2>&1 | Out- ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (INFO:mercury_ai...=============== 
+   :String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+INFO:mercury_ai.brain.scanner:MERCURY AI SCANNER
+INFO:mercury_ai.brain.scanner:=================================================
+===========
+INFO:mercury_ai.brain.scanner:=================================================
+===========
+INFO:mercury_ai.brain.scanner:RANKING INSTITUCIONAL DE OPORTUNIDADES
+INFO:mercury_ai.brain.scanner:=================================================
+===========
+INFO:mercury_ai.brain.scanner:=================================================
+===========
+INFO:mercury_ai.brain.scanner:=================================================
+===========

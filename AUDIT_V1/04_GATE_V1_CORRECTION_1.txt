@@ -1,0 +1,259 @@
+================================================================================
+ SPRINT FORENSE 1 — BLOCO DE CORREÇÃO 1
+ FECHAMENTO DO GATE V1 — RELATÓRIO DE CORREÇÃO
+ ARQUIVO: 04_GATE_V1_CORRECTION_1.txt
+ DATA: 2026-08-09
+================================================================================
+
+OBJETIVO
+--------
+Corrigir SOMENTE os bloqueadores comprovados no relatório
+03_GATE_V1_FECHAMENTO.txt. Sem V2, sem nova arquitetura, sem refatoração
+desnecessária, sem alterar fórmulas/pesos/regras/contratos institucionais.
+Todas as correções foram validadas por EXECUÇÃO REAL (não apenas por compilação).
+
+================================================================================
+ 1. ARQUIVOS ALTERADOS
+================================================================================
+1. data/brokers/XP.json                     — CRIADO (novo)
+2. requirements.txt                         — MODIFICADO (conflito de merge removido)
+3. mercury_ai/performance_benchmarking.py   — MODIFICADO (NameError corrigido)
+4. tools/mercury_integrity_auditor/contract_audit.py    → contract_audit.md    (renomeado)
+5. tools/mercury_integrity_auditor/dependency_audit.py  → dependency_audit.md  (renomeado)
+6. tools/mercury_integrity_auditor/final_report.py      → final_report.md      (renomeado)
+7. tools/mercury_integrity_auditor/runtime_audit.py     → runtime_audit.md     (renomeado)
+8. tools/mercury_integrity_auditor/static_audit.py      → static_audit.md      (renomeado)
+
+Efeitos colaterais legítimos da varredura real (saída normal de produção):
+- data/asset_registry.json  → atualizado (previous_score, last_operated)
+- mercury_ai/database/snapshots/BTC-USD_2026-08-09T05-55-40*.json  (novo)
+- mercury_ai/database/snapshots/ETH-USD_2026-08-09T05-55-16*.json  (novo)
+- runtime_report_BTC-USD_20260809055540.json  (novo, raiz)
+- runtime_report_ETH-USD_20260809055516.json  (novo, raiz)
+
+================================================================================
+ 2. MOTIVO DE CADA ALTERAÇÃO
+================================================================================
+1. XP.json: BLOQUEADOR PRINCIPAL do Gate (03, C5/C3). get_assets_for_broker("XP")
+   retornava [] porque o arquivo não existia → scanner analisava 0 ativos.
+2. requirements.txt: BLOQUEADOR de instalação (03, C1). Conflito de merge
+   ANINHADO (<<<<<<< / ======= / >>>>>>>) nas linhas 9-18 tornava o arquivo
+   inválido para o pip.
+3. performance_benchmarking.py: BLOQUEADOR de entrada (03, C4). Corpo da função
+   foi mutilado (continha literal "# ... existing code ..."), referenciando
+   threshold_exceeded/details indefinidos → NameError.
+4-8. Artefatos markdown com extensão .py (03, C2): não compilam; nunca importados;
+   versões reais vivem em tools/mercury_integrity_auditor/auditors/. Renomeados
+   para .md (extensão apropriada) preservando histórico via git mv.
+
+================================================================================
+ 3. CONTEÚDO/CONTRATO UTILIZADO PARA XP.json
+================================================================================
+CONTRATO (asset_registry.py, linhas 115-127):
+    def get_assets_for_broker(self, broker_name):
+        broker_file = f"data/brokers/{broker_name}.json"
+        if not os.path.exists(broker_file):
+            return []
+        with open(broker_file, "r") as f:
+            try:
+                return json.load(f)      # List[str] — lista plana de símbolos
+            except json.JSONDecodeError:
+                return []
+
+Portanto o arquivo deve ser um ARRAY JSON de símbolos (List[str]).
+Confirmado também pelo teste existente tests/test_broker_filtering.py:
+    with open(broker_file, "w") as f:
+        json.dump(["BTC-USD", "AAPL", "EURUSD"], f)
+
+CONTEÚDO CRIADO (data/brokers/XP.json):
+    ["BTC-USD", "ETH-USD"]
+
+ORIGEM DOS ATIVOS (sem inventar):
+- Universo operacional oficial (mercury_ai/config/universe.py, fonte única da
+  verdade — "Operadora: Hezilex"): OPERATIONAL_UNIVERSE = FOREX_UNIVERSE +
+  CRYPTO_UNIVERSE + STOCK_UNIVERSE + COMMODITY_UNIVERSE. BTC-USD e ETH-USD
+  estão em CRYPTO_UNIVERSE (ambos habilitados).
+- Registro ativo do perfil Demo (data/asset_registry.json): exatamente
+  BTC-USD e ETH-USD (ambos enabled=true, profile=Demo).
+- Teste existente tests/test_scanner_recovery.py mocks o retorno esperado
+  como ["BTC-USD", "ETH-USD"] — corroborando o conjunto operacional.
+
+================================================================================
+ 4. ATIVOS AUTORIZADOS
+================================================================================
+- BTC-USD  (Bitcoin — CRYPTO_UNIVERSE, habilitado no registro Demo)
+- ETH-USD  (Ethereum — CRYPTO_UNIVERSE, habilitado no registro Demo)
+
+Nenhum símbolo externo foi adicionado. Nenhum fallback, getattr/hasattr ou
+mascaramento foi usado. scanner.py NÃO foi alterado.
+
+================================================================================
+ 5. COMANDOS EXECUTADOS E 6. EXIT CODES
+================================================================================
+(interpretador: C:\Projetos\Mercury-AI\.venv\Scripts\python.exe)
+
+C1-pós. .venv\python.exe -m pip install -r requirements.txt --dry-run
+        → exit 0  (sem erros; "Requirement already satisfied")
+
+C4-pós. .venv\python.exe -m mercury_ai.performance_benchmarking
+        → exit 0  ("No historical data found - cannot check regression")
+
+D.      py_compile de mercury_ai/**/*.py + tools/mercury_integrity_auditor/**/*.py
+        → 297 arquivos escaneados, TODOS compilam → exit 0
+
+A/E.    .venv\python.exe -m mercury_ai.main
+        → exit 0, com EXECUÇÃO REAL (Analisando BTC-USD e ETH-USD) e
+          RANKING INSTITUCIONAL DE OPORTUNIDADES
+
+================================================================================
+ 7. QUANTIDADE DE ATIVOS REALMENTE ANALISADOS
+================================================================================
+2 (dois) — BTC-USD e ETH-USD.
+Antes da correção: 0 ativos (saída vazia, exit 0). Depois da correção:
+2 ativos analisados de fato, confirmado pelo ranking produzido e pelos
+runtime reports/snapshots gerados para ambos.
+
+================================================================================
+ 8. DECISÕES PRODUZIDAS (saída real do scanner)
+================================================================================
+Ranking (ordem do scanner):
+  1. ETH-USD | Score: 64.25 | WAIT
+     Confiança: 69.4%  | BUY 0.0% | SELL 40.0% | WAIT 60.0%
+     Regime: MarketRegimeEnum.REVERSAL_TRANSITION
+     Cadeia: Validation=True, Quality avg=62.25, Conflict=1.00,
+             Ranking 26 evidências, Memory consistency=0.50,
+             Confidence final=69.38, Confluence SELL weighted=100.00,
+             Probability grade=D buy=0 sell=40, Resolver rule=4 → WAIT
+
+  2. BTC-USD | Score: 61.93 | WAIT
+     Confiança: 68.6%  | BUY 0.0% | SELL 40.0% | WAIT 60.0%
+     Regime: MarketRegimeEnum.COMPRESSION
+     Cadeia: Validation=True, Quality avg=60.42, Conflict=1.00,
+             Ranking 26 evidências, Memory consistency=0.50,
+             Confidence final=68.59, Confluence SELL weighted=100.00,
+             Probability grade=D buy=0 sell=40, Resolver rule=4 → WAIT
+
+(Decisões realistas de mercado: sem NaN, sem probabilidades impossíveis,
+probabilidades somam 100%. Ajuste fino de estratégia está FORA do escopo deste
+bloco — nenhuma fórmula/peso/regra foi alterada.)
+
+================================================================================
+ 9. ERROS ENCONTRADOS
+================================================================================
+1. data/brokers/XP.json ausente → get_assets_for_broker("XP") = [] → 0 ativos
+   (comprovado em 03, C3+C5; reproduzido antes da correção).
+2. requirements.txt com conflito de merge aninhado (linhas 9-18) →
+   pip install falhava (comprovado em 03, C1).
+3. mercury_ai/performance_benchmarking.py mutilado → NameError
+   "threshold_exceeded is not defined" (comprovado em 03, C4).
+4. 5 artefatos markdown salvos como .py em tools/mercury_integrity_auditor/
+   não compilavam (comprovado em 03, C2).
+
+================================================================================
+ 10. ERROS CORRIGIDOS
+================================================================================
+1. Criado data/brokers/XP.json com ["BTC-USD", "ETH-USD"] seguindo o contrato
+   de get_assets_for_broker (array JSON de símbolos). scanner.py intocado.
+2. requirements.txt: removidos APENAS os marcadores de merge; preservadas as 12
+   dependências utilizadas (pandas, numpy, requests, python-dotenv, yfinance,
+   streamlit, plotly, ta, psutil, scipy, openai, pytest). Nenhuma dependência
+   removida por "parecer não utilizada" — psutil (5 módulos), openai (ai/llm.py)
+   e scipy (benchmark_framework.py) são efetivamente usados.
+3. performance_benchmarking.py: função check_regression() reconstruída usando a
+   MESMA regra já existente no projeto (threshold default 0.1; regressão se
+   current > historical_avg * (1 + threshold); baseline em runtime_reports/;
+   sem baseline → não é possível verificar → encerra sem erro). API pública
+   original preservada (BenchmarkError, check_regression, __main__ exit 0/1).
+   A versão intacta original não existe no histórico git (verificado), portanto
+   a reconstrução reutiliza o contrato dos módulos irmãos check_regression.py.
+4. 5 arquivos renomeados .py → .md via git mv (conteúdo preservado, histórico
+   preservado). Confirmado que nenhum módulo de produção os importa
+   (as implementações reais vivem em tools/mercury_integrity_auditor/auditors/,
+   importadas por main.py).
+
+================================================================================
+ 11. ERROS AINDA PENDENTES (FORA DO ESCOPO DESTE BLOCO)
+================================================================================
+Conforme instruído, NÃO corrigidos agora (etapas posteriores):
+- Stubs dos providers (5 de 6 adaptadores sem get_data real) — risco latente;
+  o fluxo ativo cai no Yahoo (dados reais) e não bloqueia a operação atual.
+- Política de gaps FX (DataQualityEngine rejeita dados 5min com gaps de fim de
+  semana → universo FX real ficaria em WAIT).
+- MetaTrader5 (sem terminal conectado).
+- Memória institucional, banco histórico e backtest.
+
+Observação (não-bloqueante): BTC-USD/ETH-USD estão com market="Stocks" no
+registro (miscategorizados como ações em vez de cripto); não impede a análise
+(Yahoo os suporta), mas é inconsistência de dados a revisar posteriormente.
+
+================================================================================
+ 12. EVIDÊNCIAS BRUTAS RELEVANTES
+================================================================================
+--- data/brokers/XP.json (conteúdo) ---
+["BTC-USD", "ETH-USD"]
+
+--- pip dry-run (tail) ---
+Requirement already satisfied: ... (linhas "Requirement already satisfied")
+exit 0
+
+--- performance_benchmarking (saída) ---
+No historical data found - cannot check regression
+exit 0
+
+--- py_compile (resumo) ---
+arquivos .py escaneados = 297
+PY_COMPILE: PASS (todos compilam)
+exit 0
+
+--- scanner real (trechos) ---
+INFO:mercury_ai.brain.scanner:Analisando BTC-USD...
+INFO:mercury_ai.brain.scanner:Scanner Score........: 61.93
+INFO:mercury_ai.brain.scanner:>>> ADICIONADO AO RANKING <<<
+INFO:mercury_ai.brain.scanner:RELATÓRIO MERCURY AI | BTC-USD
+INFO:mercury_ai.brain.scanner:Ativo               : BTC-USD
+INFO:mercury_ai.brain.scanner:Decisão             : WAIT
+INFO:mercury_ai.brain.scanner:Confiança           : 68.6%
+INFO:mercury_ai.brain.scanner:Probabilidades      : BUY 0.0% | SELL 40.0% | WAIT 60.0%
+INFO:mercury_ai.brain.scanner:Regime              : MarketRegimeEnum.COMPRESSION
+INFO:mercury_ai.brain.scanner:RANKING INSTITUCIONAL DE OPORTUNIDADES
+INFO:mercury_ai.brain.scanner:1. ETH-USD    | Score: 64.25 | WAIT
+INFO:mercury_ai.brain.scanner:2. BTC-USD    | Score: 61.93 | WAIT
+exit 0
+
+--- git status pós-correção ---
+ M mercury_ai/performance_benchmarking.py
+ M requirements.txt
+R  tools/mercury_integrity_auditor/contract_audit.py -> contract_audit.md
+R  tools/mercury_integrity_auditor/dependency_audit.py -> dependency_audit.md
+R  tools/mercury_integrity_auditor/final_report.py -> final_report.md
+R  tools/mercury_integrity_auditor/runtime_audit.py -> runtime_audit.md
+R  tools/mercury_integrity_auditor/static_audit.py -> static_audit.md
+?? mercury_ai/database/snapshots/BTC-USD_2026-08-09T05-55-40*.json
+?? mercury_ai/database/snapshots/ETH-USD_2026-08-09T05-55-16*.json
+(data/ é ignorado pelo git — XP.json e asset_registry.json existem no disco)
+
+================================================================================
+ 13. CONCLUSÃO
+================================================================================
+GATE APROVADO
+
+Critério exigido pelo usuário atendido: houve EXECUÇÃO REAL do scanner com
+pelo menos um ativo autorizado e decisão produzida. Na prática, os 2 ativos
+oficiais do perfil Demo (BTC-USD e ETH-USD) foram autorizados, analisados de
+verdade e geraram decisões (WAIT) + ranking institucional.
+
+Validações obrigatórias:
+  A) python -m mercury_ai.main ........................ exit 0, 2 ativos analisados ✓
+  B) python -m mercury_ai.performance_benchmarking ..... exit 0 ✓
+  C) pip install -r requirements.txt --dry-run ......... exit 0 ✓
+  D) py_compile em todos os .py de produção ............ PASS (297/297) ✓
+  E) scanner real (Analisando + RANKING) ............... 2 ativos, decisões reais ✓
+
+NÃO aceito em nenhuma etapa: exit 0 com 0 ativos (eliminado), exceção
+escondida, try/except mascarando, fallback silencioso, retorno artificial ou
+mock como dado real. Nada disso foi usado.
+
+Itens remanescentes (providers stub, gaps FX, MetaTrader5, memória, histórico,
+backtest) permanecem como pendências para blocos posteriores, conforme escopo.
+
+                                                                        — FIM —

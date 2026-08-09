@@ -1,0 +1,611 @@
+================================================================================
+MERCURY AI V1 — FASE 2: VALIDAÇÃO DOS ACHADOS DO INVENTÁRIO
+Arquivo: AUDIT_V1/02_VALIDACAO_FORENSE.txt
+Origem : 01_INVENTARIO_FORENSE.txt (Fase 1)
+Natureza: INVESTIGAÇÃO-ONLY. Nenhum arquivo de produção foi alterado,
+          corrigido, reorganizado ou apagado. Nenhum refactoring foi feito.
+Metodologia: cada achado do inventário foi verificado contra o CÓDIGO REAL
+          (call sites, import graph, execução de runtime) e classificado como:
+          CONFIRMADO / REFUTADO / PARCIALMENTE CONFIRMADO / NÃO FOI POSSÍVEL COMPROVAR.
+          Nunca transformar inferência em fato.
+================================================================================
+
+--------------------------------------------------------------------------------
+1. VEREDITO GERAL
+--------------------------------------------------------------------------------
+[ X ] APROVADO COM RESSALVAS
+[   ] APROVADO
+[   ] REPROVADO
+[   ] INVESTIGAÇÃO INCOMPLETA
+
+Resumo executivo:
+- O NÚCLEO do pipeline (mercury_ai.main -> MercuryScanner -> AnalysisPipeline ->
+  MercuryDecisionEngine) EXECUTA de ponta a ponta com dados válidos e produz
+  decisões coerentes, com escalas corretas, sem NaN, sem None, sem valores
+  impossíveis (verificado por probe de runtime com dados determinísticos).
+- PORÉM, o sistema como EMBARCADO (configuração oficial) NÃO executa análise
+  alguma: o entry point `mercury_ai.main` termina com exit 0 e ranking vazio
+  porque `data/brokers/` está vazia (nenhum símbolo autorizado). O entry point
+  `mercury_ai.performance_benchmarking` CRASHA com NameError (arquivo gutted).
+- requirements.txt está CORROMPIDO (merge conflict aninhado não resolvido) e
+  `pip install -r requirements.txt` falha.
+- 5 arquivos "auditores" em tools/mercury_integrity_auditor/ não são Python
+  (markdown disfarçado) e nunca são importados.
+- Há fonte dupla de verdade de pesos (INSTITUTIONAL_WEIGHTS vs
+  AdaptiveWeightEngine, ambos ativos), tabelas de mapeamento divergentes
+  (ENGINE_NAME_TO_ADAPTIVE_KEY vs ENGINE_NAME_TO_DOMAIN) e ~31 módulos
+  potencialmente mortos fora do fluxo.
+- CONCLUSÃO: o motor de decisão funciona corretamente quando alimentado com
+  dados válidos, mas o Mercury AI V1 como produto/sistema de produção NÃO está
+  em condições de afirmar "funcionando corretamente" de ponta a ponta: o
+  runtime oficial não analisa nada, um entry point quebra e as dependências
+  não instalam. As ressalvas abaixo são severas e não podem ser ignoradas.
+
+--------------------------------------------------------------------------------
+2. REQUIREMENTS
+--------------------------------------------------------------------------------
+ACHADO DO INVENTÁRIO: "requirements.txt corrompido — merge conflict não resolvido"
+CLASSIFICAÇÃO: CONFIRMADO (verificado por execução)
+
+Evidência:
+- `requirements.txt` contém marcadores de conflito aninhados nas linhas ~9-18:
+  `<<<<<<< HEAD`, `=======`, `>>>>>>> 3e8bc87...`, `>>>>>>> 67cc5c6...`.
+- Execução: `pip install -r requirements.txt --dry-run` falha com:
+  `ERROR: Invalid requirement: '<<<<<<< HEAD': Expected package name at the
+  start of dependency specifier (from line 9 of requirements.txt)`.
+- Consequência: o ambiente NÃO pode ser reproduzido a partir do requirements.txt
+  como está. A instalação limpa do projeto é impossível sem editar o arquivo.
+
+--------------------------------------------------------------------------------
+3. ARQUIVOS NÃO COMPILÁVEIS
+--------------------------------------------------------------------------------
+ACHADO DO INVENTÁRIO: "5 arquivos não compiláveis"
+CLASSIFICAÇÃO: CONFIRMADO
+
+Evidência: os 5 arquivos em `tools/mercury_integrity_auditor/`
+  (contract_audit.py, dependency_audit.py, final_report.py, runtime_audit.py,
+  static_audit.py) NÃO são código Python — são documentos em texto/markdown
+  (descrição + "Features:" + "Output:") e falham em `python -m py_compile`
+  (SyntaxError na linha 3 ou 5). NENHUM módulo vivo os importa; só são
+  referenciados no docstring do `__init__.py` do pacote.
+- As implementações válidas estão em `tools/mercury_integrity_auditor/auditors/`
+  (static_auditor.py, contract_auditor.py etc.), importadas pelo main.py do tool.
+- Verdict: são artefatos/documentos residuais, NÃO código de produção.
+  Não afetam o pipeline. Classificação: CONFIRMADO (como "não compiláveis"),
+  e esclarecido que são lixo de documentação, não código.
+
+--------------------------------------------------------------------------------
+4. MÓDULOS POTENCIALMENTE MORTOS
+--------------------------------------------------------------------------------
+ACHADO DO INVENTÁRIO: "31 módulos mortos na produção (fase 1, classificação MORTO)"
+CLASSIFICAÇÃO: CONFIRMADO para a grande maioria (ver classificação A-F abaixo)
+
+Classificação por grau (A-F), baseada no grafo de import REAL e call sites:
+
+A) VIVO NO FLUXO (eram suspeitos, mas são chamados em produção):
+   - analysis/adaptive_weight_engine.py  (via ConflictResolutionEngine)
+   - analysis/conflict_resolution_engine.py (via MercuryDecisionEngine:162)
+   - analysis/decision_resolver_engine.py (via MercuryDecisionEngine:262)
+   - analysis/institutional_memory_engine.py (pipeline:426)
+   - data/data_quality_engine.py (pipeline:66,176 — versão data/)
+   - brain/scanner.py, brain/institutional_brain.py, brain/mercury_decision_engine.py
+
+B) VIVO INDIRETAMENTE (importados por módulos do fluxo):
+   - analysis/confluence_engine.py, confluence_score_engine.py,
+     confidence_engine.py, evidence_engine.py, risk_engine.py,
+     probability_engine.py, evidence_quality_engine.py,
+     evidence_ranking_engine.py, institutional_trade_filter_engine.py,
+     mtf_engine.py, market_thesis_builder.py, decision_trace_engine.py,
+     institutional_contribution.py, confluence_helpers.py
+
+C) SÓ TESTES (não estão no fluxo de produção):
+   - analysis/provider_priority_engine.py, data/mercury_data_provider.py
+     (framework paralelo), calendar/economic_calendar.py,
+     news/news_provider.py, sessions/market_sessions.py,
+     providers/future_tradingview_provider.py
+
+D) LEGADO (substituídos, ainda alcançáveis):
+   - analysis/data_quality_engine.py (DEAD — produção usa data/)
+   - brain/exceptions.py (DEAD — produção usa core/exceptions.py)
+   - market/market_engine.py (MORTO — 0 referências)
+   - providers/mercury_data_provider.py (shim de compatibilidade)
+   - providers/provider.py (MarketProvider — só via core/startup.py, que é morto)
+
+E) REALMENTE MORTO (0 referências em todo o repositório):
+   - core/startup.py, core/data_quality_gate.py, models/signal.py,
+     ai/llm.py (MercuryLLM), analysis/post_decision_evaluation_engine.py,
+     analysis/learning_engine.py, analysis/calibration_analyzer.py,
+     providers/future_broker_provider.py, providers/future_polygon_provider.py
+
+F) NÃO DETERMINADO / NÃO AVALIADO NESTA FASE:
+   - (nenhum item obrigatório ficou nesta categoria; itens não avaliados
+      estão listados na seção 19 "O QUE AINDA NÃO FOI COMPROVADO")
+
+Observação de correção ao inventário: `analysis/confidence_calibration_auditor.py`
+NÃO é morto — é usado por `institutional_report_generator.py`. O módulo morto
+é o `analysis/calibration_analyzer.py` (CalibrationAnalyzer), que é diferente.
+
+--------------------------------------------------------------------------------
+5. DUPLICAÇÕES
+--------------------------------------------------------------------------------
+ACHADO DO INVENTÁRIO: "13 grupos de duplicação"
+CLASSIFICAÇÃO: PARCIALMENTE CONFIRMADO (verificados os grupos mais críticos)
+
+- DataQualityEngine (analysis/ vs data/): CONFIRMADO. Produção (core/analysis_pipeline
+  :66,176) usa `data/data_quality_engine.py`. A versão `analysis/data_quality_engine.py`
+  só é usada por tests/test_data_quality_engine.py. Os testes validam uma
+  implementação DIFERENTE da que roda em produção. Divergência: a versão analysis/
+  usa `datetime.now()` (não-determinística); a versão data/ não usa relógio.
+- Exceptions (brain/exceptions.py vs core/exceptions.py): CONFIRMADO. brain/ tem
+  0 referências; core/ é usada em toda a produção.
+- MercuryDataProvider (providers/ vs data/): CONFIRMADO como paralelismo, NÃO
+  como duplicação trivial. providers/market_provider.py é o canônico (IDataProvider,
+  6 adapters) e `providers/mercury_data_provider.py` é um shim de compatibilidade
+  que reexporta o canônico. `data/mercury_data_provider.py` é um framework paralelo
+  com contrato DIFERENTE (IMercuryDataProvider Protocol), usado apenas por
+  provider_priority_engine + testes. Dois contratos de provider incompatíveis.
+- MarketData (data/market_data.py MarketDataService vs models/market_data.py
+  MarketData): REFUTADO como duplicação. São responsabilidades distintas
+  (serviço vs modelo). Apenas colisão de nome de módulo.
+- Tabelas de mapeamento (ENGINE_NAME_TO_ADAPTIVE_KEY vs ENGINE_NAME_TO_DOMAIN):
+  CONFIRMADO como duplicação de fonte de verdade com DRIFT (ver seção 9).
+
+--------------------------------------------------------------------------------
+6. ESCALAS
+--------------------------------------------------------------------------------
+ACHADO DO INVENTÁRIO: "escala de confiança inconsistente (0-100 vs 0-1)"
+CLASSIFICAÇÃO DO ACHADO ESPECÍFICO: REFUTADO (ver explicação)
+CLASSIFICAÇÃO DA SITUAÇÃO GERAL: PARCIALMENTE CONFIRMADO (mix de escalas documentado)
+
+Evidência:
+- `ConfidenceEngine.calculate()` produz escala 0-100 internamente
+  (score = 100*(0.25*q + 0.45*c + 0.30*m), clamp 0-100).
+- PORÉM `DecisionResultBuilder` (decision_result_builder.py:114) faz
+  `confidence = calibrated_confidence / 100.0` — DESIGN NOTE explícita:
+  "confidence é armazenado em escala 0-1 (não 0-100) por compatibilidade
+  histórica com todos os consumidores UI que usam decision.confidence*100".
+- `confidence_calibration_auditor.py` lê `data['decision_result']['confidence']`
+  e usa bins `np.linspace(0,1,6)` — CONSISTENTE porque o valor armazenado é 0-1.
+- O achado "escala mismatch que quebra o auditor" é REFUTADO: o auditor lê a
+  escala 0-1 armazenada, não a 0-100 interna do ConfidenceEngine.
+- RESIDUAL (PARCIALMENTE CONFIRMADO): `DecisionResult` MISTURA escalas —
+  confidence=0-1 enquanto score/quality/clarity/risk_score e as probabilidades
+  são 0-100. É um design documentado, mas um risco real de confusão para
+  consumidores que esqueçam de multiplicar confidence*100.
+- Confirmação por runtime: probe produziu confidence=0.699 (0-1) e
+  buy/sell/wait=40/0/60 (0-100, soma 100). Escalas coerentes com o design.
+
+--------------------------------------------------------------------------------
+7. OHLCV (Case das colunas)
+--------------------------------------------------------------------------------
+ACHADO DO INVENTÁRIO: "inconsistência de case das colunas OHLCV
+  ('Close' vs 'close') -> risco de KeyError entre módulos"
+CLASSIFICAÇÃO: REFUTADO como bug vivo no fluxo principal; PARCIALMENTE
+  CONFIRMADO como fragilidade de design (dependência de normalização central)
+
+Contrato real (verificado no código):
+1. Adapters (providers/data_adapters.py YahooAdapter etc.) produzem MINÚSCULO
+   (rename "Open"->"open", "High"->"high", "Low"->"low", "Close"->"close",
+   "Volume"->"volume").
+2. `DataNormalizer.normalize()` (data/data_normalizer.py) converte tudo para
+   minúsculo, mapeia sinônimos, preenche ausentes e **DUPLICA OS DOIS PADRÕES**
+   (adiciona "Open/High/Low/Close/Volume" ao lado do minúsculo). Saída = AMBOS.
+3. `MarketDataService.get_data()` (data/market_data.py) SEMPRE chama
+   `_normalize_dataframe` (nos dois ramos: provider_manager e providers antigos)
+   -> retorna AMBOS os cases.
+4. Caminho principal: scanner -> pipeline -> `market_service.get_data()` (linha 171)
+   -> df com AMBOS os cases -> TODOS os engines funcionam (Capitalized e lowercase).
+5. Caminho replay: parquet `data/replay/EURUSD=X/data.parquet` tem colunas
+   MINÚSCULAS (verificado: close/high/low/open/volume, 6077 linhas).
+   `historical_replay_engine.py:90-92` (volume/close/open lowercase) funciona com
+   esse parquet. O pipeline do replay usa MarketDataService -> normaliza -> OK.
+6. Engines que se auto-normalizam (swing_engine.py:58,176;
+   market_structure_intelligence_engine.py:93) funcionam com qualquer case.
+   Engines que NÃO se auto-normalizam (historical_replay_engine:90;
+   smart_money/market_structure_engine.py:23-24) dependem do caller normalizado.
+
+Verdict: a inconsistência é real (convenções diferentes entre engines), mas é
+NEUTRALIZADA pelo DataNormalizer no fluxo canônico. KeyError só ocorreria se um
+caller burlar MarketDataService/DataNormalizer (adapter direto, df manual em
+scripts/tests) ou se o parquet de replay fosse Capitalizado (hoje é minúsculo).
+=> REFUTADO como bug vivo; CONFIRMADO como fragilidade de design (acoplamento
+   à normalização central; engines lowercase sem auto-defesa).
+
+--------------------------------------------------------------------------------
+8. DETERMINISMO
+--------------------------------------------------------------------------------
+ACHADO DO INVENTÁRIO: "data_quality_engine usa datetime.now() (quebra replay)"
+CLASSIFICAÇÃO: REFUTADO para a versão de produção; CONFIRMADO para a versão morta
+
+Evidência:
+- `data/data_quality_engine.py` (PRODUÇÃO) NÃO usa datetime/time/now/random —
+  verificado por grep (0 matches). Não quebra replay.
+- `analysis/data_quality_engine.py` (MORTA) usa `datetime.now()` na linha 36
+  (delay = (datetime.now() - df.index.max()).total_seconds()).
+- O inventário/nota conflitou as duas versões. Inferência virou "fato" sem
+  verificar qual versão roda em produção.
+
+DETERMINISMO DO PIPELINE (avaliação geral):
+- `DeterministicClock` (utils/deterministic_clock.py): set_time/utcnow/reset,
+  thread-safe. Replay chama `DeterministicClock.set_time(current_time)` por
+  candle (historical_replay_engine.py:130). O pipeline usa DeterministicClock
+  em todos os timestamps/telemetria.
+- `benchmark_framework.py:310` usa `np.random.RandomState(42)` (SEEDADO).
+- `run_deterministic_replay_scenarios.py` usa `np.random.seed(seed)` (SEEDADO).
+- Chamadas NÃO determinísticas encontradas estão FORA do caminho de decisão:
+  telemetria (asset_registry, health_center, observability_center,
+  history_logger, report_generator, market_provider elapsed), módulos só-teste
+  (sessions/market_sessions.py datetime.utcnow().hour; news/news_provider.py;
+  calendar/economic_calendar.py), scripts (run_decision_scenarios síntese de
+  cenários; stress_test_replay.py np.random SEM seed), e tooling de auditoria.
+- CONCLUSÃO: o pipeline de decisão é determinístico por design (relógio
+  injetável + seeds fixos). Riscos residuais: stress_test_replay sem seed
+  (script) e dependência de TODOS os módulos vivos usarem DeterministicClock
+  (nenhum desvio encontrado no fluxo vivo).
+
+--------------------------------------------------------------------------------
+9. ADAPTIVE WEIGHTS
+--------------------------------------------------------------------------------
+ACHADO DO INVENTÁRIO: "adaptive_weight_engine: weighting por sessão INCOMPLETO
+  (stub comentado)"
+CLASSIFICAÇÃO: CONFIRMADO (o ajuste por sessão está comentado/incompleto)
+  + ESCLARECIMENTO: o motor NÃO é morto — é VIVO E ATIVO em produção.
+
+Evidência:
+- `adaptive_weight_engine.py` `calculate_weights(context)` retorna 5 chaves
+  (Trend, Liquidity, Volatility, Structure, SmartMoney) base 1.0, com ajustes
+  por regime (Trend->1.5 cap 2.0; Consolidation->Liquidity 1.5/SmartMoney 1.3;
+  Expansion->Volatility 1.8 cap 2.5) e determinístico (função pura do context).
+- O ajuste por SESSÃO está COMENTADO: "# Ajustes baseados em Sessão (Ex: Alta
+  liquidez em NY/London)" sem código. => weighting por sessão INCOMPLETO (CONFIRMADO).
+- Cadeia ativa: ConflictResolutionEngine.py:36 instancia AdaptiveWeightEngine;
+  brain/mercury_decision_engine.py:62 instancia ConflictResolutionEngine e
+  **:162 chama resolve()** no caminho de decisão VIVO. Também confidence_engine:33
+  e evidence_engine:13 instanciam ConflictResolutionEngine.
+- OU SEJA: os pesos adaptativos (1.0-2.5) SÃO aplicados a evidências em produção,
+  multiplicando o weight das evidências. Podem alterar decisões.
+- ACHADO MAIOR (CONFIRMADO): FONTE DUPLA DE VERDADE DE PESOS.
+  `config/institutional_weights.py` declara "ÚNICA fonte de pesos para todas as
+  engines... Qualquer alteração deve ser feita exclusivamente aqui"
+  (INSTITUTIONAL_WEIGHTS: 8 domínios, soma 100: market_structure 20, trend 18,
+  smart_money 18, liquidity 14, support_resistance 12, volatility 8,
+  market_condition 6, candlestick 4 — usado por ConfluenceEngine/
+  ConfluenceScoreEngine/ProbabilityEngine). PORÉM AdaptiveWeightEngine (ativo)
+  é OUTRO sistema de pesos (5 chaves, 1.0 base x multiplicador de regime,
+  escala diferente). A claim "ÚNICA fonte" é FALSA no código.
+- A mesma evidência é ponderada por DOIS sistemas diferentes no mesmo fluxo
+  (ConfluenceEngine com INSTITUTIONAL_WEIGHTS + ConflictResolutionEngine com
+  pesos adaptativos). Risco de divergência de pesos para o mesmo engine.
+
+--------------------------------------------------------------------------------
+10. ENGINES FORA DO FLUXO
+--------------------------------------------------------------------------------
+ACHADO DO INVENTÁRIO: "módulos documentados como oficiais mas fora do fluxo"
+CLASSIFICAÇÃO: CONFIRMADO (0 referências em todo o repo, verificado por grep)
+
+- core/startup.py ...................... 0 referências -> fora do fluxo
+- core/data_quality_gate.py ............. 0 referências -> fora do fluxo
+- models/signal.py ...................... 0 referências -> fora do fluxo
+- ai/llm.py (MercuryLLM) ................ 0 referências -> fora do fluxo
+  (teste_llm.py usa `from openai import OpenAI` direto, NÃO usa MercuryLLM)
+- market/market_engine.py ................ 0 referências -> fora do fluxo
+- analysis/post_decision_evaluation_engine.py ... 0 referências
+- analysis/learning_engine.py ................... 0 referências
+- analysis/calibration_analyzer.py (CalibrationAnalyzer) ... 0 referências
+- providers/future_broker_provider.py, future_polygon_provider.py ... 0 refs
+  (stubs: todos os métodos retornam False)
+
+NUANCE: `analysis/confidence_calibration_auditor.py` (ConfidenceCalibrationAuditor)
+É VIVO — usado por institutional_report_generator.py e testes. Não confundir com
+`calibration_analyzer.py` (morto).
+- Estes módulos estão documentados como oficiais nos artefatos .mercury, mas
+  NÃO são alcançáveis por nenhum grafo de import vivo.
+
+--------------------------------------------------------------------------------
+11. PROVIDERS
+--------------------------------------------------------------------------------
+ACHADO DO INVENTÁRIO: "provedores duplicados/paralelos + stubs de futuro"
+CLASSIFICAÇÃO: PARCIALMENTE CONFIRMADO (mapa real abaixo)
+
+- CANÔNICO: `providers/market_provider.py` `MercuryDataProvider` registra 6
+  adapters (YahooAdapter, PolygonAdapter, TwelveDataAdapter, AlphaVantageAdapter,
+  BinanceAdapter, MetaTrader5Adapter). Usado em produção por
+  `brain/scanner.py:29` (self.provider), app/dashboard, scripts e testes.
+- SHIM: `providers/mercury_data_provider.py` reexporta o canônico
+  (compatibilidade). Usado pelo scanner (import de compatibilidade).
+- LEGACY DIRETO: `providers/yahoo_finance_provider.py` `YahooFinanceProvider`
+  (classe separada) usado por Demo (app/terminal/06_Demo), benchmark_framework,
+  confidence_calibration_auditor, performance_analytics, core/job_manager,
+  operations/demo_manager e testes. Padrão `MarketDataService(providers=[...])`.
+- EFETIVAMENTE MORTO: `providers/provider.py` `MarketProvider` (só via
+  core/startup.py, que é morto).
+- PLACEHOLDERS/FUTURO: `future_broker_provider.py` (0 refs, stub),
+  `future_polygon_provider.py` (0 refs, stub), `future_tradingview_provider.py`
+  (só testes).
+- REPLAY: `providers/historical_replay_provider.py` (replay engine + testes).
+- PARALELO INCOMPATÍVEL: `data/mercury_data_provider.py` (IMercuryDataProvider
+  Protocol, YahooProvider/BinanceProvider/PolygonProvider) usado SÓ por
+  analysis/provider_priority_engine + testes. Contrato diferente do canônico
+  (IDataProvider). Duas abstrações de provider com contratos incompatíveis.
+- Failover: `market_provider.py` tem trigger_failover/is_available (usado pelo
+  scanner em erro por símbolo).
+
+--------------------------------------------------------------------------------
+12. FLUXO REAL (reconstruído por call sites — não por documentação)
+--------------------------------------------------------------------------------
+CLASSIFICAÇÃO: CONFIRMADO (árvore real abaixo)
+
+ENTRY: `mercury_ai/main.py` -> `MercuryScanner().scan()`
+  (NÃO existe main.py na raiz; o entry é o módulo mercury_ai.main)
+
+MercuryScanner.scan():
+  AssetRegistry (ativos habilitados para broker via data/brokers/{broker}.json)
+  -> para cada symbol: AnalysisPipeline.analyze(symbol)
+     -> tratamento de erro por símbolo (MarketClosed, DataValidation, InvalidSymbol,
+        ProviderError, Connection, Timeout, OSError, ValueError, KeyError) + failover
+  -> RankingEngine.rank(analyses)
+  -> _print_ranking (usa InstitutionalBrain.explain)
+
+AnalysisPipeline.analyze() (core/analysis_pipeline.py, ~25 passos):
+  1  MarketDataService.get_data(symbol)  [linha 171] -> MercuryDataProvider ->
+     adapter -> DataNormalizer (AMBOS os cases)
+  2  DataQualityEngine.validate(df)      [176]  (data/ versão produção)
+  3  IndicatorEngine.calculate           [250]
+  4  MarketStructureIntelligenceEngine.evaluate [259] (+ swing_engine:260)
+  5  TrendAnalyzer.analyze               [266]
+  6  MTFEngine.analyze                   [271]
+  7  SmartMoneyEngine.analyze            [276]
+  8  SessionEngine.analyze               [282]
+  9  MarketStateEngine.analyze           [287]
+  10 VolumeIntelligenceEngine.evaluate   [292]
+  11 MarketRegimeEngine.analyze          [297]
+  12 LiquidityEngine.analyze             [302]
+  13 VolatilityEngine.analyze            [308]
+  14 MarketConditionEngine.analyze       [313]
+  15 CandlestickEngine.analyze           [318]
+  16 SupportResistanceAnalyzer.analyze   [323]
+  17 PriceActionAnalyzer.analyze         [328]
+  18 EvidenceEngine.compose              [359]
+  19 RiskEngine.assess                   [376]
+  20 ContextEngine.analyze               [396]
+  21 InstitutionalTradeFilterEngine.evaluate [401]
+  22 **MercuryDecisionEngine.analyze**   [406]  <-- ORQUESTRADOR FINAL
+        - ConflictResolutionEngine.resolve (:162) [pesos adaptativos]
+        - ConfidenceEngine.calculate + calibrate (:198-215)
+        - DecisionResolverEngine.resolve (:262)   [regras]
+        - ProbabilityEngine, ConfluenceEngine, Explainability
+  23 InstitutionalMemoryEngine.record_decision [426]
+  24 ConfluenceEngine.analyze            [432] (via decision_engine.confluence)
+  25 SnapshotLogger.save + retorna AnalysisResult
+
+Engines fora deste fluxo = "FORA DO FLUXO COMPROVADO" (ver seção 10).
+
+--------------------------------------------------------------------------------
+13. RUNTIME (probe de execução real)
+--------------------------------------------------------------------------------
+CLASSIFICAÇÃO: CONFIRMADO (comportamento observado por execução)
+
+A) Entry point oficial `python -m mercury_ai.main`:
+   - EXIT 0, sem exception, MAS: escaneia ZERO ativos -> ranking vazio.
+   - Causa raiz: `data/brokers/` está VAZIA -> `get_assets_for_broker("XP")`
+     retorna [] -> enabled_assets vazio. O entry "oficial" NÃO executa o pipeline.
+   - Importante: "terminou sem exception" NÃO significa correto — aqui não fez nada.
+
+B) Entry point `python -m mercury_ai.performance_benchmarking`:
+   - CRASHA com `NameError: name 'threshold_exceeded' is not defined` (exit 1).
+   - O arquivo está GUTTED: contém o placeholder literal `# ... existing code ...`
+     e referencia variável não definida. (verificado por execução)
+
+C) Probe direto do pipeline (dados contínuos determinísticos, seed 42, 1200
+   candles 5min, sem rede):
+   - tempo total: 18.465s (pipeline completo executa).
+   - decision=WAIT (Institutional WAIT signal by regime), score=66.29,
+     confidence=0.699 (escala 0-1), clarity=100.0, risk_score=42.91,
+     quality=80.0, grade=D, buy/sell/wait=40/0/60 (soma 100),
+     warnings=(), blockers=().
+   - evidence_ranking real: FairValueGapEngine BULLISH (strength 100),
+     StructureEngine OTE (BULLISH) repetido 3x com prefixos MTF
+     ("StructureEngine", "M5 - StructureEngine", "M15 - StructureEngine") —
+     duplicação por multi-timeframe (comportamento esperado do MTF).
+   - SANIDADE: NENHUM NaN, NENHUM None, NENHUMA probabilidade fora de 0-100,
+     confiança dentro de 0-1, score 0-100. VALORES VÁLIDOS.
+   - Nota: timestamps das evidências refletem o relógio real (DeterministicClock
+     sem set_time fora do replay), não o tempo do candle.
+
+D) DataQualityEngine em runtime:
+   - REJEITA dados com gaps temporais >15min ("Temporal gaps detected") ->
+     parquet EURUSD=X (5min com gaps de fim de semana) -> WAIT
+     (audit_id='DATA_QUALITY_FAIL'). Dados contínuos passam.
+   - Este gate é STRICT: dados 5min de semanas com fim de semana são rejeitados.
+
+E) Efeitos colaterais do probe (runtime_report + 2 snapshots EURUSD_X)
+   foram identificados e REMOVIDOS (investigação não altera o repo).
+
+--------------------------------------------------------------------------------
+14. ERROS OCULTOS (mascaramento de erro)
+--------------------------------------------------------------------------------
+CLASSIFICAÇÃO: PARCIALMENTE CONFIRMADO (mecanismo existe e registra, mas o
+  fluxo operacional mascara a distinção)
+
+- `core/analysis_pipeline.py:497` `except Exception` -> logging.exception +
+  AuditEvent + DecisionResult WAIT com audit_id='PIPELINE_ERROR'.
+  => O erro É registrado (log + audit), mas o consumidor operacional (scanner/
+  ranking) enxerga apenas um WAIT comum. A distinção só aparece via
+  audit_id='PIPELINE_ERROR' ou logs. RISCO MÉDIO de mascaramento: qualquer bug
+  interno de engine vira "WAIT" sem alerta operacional explícito.
+- `core/pipeline_executor.py:33` except Exception (wrap intencional em
+  PipelineContractError, documentado) e `core/pipeline_audit_middleware.py:37`
+  (re-raise intencional): risco baixo.
+- `execution/order_executor.py:256` `_check_symbol_authorized` except Exception:
+  return — fail-open SEM log (o comentário diz "permite mas loga", mas NÃO há
+  chamada de log). RISCO BAIXO-MÉDIO.
+- `execution/order_executor.py:300` `_load` ignora JSON corrompido silenciosamente
+  (except (json.JSONDecodeError, OSError): return) — pode perder estado de ordens
+  sem aviso. RISCO BAIXO-MÉDIO.
+- `order_block_engine.py`: 9x `return None` em casos de borda (sem log).
+- `institutional_analytics_engine.py`: 4x `return {}`.
+- `future_broker_provider.py`/`future_polygon_provider.py`: stubs retornam False.
+- Logging BOM existe em: scanner (erro por símbolo + failover),
+  institutional_memory_engine, integrity_checker, replay_batch_processor,
+  demo_manager, market_provider.py:214, pipeline_executor.py:34, atomic_io.py:110.
+
+--------------------------------------------------------------------------------
+15. ACHADOS CONFIRMADOS
+--------------------------------------------------------------------------------
+1. requirements.txt CORROMPIDO (merge conflict) — pip install falha. [CONFIRMADO]
+2. 5 arquivos "auditores" não-Python (markdown) não compiláveis e não importados.
+   [CONFIRMADO]
+3. DataQualityEngine duplicado: produção usa data/, testes validam analysis/.
+   [CONFIRMADO]
+4. brain/exceptions.py morto (produção usa core/exceptions.py). [CONFIRMADO]
+5. MercuryDataProvider: shim (providers/) vs framework paralelo incompatível
+   (data/). [CONFIRMADO]
+6. LiquidityEventEngine referenciado nas DUAS tabelas de mapeamento mas nunca
+   instanciado. [CONFIRMADO]
+7. Fonte dupla de verdade de pesos: INSTITUTIONAL_WEIGHTS (config) vs
+   AdaptiveWeightEngine, ambos ativos; claim "ÚNICA fonte" falsa. [CONFIRMADO]
+8. Tabelas de mapeamento divergentes para VWAPEngine (Structure vs
+   support_resistance), ContextEngine (Trend vs market_condition),
+   ConsistencyEngine (Trend vs market_condition). [CONFIRMADO]
+9. AdaptiveWeightEngine VIVO e ativo (via ConflictResolutionEngine ->
+   MercuryDecisionEngine:162). Ajuste por sessão INCOMPLETO (comentado).
+   [CONFIRMADO]
+10. 8+ módulos documentados como oficiais com ZERO referências (fora do fluxo).
+    [CONFIRMADO]
+11. Entry point performance_benchmarking GUTTED — CRASHA com NameError. [CONFIRMADO]
+12. Entry point oficial (mercury_ai.main) escaneia ZERO ativos (data/brokers vazia).
+    [CONFIRMADO]
+13. Pipeline de decisão determinístico por design (DeterministicClock + seeds).
+    [CONFIRMADO]
+14. DataQualityEngine rejeita dados com gaps >15min (gate estrito). [CONFIRMADO]
+15. Error handler do pipeline registra erro (audit_id PIPELINE_ERROR) mas o
+    fluxo operacional apresenta como WAIT normal. [CONFIRMADO como mecanismo]
+16. MarketSessions (relógio real) usado só em testes; produção usa SessionEngine
+    (DeterministicClock). [CONFIRMADO]
+
+--------------------------------------------------------------------------------
+16. ACHADOS REFUTADOS
+--------------------------------------------------------------------------------
+1. "Escala de confiança mismatch (0-100 vs 0-1) quebra o calibration auditor."
+   REFUTADO — DecisionResultBuilder divide por 100 (design note explícita) e o
+   auditor lê a escala 0-1 armazenada corretamente.
+2. "data_quality_engine usa datetime.now() (quebra replay)."
+   REFUTADO para a versão de produção (data/) — sem relógio; o datetime.now()
+   está na versão MORTA (analysis/).
+3. "Inconsistência de case OHLCV causa KeyError no fluxo."
+   REFUTADO como bug vivo — DataNormalizer duplica os dois cases e o
+   MarketDataService normaliza sempre; todos os engines funcionam no fluxo
+   canônico. (Confirmado apenas como fragilidade de design; ver seção 7.)
+4. "MarketData (market_data.py) é duplicação."
+   REFUTADO — serviço vs modelo, responsabilidades distintas.
+5. "AdaptiveWeightEngine é apenas um stub morto."
+   REFUTADO quanto a ser morto — é ativo em produção (pesos aplicados em :162);
+   confirmado apenas que o ajuste por sessão está incompleto.
+
+--------------------------------------------------------------------------------
+17. ACHADOS PARCIAIS (PARCIALMENTE CONFIRMADO)
+--------------------------------------------------------------------------------
+1. Duplicações em geral: 13 grupos do inventário não foram todos verificados;
+   os críticos foram. Demais ficam como "não exaustivamente validados".
+2. DecisionResult mistura escalas (confidence 0-1 vs demais 0-100): design
+   documentado, mas risco de confusão para consumidores. [PARCIAL]
+3. OHLCV: inconsistência real de convenções, neutralizada por normalização
+   central; quebra apenas se bypass de MarketDataService/DataNormalizer ou
+   parquet Capitalizado (hoje minúsculo). [PARCIAL]
+4. Erros ocultos: mecanismo registra erros, mas fluxo operacional não distingue
+   PIPELINE_ERROR de WAIT legítimo na superfície. [PARCIAL]
+5. Determinisno: pipeline determinístico; resíduos em scripts (stress_test_replay
+   sem seed) e dependência de disciplina no uso do DeterministicClock. [PARCIAL]
+
+--------------------------------------------------------------------------------
+18. RISCOS CRÍTICOS (ordenados por severidade)
+--------------------------------------------------------------------------------
+CRÍTICO:
+- Entry point oficial não executa análise alguma com a configuração embarcada
+  (data/brokers vazia) — o sistema "roda" sem fazer nada.
+- Entry point performance_benchmarking quebra (arquivo gutted) — um dos 2
+  entry points declarados está inutilizável.
+- requirements.txt corrompido impede instalação/reprodução do ambiente.
+
+ALTO:
+- Fonte dupla de verdade de pesos (INSTITUTIONAL_WEIGHTS vs AdaptiveWeightEngine)
+  com claim de "única fonte" falsa — pesos aplicados podem divergir por subsistema.
+- Tabelas de mapeamento engine->peso divergentes (3 engines mapeiam para domínios
+  diferentes nas duas tabelas) — mesma evidência pode receber pesos diferentes
+  conforme o subsistema que a processa.
+- DataQualityEngine rejeita dados com gaps >15min — com dados 5min de semanas,
+  o pipeline produz WAIT (sem decisão) em mercado real aberto com gaps normais.
+
+MÉDIO:
+- Error handler do pipeline mascara PIPELINE_ERROR como WAIT na superfície
+  operacional (detectável só por audit_id/logs).
+- order_executor._check_symbol_authorized fail-open sem log (comentário diz
+  "loga" mas não loga).
+- order_block_engine: 9x return None silencioso em casos de borda.
+- ~31 módulos mortos + stubs (future_broker/future_polygon) aumentam superfície
+  de manutenção e confusão (ex: tests validam DataQualityEngine errado).
+
+BAIXO:
+- Duplicação de frameworks de provider (IDataProvider vs IMercuryDataProvider).
+- Módulos de telemetria usam time.time()/datetime.now() (não afetam decisão).
+- JSON de estado de ordens corrompido é ignorado silenciosamente.
+
+--------------------------------------------------------------------------------
+19. O QUE AINDA NÃO FOI COMPROVADO
+--------------------------------------------------------------------------------
+- Validação exaustiva dos 13 grupos de duplicação do inventário (só os críticos
+  foram verificados nesta fase).
+- Comportamento com provider real (rede): os adapters exigem chaves/mercado
+  aberto; não foi validado qual adapter vence no failover em produção real nem
+  o formato exato entregue por TwelveData/AlphaVantage/Binance/MetaTrader5.
+- Coerência de calibração de confiança com dados reais e trades fechados
+  (confidence_calibration_auditor depende de snapshots com resultados fechados).
+- O impacto NUMÉRICO real da divergência das duas tabelas de pesos em decisões
+  reais (não medido — apenas o drift estrutural foi confirmado).
+- Se algum engine vivo do pipeline usa datetime/random de forma não detectada
+  fora dos padrões greppados (busca por padrões específicos; risco residual).
+- Os ~61 módulos MORTO da fase 1 foram re-classificados aqui apenas nos itens
+  críticos; a lista completa por classe A-F está nas seções 4/10.
+- Execução de replay determinístico completo (run_institutional_replay) com
+  validação de determinismo bit-a-bit entre execuções (não executado nesta fase).
+- Comportamento do OrderExecutor em modo real (execução de ordens) — não testado.
+
+--------------------------------------------------------------------------------
+20. VEREDITO
+--------------------------------------------------------------------------------
+PERGUNTA: "Podemos afirmar, com evidência suficiente, que o Mercury AI V1 está
+funcionando corretamente?"
+
+RESPOSTA: NÃO, com a configuração e o estado atuais NÃO é possível afirmar que o
+Mercury AI V1 está funcionando corretamente DE PONTA A PONTA.
+
+Fundamentação com evidência:
+1. O NÚCLEO do motor de decisão demonstra funcionamento correto quando alimentado
+   com dados válidos: probe executou o pipeline completo (18.5s) e produziu
+   decisão coerente com escalas válidas, sem NaN, sem None, sem valores
+   impossíveis, confiança 0-1 e probabilidades somando 100.
+2. PORÉM, o sistema como entregue NÃO executa o fluxo de produção: o entry
+   point oficial escaneia zero ativos (data/brokers vazia), o segundo entry
+   point quebra (NameError), e as dependências não instalam (requirements
+   corrompido). Ou seja: não há evidência de funcionamento correto do SISTEMA
+   em uso real — há evidência de que o motor funciona isoladamente.
+3. Existem fragilidades estruturais confirmadas que impedem afirmar corretude:
+   fonte dupla de verdade de pesos, tabelas de mapeamento divergentes, engines
+   documentados como oficiais fora do fluxo, e mascaramento parcial de erros
+   (PIPELINE_ERROR vira WAIT na superfície).
+4. Verdict parcial sobre o NÚCLEO: APROVADO COM RESSALVAS (núcleo executa e
+   produz valores válidos; ressalvas de pesos, mapeamentos e gate de dados).
+5. Verdict sobre o SISTEMA/PRODUTO: REPROVADO para "funcionando corretamente"
+   — o runtime oficial não realiza análise, um entry point quebra e o ambiente
+   não é reproduzível via requirements.
+
+Recomendação (fora do escopo desta fase, que é investigação-only): antes de
+qualquer operação real, corrigir requirements.txt, restaurar/reconfigurar
+data/brokers, restaurar o entry performance_benchmarking, e unificar a fonte de
+pesos/mapeamentos. Nenhuma dessas alterações foi feita nesta fase.
+
+================================================================================
+FIM — AUDIT_V1/02_VALIDACAO_FORENSE.txt
+Classificações usadas: CONFIRMADO / REFUTADO / PARCIALMENTE CONFIRMADO /
+NÃO FOI POSSÍVEL COMPROVAR. Nenhum arquivo de produção foi modificado.
+================================================================================

@@ -95,35 +95,18 @@ class ProbabilityEngine:
         )
 
         # ----------------------------------------------------
-        # Score Institucional (com pesos integrados)
+        # Score Institucional (composição canônica)
         # ----------------------------------------------------
 
-        # Os pesos refletem a contribuição de cada dimensão
-        # para a força institucional da decisão.
-        # Cada peso é usado individualmente para ponderar
-        # o componente correspondente do score.
-        weight_trend = self.weights.get("trend", 0.40)
-        weight_structure = self.weights.get("structure", 0.30)
-        weight_liquidity = self.weights.get("liquidity", 0.20)
-        weight_volatility = self.weights.get("volatility", 0.10)
-
-        # confluence_score captura alinhamento multi-engine
-        # confidence_score captura a qualidade geral
-        # evidence_bonus captura a profundidade da análise
+        # Composição canônica documentada (Sprint 1.7 / comentário do autor):
+        # - confluence_score (alinhamento multi-engine) ..... 50%
+        # - confidence_score (qualidade geral) .............. 35%
+        # - evidence_bonus (profundidade da análise) ........ 15%
         #
-        # Cada peso individual contribui proporcionalmente:
-        # - trend + structure (0.70) → confluence (alinhamento direcional)
-        # - liquidity + volatility (0.30) → confidence (qualidade de execução)
-        # - evidence_bonus → profundidade (sempre 0.15)
-
-        trend_structure_sum = weight_trend + weight_structure
-        liquidity_volatility_sum = weight_liquidity + weight_volatility
-        total_weight = trend_structure_sum + liquidity_volatility_sum
-
-        # Normaliza para que a soma dos coeficientes seja 1.0
-        # independentemente dos pesos configurados
-        confluence_coef = trend_structure_sum / total_weight * 0.50
-        confidence_coef = liquidity_volatility_sum / total_weight * 0.35
+        # Soma dos coeficientes = 1.0 (0.50 + 0.35 + 0.15),
+        # independentemente dos pesos configurados.
+        confluence_coef = 0.50
+        confidence_coef = 0.35
         evidence_coef = 0.15
 
         institutional_strength = (

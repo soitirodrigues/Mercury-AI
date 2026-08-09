@@ -1,0 +1,445 @@
+================================================================================
+ BLOCO DE CORREÇÃO 2 — ERROR TRANSPARENCY + PROVIDER INTEGRITY
+ Mercury AI — V1 (Sprint Forense 2, Bloco de Correção 2)
+================================================================================
+ Arquivo: 05_GATE_V1_CORRECTION_2.txt
+ Data    : 2026-08-09 (sessão forense)
+ Escopo  : Corrigir SOMENTE os 6 achados comprovados no relatório
+           05_AUDITORIA_RISCOS_LATENTES.txt relacionados a transparência de
+           erros e integridade de providers.
+ Critério de evidência: E0/E1/E2/E3/E4 (E3/E4 = "BUG COMPROVADO").
+ Regra    : REGRA ZERO (ler código atual antes de editar), REGRA DE SEGURANÇA
+           (nenhum mascaramento), "exit 0" NÃO é prova. Nenhuma alteração de
+           fórmula/peso/limiar/regra/contrato institucional (lista NÃO ALTERAR).
+ Entregável: SOMENTE este arquivo + resultado de validação real.
+ NÃO iniciar Bloco 3.
+
+================================================================================
+ 1. ACHADOS ORIGINALMENTE REPORTADOS
+================================================================================
+Os 6 achados a corrigir (do relatório 05_AUDITORIA_RISCOS_LATENTES.txt):
+
+ A1. AnalysisPipeline engole erros silenciosamente: o bloco `except Exception`
+     converte qualquer erro real em WAIT com audit_id='PIPELINE_ERROR' e score 0,
+     sem re-levantar — o operador vê apenas "WAIT" / "DESCARTADO".
+ A2. DATA_QUALITY_FAIL e PIPELINE_ERROR mascarados como WAIT simples: o scanner
+     não distingue esses estados de um WAIT legítimo; erros entram na mesma
+     fila de "descartado", sobrescrevem previous_score com 0 e não aparecem como
+     falha para o operador.
+ A3. MTF (multi-timeframe) engole falhas: `except (KeyError, IndexError, ...):
+     continue` — timeframes que falham são simplesmente omitidos, sem registro de
+     qual TF falhou, por quê, nem se o consenso "fabricou" dados que não existiam.
+ A4. Provider health check falso: `BaseAdapter.check_health()` retorna True sempre;
+     os 5 adapters stub (Polygon, TwelveData, AlphaVantage, Binance, MT5) herdam
+     check_health=True e get_data()→DataFrame vazio → o sistema declara "6/6
+     providers saudáveis" quando só 1 (Yahoo) tem implementação real.
+ A5. Failover para stub providers: se o Yahoo falhar, o "melhor" candidato seguinte
+     era um stub "healthy" que devolve DataFrame vazio → DQ_FAIL → WAIT → o scanner
+     segue adiante como se nada tivesse acontecido; `trigger_failover` era no-op.
+ A6. audit_sink não observado pelo scanner: o pipeline registra eventos de falha
+     em MemoryAuditSink (get_failed_events) mas o scanner nunca os lê — a
+     observabilidade existe mas não é consumida.
+
+================================================================================
+ 2. CONFIRMADOS NO CÓDIGO ATUAL (REGRA ZERO)
+================================================================================
+Leitura do código atual (antes de qualquer edição) — todos os 6 achados CONFIRMADOS:
+
+ A1. CONFIRMADO — mercury_ai/core/analysis_pipeline.py, bloco `except Exception as
+     exc:` (após a linha ~500): logging.exception + audit_sink.log(AuditEvent(...))
+     + DecisionResult(decision='WAIT', ..., audit_id='PIPELINE_ERROR', summary=str(exc))
+     + snapshot salvo + retorna AnalysisResult. NÃO re-levanta. O AuditEvent era
+     criado SEM o campo symbol (impossível correlacionar ao ativo sem contexto).
+ A2. CONFIRMADO — os quatro estados terminais do pipeline (DATA_QUALITY_FAIL,
+     INSUFFICIENT_DATA, MARKET_CLOSED, PIPELINE_ERROR) produzem todos DecisionResult
+     com decision='WAIT' e score=0. mercury_ai/brain/scanner.py: `score =
+     analysis.decision.score`; `self.asset_registry.update_asset_stats(symbol, score)`
+     SEMPRE (linha ~128) antes da checagem `score < min_quality_score`; não lê
+     `audit_id`; `get_failed_events()` nunca chamado. Um WAIT legítimo carrega
+     audit_id = hash sha256 de 64 hex (gerado em analysis/decision_result_builder.py
+     linha 62: `audit_id = hashlib.sha256(...)`), confirmado também pelo
+     integrity_checker (somente MARKET_CLOSED é isento do formato hex-64).
+ A3. CONFIRMADO — mercury_ai/analysis/mtf_engine.py: `except (KeyError, IndexError,
+     ValueError, ConnectionError, RuntimeError): continue` — silencioso; sem status
+     por timeframe; MTFConsensus não tinha campo de status por TF.
+ A4. CONFIRMADO — mercury_ai/providers/data_adapters.py: `BaseAdapter.check_health()
+     → return True` (hardcoded); Polygon/TwelveData/AlphaVantage/Binance/MT5 apenas
+     definem __init__ (herdam check_health=True e get_data→pd.DataFrame()).
+     mercury_ai/providers/market_provider.py `healthcheck()` → 6/6 True.
+ A5. CONFIRMADO — E PIOR que o reportado: `trigger_failover` NÃO EXISTIA como
+     método. Na linha ~120 de market_provider.py o `def trigger_failover(...)`
+     estava DENTRO de uma linha de comentário (`# --------  def trigger_failover...`),
+     e o corpo (logger.warning, healthy=..., returns) foi silenciosamente absorvido
+     como código morto inalcançável DENTRO do método `get_data` (provado via AST:
+     os statements logger.warning/error/info das linhas 122/128/132 tinham
+     owner='get_data'). Portanto `self.provider_manager.trigger_failover()` no
+     scanner SEMPRE levantava AttributeError (capturado e logado como "Falha no
+     failover"). A cadeia de mascaramento reportada (Yahoo falha → stub "healthy" →
+     df vazio → DQ_FAIL → WAIT) era real: sem a correção do A4, o Polygon era
+     considerado saudável.
+ A6. CONFIRMADO — mercury_ai/core/audit_sink.py define MemoryAuditSink com
+     get_events()/get_failed_events(); o scanner nunca os invoca.
+
+Nenhum dos 6 achados foi "já corrigido" ou "não reproduzido". Todos são divergentes
+apenas no detalhe de A5 (trigger_failover nem existia — pior que no-op).
+
+================================================================================
+ 3. JÁ CORRIGIDOS (antes deste bloco)
+================================================================================
+Nenhum. Os 6 achados foram todos corrigidos neste bloco (nenhum pré-existia
+corrigido no código atual).
+
+================================================================================
+ 4. ARQUIVOS MODIFICADOS
+================================================================================
+1. mercury_ai/core/audit_sink.py                        — MODIFICADO (campo symbol)
+2. mercury_ai/providers/data_adapters.py                — MODIFICADO (health honesto)
+3. mercury_ai/providers/market_provider.py              — MODIFICADO (trigger_failover REAL)
+4. mercury_ai/models/mtf_consensus.py                   — MODIFICADO (status por TF)
+5. mercury_ai/analysis/mtf_engine.py                    — MODIFICADO (status por TF)
+6. mercury_ai/core/analysis_pipeline.py                 — MODIFICADO (DATA_PROVIDER_UNAVAILABLE
+                                                           + AuditEvent com symbol)
+7. mercury_ai/brain/scanner.py                          — MODIFICADO (distingue estados,
+                                                           exclui erros do ranking/stats,
+                                                           observa audit_sink)
+
+Efeitos colaterais legítimos da varredura real (saída normal de produção):
+- data/asset_registry.json  → atualizado (previous_score, last_operated) pela execução real
+- mercury_ai/database/snapshots/*.json  → novos snapshots da execução real
+- runtime_report_*.json  → novos (raiz do projeto)
+
+================================================================================
+ 5. ALTERAÇÕES EXATAS
+================================================================================
+
+5.1 mercury_ai/core/audit_sink.py
+   - AuditEvent ganhou o campo `symbol: Optional[str] = None` (aditivo, retro-
+     compatível). Permite correlacionar cada evento de falha ao ativo analisado.
+
+5.2 mercury_ai/providers/data_adapters.py  (ACHADO 4)
+   - BaseAdapter.__init__ passa a definir `self.is_implemented = False`.
+   - BaseAdapter.check_health() passa a retornar `self.is_implemented` (stub →
+     indisponível) em vez de `True` hardcoded.
+   - YahooAdapter.__init__ define `self.is_implemented = True` (única implementação
+     real de get_data no V1).
+   Resultado: healthcheck() honesto → {"Yahoo": True, Polygon/TwelveData/
+   AlphaVantage/Binance/MetaTrader5: False}.
+
+5.3 mercury_ai/providers/market_provider.py  (ACHADO 4/5)
+   - `trigger_failover` foi extraído da linha de comentário e virou MÉTODO REAL:
+       def trigger_failover(self, reason: str = "") -> bool:
+           """Failover honesto (ACHADO 5). ..."""
+           logger.warning(f"Failover requested: {reason}")
+           healthy = self._healthy_providers()
+           if len(healthy) <= 1:
+               logger.error("No fallback provider available.")
+               return False
+           logger.info("Fallback provider available.")
+           return True
+     Com o health honesto (A4), quando apenas o Yahoo está implementado,
+     trigger_failover retorna False e registra que NÃO há provider de
+     contingência funcional — em vez de "simular" failover para um stub.
+   - Código morto inalcançável que estava absorvido dentro de get_data foi
+     removido (o corpo agora pertence ao método trigger_failover).
+
+5.4 mercury_ai/models/mtf_consensus.py  (ACHADO 3)
+   - MTFConsensus ganhou (com defaults, retro-compatível — chamadas existentes em
+     mtf_engine.py e risk_engine.py continuam válidas):
+       timeframe_status: Dict[str, str] = field(default_factory=dict)
+       timeframe_errors: Dict[str, str] = field(default_factory=dict)
+
+5.5 mercury_ai/analysis/mtf_engine.py  (ACHADO 3)
+   - analyze() agora registra explicitamente o status de cada timeframe:
+       * df vazio/None            → status 'absent'
+       * len(df) < 20             → status 'rejected'
+       * análise concluída        → status 'processed'
+       * exceção no try           → status 'error' + mensagem em timeframe_errors
+   - O `except (...): continue` silencioso agora registra status 'error' com
+     `f"{type(exc).__name__}: {exc}"` antes do continue.
+   - _build_consensus recebe e repassa timeframe_status/timeframe_errors.
+   - NENHUMA fórmula de consenso foi alterada (mesmos cálculos de alignment/
+     conflict/bias). Apenas observabilidade adicionada.
+
+5.6 mercury_ai/core/analysis_pipeline.py  (ACHADO 1/5)
+   - Após DataLoading e ANTES da validação de qualidade, se `df is None or df.empty`:
+       retorna _build_terminal_result(audit_id='DATA_PROVIDER_UNAVAILABLE', ...)
+     → falha de disponibilidade do provider NÃO é mais rotulada como
+     DATA_QUALITY_FAIL nem como WAIT legítimo.
+   - Novo método privado `_build_terminal_result(...)` que monta DecisionResult
+     (WAIT, score 0, audit_id configurável) + snapshot + AnalysisResult (mesmo
+     formato dos demais terminais existentes).
+   - O AuditEvent do bloco `except Exception` agora inclui `symbol=symbol`
+     (ACHADO 1/6).
+
+5.7 mercury_ai/brain/scanner.py  (ACHADO 1/2/6)
+   - Constantes de estado:
+       PIPELINE_ERROR_STATES = {"PIPELINE_ERROR", "DATA_PROVIDER_UNAVAILABLE"}
+       PIPELINE_SKIP_STATES  = {"DATA_QUALITY_FAIL", "INSUFFICIENT_DATA", "MARKET_CLOSED"}
+   - No loop de scan, logo após `analysis = self.pipeline.analyze(symbol)` e ANTES
+     de update_asset_stats:
+       * audit_id em PIPELINE_ERROR_STATES → logger.error("ERRO DE PIPELINE ..."),
+         chama _trigger_failover(symbol, ...) e `continue` (não ranqueia, não
+         atualiza stats).
+       * audit_id em PIPELINE_SKIP_STATES → logger.warning("ANÁLISE DESCARTADA ...
+         (estado observável) ...") e `continue`.
+     Um WAIT legítimo (audit_id = hash 64hex) NÃO cai em nenhum dos dois conjuntos
+     e segue o fluxo normal.
+   - Novo helper `_trigger_failover(symbol, reason)`: chama o trigger_failover real
+     do provider, registra "Sem provider funcional de contingência" quando não há
+     fallback, e envia notificação "scanner_failover" com o resultado honesto.
+   - Após o loop e ANTES do ranking: `failed = self.pipeline.get_failed_events()`
+     e cada evento é logado com logger.error (símbolo, stage, tipo, mensagem) —
+     o audit_sink existente finalmente é observado pelo scanner (ACHADO 6).
+
+================================================================================
+ 6. TESTES EXECUTADOS
+================================================================================
+6.1 py_compile (validação sintática de todos os arquivos tocados e relacionados):
+    .\.venv\Scripts\python.exe -m py_compile audit_sink data_adapters market_provider
+    mtf_consensus mtf_engine analysis_pipeline scanner mercury_decision_engine
+    decision_result analysis_result market_data  → PY_COMPILE OK
+
+6.2 pytest afetados (decisão/contexto/trend/risco/probabilidade — os que tocam
+    os módulos alterados indiretamente):
+    test_trend_engine.py, test_risk_engine.py, test_context_engine.py,
+    test_mercury_decision_engine.py, test_probability_engine.py → 53 passed.
+
+6.3 Probe determinístico (mercury_bloco2_probe.py) — 33 checks cobrindo T1–T7:
+    T1 (pipeline normal via wiring do scanner), T3/A4 (health honesto), T4/A5
+    (provider vazio → DATA_PROVIDER_UNAVAILABLE), T5/A2 (gap → DATA_QUALITY_FAIL),
+    T4b/A1+A6 (exceção → PIPELINE_ERROR + audit_sink com symbol), T6/A3 (MTF status
+    por TF), T7/A2 (WAIT legítimo hash não é erro), T2/T4c (scanner exclui erro do
+    ranking, preserva stats, expõe audit_sink).
+
+6.4 Probe end-to-end (mercury_bloco2_e2e_probe.py) — 7 checks: YahooAdapter.get_data
+    → DataFrame vazio (falha real de provider), fluxo completo scanner.scan():
+    ERRO DE PIPELINE logado para BTC-USD/ETH-USD, DATA_PROVIDER_UNAVAILABLE
+    reportado, "Sem provider funcional de contingência" logado, ranking vazio,
+    stats preservadas.
+
+6.5 Execução real: python -m mercury_ai.main (rede real) → EXIT 0, BTC-USD/ETH-USD
+    analisados, WAITs legítimos (regra 4, grade D), sem falsos estados de erro.
+
+6.6 Suíte pytest completa: rodada com --timeout=60 e exclusão de dois testes com
+    pendência PRÉ-EXISTENTE e NÃO relacionada a este bloco: test_market_provider.py
+    (executa yfinance GC=F em nível de módulo — rede) e test_liquidity_stress.py
+    (stress que estoura timeout; mercury_ai/analysis/smart_money/liquidity_engine.py
+    NÃO foi tocado). Resultado: 149 passed, exit 0 (ver seção 7.6).
+
+================================================================================
+ 7. RESULTADO DE CADA TESTE
+================================================================================
+7.1 py_compile ................................ PASS (exit 0)
+7.2 pytest afetados ........................... 53 passed (exit 0)
+7.3 Probe determinístico ...................... 33 PASS / 0 FAIL (exit 0)
+    - BaseAdapter.check_health()==False; YahooAdapter==True; 5 stubs==False;
+      stubs get_data vazio; healthcheck só Yahoo True; best_provider=Yahoo;
+      sem provider saudável → RuntimeError (não cai em stub).
+    - provider vazio → WAIT + audit_id=DATA_PROVIDER_UNAVAILABLE (NÃO DQ_FAIL).
+    - dados com gap temporal → WAIT + audit_id=DATA_QUALITY_FAIL.
+    - exceção real → WAIT + audit_id=PIPELINE_ERROR + audit_sink com
+      symbol=TEST3 + error_type=ValueError.
+    - MTF: status {M1:processed, M5:processed, M15:processed, H1:absent,
+      H4:error} + timeframe_errors H4="ConnectionError: H4 down";
+      alignment 25.0 (fórmulas preservadas).
+    - audit_id legítimo (64 hex) fora de PIPELINE_ERROR_STATES e PIPELINE_SKIP_STATES.
+    - scanner com estado de erro: ranking vazio; previous_score do ativo
+      PRESERVADO (61.9347 antes e depois); eventos de falha expostos no log.
+7.4 Probe end-to-end (provider vazio) .......... 7 PASS / 0 FAIL (exit 0)
+    - "ERRO DE PIPELINE em BTC-USD/ETH-USD: audit_id=DATA_PROVIDER_UNAVAILABLE"
+    - "Sem provider funcional de contingência para BTC-USD (...)"
+    - ranking vazio; stats BTC/ETH preservadas (63.8708/63.8787 antes e depois).
+7.5 Execução real main.py ..................... EXIT 0
+    - BTC-USD: score 63.87 → ADICIONADO AO RANKING; WAIT regra 4 grade D (legítimo)
+    - ETH-USD: score 63.88 → ADICIONADO AO RANKING; WAIT regra 4 grade D (legítimo)
+    - Nenhuma linha "ERRO DE PIPELINE", "ANÁLISE DESCARTADA" ou "EVENTOS DE FALHA"
+      (não havia falha real na execução).
+7.6 Suíte completa ............................. 149 passed (exit 0), 18min36s.
+    Suíte `pytest mercury_ai -q --timeout=60` com exclusão dos 2 testes
+    pré-existentes não relacionados (test_market_provider.py — rede yfinance em
+    nível de módulo; test_liquidity_stress.py — stress 30s que estoura timeout e
+    envolve liquidity_engine, módulo NÃO tocado neste bloco). Nenhuma regressão
+    nos módulos tocados.
+
+================================================================================
+ 8. EVIDÊNCIA DE PROVIDER HEALTH (ACHADO 4)
+================================================================================
+Antes: BaseAdapter.check_health() retornava True sempre → healthcheck() = 6/6 True.
+Depois (probe 7.3):
+    healthcheck() == {'Yahoo': True, 'Polygon': False, 'TwelveData': False,
+                      'AlphaVantage': False, 'Binance': False, 'MetaTrader5': False}
+    YahooAdapter.check_health() == True   (única implementação real)
+    Polygon/TwelveData/AlphaVantage/Binance/MetaTrader5 check_health() == False
+    _get_best_provider("BTC-USD") == Yahoo (único saudável)
+    _healthy_providers() == [] → _get_best_provider levanta RuntimeError
+    ("No healthy providers available.") — não cai em stub.
+
+================================================================================
+ 9. EVIDÊNCIA DE FAILOVER (ACHADO 5)
+================================================================================
+Antes: trigger_failover NÃO existia (def engolida por comentário; corpo virou
+código morto dentro de get_data — provado por AST). scanner.trigger_failover()
+sempre AttributeError → "Falha no failover" silenciosa.
+
+Depois: trigger_failover é método real. Com health honesto, quando só o Yahoo está
+implementado e o provider falha, o fluxo real (probe end-to-end) produziu:
+    >>> ERRO DE PIPELINE em ETH-USD: audit_id=DATA_PROVIDER_UNAVAILABLE | No data
+    returned by provider for ETH-USD | score=0.00
+    Sem provider funcional de contingência para ETH-USD
+    (DATA_PROVIDER_UNAVAILABLE: No data returned by provider for ETH-USD)
+    >>> ERRO DE PIPELINE em BTC-USD: audit_id=DATA_PROVIDER_UNAVAILABLE | ...
+    Sem provider funcional de contingência para BTC-USD (...)
+    ranking vazio; stats preservadas.
+Ou seja: falha de provider é agora IDENTIFICÁVEL, NÃO entra no ranking e NÃO
+sobrescreve as estatísticas do ativo. Não há mais "Yahoo falha → stub → df vazio →
+DQ_FAIL → WAIT → scanner continua silencioso".
+
+================================================================================
+ 10. EVIDÊNCIA DE ERRO DE PIPELINE (ACHADO 1)
+================================================================================
+Probe determinístico: market_service.get_data → raise ValueError("boom rede").
+Resultado:
+    decision=WAIT, audit_id=PIPELINE_ERROR, summary contém "boom rede"
+    audit_sink.get_failed_events() == 1 evento
+        symbol=TEST3, error_type=ValueError, error_message="boom rede"
+    scanner (quando recebe esse estado) loga "ERRO DE PIPELINE em <symbol>",
+    chama failover honesto, NÃO ranqueia e NÃO sobrescreve stats.
+
+================================================================================
+ 11. EVIDÊNCIA DE MTF INCOMPLETO (ACHADO 3)
+================================================================================
+Probe determinístico: M1/M5/M15 com dados válidos, H1 → DataFrame vazio, H4 →
+ConnectionError.
+    consensus.timeframe_status == {'M1': 'processed', 'M5': 'processed',
+                                   'M15': 'processed', 'H1': 'absent', 'H4': 'error'}
+    consensus.timeframe_errors['H4'] == 'ConnectionError: H4 down'
+    status H4 != 'processed'  (consenso NÃO fabrica dados)
+    alignment_score == 25.0 (0–100; fórmulas de consenso preservadas)
+Ausência de TF agora é registrada explicitamente (absent/rejected/error), em vez
+do `continue` silencioso.
+
+================================================================================
+ 12. EVIDÊNCIA DE DATA_QUALITY_FAIL (ACHADO 2)
+================================================================================
+Probe determinístico: dados com buraco temporal > 15min.
+    decision=WAIT, audit_id=DATA_QUALITY_FAIL, summary="Data quality issue:
+    Temporal gaps detected (Score: 0.4)"
+    (a saída "Data quality issue for TEST2: Temporal gaps detected (Score: 0.4)"
+    também é impressa pelo pipeline, como antes — comportamento preservado)
+Distinção verificada: DATA_QUALITY_FAIL está em PIPELINE_SKIP_STATES → scanner
+loga "ANÁLISE DESCARTADA ... (estado observável)" e NÃO o confunde com WAIT
+legítimo nem com erro fatal; e provider vazio NÃO é mais rotulado como
+DATA_QUALITY_FAIL (vira DATA_PROVIDER_UNAVAILABLE).
+
+================================================================================
+ 13. EXECUÇÃO REAL DO MAIN.PY
+================================================================================
+Comando: $env:PYTHONPATH='C:\Projetos\Mercury-AI';
+         .\.venv\Scripts\python.exe -m mercury_ai.main
+Saída relevante:
+    MERCURY AI SCANNER
+    Analisando BTC-USD...   Scanner Score: 63.87   >>> ADICIONADO AO RANKING <<<
+    Analisando ETH-USD...   Scanner Score: 63.88   >>> ADICIONADO AO RANKING <<<
+    RANKING INSTITUCIONAL DE OPORTUNIDADES
+    1. ETH-USD | Score: 63.88 | WAIT
+Ambos os ativos autorizados (XP.json: ["BTC-USD","ETH-USD"]) foram analisados.
+Decisão: WAIT legítimo (regra 4 — grade D; dominante BUY, buy 40%, confiança 68.7%).
+O score 63.87/63.88 é o Score Institucional (≥ min_quality_score 40) — comportamento
+pré-existente (B1 — ProbabilityEngine nunca emite BUY/SELL), que está na lista
+NÃO ALTERAR e NÃO foi tocado neste bloco. Nenhum falso erro foi reportado.
+
+================================================================================
+ 14. EXIT CODES
+================================================================================
+- py_compile ................. exit 0
+- pytest afetados ............ exit 0 (53 passed)
+- probe determinístico ....... exit 0 (33 PASS)
+- probe end-to-end ........... exit 0 (7 PASS)
+- python -m mercury_ai.main .. exit 0
+- suíte pytest completa ...... exit 0 (149 passed, 18min36s; 2 testes pré-existentes
+  excluídos por rede/stress — test_market_provider.py, test_liquidity_stress.py)
+
+Observação REGRA DE SEGURANÇA: exit 0 NÃO é prova. Por isso as evidências acima
+incluem o conteúdo dos estados (audit_id, summary, eventos de falha) reproduzidos
+em execução, e não apenas o código de saída.
+
+================================================================================
+ 15. REGRESSÕES
+================================================================================
+- pytest afetados (53) passaram — nenhuma regressão nos módulos de decisão/
+  contexto/trend/risco/probabilidade que transitam pelos módulos alterados.
+- Probes determinístico + end-to-end passaram sem quebrar fluxos existentes.
+- Execução real (main.py) sem regressão funcional: 2 ativos analisados como antes.
+- Suíte completa: resultado final CONSOLIDADO — 149 passed (exit 0) em 18min36s,
+  com os dois testes de pendência PRÉ-EXISTENTE e NÃO relacionada a este bloco
+  excluídos da rodada: test_market_provider.py (chama yfinance GC=F em nível de
+  módulo — depende de rede e pendura) e test_liquidity_stress.py (teste de stress
+  de 30s que estoura timeout; mercury_ai/analysis/smart_money/liquidity_engine.py
+  NÃO foi modificado neste bloco). Nenhuma regressão nos módulos tocados.
+
+================================================================================
+ 16. ARQUIVOS NÃO MODIFICADOS (lista NÃO ALTERAR respeitada)
+================================================================================
+NÃO foram alterados (por lista explícita):
+- brain/probability_engine.py            (B1 — grade sempre D; fora do escopo)
+- analysis/confluence_engine.py          (fórmulas de confluência)
+- analysis/decision_resolver_engine.py   (regras 1–8, regra 4 → WAIT)
+- analysis/decision_explainability.py
+- analysis/ranking_engine.py             (critério de ordenação)
+- config/institutional_weights.py        (pesos)
+- universo/ativos autorizados/brokers/estratégia/backtest/memória institucional
+- MTF: fórmulas de consenso NÃO alteradas (apenas observabilidade adicionada)
+- scoring, grades, BUY/SELL/WAIT rules
+
+Nenhum arquivo de teste de produção foi alterado.
+
+================================================================================
+ 17. PENDÊNCIAS QUE PERMANECEM (fora do escopo deste bloco)
+================================================================================
+- B1 CRÍTICO: ProbabilityEngine nunca emite BUY/SELL (máximo 48.5 < 50 → grade D →
+  regra 4 → WAIT). NA LISTA NÃO ALTERAR — não corrigido aqui. Continua sendo o
+  principal bloqueador operacional de geração de trades.
+- B2 CRÍTICO: performance_benchmarking.py → ImportError (não roda).
+- B3 ALTO: benchmark_framework fabrica outcome sintético (circular).
+- B4 ALTO: regra de gap > 15min reprova ações 5m (AAPL).
+- B5 ALTO: AnalysisResult.confluence = tupla (ConfluenceResult, contribuições).
+- B6 ALTO: DeterministicClock.set_time só no replay → produção usa relógio real.
+- integrity_checker: audit_id de estados terminais (DATA_QUALITY_FAIL,
+  INSUFFICIENT_DATA, PIPELINE_ERROR, DATA_PROVIDER_UNAVAILABLE) não passam no
+  validador hex-64 (somente MARKET_CLOSED é isento). Comportamento pré-existente;
+  o validador é uma ferramenta de auditoria e sinaliza snapshots de erro — não foi
+  modificado para evitar mascaramento.
+- Trigger de failover ainda NÃO troca de provider de fato (não existe provider
+  secundário implementado no V1); agora ele reporta honestamente a ausência.
+
+================================================================================
+ 18. VEREDITO
+================================================================================
+Todos os 6 achados foram:
+  (a) confirmados no código atual (REGRA ZERO),
+  (b) corrigidos de forma mínima e observável (sem mascaramento, sem mudança de
+      fórmula/peso/regra, sem nova arquitetura),
+  (c) validados por EXECUÇÃO REAL com estados reproduzidos (não apenas exit 0):
+      - provider health honesto (somente Yahoo implementado),
+      - falha de provider → DATA_PROVIDER_UNAVAILABLE identificável (não DQ_FAIL,
+        não WAIT silencioso),
+      - exceção real → PIPELINE_ERROR + evento de auditoria com símbolo,
+      - MTF registra absent/rejected/error por timeframe (sem fabricar dados),
+      - scanner distingue erro/descartado/WAIT legítimo, exclui erros do ranking,
+        preserva stats e observa o audit_sink,
+      - failover honesto (trigger_failover agora é método real e reporta ausência
+        de contingência),
+      - execução real do main.py sem regressão.
+
+Nenhum erro comprovado relacionado aos 6 achados permanece mascarado.
+
+================================================================================
+ VEREDITO FINAL: GATE APROVADO
+ (para o BLOCO DE CORREÇÃO 2 — Error Transparency + Provider Integrity)
+================================================================================
+Pendências que permanecem (B1/B2/B3/B4/B5/B6 e integrity_checker) são de escopo
+distinto e/ou constam da lista NÃO ALTERAR — serão tratadas nos blocos seguintes,
+não invalidam o fechamento deste bloco.
+
+Bloco 3 NÃO iniciado.
+================================================================================

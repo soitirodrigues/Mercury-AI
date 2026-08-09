@@ -170,6 +170,18 @@ class AnalysisPipeline:
             with self.profiler.stage("DataLoading"):
                 df = self.market_service.get_data(symbol)
             self._record_telemetry("DataLoading", start, symbol, df, dataframe_size=len(df))
+
+            # Transparência (ACHADO 5): se o provider não retornou dados (vazio),
+            # é uma falha de DISPONIBILIDADE do provider — NÃO deve ser confundida
+            # com falha de qualidade de dados (DATA_QUALITY_FAIL) nem com WAIT legítimo.
+            if df is None or df.empty:
+                return self._build_terminal_result(
+                    symbol=symbol,
+                    audit_id="DATA_PROVIDER_UNAVAILABLE",
+                    summary=f"No data returned by provider for {symbol}",
+                    explanation="Data provider returned no data; cannot analyze.",
+                    audit_events=("Data provider unavailable",),
+                )
                 
             start = DeterministicClock.utcnow()
             with self.profiler.stage("DataQuality"):
@@ -503,6 +515,7 @@ class AnalysisPipeline:
                 success=False,
                 error_message=str(exc),
                 error_type=type(exc).__name__,
+                symbol=symbol,
             ))
             decision = DecisionResult(
                 decision='WAIT', grade='N/A', confidence=0.0, clarity=0.0, risk_score=0.0, score=0.0, quality=0.0,
@@ -532,6 +545,50 @@ class AnalysisPipeline:
                 support_resistance=None, liquidity_analysis=None, risk_assessment=None,
                 evidence_ranking=None, volume_analysis=None, structure_analysis=None, decision=decision
             )
+
+    def _build_terminal_result(
+        self,
+        symbol: str,
+        audit_id: str,
+        summary: str,
+        explanation: str,
+        audit_events,
+    ) -> AnalysisResult:
+        """Constrói um resultado terminal (erro/indisponibilidade) observável.
+
+        O estado é carregado no DecisionResult.audit_id — que é o contrato que o
+        consumidor (scanner) usa para distinguir erro de um WAIT legítimo
+        (audit_id = hash sha256 de 64 chars gerado pelo DecisionResultBuilder).
+        """
+        decision = DecisionResult(
+            decision='WAIT', grade='N/A', confidence=0.0, clarity=0.0, risk_score=0.0, score=0.0, quality=0.0,
+            expected_strength=0.0, buy_probability=0.0, sell_probability=0.0, wait_probability=1.0,
+            expected_risk=0.0, expected_reward=0.0, expected_drawdown=0.0, audit_id=audit_id,
+            version_metadata=VersionMetadata(engine_version='1.0.0', pipeline_version='1.0.0', context_version='1.0.0', weights_version='1.0.0'),
+            summary=summary,
+            explanation=explanation,
+        )
+        dummy_market = MarketData(symbol=symbol, timeframe=DEFAULT_TIMEFRAME, close=0.0, ema9=0.0, ema21=0.0, ema50=0.0,
+                                  rsi=0.0, atr=0.0, adx=0.0, macd=0.0, macd_signal=0.0,
+                                  bollinger_upper=0.0, bollinger_lower=0.0, volume=0.0)
+        snapshot = DecisionSnapshot(
+            timestamp=DeterministicClock.utcnow().isoformat(), asset=symbol, timeframe=DEFAULT_TIMEFRAME,
+            context=None, evidence_bundle=None, decision_result=decision,
+            version_metadata=VersionMetadata(engine_version='1.0.0', pipeline_version='1.0.0', context_version='1.0.0', weights_version='1.0.0'),
+            audit_events=tuple(audit_events),
+            session_id=self.session_id,
+        )
+        self.snapshot_logger.save(snapshot)
+        self.last_snapshot = snapshot
+        self.last_snapshots[symbol] = snapshot
+        self.profiler.end_pipeline()
+        return AnalysisResult(
+            market=dummy_market, context=None, trend=[], mtf_evidences=[], smart_money=None, confluence=None,
+            market_regime=None, market_condition=None, market_state=None,
+            candlestick_analysis=None, volatility_analysis=None, session_analysis=None,
+            support_resistance=None, liquidity_analysis=None, risk_assessment=None,
+            evidence_ranking=None, volume_analysis=None, structure_analysis=None, decision=decision,
+        )
 
     def get_audit_events(self):
         """Return all audit events captured by the pipeline."""

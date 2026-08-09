@@ -1,0 +1,828 @@
+================================================================================
+ MERCURY AI V1 — AUDITORIA FORENSE — FASE 1: INVENTÁRIO
+================================================================================
+ Data: <data da execução>
+ Modo: SOMENTE INVESTIGAÇÃO (nenhum arquivo de produção foi modificado)
+ Escopo: 423 arquivos .py (excluídos .venv, .git, .mercury, caches, data/)
+ Método: análise estática via AST (parser) + resolução de imports relativos
+          + verificação manual por busca de referência (grep) + leitura de
+          arquivos-chave. Análises auxiliares em temp:
+          - mercury_audit_phase1_output.txt (inventário completo, 1229 linhas)
+          - mercury_audit_phase1_vivo.txt (classificação VIVO/MORTO de módulos)
+
+ Campos por problema:
+   Arquivo | Linha | Símbolo | Tipo | Severidade | Evidência | Impacto
+   | É executado atualmente? (SIM/NÃO/DESCONHECIDO)
+   | Pode mascarar erro? (SIM/NÃO) | Precisa de correção? (SIM/NÃO/DESCONHECIDO)
+
+================================================================================
+ 0. ENTRADA DE PRODUÇÃO (grafo vivo) — base para "É executado atualmente?"
+================================================================================
+ mercury_ai/main.py (ENTRY_POINT real de produção) → MercuryScanner.scan()
+   → AnalysisPipeline (core/analysis_pipeline.py)
+   → AssetRegistry (core/asset_registry.py)
+   → MercuryConfigCenter (config/configuration_center.py)
+   → MercuryDataProvider (providers/mercury_data_provider.py)
+   → RankingEngine (analysis/ranking_engine.py)
+   → InstitutionalBrain (brain/institutional_brain.py)
+   → MarketDataService (data/market_data.py)
+   → NotificationCenter (analysis/notification_center.py)
+   → core/exceptions.py
+
+ A partir deste grafo, todo módulo importado por qualquer código de produção
+ (mercury_ai/ ou app/) foi classificado como VIVO. Módulos nunca importados e
+ que não são entry points foram classificados como MORTO (não executado).
+
+================================================================================
+ CATEGORIA 1 — MÓDULOS DUPLICADOS / CONCORRENTES (13 grupos)
+================================================================================
+------------------------------------------------------------------------------
+ 1.1) data_quality_engine.py (DUPLICATA CONFIRMADA — drift hazard)
+------------------------------------------------------------------------------
+ Arquivo A: mercury_ai/analysis/data_quality_engine.py
+ Arquivo B: mercury_ai/data/data_quality_engine.py
+ Linha: (arquivo inteiro) | Símbolo: DataQualityEngine
+ Tipo: Duplicação | Severidade: ALTA
+ Evidência: Dois módulos com o mesmo nome e a mesma finalidade. A análise de
+   imports (v3) mostra que data/data_quality_engine.py é VIVO (importado por
+   produção) e analysis/data_quality_engine.py é VIVO_TESTS_TOOLS (importado
+   APENAS por testes/ferramentas).
+ Impacto: Duas implementações do mesmo motor podem divergir; correções feitas
+   em uma não valem para a outra. A versão analysis/ é código morto em produção.
+ É executado atualmente? analysis/: NÃO (só testes) | data/: SIM
+ Pode mascarar erro? SIM | Precisa de correção? SIM
+------------------------------------------------------------------------------
+ 1.2) main.py (4 cópias)
+------------------------------------------------------------------------------
+ Arquivos: mercury_ai/main.py (produção), tools/main.py,
+   tools/mercury_integrity_auditor/main.py (entry point da ferramenta),
+   tools/project_mapper/main.py (entry point da ferramenta)
+ Linha: (arquivo inteiro) | Símbolo: main
+ Tipo: Duplicação de nome/rolo | Severidade: MÉDIA
+ Evidência: Quatro arquivos main.py em pacotes diferentes.
+ Impacto: Confusão de importação/execução; o "main" de produção é minimalista
+   (apenas MercuryScanner().scan()), enquanto os demais são ferramentas.
+ É executado atualmente? mercury_ai/main.py: SIM (entry point) | demais: SIM (ferramentas, se invocadas)
+ Pode mascarar erro? NÃO | Precisa de correção? DESCONHECIDO
+------------------------------------------------------------------------------
+ 1.3) config.py (duplicata)
+------------------------------------------------------------------------------
+ Arquivos: tools/mercury_integrity_auditor/config.py, tools/project_mapper/config.py
+ Linha: (arquivo inteiro) | Símbolo: config
+ Tipo: Duplicação | Severidade: MÉDIA
+ Evidência: Configuração duplicada entre as duas ferramentas de auditoria.
+ Impacto: Parâmetros divergentes entre ferramentas (ex.: diretórios, status).
+ É executado atualmente? SIM (ferramentas) | Pode mascarar erro? NÃO
+ Precisa de correção? DESCONHECIDO
+------------------------------------------------------------------------------
+ 1.4) exceptions.py (duplicata)
+------------------------------------------------------------------------------
+ Arquivos: mercury_ai/brain/exceptions.py, mercury_ai/core/exceptions.py
+ Linha: (arquivo inteiro) | Símbolo: Exceptions
+ Tipo: Duplicação | Severidade: MÉDIA
+ Evidência: brain/exceptions.py é MORTO (nunca importado); core/exceptions.py
+   é VIVO (usado por scanner e pipeline).
+ Impacto: brain/exceptions.py é duplicata morta — risco de alguém importar a
+   versão errada (exceções não reconhecidas pelo pipeline).
+ É executado atualmente? brain/exceptions.py: NÃO | core/exceptions.py: SIM
+ Pode mascarar erro? SIM (import da versão errada) | Precisa de correção? SIM
+------------------------------------------------------------------------------
+ 1.5) market_data.py (duplicata)
+------------------------------------------------------------------------------
+ Arquivos: mercury_ai/data/market_data.py (MarketDataService, VIVO),
+   mercury_ai/models/market_data.py (MarketData dataclass, VIVO)
+ Linha: (arquivo inteiro) | Símbolo: market_data
+ Tipo: Duplicação de nome (semânticas diferentes) | Severidade: MÉDIA
+ Evidência: Mesmo nome de módulo em pacotes diferentes com propósitos distintos
+   (serviço vs. modelo de dados).
+ Impacto: Ambiguidade de import; colisão de nomes em ferramentas que fazem
+   "from ... import market_data".
+ É executado atualmente? SIM (ambos) | Pode mascarar erro? SIM
+ Precisa de correção? DESCONHECIDO
+------------------------------------------------------------------------------
+ 1.6) mercury_data_provider.py (duplicata)
+------------------------------------------------------------------------------
+ Arquivos: mercury_ai/data/mercury_data_provider.py, mercury_ai/providers/mercury_data_provider.py
+ Linha: (arquivo inteiro) | Símbolo: MercuryDataProvider
+ Tipo: Duplicação | Severidade: ALTA
+ Evidência: Dois arquivos com o mesmo nome. providers/mercury_data_provider.py
+   é VIVO (importado pelo scanner); data/mercury_data_provider.py também VIVO.
+ Impacto: Dois pontos de entrada para o "provider central" — risco de
+   comportamento divergente (um lê de mercado real, outro de outro lugar?).
+ É executado atualmente? SIM (ambos) | Pode mascarar erro? SIM
+ Precisa de correção? SIM
+------------------------------------------------------------------------------
+ 1.7) models.py (3 cópias)
+------------------------------------------------------------------------------
+ Arquivos: tools/models.py, tools/mercury_integrity_auditor/models.py,
+   tools/project_mapper/models.py
+ Linha: (arquivo inteiro) | Símbolo: models
+ Tipo: Duplicação | Severidade: MÉDIA
+ Evidência: Modelos duplicados nas ferramentas.
+ Impacto: Manutenção divergente; drift de contratos entre ferramentas.
+ É executado atualmente? SIM (ferramentas) | Pode mascarar erro? NÃO
+ Precisa de correção? DESCONHECIDO
+------------------------------------------------------------------------------
+ 1.8) scanner.py (3 cópias)
+------------------------------------------------------------------------------
+ Arquivos: mercury_ai/brain/scanner.py (MercuryScanner, VIVO),
+   tools/scanner.py, tools/project_mapper/scanner.py
+ Linha: (arquivo inteiro) | Símbolo: Scanner
+ Tipo: Duplicação | Severidade: MÉDIA
+ Evidência: Três scanners com o mesmo nome de arquivo.
+ Impacto: Ambiguidade; tools/scanner.py e tools/project_mapper/scanner.py são
+   ferramentas independentes.
+ É executado atualmente? brain/scanner.py: SIM | demais: SIM (ferramentas)
+ Pode mascarar erro? NÃO | Precisa de correção? DESCONHECIDO
+------------------------------------------------------------------------------
+ 1.9) writer.py (duplicata)
+------------------------------------------------------------------------------
+ Arquivos: tools/writer.py, tools/project_mapper/writer.py
+ Linha: (arquivo inteiro) | Símbolo: writer
+ Tipo: Duplicação | Severidade: BAIXA
+ Evidência: Dois writers nas ferramentas.
+ Impacto: Baixo; duplicação de utilitário.
+ É executado atualmente? SIM (ferramentas) | Pode mascarar erro? NÃO
+ Precisa de correção? DESCONHECIDO
+------------------------------------------------------------------------------
+ 1.10) test_probability_engine.py (duplicata)
+------------------------------------------------------------------------------
+ Arquivos: mercury_ai/brain/tests/test_probability_engine.py,
+   tests/test_probability_engine.py
+ Linha: (arquivo inteiro) | Símbolo: test_probability_engine
+ Tipo: Duplicação de teste | Severidade: BAIXA
+ Evidência: Dois testes com o mesmo nome em locais diferentes.
+ Impacto: Cobertura duplicada; risco de um ficar obsoleto.
+ É executado atualmente? SIM (pytest descobre ambos) | Pode mascarar erro? NÃO
+ Precisa de correção? DESCONHECIDO
+------------------------------------------------------------------------------
+ 1.11) check_regression.py (duplicata script)
+------------------------------------------------------------------------------
+ Arquivos: check_regression.py (raiz), mercury_ai/analysis/check_regression.py
+ Linha: (arquivo inteiro) | Símbolo: check_regression
+ Tipo: Duplicação | Severidade: MÉDIA
+ Evidência: Script duplicado (raiz + dentro do pacote). analysis/check_regression.py
+   é MORTO (nunca importado).
+ Impacto: Versão dentro do pacote é morta; pode divergir do script da raiz.
+ É executado atualmente? raiz: SIM (script) | analysis/: NÃO
+ Pode mascarar erro? NÃO | Precisa de correção? SIM
+------------------------------------------------------------------------------
+ 1.12) performance_benchmarking.py (duplicata script)
+------------------------------------------------------------------------------
+ Arquivos: performance_benchmarking.py (raiz), mercury_ai/performance_benchmarking.py
+ Linha: (arquivo inteiro) | Símbolo: performance_benchmarking
+ Tipo: Duplicação | Severidade: MÉDIA
+ Evidência: Dois scripts de benchmark com o mesmo nome.
+ Impacto: Resultados divergentes; benchmark errado usado por engano.
+ É executado atualmente? raiz: SIM (script) | mercury_ai/: ENTRY_POINT (se invocado)
+ Pode mascarar erro? SIM | Precisa de correção? SIM
+------------------------------------------------------------------------------
+ 1.13) Tabelas de mapeamento ENGINE_NAME (drift entre motores)
+------------------------------------------------------------------------------
+ Arquivo A: mercury_ai/analysis/conflict_resolution_engine.py (ENGINE_NAME_TO_ADAPTIVE_KEY — 16 entradas)
+ Arquivo B: mercury_ai/analysis/confluence_engine.py (ENGINE_NAME_TO_DOMAIN — 13 entradas)
+ Linha: (tabelas) | Símbolo: ENGINE_NAME_TO_ADAPTIVE_KEY / ENGINE_NAME_TO_DOMAIN
+ Tipo: Duplicação de mapeamento (drift hazard) | Severidade: ALTA
+ Evidência: Duas tabelas com nomes de motores que não batem entre si (16 vs 13).
+   Ambas VIVAS (importadas por produção).
+ Impacto: Um motor novo registrado em uma tabela e não na outra leva a
+   decisões com pesos adaptativos ou domínio de confluência ausentes —
+   falha silenciosa de configuração.
+ É executado atualmente? SIM (ambas) | Pode mascarar erro? SIM
+ Precisa de correção? SIM
+
+================================================================================
+ CATEGORIA 2 — MÓDULOS MORTOS EM PRODUÇÃO (nunca importados; não são entry)
+================================================================================
+ Classificação por análise de imports com resolução relativa correta.
+ Módulos abaixo NÃO são alcançados por nenhum código de produção (nem testes
+ descobrem via import). Total: 31 módulos de código de produção + 1 pacote.
+------------------------------------------------------------------------------
+ 2.1) mercury_ai/ai/__init__.py e mercury_ai/ai/llm.py (pacote AI inteiro)
+ Arquivo: mercury_ai/ai/llm.py | Linha: 5 (class MercuryLLM) | Símbolo: MercuryLLM
+ Tipo: Código morto | Severidade: ALTA
+ Evidência: Nenhum import em todo o repositório (verificado via grep).
+ Impacto: Camada LLM planejada (openai/llm) não está conectada ao fluxo;
+   se for acionada por config, não existe.
+ É executado atualmente? NÃO | Pode mascarar erro? SIM (promessa de IA não ligada)
+ Precisa de correção? DESCONHECIDO
+------------------------------------------------------------------------------
+ 2.2) mercury_ai/analysis/calibration_analyzer.py
+ Linha: 5 | Símbolo: CalibrationAnalyzer | Tipo: Código morto | Severidade: ALTA
+ Evidência: Nunca importado. Relacionado a confidence_calibration (VIVO).
+ Impacto: Análise de calibração de confiança não é executada; scale mismatch
+   conhecido (0-1 vs 0-100) nunca é exercitado.
+ É executado atualmente? NÃO | Pode mascarar erro? SIM | Precisa de correção? SIM
+------------------------------------------------------------------------------
+ 2.3) mercury_ai/analysis/institutional_analytics_engine.py
+ Linha: 1+ | Símbolo: InstitutionalAnalyticsEngine | Tipo: Código morto | Severidade: ALTA
+ Evidência: Nunca importado.
+ Impacto: Analytics institucional não roda.
+ É executado atualmente? NÃO | Pode mascarar erro? NÃO | Precisa de correção? DESCONHECIDO
+------------------------------------------------------------------------------
+ 2.4) mercury_ai/analysis/institutional_context_builder.py
+ Símbolo: InstitutionalContextBuilder | Tipo: Código morto | Severidade: ALTA
+ Evidência: Nunca importado.
+ Impacto: Construção de contexto institucional ausente do fluxo.
+ É executado atualmente? NÃO | Pode mascarar erro? NÃO | Precisa de correção? DESCONHECIDO
+------------------------------------------------------------------------------
+ 2.5) mercury_ai/analysis/institutional_report.py
+ Linha: 1 (import DecisionSnapshotLogger) | Símbolo: InstitutionalReport
+ Tipo: Código morto | Severidade: MÉDIA
+ Evidência: Nunca importado (importa pytest no topo — sinal de script ad-hoc).
+ Impacto: Relatório institucional não gera saída no fluxo normal.
+ É executado atualmente? NÃO | Pode mascarar erro? NÃO | Precisa de correção? DESCONHECIDO
+------------------------------------------------------------------------------
+ 2.6) mercury_ai/analysis/learning_engine.py
+ Símbolo: LearningEngine | Tipo: Código morto | Severidade: ALTA
+ Evidência: Nunca importado.
+ Impacto: "Aprendizado" institucional planejado não roda.
+ É executado atualmente? NÃO | Pode mascarar erro? SIM | Precisa de correção? DESCONHECIDO
+------------------------------------------------------------------------------
+ 2.7) mercury_ai/analysis/post_decision_evaluation_engine.py
+ Símbolo: PostDecisionEvaluationEngine | Tipo: Código morto | Severidade: ALTA
+ Evidência: Nunca importado. (Nota: o .mercury/ ARCHITECTURE_CERTIFICATION.md
+   afirma que ele importa DecisionSnapshot/PerformanceMetrics "que não existem",
+   mas ambos os modelos EXISTEM na árvore atual — o certificado está
+   desatualizado/incorreto.)
+ Impacto: Avaliação pós-decisão não executada; certificação de arquitetura
+   (entregue pelo projeto) contém alegações falsas sobre este módulo.
+ É executado atualmente? NÃO | Pode mascarar erro? SIM | Precisa de correção? SIM
+------------------------------------------------------------------------------
+ 2.8) mercury_ai/analysis/smart_money/liquidity_event_engine.py
+ Linha: 4 (import numpy) | Símbolo: LiquidityEventEngine | Tipo: Código morto | Severidade: ALTA
+ Evidência: Nunca importado (porém liquidity_engine.py, que é VIVO, é o motor
+   de liquidez real).
+ Impacto: Motor de "eventos de liquidez" não roda; comentário indica uso de
+   ATR em vez de hardcoded — provável duplicata/parcial.
+ É executado atualmente? NÃO | Pode mascarar erro? NÃO | Precisa de correção? DESCONHECIDO
+------------------------------------------------------------------------------
+ 2.9) mercury_ai/analysis/trade_memory_engine.py
+ Símbolo: TradeMemoryEngine | Tipo: Código morto | Severidade: MÉDIA
+ Evidência: Nunca importado.
+ Impacto: Memória de trades não integrada (há models/trade_memory.py VIVO,
+   indicando que o modelo existe mas o motor não é usado).
+ É executado atualmente? NÃO | Pode mascarar erro? NÃO | Precisa de correção? DESCONHECIDO
+------------------------------------------------------------------------------
+ 2.10) mercury_ai/brain/exceptions.py
+ Símbolo: Exceptions | Tipo: Código morto + duplicata | Severidade: MÉDIA
+ Evidência: Nunca importado (core/exceptions.py é o usado).
+ Impacto: Exceções duplicadas não reconhecidas pelo pipeline.
+ É executado atualmente? NÃO | Pode mascarar erro? SIM | Precisa de correção? SIM
+------------------------------------------------------------------------------
+ 2.11) mercury_ai/config/market_regimes.py
+ Símbolo: SUPPORTED_MARKET_REGIMES | Tipo: Código morto | Severidade: ALTA
+ Evidência: Nunca importado; config/__init__.py reexporta apenas
+   institutional_weights. Regimes são definidos em config/settings.py (VIVO).
+ Impacto: Duplicata de configuração morta — pode divergir da real.
+ É executado atualmente? NÃO | Pode mascarar erro? SIM | Precisa de correção? SIM
+------------------------------------------------------------------------------
+ 2.12) mercury_ai/config/strategies.py
+ Símbolo: SUPPORTED_STRATEGIES | Tipo: Código morto | Severidade: ALTA
+ Evidência: Nunca importado.
+ Impacto: Estratégias configuradas mas não lidas pelo fluxo.
+ É executado atualmente? NÃO | Pode mascarar erro? SIM | Precisa de correção? SIM
+------------------------------------------------------------------------------
+ 2.13) mercury_ai/core/data_quality_gate.py
+ Símbolo: DataQualityGate | Tipo: Código morto | Severidade: ALTA
+ Evidência: Nunca importado (gate de qualidade desligado do pipeline).
+ Impacto: Portão de qualidade de dados não valida nada no fluxo; dados ruins
+   podem entrar sem barreira.
+ É executado atualmente? NÃO | Pode mascarar erro? SIM | Precisa de correção? SIM
+------------------------------------------------------------------------------
+ 2.14) mercury_ai/core/project_state.py
+ Símbolo: ProjectState | Tipo: Código morto | Severidade: MÉDIA
+ Evidência: Nunca importado.
+ Impacto: Estado global de projeto não rastreado.
+ É executado atualmente? NÃO | Pode mascarar erro? NÃO | Precisa de correção? DESCONHECIDO
+------------------------------------------------------------------------------
+ 2.15) mercury_ai/core/startup.py
+ Símbolo: Startup | Tipo: Código morto | Severidade: MÉDIA
+ Evidência: Nunca importado.
+ Impacto: Inicialização planejada não roda.
+ É executado atualmente? NÃO | Pode mascarar erro? NÃO | Precisa de correção? DESCONHECIDO
+------------------------------------------------------------------------------
+ 2.16) mercury_ai/database/history_logger.py
+ Símbolo: HistoryLogger | Tipo: Código morto | Severidade: MÉDIA
+ Evidência: Nunca importado (snapshot_logger.py e replay_storage.py são os VIVOS).
+ Impacto: Histórico via history_logger não é gravado.
+ É executado atualmente? NÃO | Pode mascarar erro? NÃO | Precisa de correção? DESCONHECIDO
+------------------------------------------------------------------------------
+ 2.17) mercury_ai/data/replay_data_provider.py
+ Símbolo: ReplayDataProvider | Tipo: Código morto | Severidade: MÉDIA
+ Evidência: Nunca importado (data/providers/historical_data_provider.py é o
+   VIVO_TESTS; replay usa database/replay_storage).
+ Impacto: Provider de replay órfão.
+ É executado atualmente? NÃO | Pode mascarar erro? NÃO | Precisa de correção? DESCONHECIDO
+------------------------------------------------------------------------------
+ 2.18) mercury_ai/indicators/rsi.py
+ Símbolo: RSI | Tipo: Código morto | Severidade: MÉDIA
+ Evidência: Nunca importado (indicadores usam ta/pandas nos engines).
+ Impacto: Indicador RSI órfão.
+ É executado atualmente? NÃO | Pode mascarar erro? NÃO | Precisa de correção? DESCONHECIDO
+------------------------------------------------------------------------------
+ 2.19) mercury_ai/market/__init__.py e mercury_ai/market/market_engine.py
+ Símbolo: MarketEngine | Tipo: Código morto (pacote inteiro) | Severidade: ALTA
+ Evidência: Nunca importado; apenas referenciado em string num auditor.
+ Impacto: Pacote market/ inteiro não roda no fluxo.
+ É executado atualmente? NÃO | Pode mascarar erro? SIM | Precisa de correção? SIM
+------------------------------------------------------------------------------
+ 2.20) mercury_ai/models/decision_input.py
+ Símbolo: DecisionInput | Tipo: Código morto | Severidade: MÉDIA
+ Evidência: Nunca importado.
+ Impacto: Modelo de entrada de decisão não usado (o fluxo usa MarketContext etc.).
+ É executado atualmente? NÃO | Pode mascarar erro? NÃO | Precisa de correção? DESCONHECIDO
+------------------------------------------------------------------------------
+ 2.21) mercury_ai/models/decision_outcome.py
+ Símbolo: DecisionOutcome | Tipo: Código morto | Severidade: MÉDIA
+ Evidência: Nunca importado.
+ Impacto: Modelo de desfecho não usado.
+ É executado atualmente? NÃO | Pode mascarar erro? NÃO | Precisa de correção? DESCONHECIDO
+------------------------------------------------------------------------------
+ 2.22) mercury_ai/models/professional_thesis.py
+ Símbolo: ProfessionalThesis | Tipo: Código morto | Severidade: MÉDIA
+ Evidência: Nunca importado.
+ Impacto: Tese profissional não integrada.
+ É executado atualmente? NÃO | Pode mascarar erro? NÃO | Precisa de correção? DESCONHECIDO
+------------------------------------------------------------------------------
+ 2.23) mercury_ai/models/signal.py
+ Símbolo: Signal | Tipo: Código morto | Severidade: ALTA
+ Evidência: Nunca importado.
+ Impacto: Modelo central "Signal" não usado; saída real é DecisionResult.
+ É executado atualmente? NÃO | Pode mascarar erro? SIM | Precisa de correção? SIM
+------------------------------------------------------------------------------
+ 2.24) mercury_ai/models/trade_permission.py
+ Símbolo: TradePermission | Tipo: Código morto | Severidade: MÉDIA
+ Evidência: Nunca importado.
+ Impacto: Permissão de trade não modelada no fluxo.
+ É executado atualmente? NÃO | Pode mascarar erro? NÃO | Precisa de correção? DESCONHECIDO
+------------------------------------------------------------------------------
+ 2.25) mercury_ai/utils/memory_auditor.py
+ Símbolo: MemoryAuditor | Tipo: Código morto | Severidade: MÉDIA
+ Evidência: Nunca importado.
+ Impacto: Auditoria de memória não roda.
+ É executado atualmente? NÃO | Pode mascarar erro? NÃO | Precisa de correção? DESCONHECIDO
+------------------------------------------------------------------------------
+ 2.26) mercury_ai/utils/regression_detector.py
+ Símbolo: RegressionDetector | Tipo: Código morto | Severidade: MÉDIA
+ Evidência: Nunca importado.
+ Impacto: Detecção de regressão não integrada.
+ É executado atualmente? NÃO | Pode mascarar erro? NÃO | Precisa de correção? DESCONHECIDO
+------------------------------------------------------------------------------
+ 2.27) mercury_ai/utils/report_generator.py
+ Símbolo: ReportGenerator | Tipo: Código morto | Severidade: MÉDIA
+ Evidência: Nunca importado.
+ Impacto: Gerador de relatórios órfão.
+ É executado atualmente? NÃO | Pode mascarar erro? NÃO | Precisa de correção? DESCONHECIDO
+------------------------------------------------------------------------------
+ 2.28) mercury_ai/utils/stress_tester.py
+ Símbolo: StressTester | Tipo: Código morto | Severidade: MÉDIA
+ Evidência: Nunca importado.
+ Impacto: Teste de estresse não roda.
+ É executado atualmente? NÃO | Pode mascarar erro? NÃO | Precisa de correção? DESCONHECIDO
+------------------------------------------------------------------------------
+ 2.29) mercury_ai/analysis/check_regression.py (dentro do pacote)
+ Símbolo: RegressionThresholdExceededError | Tipo: Código morto | Severidade: MÉDIA
+ Evidência: Nunca importado; duplicata do script da raiz.
+ Impacto: Morto.
+ É executado atualmente? NÃO | Pode mascarar erro? NÃO | Precisa de correção? SIM
+
+ Nota: além destes, 30 arquivos de TESTE sob mercury_ai/*/tests/ nunca são
+ importados (são descobertos pelo pytest por convenção de nome), portanto não
+ foram classificados como "código morto de produção". Ver relação completa na
+ seção "Relação auxiliar" do arquivo de análise.
+
+================================================================================
+ CATEGORIA 3 — CLASSES E FUNÇÕES SEM REFERÊNCIA EXTERNA
+================================================================================
+ 3.1) Classes nunca referenciadas (candidatas a nunca instanciadas): 152
+   Arquivo: vários | Linha: várias | Símbolo: classes abaixo
+   Tipo: Código morto (símbolo) | Severidade: MÉDIA
+   Evidência: Análise de referência por nome (seção 13 do output) — classes
+     definidas mas cujo nome não aparece em nenhum outro módulo.
+   Impacto: Superfície de API maior que o necessário; risco de manutenção
+     enganosa; algumas podem ser alcançadas via getattr/dinâmica (DESCONHECIDO).
+   É executado atualmente? NÃO (exceto se invocadas dinamicamente)
+   Pode mascarar erro? NÃO | Precisa de correção? DESCONHECIDO
+   Amostra representativa (lista completa no output de análise):
+   - mercury_ai/ai/llm.py:5 MercuryLLM
+   - mercury_ai/analysis/adaptive_weight_engine.py:5 AdaptiveWeightEngine
+   - mercury_ai/analysis/calibration_analyzer.py:5 CalibrationAnalyzer
+   - mercury_ai/analysis/check_regression.py:6 RegressionThresholdExceededError
+   - (demais 148 → ver output seção 13)
+
+ 3.2) Funções de nível de módulo nunca chamadas: 232
+   Arquivo: vários | Linha: várias | Símbolo: funções listadas no output
+   Tipo: Código morto (símbolo) | Severidade: BAIXA/MÉDIA
+   Evidência: Seção 13 do output — funções definidas sem chamada referenciada
+     por nome em outro módulo (excluídas funções de teste test_*).
+   Impacto: Código não exercitado; cobertura ilusória.
+   É executado atualmente? NÃO (exceto dinâmica)
+   Pode mascarar erro? NÃO | Precisa de correção? DESCONHECIDO
+
+================================================================================
+ CATEGORIA 4 — IMPORTS NÃO UTILIZADOS (297 ocorrências)
+================================================================================
+ Arquivo: vários | Linha: várias | Símbolo: variários
+ Tipo: Import morto | Severidade: BAIXA (massivo) | Evidência: seção 3 do output.
+ Impacto: Código poluído; imports de módulos pesados (numpy/pandas) executados
+   sem uso; alguns importam módulos que "puxam" dependências desnecessárias.
+ É executado atualmente? SIM (o import roda o módulo, mas o símbolo não é usado)
+ Pode mascarar erro? SIM (imports de conveniência podem esconder ausência de uso real)
+ Precisa de correção? SIM
+ Distribuição por arquivo (mais relevantes — produção):
+   - run_decision_scenarios.py: 33 imports não usados (scripts de diagnóstico)
+   - mercury_ai/analysis/tests/test_context_engine.py: 16 (teste)
+   - mercury_ai/config/__init__.py: 3 (reexporta institutional_weights — os
+     símbolos "não usados" aqui são intencionais para reexport)
+   - mercury_ai/config/assets.py: 9 (importa universe mas não usa os símbolos)
+   - mercury_ai/execution/__init__.py: 9 (reexport intencional)
+   - tools/mercury_integrity_auditor/auditors/*: vários (ferramentas)
+   - mercury_ai/analysis/data_quality_engine.py: 4 (duplicata morta)
+   - mercury_ai/analysis/market_structure_intelligence_engine.py: 3
+   - mercury_ai/models/price_action_analysis.py: 1
+   - mercury_ai/models/trading_explanation.py: 1 (TYPE_CHECKING — benigno)
+   - mercury_ai/providers/mercury_data_provider.py: 0 (limpo)
+   Nota: a lista completa (297 itens) está na seção 3 do output de análise.
+
+================================================================================
+ CATEGORIA 5 — ENTRY POINTS (26 arquivos com if __name__ == '__main__')
+================================================================================
+ Arquivo | Executado atualmente? | Papel
+ - _check_frozen_models.py            | SIM (script) | diagnóstico
+ - calculate_institutional_stats.py   | SIM (script) | cálculo
+ - check_regression.py                | SIM (script) | verificação
+ - mercury_ai/main.py                 | SIM (produção) | ENTRADA PRINCIPAL
+ - mercury_ai/performance_benchmarking.py | SIM (se invocado) | benchmark
+ - performance_benchmarking.py        | SIM (script raiz) | benchmark
+ - resolve_merge_conflicts.py         | SIM (script) | utilitário
+ - run_decision_scenarios.py          | SIM (script) | cenários
+ - run_determinism_test.py            | SIM (script) | determinismo
+ - run_deterministic_replay_scenarios.py | SIM (script) | replay
+ - run_institutional_replay.py        | SIM (script) | replay
+ - run_instrumented.py                | SIM (script) | instrumentação
+ - scripts/prepare_replay_data.py     | SIM (script) | preparação de dados
+ - stress_test_replay.py              | SIM (script) | stress
+ - test_bloco7_scenarios.py           | SIM (script) | cenários
+ - test_replay_quick.py               | SIM (script) | replay
+ - teste_llm.py                       | SIM (script) | teste LLM
+ - tests/test_performance_engine.py   | SIM (pytest também) | teste
+ - tools/main.py                      | SIM (ferramenta) | tool
+ - tools/mercury_integrity_auditor/main.py | SIM (ferramenta) | auditor
+ - tools/mercury_integrity_auditor/auditors/architecture_certification_auditor.py | SIM | auditor
+ - tools/mercury_integrity_auditor/auditors/contract_certification_auditor.py | SIM | auditor
+ - tools/mercury_integrity_auditor/auditors/pipeline_certification_auditor.py | SIM | auditor
+ - tools/project_mapper/main.py       | SIM (ferramenta) | mapper
+ - validate_universe_parity.py        | SIM (script) | validação
+ - verify_assets.py                   | SIM (script) | validação
+ Tipo: Entry points | Severidade: INFO | Precisa de correção? NÃO
+ Impacto: 26 pontos de entrada tornam o "estado do sistema" difícil de auditar;
+   há scripts de diagnóstico na raiz que não deveriam coexistir com produção.
+
+================================================================================
+ CATEGORIA 6 — MARCAS TODO/FIXME/HACK/XXX (28 ocorrências)
+================================================================================
+ Arquivo | Evidência (comentário) | Severidade
+ - app/dashboard/provider_health_panel.py: "# Placeholder for future logic" | MÉDIA (placeholder)
+ - mercury_ai/analysis/decision_result_builder.py: "compatibilidade histórica..." | BAIXA
+ - mercury_ai/analysis/historical_replay_engine.py: "# Atualiza tempo determinístico" | BAIXA
+ - mercury_ai/analysis/institutional_analytics_engine.py: "# TEMPORAL ANALYSIS" | BAIXA (módulo morto)
+ - mercury_ai/analysis/institutional_score_engine.py: "1.0 = consenso total..." | BAIXA
+ - mercury_ai/analysis/market_structure_intelligence_engine.py: "# Métodos privados auxiliares" | BAIXA
+ - mercury_ai/analysis/risk_engine.py: "# Validar que todos têm o mesmo comprimento" | MÉDIA (validação pendente)
+ - mercury_ai/analysis/smart_money/order_block_engine.py: "# Descartar linhas com NaN..." | MÉDIA (limpeza pendente)
+ - mercury_ai/analysis/tests/test_risk_engine.py: "# Todos devem ser >= 0" | BAIXA
+ - mercury_ai/core/analysis_pipeline.py: "# 3. Build Context (1st build — placeholder risk_assessment..." | ALTA (placeholder no fluxo principal)
+ - mercury_ai/database/snapshot_logger.py (2x): "# Escrita atômica..." | BAIXA
+ - mercury_ai/utils/atomic_io.py (4x): "# Clean up / Create temp / unique temp / Serialize to temp" | BAIXA
+ - tests/test_broker_filtering.py: "# Update registry_file path..." | BAIXA
+ - tests/test_order_executor.py: "# runtime_checkable Protocol..." | BAIXA
+ - tools/mercury_integrity_auditor/auditors/* (vários): placeholders/comentários | BAIXA
+ - tools/project_mapper/snapshot_builder.py (2x): "# Carrega automaticamente TODOS os JSON/Markdown" | MÉDIA
+ Tipo: Marcador | É executado atualmente? SIM (comentários) | Pode mascarar erro? SIM
+ Precisa de correção? SIM (destacar core/analysis_pipeline.py placeholder)
+
+================================================================================
+ CATEGORIA 7 — COMENTÁRIOS DE CÓDIGO TEMPORÁRIO/LEGADO (19 ocorrências)
+================================================================================
+ Arquivo | Evidência | Observação
+ - mercury_ai/analysis/benchmark_framework.py (3x): "Buy-and-Hold Baseline / Fase 2 warm-up / Fase 5" | benchmark com baseline sintético
+ - mercury_ai/analysis/decision_resolver_engine.py (3x): "Calcular threshold adaptativo / Regra 3 / Threshold institucional" | regras com threshold
+ - mercury_ai/analysis/mtf_engine.py: "Structure to hold evidences grouped..." | legado
+ - mercury_ai/analysis/smart_money/liquidity_event_engine.py: "Voids — use ATR-based threshold instead of hardcoded 0.0" | módulo morto
+ - mercury_ai/analysis/smart_money/order_block_engine.py: "Descartar linhas com NaN..." | limpeza
+ - mercury_ai/analysis/tests/test_replay_cache.py: "Acessa (A,1)..." | teste
+ - mercury_ai/config/assets.py (2x): "COMPATIBILIDADE RETROATIVA / Registry antigo" | depreciação
+ - mercury_ai/config/settings.py (3x): "Floor/cap / Multiplicadores / Threshold base" | config
+ - mercury_ai/data/market_data.py: "# Providers antigos" | legado
+ - mercury_ai/providers/mercury_data_provider.py: "# Alias para compatibilidade com código legado..." | legado
+ - scripts/prepare_replay_data.py: "# Default: apenas EURUSD=X" | script
+ - tools/mercury_integrity_auditor/main.py: "# Fase 2: Auditoria de Contratos" | ferramenta
+ Tipo: Legado/temp | Severidade: BAIXA | Pode mascarar erro? NÃO | Precisa de correção? DESCONHECIDO
+
+================================================================================
+ CATEGORIA 8 — ARQUIVOS VAZIOS / PLACEHOLDERS (18)
+================================================================================
+ Arquivo | Linhas | Observação
+ - mercury_ai/__init__.py                 | 0 | pacote vazio
+ - mercury_ai/ai/__init__.py              | 0 | pacote morto
+ - mercury_ai/analysis/smart_money/__init__.py | 0 | pacote
+ - mercury_ai/analysis/tests/__init__.py  | 1 (comentário) | pacote de teste
+ - mercury_ai/brain/__init__.py           | 0 | pacote
+ - mercury_ai/brain/tests/__init__.py     | 0 | pacote de teste
+ - mercury_ai/calendar/__init__.py        | 0 | pacote (VIVO_PACOTE_TESTES)
+ - mercury_ai/calendar/tests/__init__.py  | 0 | pacote de teste
+ - mercury_ai/database/__init__.py        | 0 | pacote
+ - mercury_ai/market/__init__.py          | 0 | pacote morto
+ - mercury_ai/news/__init__.py            | 0 | pacote (VIVO_PACOTE_TESTES)
+ - mercury_ai/news/tests/__init__.py      | 0 | pacote de teste
+ - mercury_ai/sessions/__init__.py        | 0 | pacote (VIVO_PACOTE_TESTES)
+ - mercury_ai/sessions/tests/__init__.py  | 0 | pacote de teste
+ - stabilization_report.py                | 0 | ARQUIVO VAZIO NA RAIZ (não é __init__) — anômalo
+ - tools/__init__.py                      | 0 | pacote
+ - tools/project_mapper/__init__.py       | 0 | pacote
+ - tools/tools/__init__.py                | 0 | pacote (tools/tools — duplicação de diretório!)
+ Tipo: Placeholder/vazio | Severidade: BAIXA
+ É executado atualmente? stabilization_report.py: NÃO | __init__: SIM (import de pacote)
+ Pode mascarar erro? NÃO | Precisa de correção? SIM (remover stabilization_report.py vazio; revisar tools/tools/)
+
+================================================================================
+ CATEGORIA 9 — STUBS / IMPLEMENTAÇÕES PARCIAIS
+================================================================================
+ 9.1) mercury_ai/providers/future_broker_provider.py
+   Linha: 3+ | Símbolo: FutureBrokerProvider
+   Tipo: Stub (NotImplementedError / return False em todos os métodos)
+   Severidade: ALTA | Evidência: get_data() raise NotImplementedError;
+     is_available()/supports_*() retornam False; source_name() incompleto.
+   Impacto: Provider de broker "futuro" totalmente não funcional. Nunca
+     importado (MORTO) — mas se ativado por config, quebra em runtime.
+   É executado atualmente? NÃO | Pode mascarar erro? SIM (parece um provider válido)
+   Precisa de correção? SIM
+ 9.2) mercury_ai/providers/future_polygon_provider.py
+   Linha: 3+ | Símbolo: FuturePolygonProvider | Tipo: Stub | Severidade: ALTA
+   Evidência: Mesmo padrão (NotImplementedError/False).
+   Impacto: Idem 9.1.
+   É executado atualmente? NÃO | Pode mascarar erro? SIM | Precisa de correção? SIM
+ 9.3) mercury_ai/analysis/adaptive_weight_engine.py (implementação parcial)
+   Linha: 14-30+ | Símbolo: AdaptiveWeightEngine.calculate_weights
+   Tipo: Parcial (pesos adaptativos por sessão comentados/inacabados)
+   Severidade: ALTA
+   Evidência: Só aplica pesos base 1.0 e ajustes de regime; a lógica de
+     ponderação adaptativa por sessão está incompleta (comentada).
+   É executado atualmente? SIM (VIVO — importado por produção)
+   Pode mascarar erro? SIM (retorna pesos "adaptativos" que na prática são estáticos)
+   Precisa de correção? SIM
+ 9.4) mercury_ai/analysis/smart_money/liquidity_event_engine.py
+   Linha: 4+ | Símbolo: LiquidityEventEngine | Tipo: Parcial/duplicata
+   Severidade: MÉDIA | Evidência: módulo morto; comentário sugere usar ATR
+     em vez de threshold hardcoded 0.0.
+   É executado atualmente? NÃO | Pode mascarar erro? NÃO | Precisa de correção? DESCONHECIDO
+
+================================================================================
+ CATEGORIA 10 — CICLOS DE IMPORTAÇÃO (análise estática)
+================================================================================
+ 10.1) CICLO(3): mercury_ai.models.decision_result -> mercury_ai.models.trading_explanation -> (volta)
+   Linha: decision_result.py (topo) / trading_explanation.py:5
+   Símbolo: DecisionResult / TradingExplanation
+   Tipo: Ciclo de importação | Severidade: BAIXA (benigno)
+   Evidência: trading_explanation.py importa decision_result APENAS dentro de
+     `if TYPE_CHECKING:` — forward reference. Em runtime, NÃO é um ciclo real.
+   É executado atualmente? SIM (módulos VIVOS) | Pode mascarar erro? NÃO
+   Precisa de correção? NÃO (apenas estético)
+
+================================================================================
+ CATEGORIA 11 — ARQUIVOS QUE NÃO COMPILAM (erro de sintaxe) — 5
+================================================================================
+ 11.1) tools/mercury_integrity_auditor/contract_audit.py      SyntaxError linha 3
+ 11.2) tools/mercury_integrity_auditor/dependency_audit.py    SyntaxError linha 3
+ 11.3) tools/mercury_integrity_auditor/final_report.py        SyntaxError linha 3
+ 11.4) tools/mercury_integrity_auditor/runtime_audit.py       SyntaxError linha 3
+ 11.5) tools/mercury_integrity_auditor/static_audit.py        SyntaxError linha 5
+   Símbolo: (arquivos .py que são na verdade TEXTO markdown-style "Features:")
+   Tipo: Arquivo que não compila | Severidade: CRÍTICA
+   Evidência: conteúdo em formato markdown (ex.: "static_audit.py" tem
+     "Features:\n - AST-based...") — não é Python. São duplicatas/ruínas dos
+     verdadeiros auditors em auditors/ (contract_auditor.py, runtime_auditor.py,
+     static_auditor.py etc.).
+   Impacto: Quebram ferramentas que importem o pacote; dão falsa sensação de
+     auditoria; `python -m compileall` falha; pytest/import falham se tocados.
+   É executado atualmente? NÃO (nunca importados; mas o pacote que os contém é
+     o da ferramenta integrity_auditor)
+   Pode mascarar erro? SIM | Precisa de correção? SIM (remover ou converter)
+
+================================================================================
+ CATEGORIA 12 — DEPENDÊNCIAS (requirements.txt e imports externos)
+================================================================================
+ 12.1) requirements.txt CORROMPIDO — merge conflict NÃO resolvido (ANINHADO)
+   Linha: 9-18 | Símbolo: arquivo inteiro
+   Tipo: Dependência corrompida | Severidade: CRÍTICA
+   Evidência (conteúdo atual):
+     pandas
+     numpy
+     requests
+     python-dotenv
+     yfinance
+     streamlit
+     plotly
+     ta
+     <<<<<<< HEAD
+     psutil
+     scipy
+     openai
+     pytest
+     =======
+     <<<<<<< HEAD
+     psutil
+     =======
+     >>>>>>> 3e8bc87dc84ef379614a58c33a5424c354f3cf06
+     >>>>>>> 67cc5c60936ff914a76d6d94a09c6422d147e02a
+   Impacto: `pip install -r requirements.txt` FALHA (pip tenta instalar
+     "<<<<<<< HEAD" como pacote). Nenhum ambiente novo pode ser criado.
+   É executado atualmente? SIM (é lido pelo pip/instalação)
+   Pode mascarar erro? SIM | Precisa de correção? SIM (URGENTE)
+
+ 12.2) Módulos externos USADOS mas NÃO declarados em requirements.txt:
+   - config (31 arquivos) — pacote local? risco de conflito com pacote 'config' do PyPI
+   - auditors (18) / models (7) / scanner (2) / writer (2) — imports locais mal resolvidos
+   - tvDatafeed (2 arquivos) — NÃO declarado; se for pip, ausente em requirements
+   - google (1) — usado (teste_gemini?) e NÃO declarado
+   - python_indexer, module_index, dependency_builder, call_graph_builder,
+     architecture_audit, snapshot_builder, ast_parser (project_mapper)
+   Severidade: ALTA | Impacto: ambiente incompleto; ImportError em runtime.
+   Pode mascarar erro? SIM | Precisa de correção? SIM
+
+ 12.3) Dependências DECLARADAS mas NÃO usadas no código:
+   - requests (0 usos no código) — declarada e não importada em nenhum arquivo
+   Severidade: BAIXA | Impacto: instalação desnecessária.
+   Precisa de correção? DESCONHECIDO
+
+================================================================================
+ CATEGORIA 13 — RISCOS DE MASCARAMENTO DE ERRO / BUGS LATENTES
+================================================================================
+ 13.1) historical_replay_engine.py ~linha 155
+   Símbolo: self._cache.stats.get("misses_before", 0)
+   Tipo: Bug latente | Severidade: MÉDIA
+   Evidência: 'misses_before' nunca é setado; sempre 0; cache_total calculado
+     incorretamente (métrica de cache enganosa).
+   É executado atualmente? SIM (VIVO) | Pode mascarar erro? SIM
+   Precisa de correção? SIM
+
+ 13.2) confidence_calibration_auditor.py
+   Símbolo: calibração de confiança
+   Tipo: Incompatibilidade de escala | Severidade: ALTA
+   Evidência: auditor assume confiança 0-1; ConfidenceEngine produz 0-100.
+   É executado atualmente? SIM (VIVO) | Pode mascarar erro? SIM
+   Precisa de correção? SIM
+
+ 13.3) Inconsistência de CAIXA nos nomes de colunas (cross-module KeyError)
+   Símbolo: 'close'/'open'/'volume' (lowercase) vs 'Close'/'Open'/'Volume'
+   Tipo: Bug latente | Severidade: ALTA
+   Evidência: historical_replay_engine usa minúsculas; candlestick_engine e
+     data_quality_engine usam Capitalizado — risco de KeyError ao cruzar.
+   É executado atualmente? SIM (ambos VIVOS) | Pode mascarar erro? SIM
+   Precisa de correção? SIM
+
+ 13.4) benchmark_framework.py — avaliação circular
+   Símbolo: fabricação de outcomes sintéticos (score*0.02)
+   Tipo: Viés de auto-avaliação | Severidade: ALTA
+   Evidência: quando não usa replay histórico, inventa desfechos a partir do
+     próprio score → benchmark "se valida".
+   É executado atualmente? SIM (VIVO_TESTS_TOOLS — usado por testes/benchmark)
+   Pode mascarar erro? SIM | Precisa de correção? SIM
+
+ 13.5) data_quality_engine.py usa datetime.now() (não determinístico)
+   Símbolo: datetime.now()
+   Tipo: Não-determinismo | Severidade: MÉDIA
+   Evidência: quebra replay determinístico (mesma entrada -> saída diferente).
+   É executado atualmente? SIM (data/ versão VIVO) | Pode mascarar erro? SIM
+   Precisa de correção? SIM
+
+ 13.6) benchmark_framework.py: tracemalloc.start() sem stop
+   Símbolo: tracemalloc | Tipo: Vazamento de recurso | Severidade: MÉDIA
+   É executado atualmente? SIM (testes/benchmark) | Pode mascarar erro? NÃO
+   Precisa de correção? SIM
+
+ 13.7) CHoCH engine — VERIFICADO CORRETO na árvore atual (sem inversão)
+   Símbolo: CHOCHEngine.analyze()
+   Evidência: lower_high+lower_low → BEARISH; higher_high+higher_low → BULLISH.
+   Conclusão: bug de inversão de sinal reportado anteriormente NÃO está mais
+   presente. NÃO requer correção. (manter vigilância — era um risco alto.)
+
+ 13.8) tools/mercury_integrity_auditor/auditors/architecture_certification_auditor.py
+   Símbolo: certificação de arquitetura
+   Tipo: Relatório de auditoria INCORRETO (alega modelos inexistentes)
+   Evidência: afirma que post_decision_evaluation_engine importa
+     DecisionSnapshot/PerformanceMetrics "que não existem" — ambos existem.
+   É executado atualmente? SIM (ferramenta) | Pode mascarar erro? SIM
+   Precisa de correção? SIM (o relatório, não o código)
+
+================================================================================
+ === VEREDITO FASE 1 ===
+================================================================================
+ ARQUIVOS PYTHON INVENTARIADOS ....: 423
+ MÓDULOS DEFINIDOS (dotted) ........: 415
+ CLASSES ............................: 369
+ FUNÇÕES ............................: 1318
+ ARQUIVOS DE TESTE .................: 64 (tests/ + mercury_ai/*/tests/ + scripts test_*.py)
+ ENTRY POINTS ......................: 26
+
+ DUPLICAÇÕES (nomes de módulo) ......: 13 grupos
+   - críticas: data_quality_engine (análise vs dados), mercury_data_provider,
+     exceptions (brain vs core), tabelas ENGINE_NAME (drift 16 vs 13)
+
+ CÓDIGO MORTO (produção, não entry) .: 31 módulos
+   - inclui pacotes inteiros: ai/, market/
+   - inclui stubs: future_broker_provider, future_polygon_provider
+ CÓDIGO MORTO (testes nunca importados, descobertos por pytest): ~30 arquivos
+ MÓDULOS VIVOS EM PRODUÇÃO ..........: 163 (+4 pacotes via sub-módulo)
+ MÓDULOS VIVOS SÓ EM TESTES/FERRAMENTAS: 37 (+3 pacotes)
+ CLASSES NUNCA REFERENCIADAS ........: 152
+ FUNÇÕES NUNCA CHAMADAS ..............: 232
+ IMPORTS NÃO UTILIZADOS ..............: 297
+ TODO/FIXME/HACK/XXX ................: 28
+ COMENTÁRIOS TEMP/LEGADO ............: 19
+ ARQUIVOS VAZIOS/PLACEHOLDERS ........: 18
+ STUBS/PARCIAIS ......................: 2 stubs + 1 parcial (adaptive_weight) + 1 parcial morto
+ ARQUIVOS QUE NÃO COMPILAM ...........: 5 (tools/mercury_integrity_auditor)
+ CICLOS DE IMPORTAÇÃO ................: 1 (benigno — TYPE_CHECKING)
+ DEPENDÊNCIAS NÃO DECLARADAS .........: tvDatafeed, google (+ locais mal resolvidos)
+ DEPENDÊNCIAS DECLARADAS NÃO USADAS ..: requests
+ requirements.txt CORROMPIDO (merge) .: SIM (nested conflict)
+
+ SEVERIDADE (agrupada):
+   CRÍTICOS ....: 2 (requirements.txt corrompido; 5 arquivos que não compilam)
+   ALTOS .......: 15 (duplicatas críticas, módulos mortos com impacto de negócio,
+                     stubs, escala de confiança, colunas case, benchmark circular)
+   MÉDIOS ......: ~30 (demais módulos mortos, tabelas ENGINE_NAME, TODO no pipeline,
+                     não-determinismo, cache bug, dependências não declaradas)
+   BAIXOS ......: ~290 (imports não usados, TODO triviais, comentários legado, vazios)
+
+================================================================================
+ === CONCLUSÃO ===
+================================================================================
+ Problemas identificados (apenas enumeração — NENHUMA correção proposta nesta fase):
+
+ 1. [CRÍTICO] requirements.txt contém merge conflict NÃO resolvido e ANINHADO
+    (linhas 9-18) — `pip install -r requirements.txt` falha; nenhum ambiente
+    novo é criável; estado do repo é de "meio de merge".
+ 2. [CRÍTICO] 5 arquivos sob tools/mercury_integrity_auditor/ são texto
+    markdown disfarçado de .py (contract_audit, dependency_audit, final_report,
+    runtime_audit, static_audit) — não compilam; o pacote da ferramenta de
+    auditoria contém ruínas.
+ 3. [ALTO] Duplicata DataQualityEngine (analysis/ morta em produção vs data/
+    viva) — risco de divergência de regras de qualidade.
+ 4. [ALTO] Duplicata MercuryDataProvider (data/ vs providers/) — duas versões
+    do "provider central" vivas.
+ 5. [ALTO] Duplicata brain/exceptions.py (morta) vs core/exceptions.py (viva) —
+    import da versão errada quebra tratamento de exceção.
+ 6. [ALTO] Tabelas ENGINE_NAME_TO_ADAPTIVE_KEY (16) e ENGINE_NAME_TO_DOMAIN (13)
+    divergem — drift que silenciosamente remove pesos/domínios de motores.
+ 7. [ALTO] 31 módulos de produção nunca importados, incluindo pacotes ai/ e
+    market/ inteiros, post_decision_evaluation_engine, learning_engine,
+    calibration_analyzer, institutional_* , core/startup, core/data_quality_gate,
+    config/strategies, config/market_regimes, models/signal — o "cérebro"
+    institucional planejado (aprendizado, pós-decisão, calibração) não roda.
+ 8. [ALTO] Stubs FutureBrokerProvider e FuturePolygonProvider nunca importados,
+    mas aparentam ser providers válidos.
+ 9. [ALTO] adaptive_weight_engine (VIVO em produção) tem lógica de pesos
+    adaptativos INACABADA — retorna pesos quase estáticos sob o nome "adaptativo".
+ 10. [ALTO] confidence_calibration_auditor assume escala 0-1; ConfidenceEngine
+     produz 0-100 — calibração pode ser falsa.
+ 11. [ALTO] Inconsistência de caixa em nomes de colunas entre motores
+     (close vs Close) — risco de KeyError em replay/candlestick.
+ 12. [ALTO] benchmark_framework fabrica outcomes sintéticos (score*0.02) —
+     auto-validação circular quando sem replay histórico.
+ 13. [ALTO] Relatório de arquitetura entregue pelo projeto (architecture_certification)
+     contém alegação INCORRETA sobre modelos inexistentes (ambos existem).
+ 14. [MÉDIO] historical_replay_engine: stats["misses_before"] nunca setado — métrica
+     de cache enganosa.
+ 15. [MÉDIO] data_quality_engine usa datetime.now() — não determinístico (quebra replay).
+ 16. [MÉDIO] benchmark_framework: tracemalloc.start() sem stop — vazamento.
+ 17. [MÉDIO] Módulos de teste (30) nunca importados + testes duplicados
+     (test_probability_engine) — cobertura fragmentada.
+ 18. [MÉDIO] tools/tools/__init__.py indica duplicação de diretório tools/tools.
+ 19. [MÉDIO] stabilization_report.py vazio na raiz — resíduo.
+ 20. [MÉDIO] Placeholder real no fluxo principal: core/analysis_pipeline.py
+     "1st build — placeholder risk_assessment".
+ 21. [MÉDIO] Dependências usadas e não declaradas (tvDatafeed, google) — ambiente
+     incompleto.
+ 22. [MÉDIO] 'config', 'auditors', 'models', 'scanner', 'writer' aparecem como
+     imports "externos" não resolvidos (31/18/7/2/2 arquivos) — provável
+     resolução de pacote incorreta em ferramentas.
+ 23. [BAIXO] 297 imports não utilizados (muitos em scripts de diagnóstico e
+     __init__ de reexport) — ruído e execução desnecessária de módulos pesados.
+ 24. [BAIXO] 152 classes e 232 funções sem referência externa — superfície de API
+     maior que o uso real.
+ 25. [BAIXO] 18 arquivos vazios; 28 marcadores TODO; 19 comentários legado —
+     higiene pendente.
+ 26. [INFO] 26 entry points — múltiplas portas de entrada dificultam auditoria
+     de "o que roda".
+ 27. [INFO] Ciclo de importação decision_result/trading_explanation é benigno
+     (TYPE_CHECKING) — não requer ação.
+ 28. [OK] CHoCH engine verificado CORRETO na árvore atual — inversão de sinal
+     anterior NÃO está presente.
+
+ --- FIM DO RELATÓRIO FASE 1 ---
+ (Ferramenta de análise: script AST executado fora do repositório; nenhum
+  arquivo de produção foi alterado.)
+================================================================================

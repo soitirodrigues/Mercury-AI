@@ -1,4 +1,5 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from typing import Dict
 
 @dataclass(frozen=True)
 class MTFConsensus:
@@ -14,3 +15,8 @@ class MTFConsensus:
     dominant_trend: str = "NEUTRAL"
     institutional_consensus_strength: float = 0.0
     summary: str = ""
+    # Observabilidade: status por timeframe (processed/rejected/absent/invalid/error).
+    # NÃO altera fórmulas de consenso — apenas registra explicitamente a presença
+    # ou ausência de cada timeframe na análise.
+    timeframe_status: Dict[str, str] = field(default_factory=dict)
+    timeframe_errors: Dict[str, str] = field(default_factory=dict)

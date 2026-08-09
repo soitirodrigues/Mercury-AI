@@ -20,6 +20,22 @@ from mercury_ai.core.exceptions import (
 
 logger = logging.getLogger(__name__)
 
+# Estados terminais observáveis emitidos pelo pipeline via decision.audit_id.
+# Um WAIT legítimo carrega audit_id = hash sha256 (64 hex) gerado pelo
+# DecisionResultBuilder — nunca coincide com estes estados reservados.
+# Erros de pipeline/provider: NÃO entram no ranking, NÃO sobrescrevem stats.
+PIPELINE_ERROR_STATES = frozenset({
+    "PIPELINE_ERROR",
+    "DATA_PROVIDER_UNAVAILABLE",
+})
+# Estados de análise descartada (não são oportunidades nem erros fatais):
+# registrados de forma observável, fora do ranking e das estatísticas do ativo.
+PIPELINE_SKIP_STATES = frozenset({
+    "DATA_QUALITY_FAIL",
+    "INSUFFICIENT_DATA",
+    "MARKET_CLOSED",
+})
+
 
 class MercuryScanner:
 
@@ -110,6 +126,35 @@ class MercuryScanner:
                 # Analise pelo provider V1
                 analysis = self.pipeline.analyze(symbol)
 
+                # Transparência (ACHADO 1/2/5): distingue estados de erro/
+                # indisponibilidade de um WAIT legítimo (audit_id = hash sha256).
+                # Erros NÃO entram no ranking e NÃO sobrescrevem as estatísticas
+                # do ativo (evita corromper previous_score com score 0).
+                audit_id = analysis.decision.audit_id
+                if audit_id in PIPELINE_ERROR_STATES:
+                    logger.error(
+                        ">>> ERRO DE PIPELINE em %s: audit_id=%s | %s | score=%.2f",
+                        symbol,
+                        audit_id,
+                        analysis.decision.summary,
+                        analysis.decision.score,
+                    )
+                    self._trigger_failover(
+                        symbol,
+                        f"{audit_id}: {analysis.decision.summary}",
+                    )
+                    continue
+
+                if audit_id in PIPELINE_SKIP_STATES:
+                    logger.warning(
+                        ">>> ANÁLISE DESCARTADA em %s (estado observável): audit_id=%s | %s | score=%.2f",
+                        symbol,
+                        audit_id,
+                        analysis.decision.summary,
+                        analysis.decision.score,
+                    )
+                    continue
+
                 logger.debug("=" * 80)
                 logger.debug("DEBUG ANALYSIS")
                 logger.debug("=" * 80)
@@ -171,6 +216,26 @@ class MercuryScanner:
                     except (RuntimeError, ConnectionError, OSError, AttributeError) as failover_error:
                         logger.error("Falha no failover: %s", failover_error)
 
+        # Observabilidade (ACHADO 6): expõe eventos de falha capturados pelo
+        # audit_sink do pipeline. O sink é o mesmo objeto usado pelo pipeline,
+        # então acumula as falhas de todos os símbolos deste ciclo de scan.
+        failed_events = self.pipeline.get_failed_events()
+        if failed_events:
+            logger.error("=" * 60)
+            logger.error(
+                "EVENTOS DE FALHA DO PIPELINE (audit_sink): %d",
+                len(failed_events),
+            )
+            for ev in failed_events:
+                logger.error(
+                    "  [%s] stage=%s tipo=%s erro=%s",
+                    ev.symbol or "?",
+                    ev.stage_name,
+                    ev.error_type,
+                    ev.error_message,
+                )
+            logger.error("=" * 60)
+
         ranked = self.ranking_engine.rank(
             analyses
         )
@@ -182,6 +247,37 @@ class MercuryScanner:
         logger.info("=" * 60)
 
         return ranked
+
+    def _trigger_failover(self, symbol, reason):
+        """Failover honesto (ACHADO 5): tenta alternar de provider e reporta
+        com verdade se existe ou não provider funcional de contingência.
+
+        Com a correção do ACHADO 4, adapters stub não são 'healthy', portanto
+        trigger_failover retorna False quando não há provider secundário real —
+        e isso é registrado como erro, em vez de falhar silenciosamente para
+        um stub que devolveria um DataFrame vazio.
+        """
+        if self.provider_manager is None:
+            return
+
+        try:
+            failover_ok = self.provider_manager.trigger_failover(reason=reason)
+            if not failover_ok:
+                logger.error(
+                    "Sem provider funcional de contingência para %s (%s)",
+                    symbol,
+                    reason,
+                )
+            self.notification_center.send(
+                "scanner_failover",
+                {
+                    "symbol": symbol,
+                    "error": reason,
+                    "failover": bool(failover_ok),
+                },
+            )
+        except (RuntimeError, ConnectionError, OSError, AttributeError) as e:
+            logger.error("Falha no failover: %s", e)
 
     def _print_ranking(self, ranked):
 
