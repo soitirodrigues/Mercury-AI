@@ -1,10 +1,13 @@
 from dataclasses import dataclass
 from typing import Any
+import logging
 import os
 import re
 import threading
 
 from mercury_ai.utils.atomic_io import atomic_json_write
+
+logger = logging.getLogger(__name__)
 
 # Regex whitelist para nomes de arquivo: letras, números, ponto, hífen, underscore.
 # Rejeita path traversal (../, ..\, /, \) e caracteres especiais.
@@ -52,6 +55,7 @@ class ReplayStorage:
 
     def save(self, audit_id: str, snapshot: Any, metrics: ReplayMetrics):
         safe_audit_id = _sanitize_audit_id(audit_id)
+        filepath = f"{self.output_dir}/{safe_audit_id}.json"
         data = {
             "audit_id": audit_id,
             "decision": snapshot.decision_result.decision,
@@ -60,11 +64,16 @@ class ReplayStorage:
             "mfe": metrics.mfe,
             "pl": metrics.pl,
             "hit": metrics.hit,
-            "timestamp": snapshot.timestamp
+            "timestamp": snapshot.timestamp,
         }
         with self._lock:
+            if os.path.exists(filepath):
+                logger.warning(
+                    "ReplayStorage.save: overwriting existing replay_result for audit_id=%s",
+                    safe_audit_id,
+                )
             atomic_json_write(
-                f"{self.output_dir}/{safe_audit_id}.json",
+                filepath,
                 data,
                 indent=4,
             )

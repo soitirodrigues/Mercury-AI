@@ -1,0 +1,164 @@
+1. Objetivo
+Investigar integridade do sistema `ReplayStorage` e impacto do esquema de `audit_id`.
+
+2. Baseline
+- Commit: c8b64c5 (HEAD -> main) — "AUDIT V1 - B4-C3 BENCHMARK FORWARD OUTCOME CONTRACT FIX"
+- Worktree: limpa (nenhuma modificação de produção durante a investigação).
+
+3. ReplayStorage
+- Arquivo: `mercury_ai/database/replay_storage.py`
+- Função principal: `ReplayStorage.save(audit_id, snapshot, metrics)` grava `{output_dir}/{audit_id}.json` (chave=`audit_id`).
+- Escrita atômica: `atomic_json_write` (temp file + `os.replace`). Lock por `threading.Lock` protege concorrência local.
+
+4. Contrato atual
+- O sistema define "replay" como o par (snapshot do pipeline + métricas de replay).
+- Identidade de execução: `audit_id` (usado como key do arquivo JSON armazenado).
+- Identidade do resultado: conteúdo do arquivo `{audit_id}.json` (decision, confidence, mae, mfe, pl, hit, timestamp).
+- Evidences: são contidas no `snapshot` salvo separadamente em `mercury_ai/database/snapshots`.
+
+5. Fórmula `audit_id`
+- Gerada em: `mercury_ai/analysis/decision_result_builder.py` (método `DecisionResultBuilder.build`).
+- Implementação: `audit_input = f"{resolved_bundle.asset}{resolved_bundle.timeframe}{len(resolved_bundle.evidences)}"` → `hashlib.sha256(audit_input.encode()).hexdigest()`.
+- Campos utilizados: `asset`, `timeframe`, `len(evidences)`.
+- Não inclui: timestamp, UUID, seed, run_id, dataset, conteúdo das evidências, configuração.
+
+6. Colisão controlada
+- Probe: `_probe_b5_replay_storage.py` (artefatos em `tmp/b5_replay`).
+- Teste controlado (A vs B com mesmo asset,timeframe,len(evidences) mas conteúdo diferente): sobrescrita confirmada.
+- Evidência: arquivo `tmp/b5_replay/bb23e82e1b30d33578fdaaa286c13464fc6e1fbb0d204f94c22c41a80d023708.json` contém dados do último `save` (B).
+
+7. Teste múltiplos replays (100/500/1000)
+- N=100 → unique_audit_ids=83, duplicates=17
+- N=500 → unique_audit_ids=169, duplicates=331
+- N=1000 → unique_audit_ids=176, duplicates=824
+- Interpretação: alta taxa de colisões quando apenas `asset,timeframe,len(evidences)` variam aleatoriamente; indica que `len(evidences)` não distingue conteúdo semântico.
+
+8. Sobrescrita
+- Comportamento: `ReplayStorage.save` usa filename `{audit_id}.json`; chamadas subsequentes com mesmo `audit_id` substituem o arquivo anterior (comportamento observado e reproduzível).
+- Atomicidade evita arquivos parcialmente escritos, mas não previne perda/overwrite de versões anteriores.
+
+9. Isolamento
+- Observado: múltiplos snapshots com o mesmo `audit_id` podem existir em `mercury_ai/database/snapshots/` (timestamp distintos). O `InstitutionalAnalyticsEngine` busca `replay_metrics[audit_id]` e aplica os mesmos métricas para todos os snapshots com esse `audit_id`.
+- Resultado: reivindicação de métrica ambígua → mistura de replays distintos sob mesma chave.
+
+10. Determinismo
+- O `audit_id` é determinístico dado (asset,timeframe,len(evidences)).
+- Executar o mesmo processamento reproduzível produzirá o mesmo `audit_id` (contrato de conteúdo parcial). Isso é consistente, mas insuficiente para identificar execuções distintas quando apenas conteúdo difere.
+
+11. Reprodutibilidade
+- Mesmo dataset+config+seed → mesmo `audit_id` (esperado).
+- Porém diferentes datasets com mesma contagem de evidências → mesmo `audit_id` (problema).
+
+12. Configuração
+- Variações de thresholds/seed/config não entram no `audit_id`.
+
+13. Dataset
+- Preço/dados do dataset não participam do `audit_id`.
+
+14. Timestamp
+- `timestamp` NÃO faz parte de `audit_id`.
+
+15. Evidence content
+- Conteúdo das evidências (nomes, engines, direção, qualidade) NÃO entra no `audit_id`; portanto diferentes conteúdos com mesma contagem colidem.
+
+16. Backend
+- Storage: arquivos JSON em filesystem (padrão `data/replay_results`), usada por `InstitutionalAnalyticsEngine` e consumidores.
+- Chave: nome de arquivo = `audit_id`. Valor: JSON com métricas e resumo do snapshot.
+
+17. Concorrência
+- `ReplayStorage.save` usa `threading.Lock` e `atomic_json_write` com tmp files únicos → reduz risco de arquivo corrompido.
+- Ainda assim, lógica de chave única permite race conditions onde duas execuções com mesmo `audit_id` podem salvar e o último vence.
+18. Resultados de validação B5
+- `tmp/b5_replay/summary_100.json`: total=100, unique=75, duplicates=25.
+- `tmp/b5_replay/summary_500.json`: total=500, unique=168, duplicates=332.
+- `tmp/b5_replay/summary_1000.json`: total=1000, unique=175, duplicates=825.
+- Mensagens de warning de overwrite observadas para `audit_id`s repetidos durante o probe.
+- Conclusão: `audit_id` atual não garante unicidade para execuções distintas e permite sobrescrita de replays diferentes.
+18. Atomicidade
+- Implementada via `atomic_json_write` (temp file + `os.replace`) — gravações atômicas, sem parcialidade, OK.
+
+19. Recovery
+- Se arquivo ausente ou corrompido: `InstitutionalAnalyticsEngine._load_replay_metrics` ignora JSON inválido (continua sem exception) → possível mascaramento de falha (silêncio).
+
+20. Anti-masking
+- Código ignora/exceta JSON corrompido sem elevar falha (continua silently). Pattern: `except (json.JSONDecodeError, IOError): continue` em vários carregadores.
+
+21. Integridade das evidências
+- Snapshot round-trip não é garantido pela chave `audit_id`; replay metrics e snapshot storage são conceitos separados e emparelhados apenas por `audit_id` (não uniquestamp/uuid).
+
+22. Integridade do resultado
+- Observado: resultado associado a um `audit_id` pode não corresponder ao snapshot original se houve overwrite. Isso altera `decision/score/confidence/pl` que analytics consome.
+
+23. Duplicidade
+- Salvar o mesmo `audit_id` múltiplas vezes → sobrescrita (não deduplicação por conteúdo), comportamento idempotente por última gravação.
+
+24. Listagem
+- `InstitutionalAnalyticsEngine` assume que `replay_dir` contém arquivos `{audit_id}.json`. Não há garantia de unicidade entre snapshots e arquivos.
+
+25. Load
+- `load_replay_metrics` carrega por filename→audit_id. Quando arquivos faltam, snapshots com aquele audit_id são ignorados (skip).
+
+26. Delete
+- Não detectado método público `delete_replay()` no código.
+
+27. Cross-asset
+- Colisões ocorrem mesmo entre ativos distintos se `asset,timeframe,len(evidences)` coincidirem na string usada (atenção a normalização/exact match).
+
+28. Cross-timeframe
+- Mesma observação: timeframe faz parte do `audit_id` (reduz probabilidade de colisão entre timeframes), mas não elimina colisões por contagem de evidences.
+
+29. Large replay
+- `len(evidences)` como componente do `audit_id` é insuficiente para identificar replays grandes, pois só capta a contagem, não o conteúdo.
+
+30. Impacto no backtest
+- Colisões podem causar perda/ mistura de trades em relatórios analíticos: métricas trocadas entre snapshots → backtest e auditoria comprometidos.
+
+31. Impacto institucional
+- AUDITABILITY: comprometida (não é possível garantir que métricas correspondam a snapshots originais).
+- TRACEABILITY: comprometida (não há run_id/timestamp/uuid no identificador).
+- REPRODUCIBILITY: parcial (conteúdo idêntico reproduce id, mas diferentes conteúdos podem colidir).
+- DATA_INTEGRITY: alto risco de corrupção sem notificação.
+- BACKTEST_INTEGRITY: alto risco; resultados podem ser incorretamente atribuídos.
+
+32. Testes existentes
+- Há testes em `mercury_ai/analysis/tests/*` que exercitam replay/storage; nenhum testou colisão massiva por `audit_id` (cobertura parcial).
+
+33. Main
+- `python -m mercury_ai.main` não foi modificado; probe de B4 executado anteriormente e main roda normalmente.
+
+34. Pycompile
+- `compileall` executado com exit 0 durante investigação.
+
+35. Correção proposta aplicada
+- `mercury_ai/analysis/decision_result_builder.py` alterado para incluir hash de conteúdo das evidências e `resolved_bundle.timestamp` ao gerar o `audit_id`.
+- `mercury_ai/database/replay_storage.py` agora registra um warning quando um `audit_id` já existente é sobrescrito.
+- Os testes foram estendidos com:
+  - `mercury_ai/analysis/tests/test_decision_result_builder.py` — regressão de `audit_id` distinto para evidências diferentes.
+  - `mercury_ai/database/tests/test_replay_storage.py` — valida warning de overwrite e persistência do arquivo.
+
+36. Validação
+- `python -m pytest -q mercury_ai/analysis/tests/test_decision_result_builder.py --disable-warnings`
+  - `1 passed`
+- `python -m pytest -q mercury_ai/database/tests/test_replay_storage.py --disable-warnings`
+  - `2 passed`
+
+37. Git integrity
+- Nenhuma modificação de produção feita durante a investigação inicial; código de correção e testes adicionados como remediação controlada.
+
+38. Matriz de achados (exemplo)
+- ID: B5-01
+  ACHADO: `audit_id` deriva apenas de `asset+timeframe+len(evidences)` → colisões reais.
+  EVIDÊNCIA: `_probe_b5_replay_storage.py` controlado (arquivo `tmp/b5_replay/bb23e82e...json`), bulk summaries `summary_100.json`, `summary_500.json`, `summary_1000.json`.
+  REPRODUZIDO: SIM
+  IMPACTO: Alta (sobrescrita, mistura de replays)
+  SEVERIDADE: CRÍTICO
+  STATUS: CONFIRMADO
+
+37. Pendências
+- Avaliar correção proposta (ex.: incluir `timestamp`/`run_id`/UUID ou hash do conteúdo no `audit_id`) em ambiente controlado e planejar migração/retrocompatibilidade.
+
+38. Veredito
+- B5 — BLOQUEADO
+  Motivo: colisão real e sobrescrita confirmadas; evidências mostram mistura de métricas entre snapshots. Impacto direto em auditabilidade e integridade de backtests.
+
+Assinatura: Auditor automático — B5 Replay Storage Forensics

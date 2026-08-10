@@ -53,15 +53,41 @@ class DecisionResultBuilder:
         # AUDIT
         # =====================================================
 
+        evidence_signatures = []
+        for evidence in resolved_bundle.evidences:
+            metadata_items = []
+            if evidence.metadata:
+                metadata_items = [f"{k}={v}" for k, v in sorted(evidence.metadata.items())]
+            metadata_str = "|".join(metadata_items)
+            evidence_signatures.append(
+                "|".join([
+                    evidence.engine_name,
+                    evidence.evidence_name,
+                    evidence.direction,
+                    f"{evidence.strength:.6f}",
+                    f"{evidence.confidence:.6f}",
+                    f"{evidence.weight:.6f}",
+                    f"{evidence.quality_score:.6f}",
+                    f"{evidence.context_score:.6f}",
+                    evidence.timeframe,
+                    evidence.timestamp,
+                    metadata_str,
+                    evidence.description,
+                ])
+            )
+
+        evidence_input = "||".join(sorted(evidence_signatures))
+        evidence_hash = hashlib.sha256(evidence_input.encode()).hexdigest()
+
         audit_input = (
-            f"{resolved_bundle.asset}"
-            f"{resolved_bundle.timeframe}"
-            f"{len(resolved_bundle.evidences)}"
+            f"{resolved_bundle.asset}|"
+            f"{resolved_bundle.timeframe}|"
+            f"{resolved_bundle.timestamp}|"
+            f"{len(resolved_bundle.evidences)}|"
+            f"{evidence_hash}"
         )
 
-        audit_id = hashlib.sha256(
-            audit_input.encode()
-        ).hexdigest()
+        audit_id = hashlib.sha256(audit_input.encode()).hexdigest()
 
         # =====================================================
         # VERSION METADATA

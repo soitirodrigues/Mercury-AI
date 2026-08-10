@@ -20,6 +20,8 @@ def _sanitize_filename_component(value: str) -> str:
     - Rejeita strings vazias.
     - Rejeita strings com caracteres fora do whitelist (inclui '/', '\\', '..').
     - Substitui ':' por '-' para timestamps.
+    - Substitui '=' e '+' por '_' (símbolos Yahoo 'GC=F' e offsets ISO 8601
+      '+01:00' em timestamps timezone-aware).
     """
     if not value:
         raise ValueError("Componente de nome de arquivo não pode ser vazio.")
@@ -27,6 +29,10 @@ def _sanitize_filename_component(value: str) -> str:
     safe = value.replace(":", "-")
     # Substitui '=' por '_' (comum em símbolos do Yahoo Finance: GC=F, EURUSD=X)
     safe = safe.replace("=", "_")
+    # Substitui '+' por '_' (sinal de offset em timestamps ISO 8601 tz-aware:
+    # '...T07:40:00+01:00' — '+' não é permitido no whitelist de nome de arquivo;
+    # o instante original é preservado no conteúdo JSON do snapshot).
+    safe = safe.replace("+", "_")
     # Rejeita path traversal explícito
     if ".." in safe or "/" in safe or "\\" in safe:
         raise ValueError(f"Componente de nome de arquivo inválido (path traversal): {value!r}")

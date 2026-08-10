@@ -1,0 +1,487 @@
+================================================================================
+SPRINT FORENSE DE CORREÇÃO — B4-C5
+SNAPSHOT TIMESTAMP SAFETY & ANALYTICS TIMESTAMP INTEGRITY
+================================================================================
+Projeto : Mercury-AI
+Bloco   : B4-C5 (CORREÇÃO dos 2 achados comprovados do B4-C4)
+Data    : 2026-08-10
+Branch  : main
+HEAD    : 1acc841 (baseline limpo)
+Status  : CORREÇÃO MÍNIMA — escopo estrito respeitado
+
+================================================================================
+1. OBJETIVO
+================================================================================
+Corrigir SOMENTE os dois achados comprovados no B4-C4:
+  R1 — risco de crash no salvamento de snapshot quando o replay utiliza
+       dataset com timestamp timezone-aware.
+  R2 — institutional_analytics_engine usa pd.to_datetime(errors="coerce")
+       de forma que pode transformar timestamps aware válidos em NaT.
+B4-C4 NÃO encontrou risco em decisão/outcome/P/L/contrato forward/replay
+determinístico/comparação temporal do caminho decisório — NÃO alterados.
+
+================================================================================
+2. BASELINE
+================================================================================
+- HEAD: 1acc841 ("AUDIT V1 - B4-C3 BENCHMARK FORWARD OUTCOME CONTRACT FIX")
+- git status --short: LIMPO (working tree clean) antes das alterações B4-C5.
+- git diff --stat: vazio.
+- git log -1 --oneline: 1acc841.
+- Relatório B4-C4 (AUDIT_V1/11_FORENSE_B4_C4_TIMESTAMP_CONTRACT.txt) commitado.
+- NÃO foi apagada nenhuma alteração pré-existente.
+
+================================================================================
+3. ESCOPO
+================================================================================
+PODE alterar (alterado):
+  1. mercury_ai/database/snapshot_logger.py  (sanitização de timestamp)
+  2. mercury_ai/analysis/institutional_analytics_engine.py (conversão temporal)
+  3. testes diretamente relacionados (novos arquivos de teste)
+NÃO alterado (conforme regra):
+  DeterministicClock, HistoricalReplayEngine, HistoricalReplayProvider,
+  AnalysisPipeline, DecisionResolver, ProbabilityEngine, fórmulas, pesos,
+  thresholds, indicadores, P/L, estratégia, ranking, providers, datasets,
+  universo de ativos. NÃO iniciado B4-C6. NÃO iniciado B5.
+  NÃO feita normalização global de timezone.
+
+================================================================================
+4. REPRODUÇÃO R1 (ANTES DA CORREÇÃO)
+================================================================================
+Probe temporário _probe_b4_c5_repro.py (EXIT=0) executando o caminho real de
+snapshot (DecisionSnapshotLogger.save com DecisionSnapshot real):
+
+  INPUT_TIMESTAMP            | TIMESTAMP_TYPE | TIMEZONE  | SANITIZER        | SAVE
+  ---------------------------|----------------|-----------|------------------|------------
+  2024-01-01T07:40:00        | str            | (naive)   | OK (07-40-00)    | OK
+  2024-01-01T07:40:00+01:00  | str            | +01:00    | ValueError       | ValueError
+  2024-01-01T07:40:00+00:00  | str            | +00:00    | ValueError       | ValueError
+  2024-01-01T07:40:00-03:00  | str            | -03:00    | OK (07-40-00-03-00) | OK
+
+SERIALIZED_VALUE (naive): '2024-01-01T07:40:00'  (JSON preserva string exata)
+EXCEPTION (aware +01:00): ValueError: Componente de nome de arquivo contém
+  caracteres não permitidos: '2024-01-01T07:40:00+01:00'
+EXIT_CODE: probe EXIT=0 (a exceção é capturada para documentação; o CRASH é
+  PROVADO no caminho real: "RESULTADO: ValueError ... R1 REPRODUZIDO").
+
+CONCLUSÃO: timestamp aware VÁLIDO com offset POSITIVO ('+') causa crash no
+save. Offsets negativos ('-') passam (porque '-' é whitelisted). O gatilho
+real (Europe/London +01:00 do parquet EURUSD=X) e aware-UTC (+00:00) quebram.
+
+================================================================================
+5. CAUSA R1
+================================================================================
+- Função: mercury_ai/database/snapshot_logger.py::_sanitize_filename_component.
+- Whitelist: _SAFE_SYMBOL_RE = re.compile(r"^[A-Za-z0-9._\-]+$") — NÃO inclui '+'.
+- save() chama _sanitize_filename_component(str(snapshot.timestamp)) para
+  montar {asset}_{timestamp}.json.
+- snapshot.timestamp é string (DecisionSnapshot.timestamp: str), produzida por
+  DeterministicClock.utcnow().isoformat(). Em tempo real é naive (sem offset);
+  em replay com dataset tz-aware (ex.: parquet Europe/London) é aware e o
+  isoformat contém '+01:00'.
+- O '+' do offset ISO 8601 NÃO passa no whitelist -> ValueError.
+- Por que um timestamp aware válido provoca falha: o whitelist foi projetado
+  para path-traversal (chars de arquivo), mas não previu o sinal de offset ISO
+  8601. A validação é de SEGURANÇA (não de formato de timestamp); '+'
+  é inofensivo em filename, mas o regex o rejeita.
+- NÃO corrigido ainda nesta seção (identificação apenas).
+
+================================================================================
+6. CONTRATO DE SNAPSHOT
+================================================================================
+Representação atual determinada pelo código:
+- Timestamp salvo = str(snapshot.timestamp) = string ISO 8601
+  (DeterministicClock.utcnow().isoformat()).
+- O JSON preserva o string ORIGINAL EXATO via json.dumps(asdict(snapshot),
+  default=str) — o instante NÃO é alterado pela serialização.
+- O FILENAME é apenas identificador filesystem-safe; nenhum consumidor parseia
+  o filename para obter o instante (todos leem data['timestamp'] do JSON:
+  performance_analytics, institutional_analytics_engine, app pages, etc.).
+Comparação semântica:
+  - aware UTC      (2024-01-01T07:40:00+00:00) = mesmo instante do naive 07:40
+  - aware local    (2024-01-01T07:40:00+01:00) = 06:40 UTC
+  - naive UTC      (2024-01-01T07:40:00)       = contrato do tempo real
+Requisito: o timestamp salvo deve representar o MESMO INSTANTE. Não alterar
+arbitrariamente para horário local; não remover offset alterando o instante.
+ESCOLHA: o JSON mantém a string original (instante preservado); o filename
+precisa apenas ser filesystem-safe. Correção compatível com o contrato
+existente e com os consumidores.
+
+================================================================================
+7. CORREÇÃO R1
+================================================================================
+MENOR alteração possível em _sanitize_filename_component (snapshot_logger.py):
+  +6 linhas (docstring + 1 substituição):
+      safe = safe.replace("+", "_")
+  Consistente com o padrão existente (':' -> '-', '=' -> '_').
+Efeito:
+  - 2024-01-01T07:40:00+01:00 -> filename ...07-40-00_01-00 (whitelist OK)
+  - 2024-01-01T07:40:00+00:00 -> filename ...07-40-00_00-00 (whitelist OK)
+  - naive existente NÃO muda (…07-40-00).
+  - instante preservado: o JSON continua com a string original '+01:00'.
+  - NÃO fez: replace global de timezone; refatoração temporal; mudança do
+    DeterministicClock. Whitelist permanece estrito (segurança mantida).
+
+================================================================================
+8. TESTES R1
+================================================================================
+Arquivo: mercury_ai/database/tests/test_snapshot_logger.py (24 testes).
+Casos (A-E conforme requisito):
+  A naive UTC (2024-01-01T07:40:00)               -> PASS
+  B aware UTC (2024-01-01T07:40:00+00:00)         -> PASS
+  C aware Europe/London (2024-01-01T07:40:00+01:00)-> PASS
+  D aware offset diferente (2024-01-01T07:40:00-03:00)-> PASS
+  E próximo de mudança de offset/DST (2026-03-29T01:30:00+00:00)-> PASS
+Para cada caso: INPUT -> OUTPUT (filename sanitizado) -> EXCEPTION=NONE ->
+INSTANTE_PRESERVADO=TRUE (epoch do JSON == epoch do input).
+Cobertura extra: naive filename inalterado; símbolo Yahoo '=' -> '_';
+segurança mantida (6 casos de path traversal/vazio/barras rejeitados);
+cenário exato do B4-C4 (EURUSD=X +01:00) agora salva sem crash.
+RESULTADO: 24/24 PASS, 0 FAIL.
+
+================================================================================
+9. PROVA DE PRESERVAÇÃO DO INSTANTE
+================================================================================
+Para cada timestamp aware salvo:
+  epoch_before = pd.Timestamp(input).timestamp()
+  epoch_after  = pd.Timestamp(json['timestamp']).timestamp()
+  assert epoch_before == epoch_after
+Exemplos (prova experimental):
+  aware +01:00 (07:40 London): epoch_before == epoch_after == 1704091200.0
+  aware +00:00 (07:40 UTC)   : epoch preservado
+  aware -03:00 (07:40 SP)    : epoch preservado
+  Real (parquet Europe/London '2026-06-29T05:00:00+01:00'): epoch 1782705600.0
+    (parse válido, sem NaT).
+NÃO aceita igualdade textual apenas — o teste compara EPOCH (instante real).
+
+================================================================================
+10. COMPATIBILIDADE
+================================================================================
+Consumidores de snapshots (pesquisa load_snapshot/list_snapshots/json):
+  - performance_analytics.py: datetime.fromisoformat(data['timestamp']) — lê
+    do JSON; aceita naive e aware.
+  - institutional_analytics_engine.py: snapshot.get("timestamp","") — lê do JSON.
+  - app/terminal/pages (05_Replay, 07_Observabilidade), dashboard, data_exporter,
+    confidence_calibration_auditor, integrity_checker, operational_history,
+    statistical_auditor, etc.: leem do JSON.
+  - NENHUM consumidor parseia o FILENAME para obter instante.
+CONCLUSÃO: a mudança do filename (sanitização de '+') NÃO quebra consumidor.
+Timestamps naive existentes geram o MESMO filename de antes (teste PASS).
+Observação (pré-existente, sem impacto): list_snapshots ordena por filename
+(wall-clock); entre offsets a ordenação por string pode não ser perfeitamente
+cronológica — o instante autoritativo está no JSON.
+
+================================================================================
+11. REPRODUÇÃO R2 (ANTES DA CORREÇÃO)
+================================================================================
+Probe _probe_b4_c5_repro.py (EXIT=0):
+  Caso 1 - série PURE aware (+01:00):
+    pd.to_datetime(errors="coerce") -> [07:40+0100, 07:45+0100, 07:50+0100]
+    NaT? [False,False,False]  (pura aware OK)
+  Caso 2 - série MIXTA naive + aware (cenário replay+real):
+    INPUT: ['2024-01-01T07:40:00', '2024-01-01T07:45:00+01:00', '2024-01-01T07:50:00']
+    INPUT_DTYPE: object (str)
+    pd.to_datetime(errors="coerce") -> [07:40:00, NaT, 07:50:00]
+    NaT? [False, True, False]  NaT_COUNT=1  <- timestamp aware VÁLIDO perdido
+  Caso 2b - MIXTA sem coerce: ValueError ("unconverted data remains ... +01:00").
+  Caso 3 - MIXTA com utc=True: AINDA NaT no aware (NaT_COUNT=1) -> utc=True
+    sozinho NÃO resolve.
+PROVA: o timestamp aware válido é convertido em NaT silenciosamente quando a
+série mistura naive+aware (INPUT_DTYPE=str, TIMEZONE=Europe/London).
+
+================================================================================
+12. CAUSA R2
+================================================================================
+- Função: institutional_analytics_engine.py::_load_data.
+- Linha: df["timestamp"] = pd.to_datetime(df["timestamp"], errors="coerce").
+- Motivo do errors="coerce": resiliência — um snapshot corrompido não deve
+  derrubar generate_quality_report.
+- O código esperava (implicitamente) timestamps naive; dado aware é VÁLIDO
+  (ISO 8601 com offset) mas o parser em série mista (pandas 3.0.3) infere
+  formato do primeiro elemento e falha no aware; errors="coerce" -> NaT.
+- NaT altera cálculos posteriores: _temporal_analysis dropna(subset=timestamp)
+  REMOVE o trade do agrupamento mensal/semanal; _overview_stats date_range
+  ignora NaT; sort_values coloca NaT no fim. Em cenário misto (real-time naive
+  + replay aware no mesmo snapshot_dir), TODOS os snapshots aware seriam
+  excluídos da análise.
+- NÃO remover errors="coerce" automaticamente; manter para inválidos.
+
+================================================================================
+13. IMPACTO R2
+================================================================================
+Com NaT silencioso em série mista:
+  - analytics: trade com timestamp aware removido (dropna em _temporal_analysis).
+  - métricas: win rate/PnL por mês/semana ignoram esses trades.
+  - relatórios: date_range (min/max) ignora NaT -> range incorreto.
+  - duração/agrupamento/ordenação/estatísticas: afetados pelos trades perdidos.
+Prova: test_mixed_timestamps_all_preserved (antes) mostraria NaT_COUNT=1.
+Após a correção, misto preserva todos os válidos (NaT_COUNT=0) e ordena por
+instante correto.
+
+================================================================================
+14. CORREÇÃO R2
+================================================================================
+MENOR alteração em _load_data (institutional_analytics_engine.py): +13/-1.
+  ANTES: df["timestamp"] = pd.to_datetime(df["timestamp"], errors="coerce")
+  DEPOIS:
+    df["timestamp"] = pd.to_datetime(
+        df["timestamp"], errors="coerce", format="mixed", utc=True
+    ).dt.tz_localize(None)
+Justificativa:
+  - format="mixed" (pandas >= 2.0; instalado 3.0.3): parseia CADA elemento
+    individualmente -> naive e aware coexistindo sem ValueError/NaT.
+  - utc=True: converte aware -> UTC preservando o INSTANTE (07:45+01:00 ->
+    06:45 UTC).
+  - .dt.tz_localize(None): normaliza para naive UTC -> MESMO contrato existente
+    (datetime64 naive) dos consumidores.
+  - errors="coerce" MANTIDO intencionalmente: timestamps inválidos continuam
+    virando NaT (detectáveis; _temporal_analysis já faz dropna). NÃO máscara
+    dados válidos nem aceita inválidos silenciosamente.
+
+================================================================================
+15. TESTES R2
+================================================================================
+Arquivo: mercury_ai/analysis/tests/test_institutional_analytics_engine.py (9).
+  1. naive UTC válido   (07:40)              -> 07:40, sem NaT   PASS
+  2. aware UTC válido   (07:40+00:00)        -> 07:40, sem NaT   PASS
+  3. aware Europe/London(07:40+01:00)        -> 06:40 (instante) PASS
+  4. timezone com offset(07:40-03:00)        -> 10:40 (instante) PASS
+  5. timestamp inválido ("nao-e-timestamp")  -> NaT (detectável) PASS
+  6. valor ausente ("")                      -> NaT              PASS
+  7. dataframe vazio                         -> vazio, sem erro  PASS
+  8. mistura naive+aware (5 elementos)       -> 0 NaT, ordenação
+     por instante correta, epochs preservados                      PASS
+  Extra: downstream (_temporal_analysis + generate_quality_report) OK.  PASS
+RESULTADO: 9/9 PASS, 0 FAIL.
+
+================================================================================
+16. ANTI-MASCARAMENTO
+================================================================================
+Auditoria dos padrões: except:, except Exception:, pass, continue,
+errors="ignore", errors="coerce", pytest.skip, pytest.xfail, sys.exit,
+return True/False.
+- snapshot_logger.py: única mudança é um .replace("+","_") — NENHUM except/pass/
+  continue novo. O 'pass' existente (L80, except OSError de cleanup do temp)
+  é pré-existente e não mascara erro (é limpeza best-effort após re-raise).
+- institutional_analytics_engine.py: errors="coerce" PERMANECE em 1 ponto
+  (linha da correção) — DOCUMENTADO por quê (resiliência + inválidos->NaT
+  detectáveis; format="mixed"+utc=True garante que válidos NÃO viram NaT).
+  NENHUM errors="ignore", pytest.skip/xfail, sys.exit introduzido.
+  Os 'continue' (L46/52/56/100/106/284) são pré-existentes (skip de arquivos
+  malformados).
+- CONCLUSÃO: NENHUM mascaramento introduzido; erro real não vira PASS.
+
+================================================================================
+17. REGRESSÃO DO CLOCK (DeterministicClock)
+================================================================================
+NÃO alterado DeterministicClock (regra). Executados testes B4-C1:
+  mercury_ai/analysis/tests/test_historical_replay_engine.py::TestDeterministicClockIsolation
+  - test_clock_restored_after_normal_replay        PASS
+  - test_clock_restored_after_exception            PASS
+  - test_double_replay_deterministic_and_clock_restored PASS
+  - test_no_contamination_of_normal_execution      PASS
+  - test_empty_replay_does_not_touch_clock         PASS
+  RESULTADO: 5 passed em 518.92s (0:08:38) | EXIT_CODE=0
+Isolamento NORMAL->REPLAY->NORMAL intacto; clock restaurado (None) após replay.
+
+================================================================================
+18. TESTE DE REPLAY
+================================================================================
+Arquivo: mercury_ai/analysis/tests/test_replay_tzaware_snapshot.py (3 testes).
+  - test_replay_tz_aware_dataset_no_crash  (index Europe/London)  PASS
+      replay executou, métricas geradas, snapshots salvos SEM crash,
+      filenames sem '+', clock restaurado.
+  - test_replay_naive_dataset_no_crash     (index naive)         PASS
+      não-regressão: dataset naive continua funcionando.
+  - test_replay_tz_aware_deterministic     (2 execuções)         PASS
+      pl/hit idênticos entre execuções -> DETERMINISMO mantido.
+  RESULTADO: 3 passed em 289.82s (0:04:49) | EXIT_CODE=0
+O replay executa, produz decisões, produz snapshots, não crasha no salvamento
+com dataset naive E timezone-aware, e mantém determinismo.
+
+================================================================================
+19. TESTE COM DADOS REAIS
+================================================================================
+Probe temporário _probe_b4_c5_replay_real.py (EXIT=0), redirecionando
+snapshots/replay para diretório temporário (sem poluir o repositório):
+  dataset    = data/replay/EURUSD=X/data.parquet
+  candles    = 6077 (slice 150 usados)
+  timezone   = Europe/London (index datetime64[ms, Europe/London])
+  amostra    = 2026-06-29 00:00:00+01:00 .. 2026-07-28 08:20:00+01:00
+  decisões   = 80 métricas; exemplo WAIT, score 62.90
+  snapshots  = 80 salvos SEM crash; 0 filenames com '+'
+               exemplo timestamp salvo: '2026-06-29T05:00:00+01:00'
+               epoch 1782705600.0 (parse OK, sem NaT) -> instante preservado
+  erros      = NENHUM (EXIT=0)
+  clock      = restaurado (None) após replay
+NÃO baixou dados novos; NÃO alterou datasets.
+
+================================================================================
+20. PROVA DE NÃO-REGRESSÃO
+================================================================================
+- DECISIONS/SCORES/RANKING/OUTCOME/P/L: o caminho decisório (pipeline ->
+  resolver -> probability) NÃO foi alterado (git diff: apenas 2 arquivos,
+  filename sanitize + analytics parse, ambos fora do caminho de decisão).
+- REPLAY DETERMINISM: provado por B4-C1 (5) e test_replay_tz_aware_deterministic
+  (2 execuções com pl/hit idênticos).
+- MAIN usa dados VIVOS (Yahoo) e NÃO é determinístico entre execuções:
+  execução 1 -> ETH 72.73 SELL / BTC 65.31 WAIT
+  execução 2 -> 65.39 / 65.21 (ambos WAIT)
+  A diferença vs baseline B4-C4 (BTC 63.20 / ETH 63.18 WAIT) é DRIFT de dados
+  vivos (candles atualizam em tempo real), NÃO efeito da correção. Por isso
+  main não é baseline fixo; a não-regressão válida é o replay determinístico
+  + testes (todos verdes).
+- Esperado: NENHUMA alteração no caminho decisório — confirmado.
+
+================================================================================
+21. MAIN
+================================================================================
+Executado: python -m mercury_ai.main (2x, dados vivos)
+  exit code    = 0 (ambas)
+  ativos       = BTC-USD, ETH-USD
+  decisões     = Run1: ETH SELL / BTC WAIT ; Run2: ambos WAIT (drift vivos)
+  scores       = Run1: 72.73 / 65.31 ; Run2: 65.39 / 65.21
+  ranking      = ordenação por score institucional
+  warnings     = nenhum novo
+  errors       = nenhum
+NÃO aceito somente "exit 0": registradas decisões/scores/re-ranking e o
+caráter não-determinístico entre runs (dados vivos).
+
+================================================================================
+22. TESTES DIRETOS
+================================================================================
+Executados em conjunto (3 arquivos):
+  mercury_ai/database/tests/test_snapshot_logger.py        -> 24 passed
+  mercury_ai/analysis/tests/test_institutional_analytics_engine.py -> 9 passed
+  mercury_ai/analysis/tests/test_replay_tzaware_snapshot.py -> 3 passed
+  TOTAL: 36 passed em 268.16s (0:04:28)
+  passed=36 | failed=0 | errors=0 | skipped=0 | exit code=0
+Regressão B4-C1 (relacionada ao replay): 5 passed em 518.92s (exit 0).
+
+================================================================================
+23. SUÍTE GLOBAL
+================================================================================
+python -m pytest -q: NÃO EXECUTADA — TEMPO.
+  Suíte completa estimada em ~5h (estabelecida em B4-C2/C3/C4). Executar aqui
+  inviabilizaria a entrega. Conforme regra do sprint, NÃO se deriva PASS sem
+  execução real. Executados todos os testes diretos/temporal-relevantes:
+  36 diretos (R1/R2/replay) + 5 B4-C1 = 41 testes, todos PASS.
+  Registro honesto: NÃO EXECUTADA — TEMPO (~5h).
+
+================================================================================
+24. PYCOMPILE
+================================================================================
+python -m py_compile (5 arquivos B4-C5):
+  mercury_ai/database/snapshot_logger.py
+  mercury_ai/analysis/institutional_analytics_engine.py
+  mercury_ai/database/tests/test_snapshot_logger.py
+  mercury_ai/analysis/tests/test_institutional_analytics_engine.py
+  mercury_ai/analysis/tests/test_replay_tzaware_snapshot.py
+  EXIT_CODE = 0
+
+================================================================================
+25. GIT DIFF
+================================================================================
+git status --short:
+  M  mercury_ai/analysis/institutional_analytics_engine.py
+  M  mercury_ai/database/snapshot_logger.py
+  ?? mercury_ai/analysis/tests/test_institutional_analytics_engine.py (novo)
+  ?? mercury_ai/database/tests/test_snapshot_logger.py (novo)
+  ?? mercury_ai/analysis/tests/test_replay_tzaware_snapshot.py (novo)
+  (probes temporários removidos na limpeza — seção 27)
+git diff --stat: 2 arquivos de produção, 19 inserções, 1 deleção.
+git diff --name-only:
+  mercury_ai/analysis/institutional_analytics_engine.py
+  mercury_ai/database/snapshot_logger.py
+SOMENTE arquivos do escopo B4-C5 (2 produção + 3 novos testes). Nenhum outro
+arquivo alterado. (Artefatos de snapshot criados por testes são untracked em
+mercury_ai/database/snapshots/ e serão limpos; data/replay_results é
+gitignored por 'data/' no .gitignore.)
+
+================================================================================
+26. PROVA DE MINIMALIDADE
+================================================================================
+ARQUIVO                                   | FUNÇÃO                  | LINHAS | MOTIVO                                    | ACHADO
+------------------------------------------|-------------------------|--------|-------------------------------------------|--------
+snapshot_logger.py                         | _sanitize_filename_component | +6 | aceitar offset ISO 8601 '+' sem enfraquecer whitelist | R1 (B4-C4 F1/F2)
+institutional_analytics_engine.py          | _load_data              | +13/-1 | parsing misto naive+aware preserva instante; inválidos->NaT | R2 (B4-C4 F5)
+database/tests/test_snapshot_logger.py     | (novo, 24 testes)       | 150    | cobre R1 (A-E, instante, segurança, B4-C4) | R1
+analysis/tests/test_institutional_analytics_engine.py | (novo, 9 testes) | 165 | cobre R2 (8 casos + downstream)           | R2
+analysis/tests/test_replay_tzaware_snapshot.py | (novo, 3 testes)     | 130    | prova end-to-end replay tz-aware sem crash | R1 end-to-end
+NENHUMA alteração sem justificativa. Nenhum arquivo fora do escopo.
+
+================================================================================
+27. LIMPEZA
+================================================================================
+Removidos:
+  - _probe_b4_c5_repro.py (reprodução R1/R2) — removido.
+  - _probe_b4_c5_replay_real.py (replay dados reais) — removido.
+  - Snapshots temporários untracked gerados por testes/main
+    (CLK-*, TEST-*, TZ-*, NAIVE-*, BTC-USD_*, ETH-USD_* etc. em
+    mercury_ai/database/snapshots/) — removidos via Remove-Item dirigido,
+    NÃO git clean indiscriminado; os 272 snapshots TRACKED preservados.
+  - data/replay_results (gerados por testes) é gitignored ('data/') — não
+    aparece no git; não exige limpeza para o git.
+git status --short final: SOMENTE os arquivos B4-C5 (2 modificados + 3 novos).
+
+================================================================================
+28. PENDÊNCIAS
+================================================================================
+P1 (observação, pré-existente): list_snapshots ordena por filename (wall-clock).
+  Entre offsets, ordenação por string pode não ser perfeitamente cronológica.
+  O instante autoritativo está no JSON. Sem impacto funcional; não endereçado
+  (fora do escopo; normalização global de timezone proibida).
+P2 (pré-existente, fora do escopo B4-C5): performance_analytics faz
+  datetime.fromisoformat(data['timestamp']) + replace(tzinfo=df.index.tz).
+  Se timestamp aware e df.index.tz diferente, reetiqueta (B4-C4 classificou
+  OK nos 2 caminhos reais). Não alterado (P/L fora do escopo).
+P3: Suíte global ~5h NÃO executada (documentado honestamente, seção 23).
+P4: Contrato temporal (naive UTC canônico; replay herda tz do dataset) ainda
+  não documentado formalmente — recomendação para bloco de doc futuro.
+
+================================================================================
+29. VEREDITO
+================================================================================
+VEREDITO: B4-C5 — APROVADO
+
+Critérios (seção 27 do sprint):
+[x] R1 reproduzido antes        -> ValueError '+01:00'/'+00:00' (seção 4)
+[x] R1 corrigido                -> save OK para naive+aware (seção 7)
+[x] timestamp válido não causa crash -> 24 testes R1 PASS (seção 8)
+[x] instante preservado         -> epoch_before == epoch_after (seção 9)
+[x] snapshots existentes compatíveis -> naive filename inalterado; consumidores
+    leem do JSON (seção 10)
+[x] R2 reproduzido antes        -> aware -> NaT em série mista (seção 11)
+[x] timestamps válidos não viram NaT -> format="mixed"+utc=True (seções 14/15)
+[x] inválidos continuam tratados corretamente -> NaT detectável (seção 15)
+[x] nenhum mascaramento introduzido -> anti-masking audit (seção 16)
+[x] B4-C1 continua passando     -> 5 passed (seção 17)
+[x] replay continua determinístico -> 3 tests incl. determinismo (seção 18)
+[x] main passa                 -> exit 0, decisões registradas (seção 21)
+[x] testes diretos passam      -> 36 passed (seção 22)
+[x] pycompile passa            -> EXIT=0 (seção 24)
+[x] diff limitado ao escopo    -> 2 produção + 3 testes (seções 25/26)
+
+TODOS os critérios atendidos:
+- snapshot NÃO pode mais quebrar (R1 corrigido, inclusive em dados reais
+  Europe/London, seção 19);
+- timestamp válido NÃO é mais perdido (R2 corrigido);
+- replay NÃO mudou (B4-C1 + determinismo);
+- decisão/P/L/outcome NÃO mudaram (caminho decisório intocado);
+- determinismo NÃO quebrou;
+- nenhum erro mascarado.
+
+REGRA DE PARADA respeitada: NÃO iniciado B4-C6. NÃO iniciado B5. NÃO feita
+normalização global de timezone. NÃO alterado DeterministicClock. NÃO alterada
+estratégia. NÃO alterado P/L.
+
+ENTREGÁVEIS (regra de parada):
+1. Relatório .......... AUDIT_V1/12_FORENSE_B4_C5_SNAPSHOT_ANALYTICS_FIX.txt (este)
+2. Resumo ............. seção 29 + mensagem de entrega
+3. Evidências ......... probes (gerados e REMOVIDOS — seção 27)
+4. Testes ............. 36 diretos + 5 B4-C1 = 41 PASS
+5. Exit codes ......... main=0 | pycompile=0 | testes diretos=0 | B4-C1=0
+6. Arquivos modificados: snapshot_logger.py (+6), institutional_analytics_engine.py (+13/-1)
+7. Git diff ............ 19 inserções / 1 deleção (2 arquivos) + 3 novos testes
+8. Pendências .......... seção 28
+9. Veredito ............ APROVADO
+================================================================================

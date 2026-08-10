@@ -1,0 +1,10 @@
+{
+    "audit_id": "81f6f4096a07cc92af7ecc69eaaff6dfdcd255099ca8bacc169c284f26619ba7",
+    "decision": "SELL",
+    "confidence": 0.40285566287071384,
+    "mae": -0.016103195685224822,
+    "mfe": -0.030918001309841486,
+    "pl": -0.15848237771648233,
+    "hit": false,
+    "timestamp": "2026-08-10T00:00:905"
+}

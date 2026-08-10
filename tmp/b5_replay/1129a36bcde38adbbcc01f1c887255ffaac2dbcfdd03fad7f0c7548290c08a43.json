@@ -1,0 +1,10 @@
+{
+    "audit_id": "1129a36bcde38adbbcc01f1c887255ffaac2dbcfdd03fad7f0c7548290c08a43",
+    "decision": "WAIT",
+    "confidence": 0.8190409170708612,
+    "mae": 0.0614723501762556,
+    "mfe": -0.00992237585659439,
+    "pl": -0.07147421629106288,
+    "hit": true,
+    "timestamp": "2026-08-10T00:00:794"
+}

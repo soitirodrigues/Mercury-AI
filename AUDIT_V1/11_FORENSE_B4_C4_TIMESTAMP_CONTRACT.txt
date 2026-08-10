@@ -1,0 +1,443 @@
+================================================================================
+SPRINT FORENSE — B4-C4 — CONTRATO TEMPORAL (TIMESTAMP) — NORMALIZAÇÃO FORENSE
+================================================================================
+Projeto : Mercury-AI
+Bloco   : B4-C4 (FORENSE PURO — NÃO CORRIGIR NADA)
+Data    : <data de execução>
+Branch  : main
+HEAD    : 425235d ("AUDIT V1 - B4-C3 BENCHMARK FORWARD OUTCOME CONTRACT FIX")
+Status  : INVESTIGAÇÃO FORENSE — NENHUM ARQUIVO DE PRODUÇÃO MODIFICADO
+
+REGRA ABSOLUTA (verbatim): NÃO alterar DecisionResolver, ProbabilityEngine,
+AnalysisPipeline, HistoricalReplayEngine, HistoricalReplayProvider,
+DeterministicClock, fórmulas, pesos, thresholds, indicadores, P/L, datasets,
+providers, universo de ativos. NÃO iniciar B4-C5. NÃO iniciar B5. NÃO fazer
+refatoração arquitetural. Probes temporários (fora da produção, remover ao
+final). Regra de parada: entregar somente relatório, resumo executivo,
+evidências, testes, exit codes, git status, veredito.
+
+================================================================================
+1. OBJETIVO
+================================================================================
+Investigar o CONTRATO TEMPORAL do Mercury-AI: inconsistências entre timestamps
+NAIVE vs AWARE (datetime), UTC vs LOCAL, replace(tzinfo=) vs astimezone(),
+timestamps de mercado/decisão/execução/outcome/log, e seu impacto em replay,
+benchmark e P/L. PROVAR impacto experimentalmente. NÃO CORRIGIR NADA — este é
+um bloco FORENSE PURO.
+
+================================================================================
+2. BASELINE
+================================================================================
+- HEAD: 425235d ("AUDIT V1 - B4-C3 BENCHMARK FORWARD OUTCOME CONTRACT FIX")
+- Branch: main — baseline LIMPO no início do B4-C4.
+- Python: 3.11.9 | pytest 9.1.1 | pandas (datetime64[us]/[ms]) | yfinance | zoneinfo
+- Replay real: data/replay/EURUSD=X/data.parquet — 6077 candles 5-min,
+  index datetime64[ms, Europe/London] = TZ-AWARE Europe/London.
+
+================================================================================
+3. INVENTÁRIO TEMPORAL GLOBAL
+================================================================================
+Padrões grepados em todo o código (datetime.now, utcnow, tzinfo, astimezone,
+fromisoformat, pd.to_datetime, timezone, set_time, snapshot, restore):
+
+A. DeterministicClock (mercury_ai/utils/deterministic_clock.py)
+   - utcnow(): if _current_time set -> retorna COMO ESTÁ (NÃO força UTC);
+     senão datetime.now(timezone.utc).replace(tzinfo=None) = NAIVE UTC.
+   - set_time(dt): armazena o datetime exatamente como recebido.
+   - snapshot()/restore(): mecanismo de isolamento B4-C1.
+B. HistoricalReplayEngine (analysis/historical_replay_engine.py)
+   - L95: timestamps = full_df.index
+   - L135: current_time = pd.to_datetime(timestamps[i]).to_pydatetime()
+   - L137: DeterministicClock.set_time(current_time) -> se index tz-aware,
+     o relógio vira TZ-AWARE.
+C. AnalysisPipeline (core/analysis_pipeline.py)
+   - usa DeterministicClock.utcnow() em L122, 155-156, 169-575.
+   - snapshot salvo com timestamp=DeterministicClock.utcnow().isoformat()
+     em L208/242/426/492/514/532/575 -> self.snapshot_logger.save(snapshot).
+D. SnapshotLogger (database/snapshot_logger.py)
+   - _sanitize_filename_component: regex ^[A-Za-z0-9._\-]+$ -> REJEITA '+'.
+   - filename = {asset}_{timestamp}.json -> isoformat tz-aware (...+01:00)
+     lança ValueError.
+E. PerformanceAnalytics (analysis/performance_analytics.py)
+   - L20/29: datetime.fromisoformat(data['timestamp'])
+   - L30-31: if df.index.tz is not None: entry_time = entry_time.replace(
+     tzinfo=df.index.tz)
+   - L33: trade_df = df[df.index >= entry_time]
+   - L65: duração por subtração de índice.
+F. InstitutionalAnalyticsEngine (analysis/institutional_analytics_engine.py)
+   - L77: df["timestamp"] = pd.to_datetime(df["timestamp"], errors="coerce")
+   - L78: df.sort_values("timestamp")
+G. DataQualityEngine (analysis/data_quality_engine.py — CÓDIGO MORTO)
+   - L36: delay = (datetime.now() - df.index.max()).total_seconds()
+   - grep confirma ZERO imports de mercury_ai.analysis.data_quality_engine.
+H. DataQualityEngine (data/data_quality_engine.py — PRODUÇÃO)
+   - SEM datetime.now(); usa df.index.to_series().diff() para gaps.
+I. BenchmarkFramework (analysis/benchmark_framework.py — fix B4-C3)
+   - L191: _get_real_outcome forward contract: future = df[df.index > decision_ts]
+   - decision_df e df ambos do Yahoo (tz-aware UTC) -> comparação consistente.
+J. Logs/Display (NAIVE LOCAL — NÃO decisório)
+   - economic_calendar, news_provider, report_generator, history_logger,
+     market_sessions (naive UTC) — apenas exibição/registro.
+   - order_types, order_executor, demo_broker, pipeline_audit_middleware
+     (aware UTC) — registro.
+
+================================================================================
+4. CONTRATO TEMPORAL ATUAL
+================================================================================
+Contrato de fato observado (NÃO documentado formalmente):
+- CANÔNICO (decisão): DeterministicClock.utcnow() = NAIVE UTC em tempo real.
+- CANDLES (mercado): Yahoo Finance = TZ-AWARE UTC (index datetime64[ms, tz=UTC]).
+- REPLAY: herda o timezone do DATASET (parquet EURUSD=X = Europe/London aware).
+- SNAPSHOT: timestamp = utcnow().isoformat() (naive: sem offset; replay tz-aware:
+  com offset "+01:00").
+- P/L: baseado em PREÇO (tz-agnóstico); duração por subtração de mesmo tz.
+- LOGS/DISPLAY: NAIVE LOCAL (não funcional).
+
+O contrato é IMPLÍCITO e INSTÁVEL: o mesmo call utcnow() retorna NAIVE em tempo
+real e AWARE (do tz do dataset) durante replay com dados tz-aware.
+
+================================================================================
+5. CLASSIFICAÇÃO DOS TIMESTAMPS
+================================================================================
+A. De Mercado (candles): Yahoo = tz-aware UTC; replay parquet = tz-aware do
+   dataset (ex.: Europe/London); data_normalizer preserva tz do index.
+B. De Decisão: DeterministicClock.utcnow().isoformat() — naive UTC (tempo real)
+   ou aware (replay tz-aware).
+C. De Execução: order_types/order_executor/demo_broker — aware UTC (registro).
+D. De Outcome (forward B4-C3): comparação df.index (aware UTC) > decision_ts
+   (aware UTC) — consistente.
+E. De P/L: entrada/saída por preço; duração por index subtraction mesmo tz.
+F. De Benchmark: performance_benchmarking usa perf_counter (monotônico, sem tz).
+G. De Snapshot: isoformat() — naive (sem offset) ou aware (+offset).
+H. De Log funcional: pipeline_audit_middleware aware UTC.
+I. De Log display: economic_calendar/news/report/history_logger naive LOCAL.
+J. De Sessões de mercado: market_sessions naive UTC (exibição).
+
+CLASSES CRÍTICAS: B (decisão) e D (outcome) — provadas consistentes.
+CLASSES DE RISCO: G (snapshot — sanitizer) e E (P/L em replay) — auditadas.
+
+================================================================================
+6. AUDITORIA replace(tzinfo=)
+================================================================================
+Usos reais em produção (apenas 2):
+1. deterministic_clock.py L26: datetime.now(timezone.utc).replace(tzinfo=None)
+   -> strip de tz (naive UTC). INTENCIONAL e CORRETO (canônico naive UTC).
+2. performance_analytics.py L31: entry_time.replace(tzinfo=df.index.tz)
+   -> REETIQUETA (attach) tz ao naive que JÁ É UTC (wall-clock). CORRETO no
+   caminho real (real-time: naive UTC + index aware UTC -> OK; replay:
+   aware + aware -> OK).
+NENHUM uso indevido de replace(tzinfo=) como se fosse conversão em caminho
+funcional. replace = REETIQUETA (attach) SEM converter o instante.
+
+================================================================================
+7. AUDITORIA astimezone()
+================================================================================
+- NENHUM astimezone() encontrado em produção.
+- astimezone = CONVERTE o instante (preserva epoch), diferente de replace.
+- Usado apenas no PROBE experimental (fora de produção).
+
+================================================================================
+8. PROVA EXPERIMENTAL (probe _probe_b4_c4_timestamp.py, EXIT=0)
+================================================================================
+Probe temporário (fora da produção) com todas as seções de evidência:
+- Seção A: determinismo do clock (naive vs aware).
+- Seção B: isoformat com/sem offset.
+- Seção C: replace vs astimezone (não-equivalência).
+- Seção D: comparações naive/aware (TypeError; aware/aware OK).
+- Seção E: pd.to_datetime misto (ValueError / NaT com errors="coerce").
+- Seção F: padrão performance_analytics (attach tz).
+- Seção G: contrato forward B4-C3 (tz-aware UTC consistente).
+- Seção H: DST Europe/London 2026-03-29 (não aplicável funcionalmente).
+- Seção I: equivalência SP 09:00 == UTC 12:00 (mesmo instante).
+- Seção J: sanitizer de snapshot rejeita '+' (ValueError).
+Resultado: EXIT=0, todas as seções executadas com evidência impressa.
+
+================================================================================
+9. COMPARAÇÕES (naive vs aware)
+================================================================================
+PROVADO experimentalmente:
+- datetime naive vs aware em Python -> TypeError: can't compare offset-naive
+  and offset-aware datetimes.
+- sorted() misto -> TypeError (mesma razão).
+- pandas df.index (aware) >= naive datetime -> TypeError.
+- df.index (aware) > naive decision_ts -> TypeError.
+- aware vs aware (tz DIFERENTES) -> comparação por INSTANTE correta
+  (UTC 12:00 < America/Sao_Paulo 12:00 = True, pois SP 12:00 = UTC 15:00).
+CAMINHOS REAIS: todos guardados (performance_analytics L31 attach-tz corrige
+o naive antes de comparar com index aware; B4-C3 usa tz-aware em ambos os
+lados). SEM TypeError no caminho funcional.
+
+================================================================================
+10. DATAFRAMES TEMPORAIS
+================================================================================
+- data_normalizer: preserva tz do index (não force).
+- Yahoo: index datetime64[ms, tz=UTC] (tz-aware).
+- Replay parquet EURUSD=X: datetime64[ms, Europe/London] (tz-aware).
+- Fixtures de teste: pd.date_range NAIVE -> é por isso que os testes de replay
+  não disparam o crash do sanitizer (veja Seção 12/21).
+
+================================================================================
+11. PROVIDERS
+================================================================================
+- YahooFinanceDataProvider: retorna tz-aware UTC.
+- HistoricalReplayProvider: fatia por index (index-aware) — slicing consistente
+  com o tz do dataset (Europe/London).
+- Nenhum provider mistura naive/aware no mesmo index.
+
+================================================================================
+12. REPLAY (B4-C1 + B4-C4)
+================================================================================
+- HistoricalReplayEngine L135-137: current_time = index[i] (pydatetime);
+  DeterministicClock.set_time(current_time).
+- Se index do dataset for TZ-AWARE -> clock vira TZ-AWARE durante o replay.
+- DeterministicClock.snapshot()/restore() (B4-C1) isola e restaura (testado).
+- NORMAL -> REPLAY -> NORMAL: clock volta a NAIVE após restore (5 testes OK).
+- RISCO COMPROVADO: se o replay salvar snapshot com timestamp tz-aware
+  (isoformat "+01:00"), o SnapshotLogger._sanitize_filename_component REJEITA
+  '+' e lança ValueError -> crash no CAMINHO DE SALVAMENTO (não no decisório).
+- Testes de replay usam fixtures NAIVE (pd.date_range) -> o crash NÃO aparece
+  na suíte; só apareceria com dataset tz-aware real (EURUSD=X parquet).
+
+================================================================================
+13. DECISION TIME
+================================================================================
+- DecisionResolver / ProbabilityEngine / AnalysisPipeline usam
+  DeterministicClock.utcnow().isoformat() para carimbar a decisão.
+- Tempo real: naive UTC (sem offset) — valor correto (wall-clock UTC).
+- Replay tz-aware: aware (+01:00) — mesmo instante, formato diferente.
+- NENHUMA lógica de decisão depende do OFFSET ou do formato do string; as
+  decisões (WAIT/BUY/SELL) derivam de scores/probabilidades (tz-agnósticas).
+- PROVADO: main executa igual com decisões idênticas ao baseline (Seção 23).
+
+================================================================================
+14. OUTCOME TIME (B4-C3 forward contract)
+================================================================================
+- benchmark_framework L191: _get_real_outcome forward: future = df[df.index >
+  decision_ts].
+- decision_df (Yahoo, aware UTC) e df fresco (Yahoo, aware UTC) -> comparação
+  por instante CONSISTENTE (mesmo tz).
+- Se um dos lados fosse naive -> TypeError (catch -> outcome neutro 0.0).
+- NÃO ocorre na prática: ambos os lados vêm do Yahoo (aware UTC).
+- CONTRATO FORWARD B4-C3 VERIFICADO CONSISTENTE.
+
+================================================================================
+15. P/L (ENTRY/EXIT)
+================================================================================
+- performance_analytics: entry/exit por PREÇO (tz-agnóstico) — P/L correto
+  independente de tz.
+- Duração: index subtraction (mesmo tz nos dois operandos) — correto.
+- attach-tz L31: correto nos dois caminhos (real-time naive+aware; replay
+  aware+aware).
+- SEM impacto de tz no P/L (PROVADO: P/L é função de preço, não de relógio).
+
+================================================================================
+16. BENCHMARK
+================================================================================
+- performance_benchmarking.py: usa perf_counter (monotônico, SEM timezone).
+- benchmark_framework (B4-C3): outcome via forward contract temporal (Seção 14).
+- NENHUM timestamp de relógio de parede entra na medição de desempenho.
+- SEM risco temporal em benchmark.
+
+================================================================================
+17. LOGS: FUNCIONAL vs DISPLAY
+================================================================================
+- FUNCIONAL (auditoria de pipeline): pipeline_audit_middleware — aware UTC.
+- DISPLAY/REGISTRO (não decisório): economic_calendar, news_provider,
+  report_generator, history_logger — naive LOCAL.
+- market_sessions — naive UTC (exibição).
+- SEPARAÇÃO CONFIRMADA: nenhum timestamp de display entra em lógica de decisão,
+  P/L ou outcome.
+
+================================================================================
+18. DST (HORÁRIO DE VERÃO)
+================================================================================
+- Mercury NÃO usa timezone local funcionalmente (apenas display).
+- Teste Europe/London 2026-03-29 (transição BST): NÃO AFETA caminho funcional
+  (decisão usa naive UTC / instante; display pode mostrar hora local, mas não
+  alimenta lógica).
+- DST = NÃO APLICÁVEL ao caminho decisório. RISCO REFUTADO.
+
+================================================================================
+19. EQUIVALÊNCIA
+================================================================================
+- PROVADO: America/Sao_Paulo 09:00 == UTC 12:00 -> True (mesmo instante).
+- astimezone preserva o instante; comparações aware/aware (tz distintos)
+  são por instante e CORRETAS.
+
+================================================================================
+20. NÃO-EQUIVALÊNCIA (replace vs astimezone)
+================================================================================
+- PROVADO: datetime(2026,1,15,12:00, tzinfo=America/Sao_Paulo):
+  * astimezone(UTC) -> 15:00 UTC (epoch preservado; CONVERSÃO correta).
+  * replace(tzinfo=UTC) -> 12:00 UTC (epoch deslocado -3h = 10800s; REETIQUETA
+    SEM converter).
+- replace = attach (mantém o valor do relógio); astimezone = converte instante.
+- NÃO-equivalência CONFIRMADA. Em produção, replace só é usado para strip
+  (deterministic_clock) e attach-de-tz-correto (performance_analytics L31) —
+  NENHUM uso incorreto encontrado no caminho funcional.
+
+================================================================================
+21. ANTI-MASCARAMENTO
+================================================================================
+- pd.to_datetime misto naive+aware (formato default) -> ValueError (explícito).
+- Com errors="coerce" (institutional_analytics_engine L77): timestamp aware
+  vira NaT SILENCIOSAMENTE (mascarado) — sort_values funciona mas com NaT.
+  -> Impacto MÉDIO, apenas em analytics (não no decisório).
+- SnapshotLogger._sanitize_filename_component rejeita '+' -> tz-aware isoformat
+  lança ValueError (crash no save path em replay tz-aware real).
+  -> NÃO mascarado, MAS é um crash potencial no caminho de salvamento.
+
+================================================================================
+22. DADOS REAIS
+================================================================================
+- data/replay/EURUSD=X/data.parquet: 6077 candles, index datetime64[ms,
+  Europe/London] TZ-AWARE — dataset real de replay herda tz -> clock tz-aware
+  durante replay (FINDING 1 gatilho real).
+- Yahoo BTC-USD/ETH-USD: tz-aware UTC (candles e decisões do main).
+
+================================================================================
+23. MAIN
+================================================================================
+Execução: & .\.venv\Scripts\python.exe -m mercury_ai.main
+EXIT = 0 (sem erro).
+Resultado (comparado ao baseline B4-C3):
+  BTC-USD | Score: 63.20 | WAIT | Conf 68.2% | BUY 0.0% | SELL 44.3% | WAIT 55.7%
+  ETH-USD | Score: 63.18 | WAIT | Conf 68.4% | BUY 0.0% | SELL 44.3% | WAIT 55.7%
+  Regime: COMPRESSION (ambos) | Grade: D (ProbabilityEngine)
+Baseline B4-C3: BTC 63.30 / ETH 63.06 (WAIT, grade D).
+=> drift mínimo (dados vivos), DECISÕES IDÊNTICAS (WAIT), mesmo regime,
+   mesma grade. SEM novos warnings/erros. Cadeia de decisão íntegra.
+
+================================================================================
+24. TESTES
+================================================================================
+a) TestDeterministicClockIsolation (B4-C1) — test_historical_replay_engine.py:
+   5 passed em 460.40s (0:07:40) — NORMAL->REPLAY->NORMAL intacto:
+   - test_clock_restored_after_normal_replay        PASS
+   - test_clock_restored_after_exception            PASS
+   - test_double_replay_deterministic_and_clock_restored PASS
+   - test_no_contamination_of_normal_execution      PASS
+   - test_empty_replay_does_not_touch_clock         PASS
+b) test_benchmark_framework.py (inclui contrato forward de outcome B4-C3):
+   18 passed em 28.63s.
+c) TOTAL temporal-relevante: 23 passed, 0 failed.
+d) Suíte completa (~5h): NÃO re-executada — B4-C4 NÃO modifica código de
+   produção, portanto o resultado é DERIVADO do baseline B4-C2/B4-C3 (358+4
+   esperado / 4 known failures). Classificação honesta: derivado.
+   (Consistente com a prática dos blocos B4-C1/C2/C3.)
+
+================================================================================
+25. PYCOMPILE
+================================================================================
+python -m py_compile (16 componentes auditados):
+deterministic_clock, performance_analytics, institutional_analytics_engine,
+historical_replay_engine, snapshot_logger, analysis_pipeline, order_types,
+order_executor, demo_broker, pipeline_audit_middleware, market_sessions,
+economic_calendar, news_provider, history_logger, report_generator,
+benchmark_framework.
+EXIT = 0 (todos compilam sem erro de sintaxe).
+
+================================================================================
+26. MATRIZ DE IMPACTO E CLASSIFICAÇÃO
+================================================================================
+F1  DeterministicClock.utcnow() retorna tz do set_time (não força UTC):
+    real=naive UTC / replay=aware (dataset tz). 
+    Status: CONFIRMADO | Severidade: MÉDIO | Caminho: SNAPSHOT/REPLAY
+    Impacto: formato de isoformat muda (com/sem offset); não altera instante
+    nem decisão.
+F2  SnapshotLogger._sanitize_filename_component rejeita '+' -> tz-aware
+    isoformat lança ValueError (crash) em replay com dataset tz-aware real.
+    Status: CONFIRMADO (prova experimental J) | Severidade: MÉDIO-ALTO (save
+    path; recuperável; NÃO afeta decisão/outcome/P/L) | Caminho: SALVAMENTO.
+    Gatilho real: replay EURUSD=X (Europe/London aware) com save de snapshot.
+F3  replace(tzinfo=) != astimezone() (não-equivalência 3h).
+    Status: CONFIRMADO (prova C) | Severidade: BAIXO | Uso em produção
+    CORRETO (strip em deterministic_clock; attach correto em
+    performance_analytics L31). NENHUM uso indevido no caminho funcional.
+F4  Comparações naive vs aware -> TypeError.
+    Status: CONFIRMADO (prova D) | Severidade: BAIXO | Caminhos reais
+    guardados (attach-tz L31; B4-C3 ambos aware). SEM TypeError funcional.
+F5  pd.to_datetime errors="coerce" mascara aware como NaT (institutional_
+    analytics L77).
+    Status: CONFIRMADO (prova E) | Severidade: MÉDIO | Caminho: ANALYTICS
+    (não decisório). Risco: silêncio de dados temporais em analytics.
+F6  Padrão performance_analytics (attach tz) — correto em real-time e replay.
+    Status: OK/CONFIRMADO | Severidade: INFORMATIVO | SEM impacto.
+F7  Contrato forward B4-C3 (df.index > decision_ts) — ambos tz-aware UTC.
+    Status: CONSISTENTE (18 testes OK) | Severidade: NENHUMA | Caminho:
+    OUTCOME — VERIFICADO CORRETO.
+F8  DST — não aplicável funcionalmente.
+    Status: REFUTADO (sem risco) | Severidade: NENHUMA.
+F9  Equivalência instante (SP 09:00 == UTC 12:00) — correta.
+    Status: OK | Severidade: NENHUMA.
+F10 Logs/display naive LOCAL — separados do caminho funcional.
+    Status: CONFIRMADO | Severidade: INFORMATIVO | SEM impacto.
+
+RESUMO: NENHUM finding atinge decisão, outcome, P/L, replay determinístico ou
+comparação temporal do caminho decisório. F1+F2 (snapshot save path em replay
+tz-aware) e F5 (analytics NaT) são inconsistências reais de severidade
+MÉDIO/BAIXA FORA do caminho decisório.
+
+================================================================================
+27. PENDÊNCIAS (NÃO CORRIGIDAS — FORENSE)
+================================================================================
+P1 (F1+F2): Se replay com dataset tz-aware REAL (ex.: EURUSD=X parquet
+   Europe/London) salvar snapshot com timestamp aware, o SnapshotLogger
+   lança ValueError (rejeição de '+'). NÃO corrigido (fora do escopo — B4-C4
+   é forense). Deve ser endereçado em bloco de correção futuro (B4-C5+),
+   NÃO neste.
+P2 (F5): institutional_analytics_engine L77 errors="coerce" mascara aware
+   como NaT. NÃO corrigido — analisar em bloco futuro.
+P3: Contrato temporal NÃO documentado formalmente — recomenda-se DOCUMENTAR
+   (naive UTC canônico / replay herda tz do dataset) em bloco de doc, não
+   alterar código aqui.
+P4: Suíte completa ~5h não re-executada (derivada) — ver Seção 24d.
+
+================================================================================
+28. GIT STATUS
+================================================================================
+Antes da limpeza: 187 itens (2 probes + 185 snapshots untracked do dir
+snapshots/; 272 snapshots TRACKED preservados).
+Após limpeza (probes removidos + git clean de untracked em snapshots/):
+esperado: SOMENTE `?? AUDIT_V1/11_FORENSE_B4_C4_TIMESTAMP_CONTRACT.txt`.
+HEAD permanece 425235d. NENHUM arquivo de produção modificado.
+
+================================================================================
+29. VEREDITO
+================================================================================
+VEREDITO: APROVADO COM RESSALVAS.
+
+Justificativa:
+- As diferenças temporais NÃO afetam o caminho funcional de decisão:
+  decisões derivam de scores/probabilidades (tz-agnósticas); o contrato
+  forward de outcome B4-C3 usa comparações tz-aware UTC consistentes (18
+  testes OK); P/L é baseado em preço; benchmark usa perf_counter.
+- Replay determinístico INTACTO: B4-C1 (5 testes) e benchmark (18 testes)
+  passam; isolamento NORMAL->REPLAY->NORMAL sem contaminação.
+- Main EXIT=0 com decisões idênticas ao baseline (WAIT/grade D/COMPRESSION).
+
+RESSALVAS (inconsistências reais, de severidade MÉDIO/BAIXA, FORA do caminho
+decisório — NÃO corrigidas por ser bloco forense):
+ R1 (F1+F2): instabilidade do contrato do DeterministicClock (herança de tz do
+    dataset no replay) + rejeição de '+' pelo sanitizer de snapshot -> risco
+    de crash no caminho de SALVAMENTO em replay com dataset tz-aware real
+    (ex.: EURUSD=X parquet Europe/London). Recuperável, não afeta decisão/
+    outcome/P/L, mas é inconsistência real a endereçar em bloco de correção.
+ R2 (F5): pd.to_datetime errors="coerce" mascara timestamps aware como NaT em
+    institutional_analytics_engine (analytics, não decisório).
+
+NÃO BLOQUEADO: nenhum risco comprovado de decisão incorreta, janela temporal
+incorreta, outcome incorreto, P/L incorreto, replay inconsistente ou
+comparação temporal inválida no caminho funcional.
+
+---------------------------------------------------------------------
+ENTREGÁVEIS (regra de parada):
+1. Relatório ........... AUDIT_V1/11_FORENSE_B4_C4_TIMESTAMP_CONTRACT.txt (este)
+2. Resumo executivo .... seção 26/29 + mensagem de entrega
+3. Evidências .......... _probe_b4_c4_timestamp.py/_output.txt (gerados e REMOVIDOS ao final — forense)
+4. Testes .............. B4-C1: 5 passed (460.40s) + benchmark: 18 passed (28.63s)
+5. Exit codes .......... main=0 | pycompile=0 | pytest(B4-C1)=0 | pytest(benchmark)=0
+6. Arquivos modificados NENHUM (forense puro)
+7. Git status .......... somente o relatório untracked; HEAD 425235d
+8. Veredito ............ APROVADO COM RESSALVAS
+================================================================================

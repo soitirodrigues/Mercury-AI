@@ -1,0 +1,10 @@
+{
+    "audit_id": "2af7045696d158bf7d7818c9672d376b9868a0fa0ae88bff002e6bc8f30397b0",
+    "decision": "BUY",
+    "confidence": 0.75,
+    "mae": 0.1,
+    "mfe": 0.2,
+    "pl": 1.5,
+    "hit": true,
+    "timestamp": "2025-01-01T00:00:00Z"
+}

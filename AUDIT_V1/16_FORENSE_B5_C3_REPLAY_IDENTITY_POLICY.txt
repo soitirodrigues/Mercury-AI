@@ -1,0 +1,117 @@
+1. Objetivo
+Investigar a arquitetura de identidade do replay (`audit_id`, armazenamento de métricas e pairing de snapshot) sem aplicar alterações de produção.
+
+2. Baseline de Estado
+- Repositório limpo: `git status --short` não reporta mudanças.
+- Produção intacta: nenhuma modificação em `mercury_ai/` foi realizada durante esta análise.
+
+3. Identidade atual de replay
+- `audit_id` é gerado em `mercury_ai/analysis/decision_result_builder.py`.
+- Valor atual: SHA-256 hexadecimal de 64 caracteres.
+- Componentes do cálculo presentes hoje:
+  - `resolved_bundle.asset`
+  - `resolved_bundle.timeframe`
+  - `resolved_bundle.timestamp`
+  - `len(resolved_bundle.evidences)`
+  - `evidence_hash` derivado do conteúdo de cada evidência:
+    - `engine_name`
+    - `evidence_name`
+    - `direction`
+    - `strength`
+    - `confidence`
+    - `weight`
+    - `quality_score`
+    - `context_score`
+    - `timeframe`
+    - `timestamp`
+    - `metadata`
+    - `description`
+
+4. Armazenamento atual
+- `mercury_ai/database/replay_storage.py` persiste métricas em `data/replay_results/{audit_id}.json`.
+- Cada arquivo contém:
+  - `audit_id`
+  - `decision`
+  - `confidence`
+  - `mae`
+  - `mfe`
+  - `pl`
+  - `hit`
+  - `timestamp`
+- O armazenamento é atômico e thread-safe, mas a chave de nome de arquivo é apenas `audit_id`.
+- Se o mesmo `audit_id` for salvo duas vezes, o arquivo anterior é sobrescrito (warning registrado).
+
+5. Snapshot storage
+- `mercury_ai/database/snapshot_logger.py` salva `DecisionSnapshot` em `mercury_ai/database/snapshots`.
+- O nome de arquivo é `safe_asset_safe_timestamp.json`; não contém `audit_id`.
+- O snapshot preserva `session_id`, `evidence_bundle`, `decision_result.audit_id`, `audit_events`, `version_metadata`, `context`.
+
+6. Pairing snapshot ↔ replay
+- `InstitutionalAnalyticsEngine._load_data()` faz merge entre:
+  - snapshots carregados de `mercury_ai/database/snapshots`
+  - métricas carregadas de `data/replay_results`
+- A conexão é feita apenas por `audit_id`.
+- Se múltiplos snapshots tiverem o mesmo `audit_id`, TODOS são associados à mesma métrica.
+- Se um `audit_id` de replay estiver ausente, o snapshot é ignorado.
+
+7. Consumidores de `audit_id`
+- `mercury_ai/analysis/institutional_analytics_engine.py`
+  - usa `audit_id` para buscar `replay_metrics[audit_id]`.
+- `mercury_ai/analysis/learning_engine.py`
+  - constrói um mapa `audit_to_context[audit_id] = snapshot`
+  - associa métricas de replay por `m["audit_id"]`
+- `mercury_ai/analysis/institutional_memory_engine.py`
+  - armazena resultados e outcomes por `audit_id`
+- `mercury_ai/analysis/integrity_checker.py`
+  - valida formato de `audit_id` como 64 hex caracteres
+- `mercury_ai/brain/scanner.py`
+  - diferencia estados termináveis (`DATA_QUALITY_FAIL`, `PIPELINE_ERROR`, etc.) de WAIT legítimo com `audit_id` hash de 64 chars
+- `mercury_ai/core/analysis_pipeline.py`
+  - salva snapshots contendo `decision_result.audit_id`
+  - gera estados terminais com valores reservados de `audit_id`
+- `mercury_ai/analysis/historical_replay_engine.py`
+  - grava métricas com `snapshot.decision_result.audit_id`
+
+8. Observações de arquitetura
+- `audit_id` é usado como identidade de execução e como chave de persistência.
+- Replay metrics e snapshots são armazenados em dois subsistemas diferentes, mas emparelhados apenas via `audit_id`.
+- Há uma lacuna arquitetural entre:
+  - `DecisionSnapshot` (identidade completa do replay, incluindo `session_id` e evidências)
+  - `ReplayStorage` (chave leve baseada em `audit_id`)
+- `session_id` é preservado em snapshots, mas não aparece no arquivo de replay metrics.
+- `DecisionSnapshotLogger` não expõe `audit_id` no nome de arquivo, logo há duas formas distintas de identificação em arquivos.
+
+9. Riscos de arquitetura identificados
+- Se `audit_id` colidir ou for sobrescrito, snapshots diferentes podem ser associados à mesma métrica.
+- `InstitutionalAnalyticsEngine` e `LearningEngine` podem perder integridade de join quando `audit_id` não for verdadeiramente único.
+- `audit_id` é atualmente um identificador fixo de conteúdo; não há `run_id`/`execution_id` para distinguir múltiplas execuções idempotentes do mesmo conteúdo.
+- Somente `len(evidences)` já foi identificado como insuficiente antes do patch; o cálculo atual é mais robusto, mas ainda não garante que a chave reflita todos os fatores de contexto de execução.
+- Há possibilidade de `snapshot` e `replay metrics` pertencerem a execuções distintas se o `audit_id` for reconstruído de forma inconsistente entre pipeline e laterais.
+
+10. Campo de contrato ideal para B5-C3
+Recomenda-se definir políticas claras de identidade de replay:
+- `audit_id`: identificador de decisão analítica derivado do conteúdo e do estado da execução.
+- `snapshot_id` ou `replay_id`: identificador único e estável para cada snapshot+metrics emparelhados.
+- `session_id`: já presente em `DecisionSnapshot`; deve ser usado para agrupar múltiplas decisões dentro da mesma sessão.
+- `run_id` / `execution_id`: deve ser considerado para distinguir execuções independentes da mesma configuração ou do mesmo dataset.
+- metadata obrigatória em `data/replay_results/{audit_id}.json`:
+  - `audit_id`
+  - `session_id`
+  - `asset`
+  - `timeframe`
+  - `timestamp`
+  - `version_metadata`
+  - `run_id` ou `execution_id` se aplicável
+  - `snapshot_filename` ou `snapshot_id`
+
+11. Recomendações iniciais
+- Documentar explicitamente no contrato de arquitetura que `audit_id` é a única chave de junção atual.
+- Definir se `audit_id` deve permanecer único globalmente ou apenas dentro do escopo de uma sessão/execução.
+- Avaliar a adoção de um segundo identificador (`snapshot_id` / `replay_id`) para separar "identidade do replay" da "hash de auditoria".
+- Garantir que os consumidores de analytics possam detectar duplicatas e colisões de `audit_id`.
+- Considerar enriquecimento de `ReplayStorage` com metadados de contexto do snapshot, não apenas métricas.
+
+12. Conclusão preliminar
+- A base atual já leva o `audit_id` a um valor mais fiel ao conteúdo de evidências.
+- Entretanto, o design de B5-C3 permanece incompleto: identidade e persistência ainda estão acopladas de forma frágil.
+- A investigação deve agora focar em formalizar a política de identidade do replay e em avaliar se são necessárias separações adicionais entre `audit_id`, `snapshot_id` e `run_id`.

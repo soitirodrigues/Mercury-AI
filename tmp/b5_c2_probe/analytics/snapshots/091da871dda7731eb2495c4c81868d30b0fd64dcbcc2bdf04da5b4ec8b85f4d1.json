@@ -1,0 +1,1 @@
+{"asset": "ASSET-B", "timestamp": "2025-01-01T00:00:00Z", "decision_result": {"audit_id": "091da871dda7731eb2495c4c81868d30b0fd64dcbcc2bdf04da5b4ec8b85f4d1", "decision": "SELL", "score": -5.0, "confidence": 0.4}, "evidence_bundle": {"evidences": [{"evidence_name": "EV-B", "engine_name": "ENG", "direction": "BEARISH"}]}}

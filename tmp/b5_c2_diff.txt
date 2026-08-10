@@ -1,0 +1,348 @@
+﻿diff --git a/mercury_ai/analysis/decision_result_builder.py b/mercury_ai/analysis/decision_result_builder.py
+index 7906a83d..abbb301c 100644
+--- a/mercury_ai/analysis/decision_result_builder.py
++++ b/mercury_ai/analysis/decision_result_builder.py
+@@ -53,15 +53,41 @@ class DecisionResultBuilder:
+         # AUDIT
+         # =====================================================
+ 
++        evidence_signatures = []
++        for evidence in resolved_bundle.evidences:
++            metadata_items = []
++            if evidence.metadata:
++                metadata_items = [f"{k}={v}" for k, v in sorted(evidence.metadata.items())]
++            metadata_str = "|".join(metadata_items)
++            evidence_signatures.append(
++                "|".join([
++                    evidence.engine_name,
++                    evidence.evidence_name,
++                    evidence.direction,
++                    f"{evidence.strength:.6f}",
++                    f"{evidence.confidence:.6f}",
++                    f"{evidence.weight:.6f}",
++                    f"{evidence.quality_score:.6f}",
++                    f"{evidence.context_score:.6f}",
++                    evidence.timeframe,
++                    evidence.timestamp,
++                    metadata_str,
++                    evidence.description,
++                ])
++            )
++
++        evidence_input = "||".join(sorted(evidence_signatures))
++        evidence_hash = hashlib.sha256(evidence_input.encode()).hexdigest()
++
+         audit_input = (
+-            f"{resolved_bundle.asset}"
+-            f"{resolved_bundle.timeframe}"
+-            f"{len(resolved_bundle.evidences)}"
++            f"{resolved_bundle.asset}|"
++            f"{resolved_bundle.timeframe}|"
++            f"{resolved_bundle.timestamp}|"
++            f"{len(resolved_bundle.evidences)}|"
++            f"{evidence_hash}"
+         )
+ 
+-        audit_id = hashlib.sha256(
+-            audit_input.encode()
+-        ).hexdigest()
++        audit_id = hashlib.sha256(audit_input.encode()).hexdigest()
+ 
+         # =====================================================
+         # VERSION METADATA
+diff --git a/mercury_ai/analysis/tests/test_decision_result_builder.py b/mercury_ai/analysis/tests/test_decision_result_builder.py
+new file mode 100644
+index 00000000..610281b7
+--- /dev/null
++++ b/mercury_ai/analysis/tests/test_decision_result_builder.py
+@@ -0,0 +1,185 @@
++import hashlib
++from mercury_ai.analysis.decision_result_builder import DecisionResultBuilder
++from mercury_ai.models.confidence_result import ConfidenceResult
++from mercury_ai.models.confluence_result import ConfluenceResult
++from mercury_ai.models.evidence_ranking import EvidenceRankingResult
++from mercury_ai.models.market_evidence_bundle import MarketEvidenceBundle
++from mercury_ai.models.trading_explanation import TradingExplanation
++from mercury_ai.models.evidence import Evidence
++from mercury_ai.models.direction import AnalysisDirection
++
++
++class DummyDecisionResultBuilder(DecisionResultBuilder):
++    def build(
++        self,
++        *,
++        final_decision: str,
++        grade: str,
++        calibrated_confidence: float,
++        confluence_result: ConfluenceResult,
++        risk_score: float,
++        institutional_score: float,
++        trade_quality_score: float,
++        ranked_result: EvidenceRankingResult,
++        buy_prob: float,
++        sell_prob: float,
++        wait_prob: float,
++        expected_risk: float,
++        expected_reward: float,
++        expected_drawdown: float,
++        explanation: TradingExplanation,
++        resolved_bundle: MarketEvidenceBundle,
++        final_warnings: list[str],
++        confidence_result: ConfidenceResult,
++        explainability=None,
++    ):
++        return super().build(
++            final_decision=final_decision,
++            grade=grade,
++            calibrated_confidence=calibrated_confidence,
++            confluence_result=confluence_result,
++            risk_score=risk_score,
++            institutional_score=institutional_score,
++            trade_quality_score=trade_quality_score,
++            ranked_result=ranked_result,
++            buy_prob=buy_prob,
++            sell_prob=sell_prob,
++            wait_prob=wait_prob,
++            expected_risk=expected_risk,
++            expected_reward=expected_reward,
++            expected_drawdown=expected_drawdown,
++            explanation=explanation,
++            resolved_bundle=resolved_bundle,
++            final_warnings=final_warnings,
++            confidence_result=confidence_result,
++            explainability=explainability,
++        )
++
++
++def make_evidence(engine_name: str, evidence_name: str, timestamp: str):
++    return Evidence(
++        engine_name=engine_name,
++        evidence_name=evidence_name,
++        direction="BULLISH",
++        strength=50.0,
++        confidence=50.0,
++        description="desc",
++        weight=1.0,
++        timestamp=timestamp,
++    )
++
++
++def test_audit_id_changes_for_different_evidence_content():
++    builder = DecisionResultBuilder()
++    common_bundle = MarketEvidenceBundle(
++        evidences=(make_evidence("E1", "EV1", "2025-01-01T00:00:00Z"),),
++        timestamp="2025-01-01T00:00:00Z",
++        asset="TEST",
++        timeframe="1H",
++    )
++
++    other_bundle = MarketEvidenceBundle(
++        evidences=(make_evidence("E1", "EV2", "2025-01-01T00:00:00Z"),),
++        timestamp="2025-01-01T00:00:00Z",
++        asset="TEST",
++        timeframe="1H",
++    )
++
++    explanation = TradingExplanation(
++        exec_summary="s",
++        decision_rationale="r",
++        market_context="",
++        trend_context="",
++        liquidity_context="",
++        structure_context="",
++        momentum_context="",
++        volume_context="",
++        smart_money_context="",
++        confluence_context="",
++        risk_assessment="",
++        confidence_rationale="",
++        warnings=(),
++        conflicts=(),
++    )
++    confluence_result = ConfluenceResult(
++        buy_score=100.0,
++        sell_score=0.0,
++        neutral_score=0.0,
++        agreement_percentage=100.0,
++        conflicting_signals=False,
++        independent_confirmations=0,
++        weighted_score=100.0,
++        confidence=100.0,
++        dominant_direction=AnalysisDirection.BUY,
++        evidences=(),
++        warnings=(),
++    )
++    ranked_result = EvidenceRankingResult(
++        ranked_evidences=(),
++        contribution_percentage={},
++        strongest_evidence=make_evidence("E1", "EV1", "2025-01-01T00:00:00Z"),
++        weakest_evidence=make_evidence("E1", "EV1", "2025-01-01T00:00:00Z"),
++        total_weight=1.0,
++        bullish_weight=1.0,
++        bearish_weight=0.0,
++        neutral_weight=0.0,
++        bullish_score=1.0,
++        bearish_score=0.0,
++        neutral_score=0.0,
++    )
++    confidence_result = ConfidenceResult(
++        confidence_score=80.0,
++        final_confidence=80.0,
++        confidence_grade="A",
++        is_high=True,
++        average_quality=100.0,
++        consensus_score=100.0,
++        market_score=100.0,
++        confirmation_count=1,
++    )
++
++    result_a = builder.build(
++        final_decision="BUY",
++        grade="A",
++        calibrated_confidence=80.0,
++        confluence_result=confluence_result,
++        risk_score=0.1,
++        institutional_score=1.0,
++        trade_quality_score=1.0,
++        ranked_result=ranked_result,
++        buy_prob=0.7,
++        sell_prob=0.2,
++        wait_prob=0.1,
++        expected_risk=0.1,
++        expected_reward=0.2,
++        expected_drawdown=0.05,
++        explanation=explanation,
++        resolved_bundle=common_bundle,
++        final_warnings=[],
++        confidence_result=confidence_result,
++    )
++
++    result_b = builder.build(
++        final_decision="BUY",
++        grade="A",
++        calibrated_confidence=80.0,
++        confluence_result=confluence_result,
++        risk_score=0.1,
++        institutional_score=1.0,
++        trade_quality_score=1.0,
++        ranked_result=ranked_result,
++        buy_prob=0.7,
++        sell_prob=0.2,
++        wait_prob=0.1,
++        expected_risk=0.1,
++        expected_reward=0.2,
++        expected_drawdown=0.05,
++        explanation=explanation,
++        resolved_bundle=other_bundle,
++        final_warnings=[],
++        confidence_result=confidence_result,
++    )
++
++    assert result_a.audit_id != result_b.audit_id
++    assert len(result_a.audit_id) == 64
++    assert len(result_b.audit_id) == 64
+diff --git a/mercury_ai/database/replay_storage.py b/mercury_ai/database/replay_storage.py
+index c8f4ec31..38100f0e 100644
+--- a/mercury_ai/database/replay_storage.py
++++ b/mercury_ai/database/replay_storage.py
+@@ -1,11 +1,14 @@
+ from dataclasses import dataclass
+ from typing import Any
++import logging
+ import os
+ import re
+ import threading
+ 
+ from mercury_ai.utils.atomic_io import atomic_json_write
+ 
++logger = logging.getLogger(__name__)
++
+ # Regex whitelist para nomes de arquivo: letras, n├║meros, ponto, h├¡fen, underscore.
+ # Rejeita path traversal (../, ..\, /, \) e caracteres especiais.
+ _SAFE_REPLAY_RE = re.compile(r"^[A-Za-z0-9._\-]+$")
+@@ -52,6 +55,7 @@ class ReplayStorage:
+ 
+     def save(self, audit_id: str, snapshot: Any, metrics: ReplayMetrics):
+         safe_audit_id = _sanitize_audit_id(audit_id)
++        filepath = f"{self.output_dir}/{safe_audit_id}.json"
+         data = {
+             "audit_id": audit_id,
+             "decision": snapshot.decision_result.decision,
+@@ -60,11 +64,16 @@ class ReplayStorage:
+             "mfe": metrics.mfe,
+             "pl": metrics.pl,
+             "hit": metrics.hit,
+-            "timestamp": snapshot.timestamp
++            "timestamp": snapshot.timestamp,
+         }
+         with self._lock:
++            if os.path.exists(filepath):
++                logger.warning(
++                    "ReplayStorage.save: overwriting existing replay_result for audit_id=%s",
++                    safe_audit_id,
++                )
+             atomic_json_write(
+-                f"{self.output_dir}/{safe_audit_id}.json",
++                filepath,
+                 data,
+                 indent=4,
+             )
+diff --git a/mercury_ai/database/tests/test_replay_storage.py b/mercury_ai/database/tests/test_replay_storage.py
+new file mode 100644
+index 00000000..013f9866
+--- /dev/null
++++ b/mercury_ai/database/tests/test_replay_storage.py
+@@ -0,0 +1,53 @@
++import json
++from pathlib import Path
++from unittest.mock import MagicMock
++
++import pytest
++
++from mercury_ai.database.replay_storage import ReplayStorage, ReplayMetrics
++from mercury_ai.models.evidence import Evidence
++from mercury_ai.models.market_evidence_bundle import MarketEvidenceBundle
++from mercury_ai.models.trading_explanation import TradingExplanation
++from mercury_ai.models.confluence_result import ConfluenceResult
++from mercury_ai.models.evidence_ranking import EvidenceRankingResult
++from mercury_ai.models.confidence_result import ConfidenceResult
++from mercury_ai.models.direction import AnalysisDirection
++
++
++def _make_snapshot(audit_id: str):
++    snapshot = MagicMock()
++    snapshot.decision_result.decision = "BUY"
++    snapshot.decision_result.confidence = 0.75
++    snapshot.timestamp = "2025-01-01T00:00:00Z"
++    snapshot.decision_result.audit_id = audit_id
++    return snapshot
++
++
++def test_replay_storage_overwrite_logs_warning(tmp_path, caplog):
++    storage = ReplayStorage(output_dir=str(tmp_path))
++    audit_id = "TEST-AUDIT"
++    metrics = ReplayMetrics(mae=0.1, mfe=0.2, pl=1.0, hit=True)
++    snapshot = _make_snapshot(audit_id)
++
++    storage.save(audit_id, snapshot, metrics)
++    storage.save(audit_id, snapshot, metrics)
++
++    assert any(
++        "overwriting existing replay_result" in record.message
++        for record in caplog.records
++    )
++
++
++def test_replay_storage_file_written(tmp_path):
++    storage = ReplayStorage(output_dir=str(tmp_path))
++    audit_id = "TEST-AUDIT-2"
++    metrics = ReplayMetrics(mae=0.1, mfe=0.2, pl=1.0, hit=False)
++    snapshot = _make_snapshot(audit_id)
++
++    storage.save(audit_id, snapshot, metrics)
++    path = tmp_path / f"{audit_id}.json"
++    assert path.exists()
++
++    data = json.loads(path.read_text(encoding="utf-8"))
++    assert data["audit_id"] == audit_id
++    assert data["hit"] is False

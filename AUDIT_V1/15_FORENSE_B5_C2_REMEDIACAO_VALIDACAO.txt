@@ -1,0 +1,42 @@
+1. Objetivo
+Investigar e documentar a validação da remediação B5-C2 para o sistema de ReplayStorage e audit_id.
+
+2. Contexto
+- Código corrigido em:
+  - `mercury_ai/analysis/decision_result_builder.py`
+  - `mercury_ai/database/replay_storage.py`
+- Testes adicionados/atualizados em:
+  - `mercury_ai/analysis/tests/test_decision_result_builder.py`
+  - `mercury_ai/database/tests/test_replay_storage.py`
+- Probe de validação: `_probe_b5_replay_storage.py`
+
+3. Escopo da remediação
+- `DecisionResultBuilder.build()` passou a incluir hash determinístico do conteúdo das evidências e `resolved_bundle.timestamp` no cálculo do `audit_id`.
+- `ReplayStorage.save()` passou a emitir warning quando um arquivo com o mesmo `audit_id` já existe e está prestes a ser sobrescrito.
+
+4. Validação de integridade
+- `tmp/b5_c2_validation.py` executado com sucesso e confirmou:
+  - colisão controlada não ocorre para evidências diferentes quando o `audit_id` inclui o hash de conteúdo
+  - `same_replay` produz `audit_id` idêntico para bundle idêntico
+  - `timestamp_diff` produz `audit_id` diferente quando o timestamp difere
+  - `analytics` valida com `InstitutionalAnalyticsEngine` e `report_status: success`
+- Resultado do probe dedicado `_probe_b5_replay_storage.py` (antes da correção ou para prova de conceito de comportamento anterior):
+  - `summary_100.json`: total=100, unique=75, duplicates=25
+  - `summary_500.json`: total=500, unique=168, duplicates=332
+  - `summary_1000.json`: total=1000, unique=175, duplicates=825
+
+5. Resultados dos testes unitários
+- `python -m pytest mercury_ai/database/tests/test_replay_storage.py mercury_ai/analysis/tests/test_decision_result_builder.py`
+- Resultado: `3 passed`
+
+6. Conclusões
+- A implementação original de `audit_id` era insuficiente para garantir unicidade entre execuções distintas, pois dependia apenas de `asset+timeframe+len(evidences)`.
+- A remediação aplicada melhora a identidade do `audit_id` ao incluir conteúdo das evidências e timestamp, tornando a chave de replay mais robusta contra colisões causadas por conteúdo diferente.
+- A adição de warning em `ReplayStorage.save()` aumenta a visibilidade de possíveis sobrescritas, mas não elimina a necessidade de um modelo de identificação de replay ainda mais forte (por exemplo, UUID de execução ou hash completo do snapshot) em caso de requisitos de auditabilidade máxima.
+
+7. Recomendações finais
+- Considerar adição futura de `run_id` ou `execution_id` no `audit_id` para distinguir execuções idempotentes da mesma análise.
+- Avaliar se o comportamento de overwrite deve ser convertido em falha ou versionamento em vez de warning, dependendo do risco aceitável para consumidores.
+
+Assinatura: Auditor automático — B5-C2 Remediação e validação
+Data: 2026-08-10

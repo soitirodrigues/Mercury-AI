@@ -1,0 +1,1 @@
+{"asset": "ASSET-A", "timestamp": "2025-01-01T00:00:00Z", "decision_result": {"audit_id": "dfb5dfb0dcd0c49e53b2b3dde521d9c3599dbee56e139b9227bd374e1579e003", "decision": "BUY", "score": 10.0, "confidence": 0.8}, "evidence_bundle": {"evidences": [{"evidence_name": "EV-A", "engine_name": "ENG", "direction": "BULLISH"}]}}
