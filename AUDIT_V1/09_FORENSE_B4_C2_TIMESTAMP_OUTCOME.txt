@@ -475,7 +475,21 @@ RESULTADO:
                      test_replay_cache, test_benchmark_framework)
                     -> janela de outcome do replay, determinismo, clock
                     isolation e benchmark: TODOS passando.
-  - Suite completa: [EXECUTANDO EM BACKGROUND — resultado será anexado ao final]
+  - Suite completa: 348 PASSED, 4 FAILED em 18957.53s (5:15:57).
+      FAILED tests/test_auto_health.py::test_auto_health_checks
+      FAILED tests/test_confidence_calibration_auditor.py::test_confidence_calibration_auditor
+      FAILED tests/test_institutional_report_generator.py::test_institutional_report_generator
+      FAILED tests/test_robustness.py::test_pipeline_robustness
+  - Interpretação: resultado IDÊNTICO ao baseline B4-C1 (348 passed /
+    4 failed — AUDIT_V1/08_B4_C1:359). As 4 falhas são PRÉ-EXISTENTES e
+    documentadas nos blocos B2 (AUDIT_V1/05:276-283), B3 (AUDIT_V1/06:325),
+    B4 (AUDIT_V1/07:441) e B4-C1 (AUDIT_V1/08:359-368, 502, 532-533):
+    test_auto_health (imports de módulos inexistentes), 
+    test_confidence_calibration_auditor (escala 0-1 vs 0-100), 
+    test_institutional_report_generator (flaky), test_robustness
+    (detecção de problema de qualidade de dados). NENHUMA destas 4 falhas
+    está relacionada a timestamp/outcome/overlap — e a contagem idêntica
+    ao baseline prova que o B4-C2 NÃO introduziu regressão.
 
 ================================================================================
 SEÇÃO 22 — MAIN.PY (EXECUÇÃO VIVA)
@@ -637,7 +651,9 @@ Ressalvas (motivo de não ser APROVADO total):
 Exit codes:
   - pycompile  : 0
   - main.py    : 0
-  - testes     : VER SEÇÃO 21 (a completar)
+  - testes relacionados : 66 PASSED (0 falhas)
+  - suite completa      : 348 passed, 4 failed (falhas PRÉ-EXISTENTES,
+                          idênticas ao baseline B4-C1 — sem regressão)
 
 Git status e limpeza: ver seção final pós-execução (probe removido; artefatos
 de teste limpos; árvore com apenas este relatório + restaurações necessárias).
