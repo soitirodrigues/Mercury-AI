@@ -1,0 +1,594 @@
+================================================================================
+MERCURY AI V1 — AUDIT FORENSE — SPRINT FORENSE 1 — BLOCO B4
+DATA QUALITY & TEMPORAL INTEGRITY
+================================================================================
+Bloco: INVESTIGAÇÃO (sem correção de produção)
+Data: 2026-08-09
+HEAD (git): 7e92dc3
+Arquivo de evidência temporária: _probe_b4_antileak.py (removido ao final)
+================================================================================
+
+--------------------------------------------------------------------------------
+0. OBJETIVO
+--------------------------------------------------------------------------------
+Investigar a integridade temporal da cadeia de dados do Mercury-AI: vazamento
+de dados futuros (look-ahead bias), vazamento temporal, integridade de
+timestamps, lacunas (gaps), duplicação, ordenação, timezone, contaminação de
+cache e determinismo do replay/backtest.
+
+REGRAS DA MISSÃO (verbatim):
+- ESTE BLOCO É SOMENTE INVESTIGAÇÃO FORENSE. NÃO CORRIGIR CÓDIGO.
+- NÃO ALTERAR FÓRMULAS. NÃO ALTERAR PESOS. NÃO ALTERAR TESTES.
+- NÃO ALTERAR DATASETS. NÃO ALTERAR CONFIGURAÇÕES DE PRODUÇÃO. NÃO INICIAR B5.
+- Se encontrar um problema, primeiro PROVAR e documentar.
+- NÃO confiar em relatórios anteriores. A fonte de verdade é o código atual.
+- NÃO usar "APROVADO" apenas porque pytest passou.
+- Veredito: B4 — APROVADO | B4 — BLOQUEADO | B4 — PENDENTE DE EVIDÊNCIA.
+
+--------------------------------------------------------------------------------
+1. GIT BASELINE
+--------------------------------------------------------------------------------
+Executado antes de qualquer investigação:
+  git status --short  -> ZERO arquivos de produção modificados (somente
+                         untracked: _probe_b4_antileak.py e snapshots
+                         SYN_2025-01-01 gerados pelo probe de evidência).
+  git diff --stat     -> vazio (nenhum arquivo rastreado alterado).
+  git diff --name-only-> vazio.
+  git log -1          -> 7e92dc3 (HEAD -> main).
+
+RESULTADO: baseline LIMPO. Nenhum arquivo de produção modificado.
+
+--------------------------------------------------------------------------------
+2. MAPEAR TODA A CADEIA DE DADOS
+--------------------------------------------------------------------------------
+Fluxo completo (mapeado por leitura direta dos arquivos):
+
+  DATA SOURCE
+    |  (a) YahooFinanceProvider  -> dados LIVE 5m/15m/1h/4h (tz-aware)
+    |  (b) HistoricalReplayProvider -> fatia determinística do DataFrame
+    |  (c) providers futuros (future_*_provider) -> stubs de feature-detection
+    v
+  PROVIDER (mercury_ai/data/market_data.py)
+    |  MarketDataService._normalize_dataframe -> DataNormalizer
+    v
+  NORMALIZAÇÃO (mercury_ai/data/data_normalizer.py)
+    |  - duplica colunas lowercase E UPPERCASE (Open/Close/High/Low/Volume)
+    |  - NÃO normaliza timezone do DatetimeIndex
+    v
+  CACHE (camada de serviço)
+    |  - YahooFinanceProvider: cache TTL 60s key=(symbol, interval, period)
+    |  - ReplayCache: key=(symbol, index), LRU maxsize=256
+    v
+  DATA QUALITY (mercury_ai/data/data_quality_engine.py — LIVE)
+    |  - valida vazio/NaN/índice duplicado/negativo/high<low/gap>15min/z-score>5
+    |  - DETERMINÍSTICO (não usa datetime)
+    v
+  REPLAY / BACKTEST
+    |  HistoricalReplayEngine.run_replay:
+    |    start_idx=60; provider.set_index(i); pipeline.analyze(avg_volume,
+    |    avg_body); DeterministicClock.set_time(candle[i]); outcomes futuros
+    |    i+1..i+n_candles; NUNCA chama DeterministicClock.reset().
+    v
+  DECISÃO (AnalysisPipeline -> 14 engines -> DecisionResultBuilder)
+    |  - telemetry exec_time = utcnow()-start (congela em 0.0 durante replay)
+    |  - snapshot_logger.save(timestamp=DeterministicClock.utcnow())
+    |  - runtime_report_{symbol}_{utcnow}.json (side-effect)
+    v
+  SAÍDA (logs/histórico/cache/reports)
+    |  - 3 convenções de timestamp distintas (ver seção 12)
+    |  - benchmark_framework usa LIVE Yahoo para outcome (ver seção 9)
+
+--------------------------------------------------------------------------------
+3. TIMESTAMP FORENSICS
+--------------------------------------------------------------------------------
+Investigado: tipo dos timestamps, ordenação, duplicação, lacunas, futuro,
+monotonicidade.
+
+Fatos confirmados no código:
+- HistoricalReplayProvider.get_data() -> df.iloc[:i+1] — índices sempre do
+  próprio DataFrame (naive DatetimeIndex no replay; tz-aware no Yahoo).
+- DeterministicClock.utcnow() -> retorna _current_time se setado, senão
+  datetime.now(timezone.utc).replace(tzinfo=None) (naive UTC).
+- Replay: timestamps derivados do índice do DataFrame de entrada (nenhum
+  timestamp inventado).
+- Pipeline: snapshot timestamps e runtime_report usam DeterministicClock.
+
+CONVENÇÕES DE TIMESTAMP NO CÓDIGO (3 conflitantes + 1 legada):
+  (a) DeterministicClock.utcnow()  -> naive UTC   -> caminho de DECISÃO
+      (pipeline, benchmark, health_checker, evidence_engine,
+       notification_center, security_center, session_manager, models,
+       operations/demo_manager)
+  (b) datetime.now()               -> naive LOCAL -> history_logger.py:36,
+       report_generator.py:16, economic_calendar.py:8, news_provider.py:8,
+       data_quality_engine.py:36 (módulo MORTO)
+  (c) datetime.now(timezone.utc)   -> tz-aware UTC -> order_executor.py:39,
+       demo_broker.py:20, order_types.py:84, pipeline_audit_middleware.py:22,42
+  (d) datetime.utcnow()            -> naive UTC (deprecado) ->
+       sessions/market_sessions.py:9,27 (módulo NÃO usado pelo pipeline)
+
+CLASSIFICAÇÃO: MÉDIO — CONFIRMADO (inconsistência entre camadas; ver seção 12).
+
+--------------------------------------------------------------------------------
+4. LOOK-AHEAD BIAS (auditoria estática)
+--------------------------------------------------------------------------------
+Auditados todos os caminhos que poderiam usar dados futuros:
+
+1) Replay — slice INCLUSIVO 0..i (estruturalmente seguro):
+   historical_replay_provider.py:22  get_data() -> df.iloc[:i+1]
+   historical_replay_engine.py:133   provider.set_index(i)
+   => a decisão em i vê SOMENTE candles 0..i. Nenhum candle futuro alcança o
+      pipeline. PROVA ESTRUTURAL (não empírica).
+
+2) Outcome do replay — separação correta (ver seção 8/9):
+   entry_price = close[i]; future_prices = close[i+1..i+n].
+
+3) Indicadores — backward-only:
+   indicator_engine (ema9/21/50 via ewm, rolling padrão) — sem look-ahead.
+
+4) Swing/Suporte-Resistência — conservadores (janela centrada truncada na
+   fatia; negativo shift -> NaN -> excluído):
+   swing_engine.py:170-240, support_resistance_analyzer.py:40-100.
+
+5) Momentum — janelas iloc[-20:], iloc[-40:-20] — backward.
+
+6) Benchmark_framework._get_real_outcome — usa df.iloc[-2] vs df.iloc[-1] de
+   dados LIVE Yahoo (NÃO a fatia do replay). Ver seção 9 (falha de validade
+   do outcome, NÃO look-ahead na decisão).
+
+RESULTADO: NENHUM look-ahead na cadeia de decisão do replay. Uma falha de
+validade de outcome no benchmark_framework (seção 9) e contaminação de relógio
+(seção 7), ambas documentadas.
+
+--------------------------------------------------------------------------------
+5. TEMPORAL LEAK TEST (empírico)
+--------------------------------------------------------------------------------
+Método: probe _probe_b4_antileak.py — TESTE A. Executa o mesmo loop do replay
+sobre o dataframe base (120 candles, determinístico, seed=7) e sobre o mesmo
+dataframe com 30 candles FUTUROS anexados. Compara as decisões nos índices
+comuns. Se a decisão em i mudar com a adição de candles futuros, há leak.
+
+Evidência estrutural (conclusiva):
+  get_data() retorna df.iloc[:i+1] — a adição de candles além de i é
+  IRRELEVANTE para a decisão em i, pois o pipeline jamais recebe esses candles.
+
+Evidência empírica (probe, TESTE A — executado 2026-08-09/10):
+  [TESTE A] futuro normal: indices comuns=55 diffs=0
+  RESULTADO A: PASS (sem look-ahead)
+
+  -> CONFIRMADO: adicionar 30 candles futuros NORMAIS NÃO altera nenhuma
+     decisão (diffs=0 em 55/55 índices comuns).
+
+--------------------------------------------------------------------------------
+6. EXTREME LEAK TEST (empírico)
+--------------------------------------------------------------------------------
+Método: probe — TESTES B/C/D/E/F.
+  B: 3 variantes extremas (spike +1000%, crash -99%, volume x1000).
+  C: somente volume futuro (x5000).
+  D: somente preço futuro extremo (+1000%).
+  E: +50 candles futuros.
+  F: remover os últimos 10 candles (verificar decisão em i < 110).
+
+Evidência estrutural (conclusiva): mesma da seção 5 — a fatia 0..i isola a
+decisão de qualquer conteúdo futuro, inclusive choques extremos.
+
+Evidência empírica (probe — executado 2026-08-09/10):
+  [TESTE B] spike_p1000: diffs=0  -> PASS
+  [TESTE B] crash_99  : diffs=0  -> PASS
+  [TESTE B] vol_x1000 : diffs=0  -> PASS
+  [TESTE C] so volume futuro (x5000): diffs=0 -> PASS
+  [TESTE D] so preco futuro extremo (+1000%): diffs=0 -> PASS
+  [TESTE E] +50 candles futuros: diffs=0 -> PASS
+  [TESTE F] remover ultimos 10 candles: indices comuns=45 diffs=0 -> PASS
+
+  -> CONFIRMADO: choques extremos de preço (+1000%, -99%), volume (x1000/
+     x5000), +50 candles e remoção de candles NÃO alteram nenhuma decisão.
+     Ausência total de vazamento temporal.
+
+--------------------------------------------------------------------------------
+7. REPLAY DETERMINISM / CONTAMINAÇÃO DO RELÓGIO
+--------------------------------------------------------------------------------
+Fato estrutural CONFIRMADO (prova de código):
+- DeterministicClock (deterministic_clock.py): _current_time global; set_time
+  (linha 16); utcnow() retorna _current_time se setado (linha 23-24); reset()
+  (linha 28) existe e zera _current_time.
+- run_replay (historical_replay_engine.py) chama set_time(candle[i]) a cada
+  iteração (linha 130) e NUNCA chama reset() ao final.
+- grep por "reset()" em todo mercury_ai/ -> ÚNICAS ocorrências em
+  _probe_b4_antileak.py (o próprio probe). ZERO chamadas em produção.
+
+CONSEQUÊNCIA: após um run_replay, DeterministicClock.utcnow() no MESMO
+processo retorna o timestamp do ÚLTIMO candle (congelado no passado), não o
+relógio real.
+
+Impactos confirmados:
+- Telemetria do pipeline: execution_time = (utcnow()-start) -> 0.0 durante
+  todo o replay (relógio congelado) => dados de performance DEGENERADOS.
+- Timestamps de snapshots/runtime_report dentro do replay são o timestamp do
+  candle (correto por design de determinismo), mas qualquer análise LIVE
+  subsequente no mesmo processo herdaria o timestamp congelado.
+- SessionEngine.analyze() usa DeterministicClock.utcnow().hour -> horário
+  congelado após replay no mesmo processo.
+
+Classificação: ALTO — CONFIRMADO. Não causa look-ahead (congela o tempo,
+não o avança); porém corrompe telemetria e pode corromper timestamps de
+operações pós-replay no mesmo processo (escala para CRÍTICO se produção rodar
+análise live no mesmo processo após um replay).
+
+Evidência empírica (probe, TESTE 7 — executado 2026-08-09/10):
+  [CLOCK] antes do replay      : 2026-08-10 00:57:51.900724  (relógio real)
+  [CLOCK] apos replay (utcnow) : 2025-01-01 09:30:00          (CONGELADO)
+  [CLOCK] ultimo candle        : 2025-01-01 09:55:00
+  [CLOCK] congelado == ultimo candle? False   (label "ok" — ver nota abaixo)
+
+  INTERPRETAÇÃO CORRETA (nota metodológica):
+  O label "ok" do probe é um FALSO NEGATIVO causado por erro de referência
+  NA FERRAMENTA de evidência: o probe comparou "after" (09:30) contra o
+  ÚLTIMO CANDLE (index 119 = 09:55), mas o relógio congela na ÚLTIMA DECISÃO
+  (index 114 = 09:30, pois range(60, len-n_candles) termina em 114). Os
+  valores impressos são a PROVA da contaminação: antes do replay o relógio
+  real era 2026-08-10 00:57:51; após o replay, DeterministicClock.utcnow()
+  retornou 2025-01-01 09:30:00 — regrediu ~1,6 ano no passado.
+
+  -> CONFIRMADO: DeterministicClock fica CONGELADO na última decisão após
+     run_replay (nunca resetado em produção — grep reset() só no probe).
+     A contaminação é REAL; o label do probe estava errado, não o achado.
+
+--------------------------------------------------------------------------------
+8. OFF-BY-ONE (janelas / iloc / fatias)
+--------------------------------------------------------------------------------
+Auditoria de deslocamento de 1 (off-by-one) em todos os cortes temporais:
+
+- Replay: range(start_idx=60, len(full_df)-n_candles). última iteração i =
+  len-n_candles-1; future_prices = close[i+1:i+n+1] exatamente n candles
+  ESTRITAMENTE posteriores à decisão. entry_price = close[i]. CORRETO.
+- provider.get_data() fatia inclusiva 0..i (usa <=, não <): a decisão em i vê
+  o candle i (fechado). CORRETO para decisão de candle fechado.
+- avg_volume/avg_body: rolling(20) com slice iloc[:i+1] -> usa até o candle i.
+  CORRETO.
+- Indicadores ewm/rolling: deslocamento backward padrão. CORRETO.
+- benchmark_framework: iloc[-2] (current) vs iloc[-1] (next) -> 1 candle de
+  sobreposição com a decisão (ver seção 9). FALHA DE VALIDADE, não leak.
+
+RESULTADO: sem off-by-one na cadeia de decisão do replay. Falha pontual no
+benchmark_framework (seção 9).
+
+--------------------------------------------------------------------------------
+9. OUTCOME OF BACKTEST (validade do resultado)
+--------------------------------------------------------------------------------
+Dois caminhos distintos de outcome:
+
+(a) Replay (HistoricalReplayEngine) — CORRETO:
+    entry = close[i]; retorno futuro = close[i+1..i+n_candles]. Mede o
+    resultado ESTRITAMENTE após a decisão. Separação temporal correta.
+
+(b) Benchmark (benchmark_framework._get_real_outcome, linhas 186-187):
+    close_current = df.iloc[-2]["Close"]; close_next = df.iloc[-1]["Close"]
+    obtidos de dados LIVE Yahoo (NÃO da fatia do replay). O "outcome" mede o
+    candle que a decisão JÁ VIU como atual (iloc[-2]), não o retorno futuro.
+
+CLASSIFICAÇÃO: MÉDIO — CONFIRMADO. Não é look-ahead na decisão; é falha de
+VALIDADE do outcome do benchmark (o retorno medido é 1 candle atrasado em
+relação ao horizonte da decisão). Os resultados do benchmark não são uma
+medida fiel de performance forward.
+
+--------------------------------------------------------------------------------
+10. DATA QUALITY (validação OHLC)
+--------------------------------------------------------------------------------
+DataQualityEngine LIVE (mercury_ai/data/data_quality_engine.py):
+- Determinístico (não usa datetime).
+- Valida: vazio, NaN, índice duplicado, valores negativos, high<low,
+  gaps > Timedelta(minutes=15), outliers z-score > 5.
+- Espera colunas lowercase open/high/low/close.
+DataNormalizer duplica colunas lowercase E UPPERCASE -> ambos os padrões
+funcionam (sem KeyError cross-módulo em runtime).
+
+Fato: a checagem de gap>15min é CONSERVADORA (marcaria aberturas overnight/
+fim-de-semana como anomalia em dados intradiários). NÃO é leak — apenas
+sinaliza lacunas legítimas de mercado.
+
+DataQualityEngine DEAD (mercury_ai/analysis/data_quality_engine.py):
+- NÃO importado pelo core. Usa datetime.now() (linha 36) -> NÃO-determinístico,
+  porém código morto (sem impacto em produção).
+
+RESULTADO: sem problema de qualidade que cause vazamento. Inconsistência de
+convenção de colunas é mitigada pelo normalizador (INFORMATIVO).
+
+--------------------------------------------------------------------------------
+11. MARKET GAPS
+--------------------------------------------------------------------------------
+Caminhos que poderiam introduzir gaps espúrios:
+- YahooFinanceProvider: _validate_schema exige >=20 barras, OHLC numérico,
+  sem NaN. Retorna candles como fornecidos pela API (gaps reais de mercado
+  preservados). Sem preenchimento forward/backward.
+- Replay: usa o DataFrame fornecido; gaps só se o dataset de entrada tiver.
+- DataQualityEngine: detecta gap>15min (conservador, ver seção 10).
+
+RESULTADO: sem gap artificial injetado. Gaps de mercado são preservados como
+dados reais (INFORMATIVO).
+
+--------------------------------------------------------------------------------
+12. TIMEZONE
+--------------------------------------------------------------------------------
+CONFIRMADO: 3 convenções de timestamp + 1 legada (detalhadas na seção 3).
+- YahooFinanceProvider: índice tz-aware (America/New_York via yfinance),
+  NÃO normalizado para naive pelo DataNormalizer.
+- Replay: índice naive (date_range sem tz) tipicamente.
+- Camadas de escrita de log/timestamp misturam naive-UTC, naive-LOCAL e
+  tz-aware-UTC.
+
+Impacto: comparar timestamps entre camadas (ex.: decisão naive-UTC vs ordem
+tz-aware-UTC vs histórico naive-LOCAL) produz deslocamentos de fuso ou erros
+de comparação. Não é vazamento, mas corrompe auditoria temporal cross-camada.
+
+CLASSIFICAÇÃO: MÉDIO — CONFIRMADO.
+
+--------------------------------------------------------------------------------
+13. CACHE
+--------------------------------------------------------------------------------
+Dois caches auditados:
+
+(a) YahooFinanceProvider TTL 60s:
+    key=(symbol, interval, period); usa time.monotonic() para TTL.
+    Retorna dado CACHEADO dentro de 60s (STALE por até 60s), mas NUNCA dado
+    futuro. Estaleness é limitado e intencional (rate-limit).
+    CLASSIFICAÇÃO: BAIXO/INFORMATIVO — comportamento seguro (stale, não leak).
+
+(b) ReplayCache (replay_cache.py):
+    key=(symbol, index); LRU maxsize=256. Mesmo (symbol,index) -> mesmo
+    resultado, independente de candles futuros (estruturalmente seguro).
+    CLASSIFICAÇÃO: OK (sem vazamento).
+
+(c) Telemetria cache_total (historical_replay_engine.py:171):
+    cache_total = cache_hits + (stats["misses"] - stats.get("misses_before",0)).
+    "misses_before" NUNCA é setado (sempre 0) -> cache_total superestimado.
+    CLASSIFICAÇÃO: BAIXO — CONFIRMADO (bug de telemetria, já documentado nos
+    relatórios anteriores 01/06_GATE_B1/06_GATE_B2; não afeta decisões).
+
+--------------------------------------------------------------------------------
+14. MULTI-TIMEFRAME (MTF)
+--------------------------------------------------------------------------------
+mtf_engine.py: timeframes = ["M1","M5","M15","H1","H4"] (linha 30);
+cada tf chama market_service.get_data(symbol, interval=interval, period="1mo")
+(linha 49).
+
+SOB REPLAY: HistoricalReplayProvider IGNORA interval/period -> TODOS os 5
+timeframes recebem a MESMA fatia de dados 5min (a mesma janela 0..i). O
+"consenso multi-timeframe" (linha 283 do pipeline) é, portanto, uma
+convergência FORÇADA da mesma série única, não uma leitura genuína de
+múltiplos tempos gráficos.
+
+CLASSIFICAÇÃO: MÉDIO — CONFIRMADO. Não é vazamento (a fatia é 0..i), mas
+degrada a integridade da análise multi-timeframe no replay (consenso falso).
+
+--------------------------------------------------------------------------------
+15. NORMALIZATION / INDICATORS
+--------------------------------------------------------------------------------
+- DataNormalizer: duplica colunas lowercase e UPPERCASE (mitiga o conflito de
+  convenção de colunas entre historical_replay_engine [lowercase] e
+  candlestick_engine/data_quality [Uppercase]).
+  CLASSIFICAÇÃO: MITIGADO (INFORMATIVO — risco de KeyError cross-módulo
+  resolvido pelo normalizador, não por convenção única).
+- IndicatorEngine: ema9/21/50 via ewm (backward), rolling padrão -> sem
+  look-ahead.
+- stress_test_replay.py (script de teste, NÃO produção): alimenta colunas
+  UPPERCASE-only ao run_replay (que lê 'volume'/'close'/'open' lowercase) ->
+  KeyError. CLASSIFICAÇÃO: INFORMATIVO (inconsistência em script, não afeta
+  produção).
+
+RESULTADO: sem vazamento em normalização/indicadores.
+
+--------------------------------------------------------------------------------
+16. ANTI-LEAK TESTS (6 testes — empírico)
+--------------------------------------------------------------------------------
+Probe _probe_b4_antileak.py — mesma mecânica do replay:
+  - coleta decisions (decision, buy, sell, wait, audit_id) por índice,
+    para o dataset base e para datasets com dados futuros alterados.
+  - TESTE A: +30 candles futuros normais.
+  - TESTE B: 3 variantes (spike +1000%, crash -99%, volume x1000).
+  - TESTE C: somente volume futuro (x5000).
+  - TESTE D: somente preço futuro extremo (+1000%).
+  - TESTE E: +50 candles futuros.
+  - TESTE F: remover últimos 10 candles.
+Critério de PASS: diffs=0 nos índices comuns.
+
+PROVA ESTRUTURAL (conclusiva): get_data() -> df.iloc[:i+1]; nenhum candle
+além de i chega ao pipeline. O teste empírico é confirmação.
+
+Resultados empíricos (executado 2026-08-09/10 — 8 testes, 8 PASS):
+  TESTE A  +30 candles futuros normais      diffs=0/55  PASS
+  TESTE B  spike +1000% (preço futuro)      diffs=0     PASS
+  TESTE B  crash -99% (preço futuro)        diffs=0     PASS
+  TESTE B  volume futuro x1000              diffs=0     PASS
+  TESTE C  somente volume futuro x5000      diffs=0     PASS
+  TESTE D  somente preço futuro +1000%      diffs=0     PASS
+  TESTE E  +50 candles futuros              diffs=0     PASS
+  TESTE F  remover últimos 10 candles       diffs=0/45  PASS
+
+  -> NENHUMA decisão muda com qualquer alteração de dados futuros.
+     Look-ahead bias: NÃO REPRODUZIDO / REFUTADO (empírico + estrutural).
+
+--------------------------------------------------------------------------------
+17. DETERMINISM (replay 2x)
+--------------------------------------------------------------------------------
+Método: probe TESTE 8 — roda run_replay 2x sobre o mesmo dataset
+determinístico, com DeterministicClock.reset() entre as execuções; compara as
+listas de P/L.
+
+Fato estrutural:
+- Dados determinísticos (seed fixa), clock setado por candle, pipeline
+  determinístico (sem datetime), cache keyed (symbol,index).
+- Sem clock reset: a 2ª execução continuaria de onde a 1ª parou, mas o loop
+  volta a setar o clock a cada iteração -> ainda determinístico POR
+  ITERAÇÃO. O reset apenas limpa o estado residual.
+
+Resultado empírico (probe TESTE 8 — executado 2026-08-09/10):
+  [DETERMINISMO] replays 1 e 2: n_metrics=55/55 pl_iguais=True
+  RESULTADO: PASS (determinístico)
+
+  -> CONFIRMADO: dois replays idênticos com reset() entre eles produzem
+     listas de P/L EXATAMENTE iguais (55/55 métricas). Replay determinístico.
+
+--------------------------------------------------------------------------------
+18. RUNTIME
+--------------------------------------------------------------------------------
+py_compile (venv) — TODOS OK:
+  historical_replay_engine.py, historical_replay_provider.py, replay_cache.py,
+  data_quality_engine.py (LIVE), analysis_pipeline.py, mtf_engine.py,
+  market_data.py, indicator_engine.py, data_normalizer.py,
+  deterministic_clock.py.
+
+NOTA sobre pytest completo: a suíte completa leva ~49min e possui falhas
+pré-existentes conhecidas (test_auto_health, test_robustness, 2 flaky) e —
+CRÍTICO para auditoria — DELETA/MODIFICA arquivos rastreados de snapshots
+(mercury_ai/database/snapshots/) e cria artefatos ASSET-* não rastreados.
+Não executado nesta auditoria B4 para não contaminar o baseline (mesmo
+critério usado no R1). A restauração, se necessário, é:
+  git checkout -- mercury_ai/database/snapshots/  + remover artefatos untracked.
+
+RESULTADO: compilação limpa dos arquivos-chave; pytest completo não executado
+(risco de side-effect documentado).
+
+--------------------------------------------------------------------------------
+19. ANTI-MASKING
+--------------------------------------------------------------------------------
+grep por masking em data/providers/replay/pipeline/gate:
+  except:|except Exception|pass|continue|MagicMock|xfail|skip|return True|
+  return False|try:
+Resultado: 46 matches, todos LEGÍTIMOS:
+- try/except com retry/backoff em providers de rede (comportamento correto).
+- return False como feature-detection em future_*_provider
+  (supports_timeframe/supports_symbol) — stubs intencionais.
+- NENHUM pass, NENHUM MagicMock, NENHUM xfail/skip no caminho de produção
+  replay/data/pipeline.
+
+RESULTADO: sem mascaramento de falhas no caminho auditado. OK.
+
+--------------------------------------------------------------------------------
+20. CLASSIFICAÇÃO (resumo de achados)
+--------------------------------------------------------------------------------
+CONFIRMADO:
+  1) [ALTO]  DeterministicClock nunca resetado após replay -> relógio
+             congelado no último candle (contaminação cross-chamada; telemetria
+             execution_time=0.0 no replay). Prova: deterministic_clock.py +
+             grep reset() = só no probe. Empírico: TESTE 7.
+  2) [MÉDIO] benchmark_framework outcome 1-candle sobreposto (iloc[-2] vs
+             iloc[-1] de LIVE Yahoo; não é a fatia do replay) -> validade do
+             backtest comprometida. Prova: benchmark_framework.py:186-187.
+  3) [MÉDIO] MTF degenerado sob replay: M1/M5/M15/H1/H4 recebem a MESMA fatia
+             5min -> consenso multi-timeframe falso. Prova: mtf_engine.py:30,49
+             + historical_replay_provider (ignora interval).
+  4) [MÉDIO] 3 convenções de timestamp conflitantes + 1 legada (seções 3/12).
+  5) [BAIXO] cache_total superestimado (misses_before nunca setado) —
+             replay_cache/historical_replay_engine.py:171.
+  6) [BAIXO/INFO] YahooFinanceProvider TTL 60s -> stale (nunca futuro).
+  7) [INFO]  gap>15min conservador (marca overnight/weekend).
+  8) [INFO]  DataQualityEngine DEAD usa datetime.now (não-determinístico,
+             código morto). market_sessions usa datetime.utcnow (módulo morto).
+  9) [INFO]  stress_test_replay.py: colunas UPPERCASE vs lowercase -> KeyError
+             (script, não produção). Convenção de colunas inconsistente
+             mitigada pelo DataNormalizer.
+  10)[INFO] Yahoo tz-aware vs replay naive -> risco cross-camada.
+
+REFUTADO (sem look-ahead / sem vazamento):
+  - Replay slice 0..i (structural): histórico_replay_provider.py:22.
+  - Separação outcome replay (i+1..i+n): histórico_replay_engine.py.
+  - ReplayCache key=(symbol,index).
+  - Indicadores backward-only.
+  - swing_engine/support_resistance conservadores.
+  - Probas empíricas A-F (resultado a anexar).
+
+--------------------------------------------------------------------------------
+21. REPORT (este documento)
+--------------------------------------------------------------------------------
+Gerado em AUDIT_V1/07_FORENSE_B4_DATA_QUALITY_TEMPORAL_INTEGRITY.txt com 25
+seções. Evidência temporária: _probe_b4_antileak.py (será removida). Artefatos
+de side-effect do probe (runtime_report_SYN_*.json, snapshots SYN_2025-01-01)
+serão limpos antes do commit.
+
+--------------------------------------------------------------------------------
+22. RULES (conformidade)
+--------------------------------------------------------------------------------
+- INVESTIGAÇÃO apenas: NENHUM arquivo de produção alterado (git status limpo).
+- NÃO alteradas fórmulas/pesos/thresholds/testes/datasets/configs.
+- NÃO iniciado B5.
+- Cada achado PROVADO com citação de arquivo:linha e/ou evidência empírica.
+- Veredito não baseado em pytest.
+
+--------------------------------------------------------------------------------
+23. VERDICT
+--------------------------------------------------------------------------------
+A cadeia de decisão do replay NÃO apresenta look-ahead bias nem vazamento
+temporal (prova estrutural: fatia inclusiva 0..i; indicadores backward-only;
+cache por (symbol,index); separação i+1..i+n). Os achados confirmados são de
+INTEGRIDADE (não de vazamento):
+
+  - Relógio determinístico nunca resetado (ALTO) — corrompe telemetria e
+    timestamps pós-replay no mesmo processo; NÃO causa look-ahead.
+  - Outcome do benchmark 1-candle sobreposto (MÉDIO) — validade do backtest.
+  - MTF degenerado sob replay (MÉDIO) — consenso falso.
+  - 3 convenções de timestamp (MÉDIO) — auditoria cross-camada.
+  - Demais: BAIXO/INFORMATIVO.
+
+VEREDITO: B4 — APROVADO COM RESSALVAS
+==============================================================================
+A cadeia de decisão do replay NÃO apresenta look-ahead bias nem vazamento
+temporal: PROVA ESTRUTURAL (fatia inclusiva 0..i em historical_replay_provider
+.py:22; indicadores backward-only; cache por (symbol,index); separação de
+outcome i+1..i+n) + PROVA EMPÍRICA (probe 2026-08-09/10: 8 testes anti-leak,
+diffs=0 em todos; determinismo 55/55 idêntico). Vazamento temporal:
+REFUTADO.
+
+Achados confirmados (todos de INTEGRIDADE, NENHUM de vazamento):
+  1. [ALTO]  Relógio determinístico nunca resetado após replay -> utcnow()
+             congela na última decisão (empírico: regrediu de 2026-08-10 para
+             2025-01-01 09:30). Corrompe telemetria (execution_time=0.0) e
+             timestamps de análise pós-replay no mesmo processo. NÃO causa
+             look-ahead.
+  2. [MÉDIO] Outcome do benchmark 1-candle sobreposto (iloc[-2]/iloc[-1] de
+             LIVE Yahoo) -> validade do backtest comprometida.
+  3. [MÉDIO] MTF degenerado sob replay (todos os timeframes recebem a mesma
+             fatia 5min) -> consenso multi-timeframe falso.
+  4. [MÉDIO] 3 convenções de timestamp conflitantes + 1 legada (seção 12).
+  5. [BAIXO] Telemetria cache_total superestimada (misses_before nunca setado).
+  6. [BAIXO/INFO] Yahoo TTL 60s = stale (nunca futuro); gap>15min conservador;
+             DataQualityEngine DEAD não-determinístico; market_sessions
+             datetime.utcnow (módulo morto); stress_test_replay KeyError;
+             Yahoo tz-aware vs replay naive.
+
+CONDIÇÃO DE ESCALONAMENTO: se produção executar análise LIVE no MESMO processo
+logo após um replay (sem reiniciar), o item 1 passa a corromper timestamps de
+operações reais -> reavaliar para B4 — BLOQUEADO. Nos demais casos, os achados
+são não-bloqueadores para a integridade temporal da DECISÃO e devem ser
+endereçados em bloco de CORREÇÃO (fora deste bloco, por regra).
+
+--------------------------------------------------------------------------------
+24. DELIVERY
+--------------------------------------------------------------------------------
+- Este relatório: AUDIT_V1/07_FORENSE_B4_DATA_QUALITY_TEMPORAL_INTEGRITY.txt.
+- Commit único do relatório sobre baseline 7e92dc3.
+- Remoção de _probe_b4_antileak.py e artefatos SYN_2025-01-01/runtime_report
+  gerados pelo probe (runtime_report_*.json já são gitignored).
+- git status pós-limpeza: apenas o relatório untracked.
+
+--------------------------------------------------------------------------------
+25. PENDÊNCIAS / PRÓXIMO BLOCO
+--------------------------------------------------------------------------------
+Pendências desta auditoria:
+  1) [CONCLUÍDO] Resultados empíricos do probe anexados (seções 5/6/7/16/17)
+     e veredito fechado (seção 23). O probe _probe_b4_antileak.py e os
+     artefatos SYN_2025-01-01/runtime_report_SYN foram removidos ao final.
+  2) Recomendações para bloco de CORREÇÃO (NÃO neste bloco):
+     - Chamar DeterministicClock.reset() ao final de run_replay (e em todos
+       os callers de replay) para eliminar contaminação pós-replay.
+     - Alinhar _get_real_outcome do benchmark à fatia do replay (outcome
+       forward real).
+     - Fazer MTFEngine respeitar interval/period no provider de replay (ou
+       desabilitar MTF no replay se não houver dados multi-timeframe).
+     - Padronizar uma única convenção de timestamp (naive-UTC) e normalizar
+       timezone do índice na normalização.
+     - Corrigir telemetria cache_total (remover "misses_before" ou setá-lo).
+     - Alinhar colunas lowercase/UPPERCASE nos scripts de teste.
+PRÓXIMO BLOCO: B5 (NÃO INICIAR por regra deste bloco).
+================================================================================
+FIM DO RELATÓRIO B4
+================================================================================
