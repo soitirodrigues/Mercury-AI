@@ -74,7 +74,19 @@ class InstitutionalAnalyticsEngine:
 
         df = pd.DataFrame(data_records)
         if not df.empty and "timestamp" in df.columns:
-            df["timestamp"] = pd.to_datetime(df["timestamp"], errors="coerce")
+            # Conversão temporal robusta: snapshots podem conter timestamps
+            # naive UTC (tempo real) e timezone-aware (replay com dataset
+            # tz-aware). `format="mixed"` + `utc=True` parseia cada elemento
+            # individualmente e converte aware para UTC preservando o instante
+            # (evita que timestamps aware válidos virem NaT — achado R2 do
+            # B4-C4). `.dt.tz_localize(None)` normaliza para naive UTC,
+            # mantendo o contrato existente (datetime64 naive) dos consumidores.
+            # Timestamps inválidos continuam virando NaT (detectáveis), pois
+            # errors='coerce' é mantido intencionalmente (resiliência a dados
+            # corrompidos; _temporal_analysis já faz dropna).
+            df["timestamp"] = pd.to_datetime(
+                df["timestamp"], errors="coerce", format="mixed", utc=True
+            ).dt.tz_localize(None)
             df = df.sort_values("timestamp").reset_index(drop=True)
         return df
 

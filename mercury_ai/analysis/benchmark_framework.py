@@ -141,6 +141,21 @@ class MercuryBenchmarkFramework:
         tracemalloc.clear_traces()
         start_time = time.perf_counter()
 
+        # Captura o df da decisão ANTES do analyze: o fetch abaixo popula o cache
+        # do provider; o analyze (mesmo market_service/provider e chave de cache)
+        # usa exatamente este df — sem corrida. Ancorar a janela FORWARD do
+        # outcome exige conhecer a última vela vista pelo pipeline (T0). Se o
+        # provider falhar, decision_df=None e o outcome é NEUTRO (0.0) — honesto.
+        decision_df = None
+        if self.use_historical_replay:
+            try:
+                decision_df = self.pipeline.market_service.get_data(symbol)
+            except Exception as exc:  # noqa: BLE001 - MarketDataService.get_data
+                # lança Exception genérica ("No provider available") quando nenhum
+                # provider responde; loga e neutraliza (não é silencioso).
+                logger.warning(f"Could not capture decision dataframe for {symbol}: {exc}")
+                decision_df = None
+
         result = self.pipeline.analyze(symbol)
 
         end_time = time.perf_counter()
@@ -153,7 +168,7 @@ class MercuryBenchmarkFramework:
         # Outcome REAL de mercado (não circular). NUNCA deriva o outcome do
         # próprio score/decision do modelo (evita auto-validação — achado B3).
         if self.use_historical_replay:
-            outcome = self._get_real_outcome(symbol, result.decision.decision)
+            outcome = self._get_real_outcome(symbol, result.decision.decision, decision_df=decision_df)
         else:
             # Replay desabilitado explicitamente: outcome NEUTRO (0.0) com aviso
             # claro — NÃO fabrica P/L a partir do score do modelo.
@@ -173,23 +188,49 @@ class MercuryBenchmarkFramework:
 
         return run_result, [outcome], [result.decision.decision], [result.decision.score]
 
-    def _get_real_outcome(self, symbol: str, decision: str) -> float:
+    def _get_real_outcome(self, symbol: str, decision: str, decision_df=None) -> float:
         """
-        Obtém o outcome real do mercado para o símbolo.
-        Usa o YahooFinanceProvider para pegar o próximo candle e calcular retorno.
+        Obtém o outcome real FORWARD do mercado para o símbolo.
+
+        Contrato temporal (correção B4-C3 — elimina o overlap de 1 candle
+        confirmado no B4-C2):
+          DECISION_CANDLE = última vela do df analisado pelo pipeline (T0)
+          OUTCOME_CANDLE  = primeira vela com timestamp ESTRITAMENTE após T0 (T1)
+          OUTCOME_PRICE   = close[T1]
+          OUTCOME_RETURN  = (close[T1] - close[T0]) / close[T0]   (SELL inverte)
+
+        A vela de decisão (T0) NUNCA é usada como vela de outcome. Se nenhuma
+        vela estritamente após T0 estiver disponível no fetch atual (o mercado
+        ainda não formou a próxima vela), o outcome é NEUTRO (0.0) — honesto.
+
+        decision_df: DataFrame que o pipeline analisou (a vela de decisão é a
+        última dele). Se None/vazio, não há como ancorar a janela forward →
+        retorna NEUTRO (0.0) em vez de adivinhar a vela de decisão a partir das
+        últimas velas.
         """
         try:
+            if decision_df is None or len(decision_df) == 0:
+                return 0.0
+            decision_ts = decision_df.index[-1]
+            decision_close = float(decision_df.iloc[-1]["Close"])
+
             provider = YahooFinanceProvider()
             df = provider.get_data(symbol)
-            if df is not None and len(df) >= 2:
-                # Retorno do candle seguinte como outcome
-                close_current = float(df.iloc[-2]["Close"])
-                close_next = float(df.iloc[-1]["Close"])
-                raw_return = (close_next - close_current) / close_current
-                if decision == "SELL":
-                    raw_return = -raw_return
-                return raw_return
-        except (ValueError, KeyError, IndexError, ConnectionError, OSError) as e:
+            if df is None or len(df) == 0:
+                return 0.0
+
+            # Velas estritamente posteriores à vela de decisão (exclui T0).
+            future = df[df.index > decision_ts]
+            if future.empty:
+                # Nenhuma vela futura formada ainda → outcome NEUTRO (honesto).
+                return 0.0
+
+            outcome_close = float(future.iloc[0]["Close"])
+            raw_return = (outcome_close - decision_close) / decision_close
+            if decision == "SELL":
+                raw_return = -raw_return
+            return raw_return
+        except (ValueError, KeyError, IndexError, ConnectionError, OSError, TypeError) as e:
             logger.warning(f"Could not get real outcome for {symbol}: {e}")
         # Fallback: outcome NEUTRO (0.0) — sem dados de mercado disponíveis.
         # NUNCA deriva o outcome do score/decision do modelo (correção B3).
@@ -458,6 +499,17 @@ class MercuryBenchmarkFramework:
             tracemalloc.clear_traces()
             start_time = time.perf_counter()
 
+            # Captura o df da decisão ANTES do analyze (mesma fonte que o pipeline
+            # usará — cache do provider) para ancorar a janela FORWARD do outcome.
+            # Se o provider falhar, decision_df=None e o outcome é NEUTRO (0.0).
+            decision_df = None
+            if self.use_historical_replay:
+                try:
+                    decision_df = self.pipeline.market_service.get_data(symbol)
+                except Exception as exc:  # noqa: BLE001 - provider indisponível
+                    logger.warning(f"Could not capture decision dataframe for {symbol}: {exc}")
+                    decision_df = None
+
             result = self.pipeline.analyze(symbol)
 
             end_time = time.perf_counter()
@@ -480,7 +532,7 @@ class MercuryBenchmarkFramework:
             # Outcome REAL de mercado (não circular — B3). NUNCA deriva do
             # próprio score do modelo. Sem replay -> neutro 0.0 com aviso.
             if self.use_historical_replay:
-                outcomes.append(self._get_real_outcome(symbol, result.decision.decision))
+                outcomes.append(self._get_real_outcome(symbol, result.decision.decision, decision_df=decision_df))
             else:
                 logger.warning(
                     "Real outcomes disabled (use_historical_replay=False); "

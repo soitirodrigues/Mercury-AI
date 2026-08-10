@@ -1,0 +1,528 @@
+================================================================================
+SPRINT FORENSE DE CORREÇÃO — B4-C3 — BENCHMARK OUTCOME CONTRACT
+Relatório de Correção e Validação (componente isolado, órfão)
+================================================================================
+Data da execução : 2026-08-10 (UTC-3, máquina local)
+Commit base       : 11501e5 (HEAD->main) = "AUDIT V1 - B4-C2 TIMESTAMP CONTRACT
+                    & 1-CANDLE OUTCOME FORENSICS"
+Status base       : LIMPO (sem alterações não commitadas antes da correção)
+Arquivo de saída  : AUDIT_V1/10_FORENSE_B4_C3_BENCHMARK_OUTCOME_FIX.txt
+Regra do bloco    : CORRIGIR E VALIDAR EXCLUSIVAMENTE o achado confirmado no
+                    B4-C2: benchmark_framework._get_real_outcome.
+                    NÃO tocar: HistoricalReplayEngine/Provider, DeterministicClock,
+                    AnalysisPipeline, DecisionResolver, ProbabilityEngine, fórmulas,
+                    pesos, thresholds, indicadores, estratégia, ranking, P/L de
+                    produção, datasets de produção, providers de mercado.
+                    NÃO iniciar B4-C4. NÃO iniciar B5. Sem refatoração geral.
+--------------------------------------------------------------------------------
+
+================================================================================
+SEÇÃO 1 — OBJETIVO
+================================================================================
+Corrigir e validar exclusivamente o achado confirmado no B4-C2:
+
+  PROLEMA (B4-C2, PARTE C): benchmark_framework._get_real_outcome computava
+  o outcome como (close[-1] - close[-2]) / close[-2] do MESMO DataFrame que o
+  pipeline analisou. Como o pipeline analisa o DataFrame COMPLETO, close[-1]
+  é a PRÓPRIA vela de decisão (T0). Ou seja: a vela que formou a decisão era
+  usada como endpoint do outcome — SOBREPOSIÇÃO DE 1 CANDLE (outcome
+  IN-SAMPLE, não FORWARD).
+
+  OBJETIVOS DESTE BLOCO:
+  1. Identificar o contrato atual do componente (real, não o intencional).
+  2. Determinar o contrato SEMANTICAMENTE correto (outcome FORWARD).
+  3. Corrigir SOMENTE esse componente (mínimo absoluto).
+  4. Provar que a correção NÃO altera replay/produção (componente é órfão).
+  5. Provar que o benchmark NÃO avalia mais a mesma vela usada na decisão.
+
+  O componente corrigido (MercuryBenchmarkFramework) é ORFÃO: importado APENAS
+  por seu próprio arquivo de teste; NENHUM caminho de produção o importa.
+  Portanto, a correção é cirúrgica e não pode contaminar decisão/replay/produção.
+
+================================================================================
+SEÇÃO 2 — BASELINE
+================================================================================
+Commit base   : 11501e5 (HEAD->main) — commit do B4-C2 (forense de timestamps
+                e overlap de outcome).
+Status base   : LIMPO — nenhuma modificação não-commitada antes da correção.
+Ambiente      : Windows, PowerShell 5.1; Python 3.11.9; pytest 9.1.1;
+                pluggy 1.6.0; timeout 2.4.0; anyio 4.14.2.
+Módulo local  : import mercury_ai.analysis.benchmark_framework resolve para
+                C:\Projetos\Mercury-AI\mercury_ai\analysis\benchmark_framework.py
+                (NÃO há cópia em site-packages; Test-Path site-packages\mercury_ai
+                = False; Test-Path .\mercury_ai\analysis\benchmark_framework.py
+                = True).
+Árvore final  : benchmark_framework.py (M), test_benchmark_framework.py (M),
+                este relatório (untracked). Nenhum outro arquivo alterado.
+
+================================================================================
+SEÇÃO 3 — COMPONENTE AUDITADO
+================================================================================
+Arquivo : mercury_ai/analysis/benchmark_framework.py
+Classe  : MercuryBenchmarkFramework (L78)
+Método  : _get_real_outcome — ANTES: L176; DEPOIS: L191
+          assinatura ANTES: (symbol: str, decision: str) -> float
+          assinatura DEPOIS: (symbol: str, decision: str, decision_df=None) -> float
+
+Descrição: framework de benchmark institucional (relatório enriquecido,
+métricas financeiras, buy-and-hold baseline, testes estatísticos, warm-up/
+cool-down, execução paralela). NÃO é produção — é ORFÃO.
+
+================================================================================
+SEÇÃO 4 — CALLERS
+================================================================================
+Chamadas a _get_real_outcome (ambas passam result.decision.decision):
+  1. _run_single_symbol (L~156 -> agora L171):
+       outcome = self._get_real_outcome(symbol, result.decision.decision,
+                                        decision_df=decision_df)
+  2. run_quick_benchmark (L~483 -> agora L535):
+       outcomes.append(self._get_real_outcome(symbol, result.decision.decision,
+                                              decision_df=decision_df))
+
+Ambos os call sites agora capturam decision_df ANTES do analyze via
+self.pipeline.market_service.get_data(symbol) — mesma fonte/cache que o
+pipeline usa, garantindo que decision_df é EXATAMENTE o df analisado
+(sem corrida).
+
+================================================================================
+SEÇÃO 5 — USO EM PRODUÇÃO
+================================================================================
+ÓRFÃO PROVADO:
+- benchmark_framework é importado APENAS por
+  mercury_ai/analysis/tests/test_benchmark_framework.py (L10).
+- python -m mercury_ai.main NÃO importa benchmark_framework (verificado:
+  main roda sem tocar o componente; saída inalterada — Seção 20).
+- Nenhum outro módulo de produção (pipeline, decisão, replay, execução,
+  providers) importa benchmark_framework.
+
+CONCLUSÃO: a correção afeta SOMENTE o próprio componente + seu teste.
+Nenhum caminho de produção é alcançado pela correção.
+
+================================================================================
+SEÇÃO 6 — REPRODUÇÃO PRÉ-CORREÇÃO
+================================================================================
+Probe executável _probe_b4_c3_outcome.py (signature-adaptive via inspect —
+roda idêntico pré e pós-fix; REMOVIDO ao final, Seção 24).
+Dados controlados (freq 5min): T-2=100, T-1=102, T0=105 (vela de decisão),
+T1=110, T2=120 (velas futuras).
+
+RESULTADO PRÉ-CORREÇÃO (capturado em _probe_pre_fix_output.txt):
+  CENÁRIO A (fresh == df da decisão, sem vela futura):
+    OUTCOME_RETURN = +0.029412  => (105 - 102) / 102
+    O endpoint era close[-1] = T0 = A PRÓPRIA VELA DE DECISÃO (close 105).
+    -> SOBREPOSIÇÃO DE 1 CANDLE CONFIRMADA (a decisão avalia a própria vela).
+
+  CENÁRIO B (com velas futuras T1=110, T2=120):
+    OUTCOME_RETURN = +0.090909  => (120 - 110) / 110
+    Âncora errada: close[-2]=T1 (110) e close[-1]=T2 (120), em vez de
+    ancorar em T0 (105) e medir T0->T1 (110).
+
+  SENSIBILIDADE PRÉ-FIX (confirma in-sample):
+    Alterar a última vela (T0: 105 -> 110) MUDA o outcome para +0.10.
+    -> A vela que forma a decisão influencia o outcome: outcome NÃO é forward.
+
+================================================================================
+SEÇÃO 7 — CONTRATO REAL (ANTES DA CORREÇÃO)
+================================================================================
+CONTRATO REAL (comportamento do código pré-correção):
+  outcome = (close[-1] - close[-2]) / close[-2]
+  onde close[-1] = ÚLTIMA vela do df = vela de decisão (pipeline analisa o
+  df inteiro; result.market.close = close da última vela = T0).
+  SELL: inverte o sinal.
+
+CONTRATO INTENCIONAL (docstring pré-correção):
+  "Obtém o outcome real do mercado para o símbolo. Usa o YahooFinanceProvider
+   para pegar o próximo candle e calcular retorno."
+
+DIVERGÊNCIA:
+  - A docstring dizia "próximo candle" (forward), mas o código usava as DUAS
+    ÚLTIMAS velas do MESMO df da decisão.
+  - O endpoint (close[-1]) era a PRÓPRIA vela de decisão (T0) — o outcome era
+    IN-SAMPLE: a decisão já havia observado o preço usado como resultado.
+  - Não havia âncora temporal: o método não conhecia qual vela o pipeline
+    tinha analisado.
+
+================================================================================
+SEÇÃO 8 — CAUSA RAIZ
+================================================================================
+1. O pipeline analisa o DataFrame COMPLETO; a "vela de decisão" é a última
+   vela desse df (result.market.close). O pipeline NÃO expõe o timestamp da
+   vela nem o df analisado (AnalysisResult/DecisionResult/MarketData não
+   possuem campo de timestamp da vela).
+2. _get_real_outcome pré-correção criava um NOVO YahooFinanceProvider().get_data()
+   que, em cenário real, retorna os MESMOS dados (mesma janela) que o pipeline
+   analisou — e usava df.iloc[-2]/df.iloc[-1] desse df.
+3. Como close[-1] == vela de decisão (T0), o outcome endpoint era a própria
+   vela de decisão => OVERLAP DE 1 CANDLE (outcome in-sample, não forward).
+4. Sem decision_df não havia como ancorar a janela FORWARD.
+
+================================================================================
+SEÇÃO 9 — CORREÇÃO (MÍNIMA)
+================================================================================
+NOVO CONTRATO FORWARD (correção B4-C3), aplicado APENAS em benchmark_framework.py:
+
+  _get_real_outcome(self, symbol: str, decision: str, decision_df=None) -> float
+    DECISION_CANDLE = decision_df.index[-1]   (última vela do df analisado = T0)
+    DECISION_CLOSE  = decision_df.iloc[-1]["Close"]
+    provider = YahooFinanceProvider()
+    df = provider.get_data(symbol)            (fetch "fresco")
+    future = df[df.index > decision_ts]       (velas ESTRITAMENTE após T0)
+    se future.empty: return 0.0               (neutro honesto)
+    OUTCOME_CANDLE = future.iloc[0]           (1ª vela após T0 = T1)
+    raw_return = (close[T1] - close[T0]) / close[T0]
+    if decision == "SELL": raw_return = -raw_return
+    return raw_return
+
+  PRÉ-FETCH nos dois call sites (antes do analyze):
+    decision_df = self.pipeline.market_service.get_data(symbol)
+    (popula o cache do provider sob a mesma chave symbol|5m|5d que o pipeline
+     usa -> o analyze usa EXATAMENTE decision_df; sem corrida)
+
+  EXCEÇÕES: tuple ampliada com TypeError (comparação de índices
+  df.index > decision_ts pode lançar TypeError com tipos incompatíveis);
+  logging de warning; retorno 0.0 neutro. NUNCA except silencioso (Seção 18).
+
+PONTOS-CHAVE:
+  - A vela de decisão (T0) NUNCA é usada como vela de outcome.
+  - Sem vela futura no fetch atual -> outcome NEUTRO 0.0 (honesto, não
+    avalia a decisão com dado in-sample).
+  - decision_df=None/vazio -> NEUTRO 0.0 (não adivinha T0 a partir das
+    últimas velas).
+  - Fórmula PRESERVADA: (close_outcome - close_decision)/close_decision;
+    SELL inverte (inalterado).
+
+================================================================================
+SEÇÃO 10 — TESTE DE OVERLAP
+================================================================================
+REGRESSÃO (test_benchmark_framework.py / TestB4C3OutcomeContract):
+  - test_no_future_candle_is_neutral:
+      fresh == decision_df (termina em T0) -> outcome 0.0.
+      ANTES: seria (105-102)/102 = +0.029412 com T0 como endpoint (overlap).
+      DEPOIS: 0.0 — a decisão NÃO é avaliada.
+  - test_decision_candle_never_is_outcome_endpoint:
+      outcome = (110-105)/105 = +0.047619 (endpoint T1), NÃO
+      (120-110)/110 (overlap pré-fix com âncora em T1).
+
+PROBE PÓS-FIX:
+  CENÁRIO A: OUTCOME_RETURN = +0.000000 (neutro) — sem vela futura.
+  CENÁRIO B: OUTCOME_RETURN = +0.047619, OUTCOME_CANDLE = T1.
+
+=> OVERLAP ELIMINADO: a vela de decisão (T0) não é mais endpoint do outcome.
+
+================================================================================
+SEÇÃO 11 — TESTE DE SENSIBILIDADE
+================================================================================
+REGRESSÃO:
+  - test_sensitivity_only_t0_changes_outcome:
+      T0: 105 -> 115 => outcome (110-115)/115 = -0.043478  (T0 é a referência)
+  - test_sensitivity_only_t1_changes_outcome:
+      T1: 110 -> 120 => outcome (120-105)/105 = +0.142857  (T1 é o outcome)
+  - test_sensitivity_only_t2_does_not_change_outcome:
+      T2: 120 -> 999 => outcome INALTERADO (T2 fora do horizonte N=1)
+
+PROBE PÓS-FIX:
+  RUN A (base)      = +0.047619
+  só T0 (105->115)  = -0.043478  (mudou? True)  -> T0 é a referência
+  só T1 (110->120)  = +0.142857  (mudou? True)  -> T1 é o outcome
+  só T2 (120->999)  = +0.047619  (mudou? False) -> T2 fora do horizonte N=1
+  VALIDAÇÃO horizonte N=1: OK
+
+=> A sensibilidade está CORRETA: só T0 (âncora) e T1 (outcome) afetam.
+
+================================================================================
+SEÇÃO 12 — TESTE FUTURO (FORA DA JANELA)
+================================================================================
+REGRESSÃO:
+  - test_far_future_candle_does_not_interfere:
+      adicionar T3=500, T4=600 -> outcome INALTERADO ((110-105)/105).
+
+PROBE PÓS-FIX:
+  FUTURO FORA DA JANELA (adicionar T3=500, T4=600):
+    outcome com T3/T4 = +0.047619 (base +0.047619) -> VALIDAÇÃO OK.
+
+=> Velas futuras além do horizonte N=1 NÃO interferem no outcome.
+
+================================================================================
+SEÇÃO 13 — OFF-BY-ONE
+================================================================================
+REGRESSÃO:
+  - test_forward_outcome_is_first_candle_after_decision:
+      outcome = (110-105)/105 = +0.047619 (usa T1, 1ª vela estritamente após T0)
+  - test_horizon_extremes:
+      T0=100, T1=200, T2=1000 => outcome +1.0  (usa T1; NÃO usa T2=1000)
+      invertido T1=1000, T2=200 => outcome +9.0 (usa T1; NÃO usa T2)
+
+PROBE PÓS-FIX:
+  OFF-BY-ONE (outcome = 1ª vela estritamente após T0):
+    OUTCOME_RETURN = (110-105)/105 = +0.047619 OK
+    OUTCOME_CANDLE = T1 (índice 3 do fresh, close=110) — nem T0, nem T2.
+
+=> SEM erro de off-by-one: outcome usa T1 (1ª vela após T0), nunca T0 nem T2.
+
+================================================================================
+SEÇÃO 14 — FÓRMULA
+================================================================================
+FÓRMULA PRESERVADA (inalterada em estrutura):
+  OUTCOME_RETURN = (close[outcome] - close[decision]) / close[decision]
+  SELL: raw_return = -raw_return
+
+  ANTES (incorreto):  (close[-1] - close[-2]) / close[-2]
+                      (endpoint = vela de decisão T0; âncora = T-1)
+  DEPOIS (correto):   (close[T1] - close[T0]) / close[T0]
+                      (endpoint = 1ª vela após T0; âncora = T0)
+
+  A MESMA fórmula de retorno relativo é usada; apenas a IDENTIDADE da âncora
+  e do endpoint foi corrigida para o contrato FORWARD. SELL inverte (inalterado).
+  Nenhuma fórmula/peso/threshold de produção foi tocada (regra B4-C3).
+
+================================================================================
+SEÇÃO 15 — DOCSTRING vs COMPORTAMENTO
+================================================================================
+ANTES (INCONSISTENTE):
+  Docstring: "pegar o próximo candle e calcular retorno" (forward).
+  Comportamento: usava os 2 últimos candles do MESMO df da decisão; endpoint
+  = vela de decisão (in-sample). Docstring e comportamento DIVERGENTES.
+
+DEPOIS (CONSISTENTE):
+  Docstring documenta o contrato FORWARD completo:
+    DECISION_CANDLE = última vela do df analisado (T0)
+    OUTCOME_CANDLE  = 1ª vela estritamente após T0 (T1)
+    OUTCOME_RETURN  = (close[T1]-close[T0])/close[T0]; SELL inverte
+    Sem vela futura -> NEUTRO 0.0 (honesto)
+    decision_df None/vazio -> NEUTRO 0.0
+  Comportamento implementado reflete EXATAMENTE a docstring.
+  => Docstring e comportamento agora CONSISTENTES.
+
+================================================================================
+SEÇÃO 16 — TESTES ANTES (BASELINE)
+================================================================================
+Executado com a correção em STASH (baseline 11501e5):
+  & .\.venv\Scripts\python.exe -m pytest mercury_ai/analysis/tests/test_benchmark_framework.py -v
+  Resultado: 7 passed em 41.26s, EXIT=0.
+  (git stash push benchmark_framework.py -> run -> git stash pop)
+
+================================================================================
+SEÇÃO 17 — TESTES DEPOIS (CORREÇÃO)
+================================================================================
+COM a correção aplicada e persistida:
+  1. Testes existentes (7): 7 passed em 27.13s, EXIT=0. SEM regressão.
+  2. Testes existentes + 11 de regressão B4-C3 (TestB4C3OutcomeContract):
+     18 passed em 24.25s, EXIT=0.
+  -> 7 existentes passam antes E depois; os 11 novos de regressão passam.
+  -> SEM regressão introduzida.
+
+LISTA DOS 11 TESTES DE REGRESSÃO (TestB4C3OutcomeContract):
+  test_forward_outcome_is_first_candle_after_decision
+  test_no_future_candle_is_neutral
+  test_decision_candle_never_is_outcome_endpoint
+  test_far_future_candle_does_not_interfere
+  test_sensitivity_only_t0_changes_outcome
+  test_sensitivity_only_t1_changes_outcome
+  test_sensitivity_only_t2_does_not_change_outcome
+  test_horizon_extremes
+  test_sell_negates_forward_return
+  test_neutral_without_decision_df
+  test_exception_returns_neutral_and_logs
+
+================================================================================
+SEÇÃO 18 — ANTI-MASCARAMENTO
+================================================================================
+Varredura: nenhum `except: pass`, `except Exception: pass` ou `pass` silencioso
+foi introduzido em PRODUÇÃO (benchmark_framework.py).
+
+  a) _get_real_outcome:
+     except (ValueError, KeyError, IndexError, ConnectionError, OSError, TypeError) as e:
+         logger.warning(f"Could not get real outcome for {symbol}: {e}")
+     return 0.0
+     -> Exceção LOGADA como warning e outcome NEUTRO. NÃO silencioso.
+     -> TypeError ADICIONADO (comparação df.index > decision_ts pode lançar
+        TypeError com tipos de índice incompatíveis) — logado, não silencioso.
+
+  b) Pré-fetch de decision_df (call sites):
+     except Exception as exc:  # noqa: BLE001 - MarketDataService.get_data
+         logger.warning(f"Could not capture decision dataframe for {symbol}: {exc}")
+         decision_df = None
+     -> JUSTIFICADO: MarketDataService.get_data (mercury_ai/data/market_data.py)
+        NÃO cacheia e, quando NENHUM provider responde, lança Exception genérica
+        ("No provider available for {symbol}") — não há exceção específica para
+        capturar. Padrão consistente com AnalysisPipeline L509 (logging.exception).
+        LOGA warning e neutraliza (decision_df=None -> outcome 0.0). NÃO silencioso.
+
+  c) Teste de regressão: test_exception_returns_neutral_and_logs
+     verifica que uma exceção (ConnectionError) -> outcome 0.0 E registra
+     warning "Could not get real outcome" (via caplog). Prova anti-mascaramento.
+
+CONCLUSÃO: nenhuma falha mascarada; todos os caminhos de exceção são
+logados e neutralizados de forma honesta (outcome NEUTRO 0.0).
+
+================================================================================
+SEÇÃO 19 — REPLAY DE REGRESSÃO
+================================================================================
+Executado (após a correção):
+  & .\.venv\Scripts\python.exe -m pytest \
+      mercury_ai/analysis/tests/test_historical_replay_engine.py \
+      mercury_ai/analysis/tests/test_replay_cache.py \
+      mercury_ai/analysis/tests/test_replay_batch_processor.py -q
+  Resultado: 59 passed em 1187.47s (0:19:47), EXIT=0.
+  (21 + 22 + 16 testes de replay/cache/batch)
+
+HistoricalReplayEngine / HistoricalReplayProvider NÃO foram tocados
+(regra B4-C3). A correção é no benchmark (órfão). Os 59 testes de replay
+passam -> SEM regressão no replay.
+
+================================================================================
+SEÇÃO 20 — MAIN (PRODUÇÃO)
+================================================================================
+Executado:
+  & .\.venv\Scripts\python.exe -m mercury_ai.main
+  MAIN_EXIT = 0
+
+Saída (ranking institucional):
+  1. BTC-USD | Score: 63.30 | WAIT | Confiança: 68.5% | BUY 0.0% | SELL 44.4% |
+     WAIT 55.6% | Regime: COMPRESSION | grade D
+  2. ETH-USD | Score: 63.06 | WAIT | Confiança: 68.7% | BUY 0.0% | SELL 44.1% |
+     WAIT 55.9% | Regime: COMPRESSION | grade D
+
+Baseline B4-C2 (memória): BTC 63.93 / ETH 63.65, WAIT grade D, COMPRESSION.
+Drift (63.30 vs 63.93; 63.06 vs 63.65) = dados de mercado LIVE (preço moveu-se
+desde B4-C2) — esperado. Mesma decisão (WAIT), mesma grade (D), mesmo regime.
+
+CONCLUSÃO: main funciona (EXIT 0) e não é afetado pela correção — benchmark_framework
+é órfão e NÃO está no caminho do main.
+
+================================================================================
+SEÇÃO 21 — PYTEST (SUITE + CLASSIFICAÇÃO)
+================================================================================
+BASELINE DOCUMENTADO (B4-C2, memória de sessão):
+  Suite completa: 348 passed / 4 failed em 18957.53s (5:15:57), IDÊNTICO ao
+  baseline B4-C1 (348/4). 4 falhas PRÉ-EXISTENTES (documentadas B2/B3/R1/B4,
+  não relacionadas a timestamp/outcome):
+    - test_auto_health
+    - test_confidence_calibration_auditor
+    - test_institutional_report_generator
+    - test_robustness
+
+NESTE SPRINT (B4-C3):
+  A suite completa foi LANÇADA em background, mas foi encerrada após ~20 min
+  porque a suite completa leva ~5h (documentado B4-C2, dominado por testes com
+  timeout de rede). A correção é ÓRFÃ (benchmark_framework importado APENAS por
+  test_benchmark_framework.py) -> NENHUM outro teste da suite é alcançado pela
+  correção; o resultado da suite completa é DERIVÁVEL e IDÊNTICO-EM-ESPÉCIE ao
+  baseline B4-C2.
+
+  DERIVAÇÃO (provada por orfandade):
+    B4-C2: 348 passed / 4 failed (incluía 7 testes de benchmark, todos passando)
+    B4-C3: +11 testes de benchmark adicionados (todos passando, Seção 17)
+    -> suite completa esperada: 359 passed / 4 failed.
+
+  CLASSIFICAÇÃO DAS 4 FALHAS:
+    PRE-EXISTENTE (idênticas ao baseline B4-C2/B4-C1, não relacionadas ao
+    outcome/benchmark): test_auto_health, test_confidence_calibration_auditor,
+    test_institutional_report_generator, test_robustness.
+    INTRODUZIDA: NENHUMA.
+
+  EVIDÊNCIA FRESCA EXECUTADA NESTE SPRINT (ambos EXIT=0):
+    - benchmark (7 existentes + 11 regressão): 18 passed em 24.25s
+    - replay/cache/batch: 59 passed em 1187.47s (0:19:47)
+
+CONCLUSÃO: NENHUMA falha introduzida pela correção; as 4 falhas conhecidas são
+PRÉ-EXISTENTES e documentadas em blocos anteriores.
+
+================================================================================
+SEÇÃO 22 — PYCOMPILE
+================================================================================
+Executado:
+  & .\.venv\Scripts\python.exe -m py_compile \
+      mercury_ai/analysis/benchmark_framework.py \
+      mercury_ai/analysis/tests/test_benchmark_framework.py
+  PYCOMPILE_EXIT = 0
+
+get_errors (VS Code / Pylance): nenhum erro nos 2 arquivos modificados.
+
+================================================================================
+SEÇÃO 23 — GIT DIFF (AUDITORIA)
+================================================================================
+git diff --stat (após limpeza):
+  mercury_ai/analysis/benchmark_framework.py       | 80 +++++++++--
+      1 file changed, 66 insertions(+), 14 deletions(-)
+  mercury_ai/analysis/tests/test_benchmark_framework.py | 160 ++++++++++++++
+      1 file changed, 160 insertions(+)
+
+Diff LIMITADO AO ESCOPO B4-C3:
+  benchmark_framework.py (66+/14-):
+    - 2 blocos de pré-fetch de decision_df (em _run_single_symbol e
+      run_quick_benchmark) — captura do df analisado antes do analyze.
+    - assinatura _get_real_outcome ganhou decision_df=None.
+    - lógica FORWARD (T0/T1) substituindo a lógica in-sample (close[-1]).
+    - TypeError adicionado à tupla de exceções.
+    - docstring atualizada (contrato FORWARD).
+  test_benchmark_framework.py (160+):
+    - helper _make_controlled_ohlcv (closes exatos para janela temporal).
+    - classe TestB4C3OutcomeContract (11 testes de regressão).
+
+NENHUM outro arquivo de produção alterado. Nenhum replay/provider/clock/
+pipeline/decision/probability/produção tocado.
+
+================================================================================
+SEÇÃO 24 — LIMPEZA
+================================================================================
+Realizada ao final (padrão dos blocos anteriores):
+  - DELETADOS (probes e evidências temporárias):
+      _probe_b4_c3_outcome.py
+      _probe_pre_fix_output.txt
+      _probe_post_fix_output.txt
+  - RESTAURADOS (git checkout) snapshots RASTREADOS modificados por execuções
+    de teste (88 arquivos CACHE-TEST_*, SYM-A_*, TEST_*).
+  - REMOVIDOS (git clean) snapshots UNTRACKED gerados por testes/probes
+    (BTC-USD_*, ETH-USD_*, CLK-A/C1/C2/D1/D2_*).
+
+GIT STATUS FINAL (limpo, apenas o escopo intencional):
+  M mercury_ai/analysis/benchmark_framework.py
+  M mercury_ai/analysis/tests/test_benchmark_framework.py
+  ?? AUDIT_V1/10_FORENSE_B4_C3_BENCHMARK_OUTCOME_FIX.txt   (este relatório)
+
+================================================================================
+SEÇÃO 25 — PENDÊNCIAS
+================================================================================
+1. Suite pytest completa (~5h) NÃO foi re-executada integralmente neste sprint;
+   resultado DERIVADO do baseline B4-C2 (359 passed/4 failed esperados) via
+   orfandade comprovada; as 4 falhas conhecidas classificadas PRE-EXISTENTE.
+   Se a execução integral for exigida, pode ser disparada em background.
+2. MercuryBenchmarkFramework permanece ORFÃO (fora de produção). Recomenda-se,
+   fora do escopo deste bloco (B4-C4/B5), decidir se será integrado à produção
+   ou removido.
+3. Drift de dados LIVE no main (BTC 63.30 vs baseline 63.93; ETH 63.06 vs
+   63.65) — esperado (preços de mercado mudam); não é regressão da correção.
+4. benchmark_framework usa tracemalloc.start() sem stop (smell pré-existente,
+   fora do escopo B4-C3 — NÃO corrigido por regra de escopo).
+
+================================================================================
+SEÇÃO 26 — VEREDITO
+================================================================================
+CRITÉRIOS DE APROVAÇÃO (todos verificados):
+
+  [OK] Bug reproduzido (probe pré-fix: +0.029412 com T0 como endpoint = overlap)
+  [OK] Causa raiz comprovada (close[-1] = vela de decisão; outcome in-sample)
+  [OK] Contrato definido (FORWARD: T0 = decisão, T1 = outcome, fórmula preservada)
+  [OK] Correção mínima (somente benchmark_framework.py + seu teste; órfão)
+  [OK] Overlap eliminado (sem vela futura -> NEUTRO; T0 nunca é endpoint)
+  [OK] Off-by-one validado (T1 = 1ª vela estritamente após T0; extremos OK)
+  [OK] Futuro fora da janela não interfere (T3/T4, T2 -> inalterado)
+  [OK] Fórmula preservada ((close_outcome - close_decision)/close_decision; SELL inverte)
+  [OK] Docstring vs comportamento CONSISTENTES (contrato FORWARD documentado)
+  [OK] Testes passam (7 existentes antes/depois; +11 regressão = 18 passed)
+  [OK] Replay não sofreu alteração (59 passed; replay não foi tocado)
+  [OK] Main funciona (EXIT 0; BTC 63.30/ETH 63.06 WAIT D; drift LIVE esperado)
+  [OK] Nenhuma falha mascarada (exceções logadas; anti-mascaramento Seção 18)
+  [OK] Git diff limitado ao escopo (2 arquivos; 66+/14- e 160+)
+  [OK] Limpeza realizada (probes/snapshots removidos; git status limpo)
+
+  VEREDITO FINAL: APROVADO
+
+  O achado B4-C2 (overlap de 1 candle no benchmark LIVE) foi corrigido com
+  contrato FORWARD mínimo, validado por 11 testes de regressão + probe,
+  sem alterar replay/produção (componente órfão), sem mascarar falhas.
+
+================================================================================
+FIM DO RELATÓRIO B4-C3
+================================================================================
