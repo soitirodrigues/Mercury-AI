@@ -1,5 +1,6 @@
 import threading
 from datetime import datetime, timezone
+from typing import Optional
 
 
 class DeterministicClock:
@@ -29,3 +30,23 @@ class DeterministicClock:
         """Limpa o tempo determinístico, voltando ao relógio real."""
         with cls._lock:
             cls._current_time = None
+
+    @classmethod
+    def snapshot(cls) -> Optional[datetime]:
+        """Captura o estado atual do relógio (None = relógio real).
+
+        Usado para isolar o relógio durante operações determinísticas
+        (ex.: replay histórico) e restaurar o estado anterior ao final,
+        evitando contaminação temporal pós-replay.
+        """
+        with cls._lock:
+            return cls._current_time
+
+    @classmethod
+    def restore(cls, state: Optional[datetime]) -> None:
+        """Restaura um estado previamente capturado por snapshot().
+
+        Se state for None, o relógio volta ao comportamento normal (real).
+        """
+        with cls._lock:
+            cls._current_time = state

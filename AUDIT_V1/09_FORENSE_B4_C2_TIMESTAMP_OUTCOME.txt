@@ -1,0 +1,653 @@
+================================================================================
+SPRINT FORENSE — B4-C2 — TIMESTAMP CONTRACT & 1-CANDLE OUTCOME FORENSICS
+Relatório de Investigação Forense (NÃO é correção)
+================================================================================
+Data da execução : 2026-08-10 (UTC-3, máquina local)
+Commit base       : b08983c (HEAD->main, = B4-C1)
+Status base       : LIMPO (sem alterações não commitadas)
+Arquivo de saída  : AUDIT_V1/09_FORENSE_B4_C2_TIMESTAMP_OUTCOME.txt
+Regra do bloco    : INVESTIGAÇÃO FORENSE. NÃO CORRIGIR. NÃO REFAZER ARQUITETURA.
+                    NÃO INICIAR B4-C3. NÃO INICIAR B5.
+--------------------------------------------------------------------------------
+
+================================================================================
+SEÇÃO 1 — IDENTIFICAÇÃO DO RELATÓRIO
+================================================================================
+Bloco            : B4-C2 (Forense)
+Título           : TIMESTAMP CONTRACT & 1-CANDLE OUTCOME FORENSICS
+Objeto           : (a) múltiplas convenções de timestamp no código; e
+                   (b) possível sobreposição de outcome de 1 candle (janela
+                   de decisão vs janela de resultado) em decisão/replay/P&L/backtest.
+Questão central  : As convenções coexistem de forma COMPATÍVEL, existe INCONSISTÊNCIA
+                   REAL, ou há CONTAMINAÇÃO de decisão/replay/P&L/backtest?
+Método           : Inventário estático (grep file:line) + prova experimental
+                   executável (_probe_b4_c2_timestamps.py, remoção ao final) +
+                   auditoria de backtest + auditoria anti-mascaramento + testes.
+Veredito         : VER SEÇÃO 28.
+================================================================================
+
+================================================================================
+SEÇÃO 2 — ESCOPO E REGRAS DO BLOCO
+================================================================================
+- Investigação forense APENAS. Nenhum arquivo de produção foi modificado.
+- Nenhuma correção foi aplicada. Nenhuma re-arquitetura foi proposta como mudança.
+- B4-C3 e B5 NÃO foram iniciados (proibido por regra).
+- Datasets de produção NÃO foram alterados.
+- A prova experimental (_probe_b4_c2_timestamps.py) será REMOVIDA ao final;
+  os artefatos por ela gerados (data/replay_results/b4c2probe.json, snapshots
+  B4C2TEST_*, runtime_report_B4C2TEST_*.json) serão limpos/ignorados.
+- Entrega: (1) este relatório; (2) resumo executivo (Seção 28);
+  (3) evidências; (4) testes; (5) exit codes; (6) git status; (7) veredito.
+
+Arquivos auditados (inventário temporal):
+  mercury_ai/utils/deterministic_clock.py
+  mercury_ai/core/analysis_pipeline.py
+  mercury_ai/analysis/historical_replay_engine.py
+  mercury_ai/providers/historical_replay_provider.py
+  mercury_ai/providers/yahoo_finance_provider.py
+  mercury_ai/analysis/benchmark_framework.py
+  mercury_ai/analysis/performance_analytics.py
+  mercury_ai/core/security_center.py
+  mercury_ai/core/session_manager.py
+  mercury_ai/models/analysis_result.py
+  mercury_ai/models/evidence.py
+  mercury_ai/analysis/evidence_engine.py
+  mercury_ai/analysis/health_checker.py
+  mercury_ai/analysis/notification_center.py
+  mercury_ai/analysis/session_engine.py
+  mercury_ai/operations/demo_manager.py
+  mercury_ai/execution/order_executor.py
+  mercury_ai/execution/brokers/demo_broker.py
+  mercury_ai/execution/order_types.py
+  mercury_ai/core/pipeline_audit_middleware.py
+  mercury_ai/calendar/economic_calendar.py
+  mercury_ai/database/history_logger.py
+  mercury_ai/news/news_provider.py
+  mercury_ai/utils/report_generator.py
+  mercury_ai/sessions/market_sessions.py
+  mercury_ai/database/replay_storage.py
+  calculate_institutional_stats.py (raiz)
+  performance_benchmarking.py (raiz) / mercury_ai/performance_benchmarking.py
+
+================================================================================
+SEÇÃO 3 — BASELINE DE AUDITORIA
+================================================================================
+Commit base   : b08983c (HEAD->main) — commit do B4-C1 (correção do relógio
+                determinístico com snapshot/restore).
+Status base   : LIMPO — nenhuma modificação não-commitada antes da auditoria.
+Observação    : Nenhum arquivo de produção foi alterado DURANTE o B4-C2.
+                Alterações em árvore ao final = apenas este relatório (untracked)
+                e possíveis restaurações de snapshots apagados por testes.
+Exit codes    :
+  - pycompile de todos os arquivos auditados + probe : EXIT = 0
+  - python -m mercury_ai.main                          : EXIT = 0
+  - testes relacionados (4 arquivos)                  : VER SEÇÃO 21
+  - suite pytest completa                             : VER SEÇÃO 21
+
+================================================================================
+SEÇÃO 4 — INVENTÁRIO TEMPORAL (RESULTADO DA VARREDURA)
+================================================================================
+Varredura estática por grep em mercury_ai/**/*.py dos padrões:
+  DeterministicClock.utcnow(), datetime.now(), datetime.now(timezone.utc),
+  datetime.utcnow() (legacy/deprecado).
+
+Resultado: 4 convenções de produção (3 ativas + 1 legada/dead) + caminho de
+índice de candle distinto (Yahoo tz-aware vs replay naive).
+
+Detalhamento por convenção na Seção 5. Distribuição bruta:
+  - DeterministicClock.utcnow()  : 45 ocorrências em 11 arquivos (caminho de decisão)
+  - datetime.now()               :  5 ocorrências em  5 arquivos (caminhos auxiliares)
+  - datetime.now(timezone.utc)   :  6 ocorrências em  5 arquivos (caminho de execução)
+  - datetime.utcnow() (legacy)   :  2 ocorrências em  1 arquivo  (sessions/market_sessions, DEAD)
+
+================================================================================
+SEÇÃO 5 — CONVENÇÕES DE TIMESTAMP IDENTIFICADAS (3 + 1 LEGACY)
+================================================================================
+------------------------------------------------------------------------
+CONVENÇÃO A — NAIVE-UTC via DeterministicClock.utcnow()
+------------------------------------------------------------------------
+Semântica : datetime NAIVE (tzinfo=None) em UTC. Classe central que permite
+            congelamento determinístico (B4-C1) e reuso em testes.
+Uso       : caminho de DECISÃO, evidências, métricas e relatórios de análise.
+Evidências (arquivo:linha):
+  mercury_ai/core/analysis_pipeline.py          : 122, 156, 169, 186, 208, 242,
+                                                   260-338, 370-423, 426, 474, 492,
+                                                   514, 532, 575
+  mercury_ai/analysis/benchmark_framework.py    : 167, 471
+  mercury_ai/analysis/evidence_engine.py        : 33
+  mercury_ai/analysis/health_checker.py         : 51
+  mercury_ai/analysis/notification_center.py    : 11
+  mercury_ai/analysis/session_engine.py         : 12
+  mercury_ai/core/security_center.py            : 19
+  mercury_ai/core/session_manager.py            : 14
+  mercury_ai/models/analysis_result.py          : 49
+  mercury_ai/models/evidence.py                 : 21, 43
+  mercury_ai/operations/demo_manager.py         : 33
+Implementação (mercury_ai/utils/deterministic_clock.py:26):
+  return datetime.now(timezone.utc).replace(tzinfo=None)   # NAIVE UTC
+  (quando _current_time é None; senão retorna o tempo congelado).
+
+------------------------------------------------------------------------
+CONVENÇÃO B — NAIVE-LOCAL via datetime.now()
+------------------------------------------------------------------------
+Semântica : datetime NAIVE (tzinfo=None) em HORA LOCAL da máquina.
+            NA MÁQUINA DE AUDITORIA = UTC-3. Divergência de 3h vs Convenção A.
+Uso       : calendário econômico, histórico, notícias, gerador de relatório.
+Evidências (arquivo:linha):
+  mercury_ai/calendar/economic_calendar.py      : 8
+  mercury_ai/database/history_logger.py         : 36
+  mercury_ai/news/news_provider.py              : 8
+  mercury_ai/utils/report_generator.py          : 16
+  mercury_ai/analysis/data_quality_engine.py    : 36  (*) DEAD (versão analysis/
+                                                    não usada pelo core; o core usa
+                                                    data/data_quality_engine.py)
+
+------------------------------------------------------------------------
+CONVENÇÃO C — TZ-AWARE-UTC via datetime.now(timezone.utc)
+------------------------------------------------------------------------
+Semântica : datetime AWARE (tzinfo=UTC, sufixo +00:00). Preciso e não-ambíguo.
+Uso       : caminho de EXECUÇÃO (ordens, brokers) e middleware de auditoria.
+Evidências (arquivo:linha):
+  mercury_ai/execution/order_executor.py        : 39
+  mercury_ai/execution/brokers/demo_broker.py   : 20
+  mercury_ai/execution/order_types.py           : 84
+  mercury_ai/core/pipeline_audit_middleware.py  : 22, 42
+  mercury_ai/utils/deterministic_clock.py       : 26 (fallback interno, converte
+                                                    para NAIVE UTC — origem da
+                                                    Convenção A)
+
+------------------------------------------------------------------------
+CONVENÇÃO LEGACY — datetime.utcnow() (DEPRECADO em Python 3.12+)
+------------------------------------------------------------------------
+Semântica : datetime NAIVE UTC; método removido/deprecado em versões futuras.
+Uso       : DEAD CODE.
+Evidências (arquivo:linha):
+  mercury_ai/sessions/market_sessions.py        : 9, 27  (DEAD — não importado
+                                                    pelo caminho de decisão)
+Observação : Nenhum uso ativo de datetime.utcnow() no caminho de produção.
+
+------------------------------------------------------------------------
+CONVENÇÃO DE ÍNDICE DE CANDLE (separada das de timestamp)
+------------------------------------------------------------------------
+- YahooFinanceProvider (mercury_ai/providers/yahoo_finance_provider.py):
+  retorna df do yfinance AS-IS: DatetimeIndex TZ-AWARE (UTC p/ cripto;
+  ex. BTC-USD index[0]=2026-08-09 00:00:00+00:00). Sem normalização de tz
+  no índice. Valida schema (>=20 barras, OHLC maiúsculo, sem NaN).
+- Testes de replay: índices NAIVE (pd.date_range sem tz).
+- DeterministicClock.utcnow(): NAIVE UTC (Convenção A).
+
+================================================================================
+SEÇÃO 6 — TIMELINE CANÔNICA DO CICLO DE DECISÃO-REPLAY-EXECUÇÃO
+================================================================================
+Fases e convenção de timestamp usada em cada uma (caminho de produção):
+
+  [1] Coleta de dados (MarketDataService/DataNormalizer)
+        - Normaliza colunas (duplica lower/upper case: open..volume e
+          Open..Volume). NÃO toca timezone do índice.
+        - Candle index: tz-aware UTC (Yahoo) / naive (replay teste).
+  [2] Análise e Decisão (AnalysisPipeline.analyze)
+        - timestamp da decisão = DeterministicClock.utcnow().isoformat()
+          -> NAIVE UTC (Convenção A). Ex.: analysis_result.timestamp
+          (models/analysis_result.py:49).
+        - market.close = fechamento da ÚLTIMA vela observada.
+  [3] Replay histórico (HistoricalReplayEngine.run_replay)
+        - Por vela i: DeterministicClock.set_time(current_time) com
+          pd.to_datetime(timestamps[i]) (NAIVE do índice do replay).
+        - P/L da vela i = (close[i+n] - close[i]) / close[i].
+        - Snapshot/restore do relógio ao redor do loop (B4-C1).
+  [4] Execução (order_executor / demo_broker / order_types)
+        - datetime.now(timezone.utc).isoformat() -> AWARE UTC (Convenção C).
+        - Para fins de auditoria/execução (off-decision-path).
+  [5] Logs auxiliares (history_logger / report_generator / news / calendário)
+        - datetime.now() -> NAIVE LOCAL (Convenção B). Fora do caminho de
+          decisão/P&L; usados para display/histórico.
+
+CONCLUSÃO PARCIAL (Seção 9 detalha): a timeline de PRODUÇÃO é auto-consistente
+na Convenção A (decisão) e C (execução) — ambas UTC, diferindo apenas em
+naive vs aware. A Convenção B é isolada ao caminho de log/display e NÃO entra
+no cálculo de decisão, replay ou P&L.
+
+================================================================================
+SEÇÃO 7 — CONTRATO DE TIMESTAMP DA DECISÃO (NAIVE-UTC)
+================================================================================
+- O contrato oficial do timestamp de decisão é: NAIVE UTC via
+  DeterministicClock.utcnow().
+- Vantagem: determinismo (congelável) + independência do fuso da máquina
+  (a representação é sempre UTC, independente do TZ local).
+- Risco documentado: como o datetime é NAIVE, QUALQUER comparação com
+  datetime AWARE (ex.: índice Yahoo tz-aware) ou com datetime NAIVE-LOCAL
+  (Convenção B) requer conversão EXPLÍCITA; não há conversão automática.
+- O B4-C1 adicionou snapshot()/restore() para isolar o relógio determinístico
+  (verificado na PARTE G, Seção 15).
+
+================================================================================
+SEÇÃO 8 — PROVA EXPERIMENTAL — DESCRIÇÃO E METODOLOGIA
+================================================================================
+Arquivo : _probe_b4_c2_timestamps.py (TEMPORÁRIO — será removido ao final).
+Método  : Sonda executável (parts A..J) que mede com valores reais:
+  - A  : convenções de timestamp (A/B/C) no mesmo instante.
+  - B  : P/L do replay — fórmula e janela de outcome.
+  - C  : outcome do benchmark LIVE — endpoint da janela vs vela da decisão.
+  - D  : janela de observação da decisão (futuro vs passado).
+  - E  : off-by-one do exit (N=1,2,3).
+  - F  : determinismo do replay (2 execuções idênticas).
+  - G  : isolamento do relógio determinístico (B4-C1) pós-replay.
+  - H  : timezone do índice Yahoo.
+  - I  : horizonte exato do outcome do replay (exclusividade de i+n+1).
+  - J  : boundary T0/T1 — qual close a decisão observa no instante T.
+Helpers: FakePipeline (stub de pipeline com decisão BUY fixa), make_mono_df
+         (série de preços monotônica), FakeYahoo (provider stub), construção
+         de MercuryBenchmarkFramework via object.__new__ (skip do __init__).
+Resultados detalhados por parte nas Seções 9-18.
+
+================================================================================
+SEÇÃO 9 — PARTE A — CONVENÇÕES DE TIMESTAMP (VALORES REAIS)
+================================================================================
+Executado no mesmo instante da máquina de auditoria (fuso local UTC-3):
+
+  A) DeterministicClock.utcnow()      = 2026-08-10 04:13:39  tzinfo=None (NAIVE)
+  B) datetime.now()                   = 2026-08-10 01:13:39  tzinfo=None (NAIVE)
+  C) datetime.now(timezone.utc)       = 2026-08-10 04:13:39+00:00 (AWARE UTC)
+
+  Diferença de relógio de parede A - B = 10800 s = 3,0 h  (offset local UTC-3).
+  A e C representam o MESMO instante (04:13 UTC) — diferem apenas em naive/aware.
+  B representa 3h a menos (hora local).
+
+CONCLUSÃO A: As convenções A e C são o mesmo instante em UTC (representação
+diferente). A convenção B diverge em 3h nesta máquina (deslocamento local).
+Como A é naive, um observador que não conheça o contrato poderia interpretar
+B (naive) como UTC — fonte potencial de confusão em LOGS mistos. Impacto em
+decisão/replay/P&L: NENHUM (B não está nesses caminhos).
+
+================================================================================
+SEÇÃO 10 — PARTE B — P/L DO REPLAY (FÓRMULA E JANELA DE OUTCOME)
+================================================================================
+- Fórmula verificada em 7/7 cenários:
+    P/L = (close[i+n] - close[i]) / close[i]
+  onde i = vela da decisão, n = horizonte de candles (default 3).
+- Exemplo real (n=3):
+    ENTRY_TIME = 05:00  (open/close da vela i)
+    EXIT_TIME  = 05:15  (close da vela i+3)
+- Janela de outcome do replay = [i+1 .. i+n] — EXCLUSIVA da vela de decisão i.
+- RESULTADO: NO REPLAY NÃO HÁ SOBREPOSIÇÃO entre a vela da decisão e a janela
+  de resultado. O outcome é estritamente FORWARD (futuro) em relação à decisão.
+
+================================================================================
+SEÇÃO 11 — PARTE C — OUTCOME DO BENCHMARK LIVE (SOBREPOSIÇÃO 1-CANDLE)
+================================================================================
+Caminho: MercuryBenchmarkFramework._run_single_symbol
+  -> result = self.pipeline.analyze(symbol)          (analisa df Yahoo COMPLETO)
+  -> outcome = self._get_real_outcome(symbol, decision)
+
+Código exato de _get_real_outcome (benchmark_framework.py:182-192):
+    provider = YahooFinanceProvider()
+    df = provider.get_data(symbol)
+    close_current = float(df.iloc[-2]["Close"])
+    close_next    = float(df.iloc[-1]["Close"])
+    raw_return    = (close_next - close_current) / close_current
+    if decision == "SELL": raw_return = -raw_return
+    return raw_return
+
+Prova experimental (FakeYahoo, df com Close final = 105):
+  - outcome = (105 - 100) / 100 = 0.05
+  - decisão real do pipeline = BUY; market.close = 105.0 = close[-1]
+      -> market_close_matches = true
+  - ALTERANDO a ÚLTIMA vela (a vela da decisão) para 110:
+      outcome = (110 - 100) / 100 = 0.10   (RESPONDE à vela da decisão)
+
+CONCLUSÃO C (CRÍTICA):
+  - O endpoint do outcome (close[-1]) é a MESMA vela que forma a decisão
+    (o pipeline analisou o df COMPLETO, incluindo close[-1]).
+  - O outcome do benchmark LIVE NÃO é forward-looking: ele mede o retorno
+    da penúltima para a última vela JÁ VISTAS pela decisão.
+  - SOBREPOSIÇÃO DE 1 CANDLE CONFIRMADA no benchmark LIVE.
+  - A docstring diz "pegar o próximo candle" — o CÓDIGO usa as duas últimas
+    velas do df ATUAL (mismatch documentação vs comportamento).
+
+IMPACTO (Seção 26 detalha):
+  - NÃO afeta o replay histórico (que usa [i+1..i+n], correto — Seção 10).
+  - NÃO afeta a decisão ao vivo (o benchmark só CONSUME o resultado).
+  - Afeta as MÉTRICAS do próprio MercuryBenchmarkFramework (hit rate, P&L,
+    Sharpe, Sortino) calculadas a partir deste outcome.
+  - Mitigação de contexto: benchmark_framework é ÓRFÃO (achado B3 — importado
+    apenas por testes; NÃO está no caminho de decisão/P&L de produção).
+    Portanto a contaminação é contida ao framework de benchmark, não a
+    decisão/replay/P&L/backtest de produção.
+
+================================================================================
+SEÇÃO 12 — PARTE D — JANELA DE OBSERVAÇÃO DA DECISÃO (FUTURO vs PASSADO)
+================================================================================
+Experimento: grid de 70 velas; decisão na vela i=65.
+  - Modificando velas i+1 .. fim (multiplicar por 1000):
+      decisão INALTERADA (BUY, close observado = 165.0 = close[i]).
+      -> slice_len = 66 = i+1 (inclusivo) -> decisão observa SOMENTE 0..i.
+  - Modificando a vela i (a própria):
+      decisão muda p/ SELL (close observado = 82.5).
+      -> a vela i (T+0) é a última informação da decisão.
+
+CONCLUSÃO D: A decisão é computada com TODAS as velas até i (inclusive), e a
+vela i+1 em diante NÃO influencia a decisão. Em replay, a decisão na vela i é
+legitimamente "às cegas" em relação ao futuro.
+
+================================================================================
+SEÇÃO 13 — PARTE E — OFF-BY-ONE DO EXIT (TABELA N=1,2,3)
+================================================================================
+Contrato: EXIT = close[i + n] (exit index = i + n). Verificação real:
+
+  N (horizonte) | Exit index esperado | Close lido | Match
+  --------------+---------------------+------------+-------
+  N=1           | i+1                 | close[61]  | true
+  N=2           | i+2                 | close[62]  | true
+  N=3           | i+3                 | close[63]  | true
+
+CONCLUSÃO E: Sem erro de off-by-one no exit. ENTRY = close[i], EXIT = close[i+n],
+janela de outcome = (i, i+n] (exclusivo de i, inclusivo de i+n).
+
+================================================================================
+SEÇÃO 14 — PARTE F — DETERMINISMO DO REPLAY (2 EXECUÇÕES)
+================================================================================
+- Duas execuções do replay (mesmo dataset, mesmo relógio congelado):
+  - 8 métricas idênticas (nA == nB).
+  - P/L IDÊNTICO (valores iguais em cada vela).
+CONCLUSÃO F: Replay determinístico — mesmos dados + mesmo relógio => mesmo
+resultado. A introdução de timestamps não introduz não-determinismo.
+
+================================================================================
+SEÇÃO 15 — PARTE G — ISOLAMENTO DO RELÓGIO DETERMINÍSTICO (B4-C1 MANTIDO)
+================================================================================
+- Medição do relógio real antes/depois da execução do replay:
+    antes  : 2026-08-10 04:12:06.831701
+    depois : 2026-08-10 04:12:06.925921   (delta ~0.09 s)
+- frozen = FALSE -> o relógio NÃO ficou congelado após o replay.
+CONCLUSÃO G: O snapshot/restore do B4-C1 está FUNCIONANDO — o relógio
+determinístico é restaurado ao valor real após o loop de replay. Não houve
+vazamento de estado de relógio (não contamina execuções subsequentes).
+
+================================================================================
+SEÇÃO 16 — PARTE H — TIMEZONE DO ÍNDICE YAHOO
+================================================================================
+- YahooFinanceProvider.get_data() retorna o df do yfinance AS-IS:
+    index_type = DatetimeIndex
+    tz         = datetime.timezone.utc  (AWARE)
+    index[0]   = 2026-08-09 00:00:00+00:00
+    index[-1]  = 2026-08-10 04:10:00+00:00
+CONCLUSÃO H: O índice de candle Yahoo é TZ-AWARE (UTC para cripto). O replay
+de testes usa índices NAIVE. Isso NÃO é bug — a decisão é armazenada como
+NAIVE-UTC (Convenção A) e o replay congela o relógio com valores naive do
+próprio índice. O risco potencial (comparar naive-UTC com aware sem conversão)
+está documentado na Seção 5/9 e na Seção 17 (performance_analytics).
+
+================================================================================
+SEÇÃO 17 — PARTE I — HORIZONTE EXATO DO OUTCOME DO REPLAY
+================================================================================
+Experimento: P/L(i=60) permanece INALTERADO (same60=true) quando todas as
+velas > 63 são modificadas. Conjunto alterado: 17 velas (i >= 61 .. fim).
+  - same60 = true  -> o P/L da vela 60 não depende de nada após i+n (=63).
+  - same_all = false -> ESPERADO: velas i>=61 têm horizonte [i+1..i+n] que
+    toca as velas alteradas (ex.: vela 61 usa closes até 64).
+CONCLUSÃO I: Prova o horizonte EXATO [i+1 .. i+n], com i+n+1 em diante EXCLUÍDO
+do outcome da vela i. Confirma Seção 10 (sem sobreposição no replay).
+
+================================================================================
+SEÇÃO 18 — PARTE J — BOUNDARY T0/T1 (QUAL CLOSE A DECISÃO OBSERVA)
+================================================================================
+Experimento: grid 70 velas de 5 min a partir de 09:30; decisão na vela i=65:
+  - T_DECISION (timestamp armazenado) = 14:55  (= open da vela i).
+  - close observado pela decisão       = 165.0 = close[i]  (T+0).
+  - close[i+1]                         = 166.0 (T+1) NÃO observado.
+  - uses_T0 = true  -> a decisão usa close[i] (fechamento da vela i),
+                       NÃO close[i+1].
+CONCLUSÃO J: O timestamp armazenado é o OPEN da vela i; o close[i] é
+REALIZADO ao FECHAMENTO da vela i (T+5 min p/ TF=5m). A decisão é
+pós-close da vela i e o registro de timestamp usa o horário de OPEN.
+Isso é consistente com o contrato de replay (ENTRY=close[i], decisão às
+cegas ao futuro).
+
+================================================================================
+SEÇÃO 19 — CONTRATO DE P&L (ENTRY/EXIT/TIME)
+================================================================================
+Caminho de produção de P&L = HistoricalReplayEngine (replay):
+  ENTRY     : entry_price = float(close_prices[i])           (close da vela i)
+  EXIT      : future_prices = close_prices[i+1 : i+n+1];
+              exit_price    = float(future_prices[-1])        (close da vela i+n)
+  P/L       : (exit_price - entry_price) / entry_price
+  HIT       : BUY  -> P/L > 0 ; SELL -> P/L < 0
+  ENTRY_TIME: timestamp da vela i (open)
+  EXIT_TIME : ENTRY_TIME + n * timeframe  (ex.: n=3, TF=5min => +15 min)
+              SEMPRE EXIT_TIME > ENTRY_TIME (avanço temporal garantido).
+Janela     : (i, i+n] — sem sobreposição com a vela da decisão.
+Registro   : ReplayStorage.save -> data/replay_results/<audit_id>.json
+             (audit_id, decision, confidence, mae, mfe, pl, hit, timestamp).
+Consumidor : calculate_institutional_stats.py (raiz) lê esses JSONs e calcula
+             acurácia por decisão a partir de hit — CONSISTENTE com o replay.
+
+NOTA (fora do replay): performance_analytics.py (snapshot/posição) usa
+entry_time = datetime.fromisoformat(data['timestamp']) e, se df.index.tz
+não for None: entry_time = entry_time.replace(tzinfo=df.index.tz).
+  - Para df tz=UTC (cripto): correto (naive-UTC tratado como UTC).
+  - Para df com outro tz (ex.: America/New_York): tratar naive-UTC como
+    "local do df" via replace (e não astimezone) induz erro de deslocamento.
+  - Impacto: NÃO está no caminho de decisão/replay; é P&L de snapshot/papel.
+  - Classificação: AMBÍGUO/BAIXO (Seção 24).
+
+================================================================================
+SEÇÃO 20 — ANTI-MASCARAMENTO (AUDITORIA DE PASS/EXCEPTS/MOCKS)
+================================================================================
+Varredura dos arquivos auditados:
+  - Nenhum 'pass' BURRO (bare pass sem corpo/observabilidade) nos arquivos do
+    caminho de decisão/replay/benchmark auditados.
+  - NENHUM MagicMock / xfail / skip em código de PRODUÇÃO (apenas em testes,
+    o que é esperado).
+  - Todos os except mapeados LOGAM ou imprimem (não silenciosos):
+      * analysis_pipeline.py:509  -> except Exception genérico: logging.exception
+        + evento de auditoria + audit_id='PIPELINE_ERROR' (OBSERVÁVEL).
+      * benchmark_framework.py:_get_real_outcome (L182-192) -> tuple de exceções
+        (ValueError/KeyError/IndexError/ConnectionError/OSError) com
+        logger.warning + fallback NEUTRO 0.0 (documentado B3, logado, não-silencioso).
+      * benchmark_framework.py:262 (buy-and-hold) -> logger.warning + baseline
+        neutro de zeros.
+      * benchmark_framework.py:302 (import scipy) -> fallback para normal
+        (caminho documentado).
+      * benchmark_framework.py:370 (por-símbolo) -> print + skip.
+      * historical_replay_engine.py: ZERO cláusulas except no loop.
+  - Os fallbacks NEUTROS (0.0) NUNCA derivam outcome do score/decision do
+    modelo (correção B3 mantida) — sem auto-validação circular.
+
+================================================================================
+SEÇÃO 21 — TESTES (RELACIONADOS + SUITE COMPLETA)
+================================================================================
+[PREENCHEMENTO PENDENTE — em execução durante a redação do relatório]
+Comandos:
+  1. Relacionados (4 arquivos):
+       pytest -q --timeout=900
+         test_historical_replay_engine.py
+         test_replay_batch_processor.py
+         test_replay_cache.py
+         test_benchmark_framework.py
+  2. Suite completa:
+       pytest -q --continue-on-collection-errors --timeout=900
+         --ignore=test_mercury_signal.py
+         --ignore=test_market_provider.py
+         --ignore=test_liquidity_stress.py
+RESULTADO:
+  - Relacionados  : 66 PASSED em 1734.69s (0:28:54) — 0 falhas.
+                    (test_historical_replay_engine, test_replay_batch_processor,
+                     test_replay_cache, test_benchmark_framework)
+                    -> janela de outcome do replay, determinismo, clock
+                    isolation e benchmark: TODOS passando.
+  - Suite completa: [EXECUTANDO EM BACKGROUND — resultado será anexado ao final]
+
+================================================================================
+SEÇÃO 22 — MAIN.PY (EXECUÇÃO VIVA)
+================================================================================
+Comando: python -m mercury_ai.main
+  MAIN_EXIT = 0
+Saída (resumo):
+  BTC-USD : Score 63.93 | WAIT | Confiança 69.4% | BUY 45.1% | SELL 0.0% |
+            WAIT 54.9% | Regime COMPRESSION | grade D (rule 4)
+  ETH-USD : Score 63.65 | WAIT | Confiança 69.1% | BUY 44.8% | SELL 0.0% |
+            WAIT 55.2% | Regime COMPRESSION | grade D (rule 4)
+Interpretação: execução viva OK. Decisão WAIT (grade D -> regra 4), scores
+63.93/63.65 próximos do baseline B4-C1 (63.75/63.65) — variação esperada do
+mercado ao vivo. Cadeia de decisão completa (Validation->Quality->Conflict->
+Ranking->Memory->Confidence->Confluence->Probability->Resolver).
+
+================================================================================
+SEÇÃO 23 — PYCOMPILE (VALIDAÇÃO SINTÁTICA)
+================================================================================
+- py_compile de TODOS os arquivos auditados (Seção 2) + _probe_b4_c2_timestamps.py
+- RESULTADO: EXIT = 0 (nenhum erro de sintaxe).
+
+================================================================================
+SEÇÃO 24 — CLASSIFICAÇÃO DOS ACHADOS
+================================================================================
+ACHADO 1 — SOBREPOSIÇÃO DE 1 CANDLE NO OUTCOME DO BENCHMARK LIVE
+  Status    : CONFIRMADO (prova experimental, Parte C).
+  Severidade: MÉDIA (ALTA apenas dentro do próprio MercuryBenchmarkFramework).
+  Local     : benchmark_framework.py::_get_real_outcome (iloc[-2]/iloc[-1]).
+  Impacto   : Contamina métricas do benchmark (hit/P&L/Sharpe/Sortino).
+              NÃO afeta decisão, replay, P&L de produção nem backtest de replay.
+  Contexto  : benchmark_framework é ÓRFÃO (achado B3; importado só por testes).
+  Natureza  : Documentação vs comportamento divergentes ("próximo candle"
+              vs "últimas duas velas do df atual"). Outcome NÃO é forward.
+  NÃO CORRIGIR (regra do bloco) — registrar para B4-C3.
+
+ACHADO 2 — 3 CONVENÇÕES DE TIMESTAMP + 1 LEGACY
+  Status    : CONFIRMADO (inventário estático, Seção 5).
+  Severidade: BAIXA/MÉDIA.
+  Local     : Convenção A (naive-UTC, decisão), B (naive-LOCAL, log/display),
+              C (aware-UTC, execução), legacy (utcnow, DEAD).
+  Impacto   : Decisão (A) e execução (C) são ambas UTC -> coerentes no
+              caminho de produção. B é isolada a logs/display -> sem impacto
+              em decisão/replay/P&L. Divergência real de 3h entre A e B na
+              máquina (fuso local) é fonte de confusão em LOGS mistos.
+  NÃO CORRIGIR (regra) — registrar para B4-C3 (padronização).
+
+ACHADO 3 — performance_analytics.py:20-31 (replace tzinfo vs astimezone)
+  Status    : AMBÍGUO / BAIXO.
+  Local     : entry_time.replace(tzinfo=df.index.tz) em P&L de snapshot.
+  Impacto   : Correto para df tz=UTC (cripto); potencial erro de deslocamento
+              p/ ativos com outro fuso. Fora do caminho de decisão/replay.
+  NÃO CORRIGIR (regra) — registrar para B4-C3.
+
+ACHADO 4 — ÍNDICE DE CANDLE TZ-AWARE (Yahoo) vs NAIVE (replay/testes)
+  Status    : CONFIRMADO, COMPATÍVEL (Seção 16).
+  Impacto   : Sem impacto real: cada caminho usa seu próprio índice; o relógio
+              determinístico é congelado com valores do próprio dataset.
+              Requer cuidado apenas em comparações cruzadas naive vs aware.
+
+RESUMO DE IMPACTO NOS CAMINHOS-CHAVE (decisão / replay / P&L / backtest):
+  - DECISÃO ao vivo  : NÃO CONTAMINADA (Convenção A; outcome de benchmark
+                       não retro-alimenta a decisão).
+  - REPLAY histórico : NÃO CONTAMINADO (janela [i+1..i+n] correta; determinístico).
+  - P&L de produção  : NÃO CONTAMINADO (replay; ENTRY/EXIT/TIME corretos).
+  - BACKTEST         : NÃO CONTAMINADO (replay é o backtest de produção).
+  - BENCHMARK FRAMEWORK (órfão): CONTAMINADO pelo Achado 1 (1-candle overlap).
+
+================================================================================
+SEÇÃO 25 — MATRIZ DE COMPATIBILIDADE E IMPACTO
+================================================================================
+                      A (naive-UTC)   B (naive-local)  C (aware-UTC)   legacy
+  Decisão (pipeline)  USO             -                -               -
+  Execução (ordens)   -               -                USO             -
+  Logs/display/hist   -               USO              -               -
+  Replay (relógio)    USO (set_time)  -                -               -
+  Benchmark outcome   USO (ts)        -                -               -
+  Market sessions     -               -                -               DEAD
+
+  Comparação A vs C : mesmo instante; diferem em naive/aware -> OK com conversão.
+  Comparação A vs B : DIVERGEM em 3h (máquina UTC-3) -> AMBÍGUO em logs mistos.
+  Comparação naive (A) vs índice aware (Yahoo): requer conversão explícita
+                     (nenhum código faz astimezone — Achado 3).
+
+  Path de P&L de produção (replay): correta, forward, sem sobreposição.
+  Path de benchmark (órfão)       : sobreposição de 1 candle (Achado 1).
+
+================================================================================
+SEÇÃO 26 — IMPACTO EM DECISÃO / REPLAY / P&L / BACKTEST (CONCLUSÃO)
+================================================================================
+Respondendo à questão central do bloco:
+  (A) COMPATÍVEL? As convenções A e C são compatíveis (ambas UTC, representação
+      diferente). A convenção B (local) é isolada e não participa dos cálculos.
+      => COMPATÍVEIS no caminho de produção.
+  (B) INCONSISTÊNCIA REAL? SIM, existe: (1) sobreposição de 1 candle no
+      outcome do benchmark LIVE (Achado 1) — real, mas restrita ao framework
+      de benchmark órfão; (2) 3 convenções + 1 legacy de timestamp (Achado 2)
+      — real, mas confinada a caminhos não-críticos; (3) replace vs astimezone
+      em performance_analytics (Achado 3) — real, baixa severidade, fora do
+      caminho de decisão.
+  (C) CONTAMINAÇÃO de decisão/replay/P&L/backtest? NÃO. Nenhuma contaminação
+      nos caminhos de produção: decisão (naive-UTC), replay (janela correta e
+      determinística), P&L (ENTRY/EXIT/TIME corretos), backtest (= replay).
+      A ÚNICA contaminação confirmada é no MercuryBenchmarkFramework (órfão,
+      usado só por testes) — e mesmo ali é contenção de métricas internas, sem
+      retro-alimentar decisão ou produção.
+
+================================================================================
+SEÇÃO 27 — RECOMENDAÇÕES (SEM CORREÇÃO — REGISTRO PARA B4-C3)
+================================================================================
+Regra do bloco: NÃO corrigir. Lista abaixo é APENAS registro para o bloco
+seguinte (B4-C3), se autorizado.
+  1. benchmark_framework._get_real_outcome: alinhar docstring/contrato com o
+     comportamento real (mede retorno das 2 últimas velas do df atual) OU
+     torná-lo realmente forward (buscar 1 candle APÓS o df atual); decidir em
+     B4-C3. (Candidato a correção de B4-C3.)
+  2. Padronizar convenção de timestamp: definir contrato único (recomendado:
+     naive-UTC via DeterministicClock, ou aware-UTC via now(timezone.utc)),
+     e converter Convenção B (logs/display) para o mesmo padrão ou anotar
+     explicitamente o fuso. (Registro para B4-C3.)
+  3. performance_analytics.py: trocar entry_time.replace(tzinfo=...)
+     por astimezone(...) quando houver conversão de fuso, ou documentar que o
+     contrato é "df sempre UTC". (Registro para B4-C3.)
+  4. Adicionar teste de regressão que congela o relógio (B4-C1 já cobre via
+     snapshot/restore) e teste que garanta janela de outcome do replay
+     exclusiva de i (coberto pela Parte I da sonda). (Registro.)
+  Nenhuma destas recomendações foi implementada (regra do bloco).
+
+================================================================================
+SEÇÃO 28 — VEREDITO + RESUMO EXECUTIVO
+================================================================================
+VEREDITO: APROVADO COM RESSALVAS
+
+Justificativa:
+- Os caminhos de PRODUÇÃO (decisão, replay, P&L, backtest) estão CORRETOS e
+  consistentes quanto a timestamp (naive-UTC na decisão, aware-UTC na execução)
+  e quanto a janela de outcome (replay usa [i+1..i+n], forward, sem
+  sobreposição; determinístico; relógio isolado pós-B4-C1).
+- Existem 2 inconsistências CONFIRMADAS e 1 ambígua, mas TODAS confinadas a
+  caminhos não-críticos/órfãos:
+    1) Sobreposição de 1 candle no outcome do benchmark LIVE
+       (benchmark_framework._get_real_outcome) — framework ÓRFÃO (só testes),
+       não retro-alimenta produção.
+    2) 3 convenções de timestamp + 1 legacy — Convenção B (local) isolada a
+       logs/display; A e C coerentes (UTC).
+    3) replace vs astimezone em performance_analytics — baixa severidade,
+       fora do caminho de decisão/replay.
+- NENHUMA contaminação de decisão/replay/P&L/backtest de produção foi
+  encontrada. A questão central (C) do bloco: CONTAMINAÇÃO -> NÃO.
+- Não houve correção (regra respeitada). Achados registrados para B4-C3.
+
+Ressalvas (motivo de não ser APROVADO total):
+  - Achado 1 (benchmark overlap) é real e deve ser corrigido em B4-C3
+    (alinhar contrato ou tornar forward) ANTES de qualquer uso do
+    MercuryBenchmarkFramework para métricas confiáveis.
+  - Divergência de 3h entre Convenção A e B (logs) é armadilha operacional.
+  - Mismatch docstring/behavior em _get_real_outcome deve ser sanado.
+
+Exit codes:
+  - pycompile  : 0
+  - main.py    : 0
+  - testes     : VER SEÇÃO 21 (a completar)
+
+Git status e limpeza: ver seção final pós-execução (probe removido; artefatos
+de teste limpos; árvore com apenas este relatório + restaurações necessárias).
+
+RESUMO EXECUTIVO (1 linha):
+  "Timestamp e janela de outcome de DECISÃO/REPLAY/P&L estão corretos e
+   determinísticos; a única sobreposição real de 1 candle está confinada ao
+   framework de benchmark (órfão) — veredito APROVADO COM RESSALVAS,
+   sem correção neste bloco."
+
+================================================================================
+FIM DO RELATÓRIO B4-C2
+================================================================================

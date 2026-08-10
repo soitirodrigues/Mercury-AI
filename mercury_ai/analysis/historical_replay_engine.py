@@ -116,55 +116,63 @@ class HistoricalReplayEngine:
 
         cache_hits_before = self._cache.stats["hits"]
 
-        for i in range(start_idx, len(full_df) - n_candles):
-            candle_num = i - start_idx
+        # B4-C1: isola o relógio determinístico durante o replay.
+        # Captura o estado temporal anterior e restaura em finally, garantindo
+        # que o clock NÃO permaneça congelado em timestamp histórico após o
+        # replay (inclusive em caso de exceção no loop).
+        clock_state = DeterministicClock.snapshot()
+        try:
+            for i in range(start_idx, len(full_df) - n_candles):
+                candle_num = i - start_idx
 
-            # Progress logging otimizado
-            if not silent and candle_num >= next_progress_mark:
-                pct = (candle_num * 100) // total_candles
-                print(f"  Progresso: {pct}% ({candle_num}/{total_candles})")
-                next_progress_mark += progress_step
+                # Progress logging otimizado
+                if not silent and candle_num >= next_progress_mark:
+                    pct = (candle_num * 100) // total_candles
+                    print(f"  Progresso: {pct}% ({candle_num}/{total_candles})")
+                    next_progress_mark += progress_step
 
-            # Atualiza tempo determinístico
-            current_time = pd.to_datetime(timestamps[i]).to_pydatetime()
-            DeterministicClock.set_time(current_time)
+                # Atualiza tempo determinístico
+                current_time = pd.to_datetime(timestamps[i]).to_pydatetime()
+                DeterministicClock.set_time(current_time)
 
-            # Atualiza o provedor com o índice atual
-            provider.set_index(i)
-            # Verifica cache antes de executar pipeline
-            cached_snapshot = self._cache.get(symbol, i)
-            if cached_snapshot is not None:
-                snapshot = cached_snapshot
-            else:
-                # Executa o pipeline de forma determinística
-                pipeline.analyze(
-                    symbol,
-                    avg_volume=avg_volume.iloc[:i+1],
-                    avg_body=avg_body.iloc[:i+1],
-                    silent=True
-                )
-                snapshot = pipeline.last_snapshot
-                # Armazena no cache
-                self._cache.put(symbol, i, snapshot)
+                # Atualiza o provedor com o índice atual
+                provider.set_index(i)
+                # Verifica cache antes de executar pipeline
+                cached_snapshot = self._cache.get(symbol, i)
+                if cached_snapshot is not None:
+                    snapshot = cached_snapshot
+                else:
+                    # Executa o pipeline de forma determinística
+                    pipeline.analyze(
+                        symbol,
+                        avg_volume=avg_volume.iloc[:i+1],
+                        avg_body=avg_body.iloc[:i+1],
+                        silent=True
+                    )
+                    snapshot = pipeline.last_snapshot
+                    # Armazena no cache
+                    self._cache.put(symbol, i, snapshot)
 
-            # Calcula métricas de replay
-            entry_price = float(close_prices[i])
-            future_prices = close_prices[i+1:i+n_candles+1]
+                # Calcula métricas de replay
+                entry_price = float(close_prices[i])
+                future_prices = close_prices[i+1:i+n_candles+1]
 
-            pl = (float(future_prices[-1]) - entry_price) / entry_price
-            mae = (float(future_prices.min()) - entry_price) / entry_price
-            mfe = (float(future_prices.max()) - entry_price) / entry_price
+                pl = (float(future_prices[-1]) - entry_price) / entry_price
+                mae = (float(future_prices.min()) - entry_price) / entry_price
+                mfe = (float(future_prices.max()) - entry_price) / entry_price
 
-            decision = snapshot.decision_result.decision
-            hit = False
-            if decision == "BUY":
-                hit = pl > 0
-            elif decision == "SELL":
-                hit = pl < 0
+                decision = snapshot.decision_result.decision
+                hit = False
+                if decision == "BUY":
+                    hit = pl > 0
+                elif decision == "SELL":
+                    hit = pl < 0
 
-            metrics = ReplayMetrics(mae=mae, mfe=mfe, pl=pl, hit=hit)
-            storage.save(snapshot.decision_result.audit_id, snapshot, metrics)
-            all_metrics.append(metrics)
+                metrics = ReplayMetrics(mae=mae, mfe=mfe, pl=pl, hit=hit)
+                storage.save(snapshot.decision_result.audit_id, snapshot, metrics)
+                all_metrics.append(metrics)
+        finally:
+            DeterministicClock.restore(clock_state)
 
         wall_time = time_module.perf_counter() - t_start
         cache_hits = self._cache.stats["hits"] - cache_hits_before

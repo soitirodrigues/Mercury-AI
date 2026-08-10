@@ -9,6 +9,7 @@ from unittest.mock import MagicMock, patch, PropertyMock
 from mercury_ai.analysis.historical_replay_engine import HistoricalReplayEngine
 from mercury_ai.analysis.replay_cache import ReplayCache
 from mercury_ai.database.replay_storage import ReplayMetrics
+from mercury_ai.utils.deterministic_clock import DeterministicClock
 
 # Timeout estendido: run_replay executa pipeline.analyze() (~20+ engines pesados)
 # para cada candle. Com 100 candles + n_candles=5, são 35 iterações.
@@ -182,3 +183,100 @@ class TestReplayEdgeCases:
             assert hasattr(m, 'mfe')
             assert hasattr(m, 'pl')
             assert hasattr(m, 'hit')
+
+
+class TestDeterministicClockIsolation:
+    """B4-C1: DeterministicClock deve ser isolado durante o replay.
+
+    O replay congela o relógio em timestamps históricos (set_time por candle);
+    após run_replay, o clock NÃO pode permanecer no passado (contaminação
+    temporal). A correção usa snapshot/restore em finally.
+    """
+
+    def test_clock_restored_after_normal_replay(self, sample_df):
+        """A) Restauração normal: clock volta ao relógio real após replay."""
+        DeterministicClock.reset()
+        engine = HistoricalReplayEngine()
+        engine.run_replay("CLK-A", sample_df, n_candles=5, silent=True)
+        # Depois do replay, _current_time deve ser None (relógio real)
+        assert DeterministicClock._current_time is None
+
+    def test_clock_restored_after_exception(self, sample_df):
+        """B) Restauração após exceção: clock volta ao real mesmo com erro.
+
+        A exceção original NÃO é mascarada; o finally restaura o relógio.
+        """
+        DeterministicClock.reset()
+
+        class FailingPipeline:
+            last_snapshot = None
+
+            def __init__(self, *a, **k):
+                pass
+
+            def analyze(self, *a, **k):
+                raise RuntimeError("intentional replay failure")
+
+        engine = HistoricalReplayEngine()
+        with patch(
+            "mercury_ai.analysis.historical_replay_engine.AnalysisPipeline",
+            FailingPipeline,
+        ):
+            with pytest.raises(RuntimeError, match="intentional replay failure"):
+                engine.run_replay("CLK-B", sample_df, n_candles=5, silent=True)
+
+        # Exceção propagada; relógio deve estar restaurado
+        assert DeterministicClock._current_time is None
+
+    def test_double_replay_deterministic_and_clock_restored(self, sample_df):
+        """C) Replay duplo: A == B e clock_after_A/B fora do estado histórico."""
+        DeterministicClock.reset()
+        engine = HistoricalReplayEngine()
+
+        metrics_a = engine.run_replay("CLK-C1", sample_df, n_candles=5, silent=True)
+        clock_after_a = DeterministicClock._current_time
+
+        metrics_b = engine.run_replay("CLK-C2", sample_df, n_candles=5, silent=True)
+        clock_after_b = DeterministicClock._current_time
+
+        # Determinístico: listas de P/L idênticas
+        pl_a = [m.pl for m in metrics_a]
+        pl_b = [m.pl for m in metrics_b]
+        assert pl_a == pl_b
+        # Sem contaminação residual
+        assert clock_after_a is None
+        assert clock_after_b is None
+
+    def test_no_contamination_of_normal_execution(self, sample_df):
+        """D) Ausência de contaminação: NORMAL -> REPLAY -> NORMAL -> REPLAY.
+
+        Execuções normais intercaladas com replays devem usar relógio real.
+        """
+        DeterministicClock.reset()
+        engine = HistoricalReplayEngine()
+
+        # NORMAL 1
+        assert DeterministicClock._current_time is None
+        # REPLAY 1
+        engine.run_replay("CLK-D1", sample_df, n_candles=5, silent=True)
+        # NORMAL 2 (após replay) — não contaminado
+        assert DeterministicClock._current_time is None
+        # REPLAY 2
+        engine.run_replay("CLK-D2", sample_df, n_candles=5, silent=True)
+        # NORMAL 3 (após segundo replay) — não contaminado
+        assert DeterministicClock._current_time is None
+
+    def test_empty_replay_does_not_touch_clock(self):
+        """Replay vazio (dados insuficientes) não altera o estado do clock."""
+        DeterministicClock.reset()
+        df = pd.DataFrame({
+            "open": [100.0] * 10,
+            "high": [101.0] * 10,
+            "low": [99.0] * 10,
+            "close": [100.5] * 10,
+            "volume": [5000] * 10,
+        })
+        engine = HistoricalReplayEngine()
+        metrics = engine.run_replay("CLK-E", df, n_candles=5, silent=True)
+        assert metrics == []
+        assert DeterministicClock._current_time is None

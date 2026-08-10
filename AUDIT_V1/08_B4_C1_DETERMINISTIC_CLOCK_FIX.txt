@@ -1,0 +1,545 @@
+================================================================================
+MERCURY AI V1 — SPRINT FORENSE DE CORREÇÃO — B4-C1 — DETERMINISTIC CLOCK ISOLATION
+================================================================================
+Bloco: CORREÇÃO (escopo único: isolamento/restauração do estado temporal)
+Data: 2026-08-10
+Baseline (git): 3cd5090 (AUDIT V1 - B4 FORENSE DATA QUALITY & TEMPORAL INTEGRITY)
+================================================================================
+
+--------------------------------------------------------------------------------
+1. OBJETIVO
+--------------------------------------------------------------------------------
+Corrigir exclusivamente o problema comprovado no B4: o DeterministicClock
+utilizado durante o Historical Replay permanece alterado após o término do
+replay, contaminando o estado temporal da aplicação.
+
+Evidência do B4 (pré-correção):
+  ANTES DO REPLAY : 2026-08-10 00:57:51  (relógio real)
+  APÓS O REPLAY   : 2025-01-01 09:30     (relógio congelado no passado)
+
+REGRAS DA MISSÃO (verbatim):
+- Sprint NÃO é refatoração geral. NÃO corrigir outros achados do B4.
+- NÃO alterar: ProbabilityEngine, fórmulas, pesos, thresholds, DecisionResolver,
+  Data Quality, MTF, outcome, providers, indicadores, estratégia, ranking,
+  regras de decisão.
+- Somente corrigir o isolamento/restauração do estado temporal.
+- NÃO iniciar B4-C2. NÃO iniciar B5.
+- Entregar: AUDIT_V1/08_B4_C1_DETERMINISTIC_CLOCK_FIX.txt
+
+--------------------------------------------------------------------------------
+2. BASELINE
+--------------------------------------------------------------------------------
+BASELINE_COMMIT   : 3cd5090 (HEAD -> main)
+GIT_STATUS_BEFORE : limpo (nenhuma alteração pré-existente)
+GIT_DIFF_BEFORE   : vazio (git diff --stat sem saída)
+
+CWD inicial: C:\Projetos\Mercury-AI
+Sem alterações pré-existentes a preservar.
+
+--------------------------------------------------------------------------------
+3. EVIDÊNCIA DO BUG
+--------------------------------------------------------------------------------
+Fonte: relatório B4 (AUDIT_V1/07_FORENSE_B4_DATA_QUALITY_TEMPORAL_INTEGRITY.txt)
+e re-produção direta (seção 4).
+
+DeterministicClock é um relógio GLOBAL de classe (mutable class-level state):
+  - _current_time = None (estado real) | datetime (congelado/histórico)
+  - _lock = threading.Lock() (thread-safe de classe)
+
+Chamadas em PRODUÇÃO (grep confirmado):
+  - set_time : ÚNICA em mercury_ai/analysis/historical_replay_engine.py:130
+               (dentro do loop de replay, por candle)
+  - reset    : NENHUMA em produção (0 chamadas; só existia em probe B4)
+  - utcnow   : muitos leitores (analysis_pipeline, models, notification_center,
+               session_engine, benchmark_framework, security_center, etc.)
+
+CONSEQUÊNCIA: após run_replay, o clock permanece congelado no timestamp da
+última decisão do replay. Qualquer leitura posterior de utcnow() devolve um
+timestamp histórico (~1,6 ano no passado), corrompendo timestamps, telemetria
+(execution_time) e runtime_reports de execuções normais no mesmo processo.
+
+--------------------------------------------------------------------------------
+4. REPRODUÇÃO PRÉ-CORREÇÃO
+--------------------------------------------------------------------------------
+Probe temporário: _probe_b4_c1.py (FORA de produção; removido ao final).
+Ciclo real: run_replay("SYN", df 80 candles 5min, n_candles=5, silent=True)
+            -> 15 decisões executadas (15 ciclos reais de pipeline).
+
+RESULTADO PRÉ-CORREÇÃO (executado 2026-08-10 01:32:46):
+  [BEFORE] DeterministicClock.utcnow() = 2026-08-10 01:32:46.377336
+  [BEFORE] _current_time               = None                     (relógio real)
+  [DURING] primeiro set_time           = 2025-01-01 05:00:00       (histórico)
+  [DURING] ultimo  set_time            = 2025-01-01 06:10:00       (histórico)
+  [DURING] utcnow no replay            = 2025-01-01 06:10:00
+  [METRICS] len(metrics)               = 15
+  [AFTER]  DeterministicClock.utcnow() = 2025-01-01 06:10:00       (CONGELADO)
+  [AFTER]  _current_time               = 2025-01-01 06:10:00       (CONGELADO)
+  [VEREDITO] clock congelado apos replay? True
+  BUG REPRODUZIDO
+
+CONDIÇÃO DE REPRODUÇÃO ATENDIDA:
+  after (2025-01-01 06:10:00) != estado temporal esperado da aplicação
+  (relógio real / normal). after == último timestamp histórico do replay.
+
+--------------------------------------------------------------------------------
+5. CAUSA RAIZ
+--------------------------------------------------------------------------------
+HistoricalReplayEngine.run_replay congelava DeterministicClock via
+set_time(current_time) a cada candle do loop e NUNCA restaurava o estado ao
+final. Como reset() não era chamado em nenhum lugar da produção, o relógio
+permanecia preso no último timestamp histórico após o retorno de run_replay.
+
+Localização: mercury_ai/analysis/historical_replay_engine.py
+  - loop: for i in range(start_idx, len(full_df) - n_candles)
+  - set_time dentro do loop (era linha 130)
+  - sem reset/restauração após o loop
+
+DeterministicClock: mercury_ai/utils/deterministic_clock.py
+  - estado global de classe _current_time
+  - reset() existia mas NUNCA era chamado em produção
+
+--------------------------------------------------------------------------------
+6. CONTRATO ESPERADO
+--------------------------------------------------------------------------------
+Contrato derivado do CÓDIGO ATUAL (não inventado):
+
+DURANTE replay:
+  DeterministicClock = timestamp histórico do candle atual
+  (set_time por candle — comportamento atual, CORRETO; preservado)
+
+DEPOIS do replay:
+  DeterministicClock NÃO pode permanecer no passado.
+  O estado temporal anterior deve ser RESTAURADO (snapshot/restore)
+  — o mecanismo mais correto: preserva exatamente o estado pré-existente,
+  inclusive se um caller tiver congelado o clock deliberadamente antes do
+  replay (ex.: replay aninhado), em vez de resetar cegamente para None.
+
+O projeto já possuía reset() (volta ao relógio real), mas snapshot/restore é
+estritamente mais correto para ISOLAMENTO: restaura o estado exato anterior.
+
+--------------------------------------------------------------------------------
+7. CORREÇÃO IMPLEMENTADA
+--------------------------------------------------------------------------------
+Mudança mínima em 2 arquivos de produção:
+
+A) mercury_ai/utils/deterministic_clock.py
+   Adicionados 2 classmethods (thread-safe, com o lock de classe existente):
+     - snapshot() -> Optional[datetime] : captura o estado atual (_current_time)
+     - restore(state) -> None           : restaura o estado capturado
+   + import typing.Optional
+
+B) mercury_ai/analysis/historical_replay_engine.py
+   Loop de replay envolvido em try/finally com snapshot/restore:
+     clock_state = DeterministicClock.snapshot()
+     try:
+         for i in range(start_idx, len(full_df) - n_candles):
+             ... (loop inalterado; set_time por candle preservado)
+     finally:
+         DeterministicClock.restore(clock_state)
+
+PROPRIEDADES:
+- During replay: clock congelado no histórico (inalterado).
+- After replay: clock restaurado ao estado anterior (finally).
+- Exceção: finally garante restauração; exceção NÃO é mascarada.
+- Replay vazio (total_candles <= 0): retorna ANTES do snapshot/try; o clock
+  nunca é tocado (set_time não é chamado) -> sem necessidade de restore.
+- Thread-safety: snapshot/restore usam o lock de classe existente.
+
+--------------------------------------------------------------------------------
+8. ARQUIVOS MODIFICADOS
+--------------------------------------------------------------------------------
+  mercury_ai/utils/deterministic_clock.py               (correção: +21 linhas)
+  mercury_ai/analysis/historical_replay_engine.py       (correção: try/finally)
+  mercury_ai/analysis/tests/test_historical_replay_engine.py  (testes: +100)
+
+NENHUM outro arquivo de produção alterado. Escopo respeitado.
+
+--------------------------------------------------------------------------------
+9. TESTES ADICIONADOS
+--------------------------------------------------------------------------------
+Classe TestDeterministicClockIsolation (mercury_ai/analysis/tests/
+test_historical_replay_engine.py) — 5 testes:
+
+  A) test_clock_restored_after_normal_replay
+     -> restauração NORMAL: clock volta ao real (None) após replay.
+  B) test_clock_restored_after_exception
+     -> restauração APÓS EXCEÇÃO: RuntimeError no pipeline propaga
+        (pytest.raises match "intentional replay failure") E clock restaurado.
+  C) test_double_replay_deterministic_and_clock_restored
+     -> REPLAY DUPLO: P/L A == P/L B (determinístico) e clock_after_A/B None.
+  D) test_no_contamination_of_normal_execution
+     -> AUSÊNCIA DE CONTAMINAÇÃO: NORMAL->REPLAY->NORMAL->REPLAY->NORMAL,
+        todos os passos NORMAL com clock real.
+  E) test_empty_replay_does_not_touch_clock
+     -> REPLAY VAZIO: dados insuficientes não alteram o clock.
+
+--------------------------------------------------------------------------------
+10. TESTE NORMAL
+--------------------------------------------------------------------------------
+Probe pós-correção (executado 2026-08-10 01:35:33):
+  [BEFORE] DeterministicClock.utcnow() = 2026-08-10 01:35:33.372110
+  [BEFORE] _current_time               = None
+  [DURING] primeiro set_time           = 2025-01-01 05:00:00
+  [DURING] ultimo  set_time            = 2025-01-01 06:10:00
+  [DURING] utcnow no replay            = 2025-01-01 06:10:00
+  [METRICS] len(metrics)               = 15
+  [AFTER]  DeterministicClock.utcnow() = 2026-08-10 01:36:02.054086  (REAL)
+  [AFTER]  _current_time               = None                        (REAL)
+  [VEREDITO] clock congelado apos replay? False
+  BUG NAO REPRODUZIDO
+
+CONTRATO ATENDIDO:
+  ANTES  = relógio real (None)      -> comportamento esperado
+  DURANTE = timestamp histórico      -> correto durante replay
+  DEPOIS  = relógio real (None)      -> restaurado (comportamento normal)
+
+--------------------------------------------------------------------------------
+11. TESTE COM EXCEÇÃO
+--------------------------------------------------------------------------------
+Probe pós-correção (executado 2026-08-10 01:39:16):
+  before = 2026-08-10 01:39:16.247296
+  excecao capturada = 'intentional replay failure'   (RuntimeError)
+  after  = 2026-08-10 01:39:16.247296                (relógio real)
+  _current_time = None                               (restaurado)
+  excecao NAO mascarada? True
+  clock restaurado? True
+  RESULTADO: PASS
+
+REGRAS DE EXCEÇÃO ATENDIDAS (seção 6 da missão):
+  1. exceção original aparece (RuntimeError com mensagem original)      [OK]
+  2. exceção NÃO é mascarada (não há except; só try/finally)            [OK]
+  3. clock é restaurado em finally                                       [OK]
+  4. execução posterior normal continua com estado temporal válido      [OK]
+  Não usou: except Exception / pass / transformar falha em sucesso.
+
+Teste automatizado equivalente:
+  test_clock_restored_after_exception (PASSED em pytest).
+
+--------------------------------------------------------------------------------
+12. TESTE DE REPLAY DUPLO
+--------------------------------------------------------------------------------
+Probe pós-correção (executado 2026-08-10 01:37:05):
+  RUN A: n=15 before=2026-08-10 01:37:05.334200 after=2026-08-10 01:37:37.138457 clock=None
+  RUN B: n=15 before=2026-08-10 01:37:37.138457 after=2026-08-10 01:38:06.982827 clock=None
+  A == B (P/L idênticos)? True
+  clock_after_A normal? True
+  clock_after_B normal? True
+  RESULTADO: PASS
+
+Teste automatizado equivalente:
+  test_double_replay_deterministic_and_clock_restored (PASSED em pytest).
+
+--------------------------------------------------------------------------------
+13. TESTE DE CONTAMINAÇÃO
+--------------------------------------------------------------------------------
+Probe pós-correção (executado 2026-08-10 01:38:07):
+  NORMAL-1  utcnow=2026-08-10 01:38:07.009927  _current_time=None
+  REPLAY-1  utcnow=2026-08-10 01:38:38.302336  _current_time=None
+  NORMAL-2  utcnow=2026-08-10 01:38:38.302336  _current_time=None
+  REPLAY-2  utcnow=2026-08-10 01:39:16.229942  _current_time=None
+  NORMAL-3  utcnow=2026-08-10 01:39:16.231960  _current_time=None
+  Todos os NORMAL com clock real (None)? True
+  RESULTADO: PASS
+
+O replay NÃO contamina a execução normal posterior (todos os passos NORMAL
+usam relógio real).
+
+Teste automatizado equivalente:
+  test_no_contamination_of_normal_execution (PASSED em pytest).
+
+--------------------------------------------------------------------------------
+14. THREAD / GLOBAL STATE (seção 10 da missão)
+--------------------------------------------------------------------------------
+DeterministicClock é:
+  - GLOBAL / CLASS-LEVEL: _current_time e _lock são atributos de classe,
+    compartilhados por todas as threads do processo.
+  - NÃO é thread-local, NÃO é contexto, NÃO é stack de timestamps.
+
+Sincronização: _lock (threading.Lock) de classe garante atomicidade de
+set_time / utcnow / snapshot / restore individuais.
+
+CALLERS DE run_replay (verificado no código):
+  - run_deterministic_replay_scenarios.py : SEQUENCIAL (loop for)
+  - run_institutional_replay.py            : SEQUENCIAL (loop for)
+  - ReplayBatchProcessor.run_batch         : PARALELO (ThreadPoolExecutor,
+    max_workers configurável, default 4) -> run_replay em threads por símbolo.
+
+RISCO DE CONCORRÊNCIA (pré-existente, FORA do escopo desta correção):
+  Se dois replays rodarem em threads paralelas, o _current_time de classe é
+  compartilhado: os set_time de cada thread podem se intercalar e o timestamp
+  "atual" visto por cada candle pode pertencer à OUTRA thread durante o replay.
+  A correção B4-C1 (snapshot/restore) NÃO piora este cenário: cada thread
+  restaura o estado capturado ao final. O risco de corrida DURANTE o replay é
+  anterior a esta correção e pertence ao desenho global do DeterministicClock.
+
+REGISTRADO COMO PENDÊNCIA (não expandir escopo):
+  - ReplayBatchProcessor em paralelo + DeterministicClock de classe = corrida
+    de timestamps DURANTE replay. Endereçar em bloco futuro (ex.: clock
+    thread-local, ou lock de replay abrangendo o loop inteiro).
+  - Para o contrato SEQUENCIAL (uso primário de produção), a correção é
+    suficiente e correta.
+
+--------------------------------------------------------------------------------
+15. TESTES EXISTENTES (seção 11 da missão)
+--------------------------------------------------------------------------------
+Testes existentes relacionados (executados APÓS a correção):
+  - mercury_ai/analysis/tests/test_historical_replay_engine.py (arquivo inteiro)
+  - Inclui TestDeterministicClockIsolation (novos, 5 testes)
+
+RESULTADO DO ARQUIVO COMPLETO DE REPLAY:
+  21 passed in 1416.02s (0:23:36)   [executado 2026-08-10]
+  -> TODOS os testes de replay existentes + os 5 novos passam. Nenhuma
+     regressão no arquivo de replay.
+
+--------------------------------------------------------------------------------
+16. PYCOMPILE (seção 15 da missão)
+--------------------------------------------------------------------------------
+python -m py_compile dos arquivos alterados:
+  mercury_ai/utils/deterministic_clock.py            -> OK (exit 0)
+  mercury_ai/analysis/historical_replay_engine.py    -> OK (exit 0)
+  mercury_ai/analysis/tests/test_historical_replay_engine.py -> OK (exit 0)
+
+Compilação dos 10 arquivos do escopo replay (B4) -> TODOS OK (exit 0):
+  historical_replay_engine, historical_replay_provider, replay_cache,
+  data_quality_engine (data/), analysis_pipeline, mtf_engine, market_data,
+  indicator_engine, data_normalizer, deterministic_clock.
+
+--------------------------------------------------------------------------------
+17. REGRESSÃO DO REPLAY (seção 12 da missão)
+--------------------------------------------------------------------------------
+A correção NÃO altera o corpo do loop de replay (apenas o envolve em
+try/finally). Os resultados históricos legítimos do replay dependem de:
+  - decisões do pipeline (baseadas em dados 0..i e timestamps set_time por
+    candle — INALTERADOS);
+  - P/L/MAE/MFE (calculados a partir de close_prices e future_prices —
+    INALTERADOS);
+  - cache (ReplayCache por (symbol, index) — INALTERADO).
+
+Evidência de determinismo preservado:
+  - Probe REPLAY DUPLO (seção 12): P/L A == P/L B (idênticos) -> determinismo
+    preservado.
+  - Teste test_double_replay_deterministic_and_clock_restored (PASSED).
+  - Arquivo completo de replay: 21 passed (sem alteração de comportamento).
+
+Replays determinísticos existentes (run_deterministic_replay_scenarios.py)
+rodam SEQUENCIALMENTE; a correção só acrescenta restauração ao final, sem
+alterar nenhuma decisão/P/L.
+
+--------------------------------------------------------------------------------
+18. MAIN REAL (seção 13 da missão)
+--------------------------------------------------------------------------------
+python -m mercury_ai.main  [executado 2026-08-10]
+  EXIT = 0  (sem exceções)
+  Cadeia de decisão: Validation ok -> Quality 60.77 -> Conflict 1.00 ->
+    Ranking 27 evidências -> Memory 0.50 -> Confidence 68.99 ->
+    Confluence BUY 100.00 -> Probability grade=D (buy 44.92, sell 0.00) ->
+    Resolver rule=4 -> WAIT.
+  RANKING: BTC-USD Score 63.75 WAIT | ETH-USD Score 63.65 WAIT
+  (comportamento idêntico ao baseline documentado: grade D regra 4, WAIT).
+
+--------------------------------------------------------------------------------
+19. PYTEST (seção 14 da missão)
+--------------------------------------------------------------------------------
+1) Testes relacionados (clock/replay) ANTES: N/A (não existiam).
+   Testes relacionados (clock/replay) DEPOIS:
+   mercury_ai/analysis/tests/test_historical_replay_engine.py -> 21 passed.
+
+2) Suite completa (python -m pytest -q):
+   ERRO DE COLLECTION PRÉ-EXISTENTE em test_mercury_signal.py:
+     AttributeError: 'str' object has no attribute 'market_context'
+     (signal_formatter.py:62 lê decision.explanation.market_context)
+   -> PRE-EXISTENTE, documentado no relatório R1 (AUDIT_V1/06A, seções 8.2
+      e 16.4). NÃO relacionado a B4-C1: test_mercury_signal.py não referencia
+      DeterministicClock/replay; nenhum arquivo da correção está envolvido.
+
+   Suite completa com --continue-on-collection-errors, excluindo os 3
+   arquivos com problemas pré-existentes documentados (test_mercury_signal.py
+   erro de collection; test_market_provider.py e test_liquidity_stress.py
+   hangs pré-existentes):
+   RESULTADO REAL: 348 passed, 4 failed em 4488.96s (1:14:48).
+   Comando: python -m pytest -q --continue-on-collection-errors
+            --timeout=900 --ignore=test_mercury_signal.py
+            --ignore=test_market_provider.py --ignore=test_liquidity_stress.py
+
+   CLASSIFICAÇÃO DAS 4 FALHAS:
+     [1] tests/test_auto_health.py::test_auto_health_checks
+     [2] tests/test_confidence_calibration_auditor.py::test_confidence_calibration_auditor
+     [3] tests/test_institutional_report_generator.py::test_institutional_report_generator
+     [4] tests/test_robustness.py::test_pipeline_robustness
+         (audit_events = 'Data provider unavailable' em vez de
+          'Data quality issue detected' — gate de DATA_QUALITY/fallback de
+          provider, NÃO clock/replay)
+
+     TODAS AS 4 SÃO PRE-EXISTENTES. Evidência:
+       (a) grep nos 4 arquivos de teste por
+           DeterministicClock|HistoricalReplay|run_replay|set_time|
+           _current_time|snapshot()|restore() -> 0 ocorrências.
+       (b) imports dos 4 arquivos: MercuryAutoHealth, MercuryDataProvider,
+           AssetRegistry, ConfidenceCalibrationAuditor,
+           InstitutionalReportGenerator, AnalysisPipeline, MarketDataProvider,
+           MarketDataService -> nenhum importa deterministic_clock ou
+           historical_replay_engine.
+       (c) as MESMAS 4 falhas estão documentadas como pré-existentes nos
+           audits anteriores (anterior a B4-C1):
+           - AUDIT_V1/05_FORENSE_B2_PERFORMANCE_BENCHMARKING.txt:279-283
+             (mesmas 4 FAILED) e :369-371 (P1/P2 falhas determinísticas)
+           - AUDIT_V1/06_FORENSE_B3_BENCHMARK_FRAMEWORK.txt:325
+             (falhas pré-existentes)
+           - AUDIT_V1/06A_FORENSE_SIGNATURE_MATH_RECONCILIATION.txt:499-505
+             (mesmas 4)
+           - AUDIT_V1/07_FORENSE_B4_DATA_QUALITY_TEMPORAL_INTEGRITY.txt:441
+             (pré-existentes conhecidas)
+
+     INTRODUZIDA PELA CORREÇÃO: NENHUMA.
+     Testes relacionados à correção (clock/replay): TODOS PASSARAM.
+       21/21 em test_historical_replay_engine.py (5 novos de isolamento do
+       clock + 16 de replay existentes).
+
+--------------------------------------------------------------------------------
+20. ANTI-MASCARAMENTO (seção 16 da missão)
+--------------------------------------------------------------------------------
+Auditoria dos arquivos alterados por padrões de mascaramento:
+  - except Exception            : 0 ocorrências
+  - except: (bare)              : 0 ocorrências
+  - pass (stmt vazio)           : 0 ocorrências
+  - finally: return             : 0 ocorrências
+  - sys.exit                    : 0 ocorrências
+  - @skip / @pytest.mark.skip   : 0 ocorrências
+  - @pytest.mark.xfail          : 0 ocorrências
+
+A correção usa SOMENTE try/finally para restaurar o clock; não engole
+exceções, não transforma erro em PASS, não altera exit code, não falsifica
+resultado, não ignora teste, não desabilita validação.
+
+Grep confirmado: mercury_ai/analysis/historical_replay_engine.py NÃO possui
+nenhuma cláusula except; o único tratamento de exceção é o try/finally novo.
+
+--------------------------------------------------------------------------------
+21. GIT DIFF (seção 18 da missão)
+--------------------------------------------------------------------------------
+git status --short (após correção):
+  ?? _probe_b4_c1.py                          (probe temporário — removido)
+  ?? _probe_b4_c1_scenarios.py                (probe temporário — removido)
+  M  mercury_ai/utils/deterministic_clock.py
+  M  mercury_ai/analysis/historical_replay_engine.py
+  M  mercury_ai/analysis/tests/test_historical_replay_engine.py
+  ?? AUDIT_V1/08_B4_C1_DETERMINISTIC_CLOCK_FIX.txt
+  (mais artefatos de side-effect: runtime_report_SYN_*, snapshots SYN_*,
+   data/replay_results/* — gitignored/removidos)
+
+git diff --stat:
+  mercury_ai/analysis/historical_replay_engine.py       | 106 +++++-----
+  mercury_ai/analysis/tests/test_historical_replay_engine.py | 100 ++++++-
+  mercury_ai/utils/deterministic_clock.py               |  21 +++
+
+git diff --name-only (produção + testes):
+  mercury_ai/analysis/historical_replay_engine.py
+  mercury_ai/analysis/tests/test_historical_replay_engine.py
+  mercury_ai/utils/deterministic_clock.py
+
+AUDITORIA: somente arquivos necessários para B4-C1. A grande mudança em
+historical_replay_engine.py é INDENTAÇÃO (loop envolvido em try) + wrapper
+snapshot/restore; nenhuma lógica do loop alterada. Nenhum arquivo fora do
+escopo modificado.
+
+--------------------------------------------------------------------------------
+22. INVARIANTES (seção 17 da missão)
+--------------------------------------------------------------------------------
+Após qualquer replay concluído:
+  INVARIANTE 1: clock não permanece preso no timestamp histórico.
+      -> Confirmado: [AFTER] _current_time = None (pós-correção).
+  INVARIANTE 2: execução normal posterior não utiliza timestamp histórico.
+      -> Confirmado: NORMAL-1/2/3 com clock real (seção 13).
+  INVARIANTE 3: replay continua determinístico.
+      -> Confirmado: P/L A == P/L B (seção 12).
+  INVARIANTE 4: exceção durante replay não deixa estado temporal corrompido.
+      -> Confirmado: RuntimeError propagou + clock restaurado (seção 11).
+  INVARIANTE 5: resultados históricos legítimos permanecem iguais.
+      -> Confirmado: corpo do loop inalterado; replay duplo idêntico.
+
+--------------------------------------------------------------------------------
+23. ACHADOS FORA DO ESCOPO (seção 19 da missão)
+--------------------------------------------------------------------------------
+Os seguintes problemas NÃO fazem parte de B4-C1 e NÃO foram tocados:
+  - outcome 1-candle (benchmark)          -> "Fora do escopo de B4-C1."
+  - MTF degenerado sob replay             -> "Fora do escopo de B4-C1."
+  - timestamp conventions (3 + legada)    -> "Fora do escopo de B4-C1."
+  - cache telemetry (cache_total/misses_before) -> "Fora do escopo de B4-C1."
+  - Yahoo TTL (stale)                     -> "Fora do escopo de B4-C1."
+  - módulos mortos não-determinísticos    -> "Fora do escopo de B4-C1."
+  - NaN/Inf                               -> "Fora do escopo de B4-C1."
+  - corrida de clock em ReplayBatchProcessor paralelo
+                                           -> "Fora do escopo de B4-C1."
+     (documentada na seção 14 como PENDÊNCIA)
+
+--------------------------------------------------------------------------------
+24. RESULTADO FINAL
+--------------------------------------------------------------------------------
+Bug reproduzido pré-correção (probe _probe_b4_c1.py):
+  BEFORE=None (relógio real), DURING=2025-01-01 05:00->06:10 (histórico),
+  AFTER=2025-01-01 06:10 (FROZEN) -> "BUG REPRODUZIDO True"
+
+Causa raiz: DeterministicClock mantém _current_time global mutável;
+run_replay chama set_time() por candle e NUNCA restaura o relógio; qualquer
+execução posterior (produção ou teste) consome timestamp histórico congelado.
+
+Correção mínima aplicada:
+  - deterministic_clock.py: + snapshot() e restore() (2 métodos, com lock).
+  - historical_replay_engine.py: loop envolvido em try/finally;
+    clock_state = snapshot() antes; restore(clock_state) no finally.
+    Nenhuma lógica do loop alterada (diff = indentação + wrapper).
+
+Validações pós-correção:
+  - Clock correto DURANTE replay        : SIM (DURING=2025-01-01)
+  - Clock restaurado APÓS replay        : SIM (AFTER=None, relógio real)
+  - Restauração após EXCEÇÃO            : SIM (RuntimeError propagou, clock OK)
+  - Replay duplo determinístico         : SIM (P/L A == P/L B)
+  - Sem contaminação (NORMAL->REPLAY->NORMAL) : SIM (NORMAL 1/2/3 = clock real)
+  - Replay vazio não toca o clock       : SIM
+  - Resultados históricos preservados   : SIM (corpo do loop inalterado)
+  - main.py (execução real)             : EXIT=0, grade D, WAIT BTC 63.75 / ETH 63.65
+  - Testes relacionados (21)            : TODOS PASSARAM
+  - Pytest suite completa               : 348 passed, 4 failed (TODAS pré-existentes)
+  - Falhas introduzidas pela correção   : NENHUMA
+  - Anti-mascaramento                   : 0 ocorrências em todos os padrões
+  - Escopo da mudança                   : 3 arquivos (2 produção + 1 testes) + relatório
+
+PENDÊNCIAS (fora do escopo de B4-C1, não bloqueantes, seções 14 e 23):
+  - Corrida de clock no ReplayBatchProcessor paralelo -> B4-C2.
+  - 4 falhas pré-existentes da suite (auto_health, confidence_calibration_auditor,
+    institutional_report_generator, robustness) -> B4-C2/auditoria geral.
+
+--------------------------------------------------------------------------------
+25. VEREDITO
+--------------------------------------------------------------------------------
+VEREDITO: B4-C1 — APROVADO
+
+Critérios de aprovação da missão (13/13 atendidos):
+  [x] Bug reproduzido (probe pré-correção)
+  [x] Causa raiz identificada
+  [x] Correção mínima (escopo limitado)
+  [x] Clock correto durante o replay
+  [x] Clock restaurado após o replay
+  [x] Restauração após exceção
+  [x] Replay duplo determinístico
+  [x] Sem contaminação de execução normal
+  [x] Resultados históricos preservados
+  [x] main funciona (EXIT=0)
+  [x] Testes relacionados passam (21/21)
+  [x] Sem falhas mascaradas (anti-mascaramento 0 ocorrências)
+  [x] Mudanças limitadas ao escopo (3 arquivos)
+
+Falhas pré-existentes da suite (test_auto_health, test_confidence_calibration_auditor,
+test_institutional_report_generator, test_robustness) NÃO bloqueiam a aprovação:
+são anteriores a B4-C1, documentadas nos audits B2/B3/R1/B4, e não referenciam
+nenhum código alterado por esta correção (grep de imports = 0 ocorrências).
+
+PENDÊNCIA (fora do escopo, não bloqueante): corrida de clock no
+ReplayBatchProcessor paralelo — documentada nas seções 14 e 23 para B4-C2.
+
+Conforme missão: NÃO iniciar B4-C2. NÃO iniciar B5. Sprint encerrado.
+
+================================================================================
+FIM DO RELATÓRIO B4-C1
+================================================================================
+
