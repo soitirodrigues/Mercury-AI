@@ -14,13 +14,16 @@ class LearningEngine:
 
     def run_learning(self) -> Dict[str, Any]:
         # 1. Load context
-        audit_to_context = {}
+        id_to_context = {}
         for filename in os.listdir(self.snapshots_dir):
             if filename.endswith(".json"):
                 with open(os.path.join(self.snapshots_dir, filename), 'r') as f:
                     snap = json.load(f)
                     audit_id = snap["decision_result"]["audit_id"]
-                    audit_to_context[audit_id] = snap
+                    replay_id = snap.get("replay_id")
+                    if replay_id:
+                        id_to_context[replay_id] = snap
+                    id_to_context[audit_id] = snap
                     
         # 2. Analyze
         stats = {
@@ -33,7 +36,11 @@ class LearningEngine:
                 with open(os.path.join(self.metrics_dir, filename), 'r') as f:
                     m = json.load(f)
                 
-                ctx = audit_to_context.get(m["audit_id"])
+                ctx = None
+                if m.get("replay_id"):
+                    ctx = id_to_context.get(m["replay_id"])
+                if not ctx:
+                    ctx = id_to_context.get(m.get("audit_id"))
                 if ctx:
                     self._accumulate(stats, m, ctx)
         

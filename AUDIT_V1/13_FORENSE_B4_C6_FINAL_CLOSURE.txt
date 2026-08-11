@@ -2,7 +2,8 @@
 Executar B4-C6 — FINAL TEMPORAL REGRESSION & CLOSURE AUDIT (MERCURY AI V1).
 
 2. Baseline
-HEAD verificado: 04c4ee0. Não foram alterados arquivos de produção neste bloco.
+HEAD verificado na escrita original: 04c4ee0. Não foram alterados arquivos de produção neste bloco.
+[ATUALIZAÇÃO 2026-08-11] HEAD atual: d8599ad5 (merge de origin/main, 2026-08-10 22:35:23 -0300). O merge ocorreu ~5h após a escrita deste relatório (17:32:28).
 
 3. Histórico C1-C5
 C1..C5 verificados; correções aplicadas anteriormente mantidas e validadas.
@@ -77,16 +78,26 @@ Nenhuma regressão temporal detectada nas áreas testadas.
 Remoções: arquivos de snapshot temporários removidos; probe removido.
 
 27. Git integrity
-Worktree limpa: sem modificações pendentes.
+[ATUALIZAÇÃO 2026-08-11] Worktree NÃO está limpa. Estado atual (HEAD=d8599ad5):
+- 6 arquivos de produção modificados: confidence_calibration_auditor.py, historical_replay_engine.py, institutional_analytics_engine.py, learning_engine.py, replay_storage.py, snapshot_logger.py.
+- 1 arquivo de teste modificado: test_replay_storage.py.
+- 1 arquivo de teste novo (não rastreado): test_replay_identity_pairing.py.
+- 315 snapshots JSON modificados (artefatos de teste regenerados).
 
 28. Matriz de achados
-- INFORMATIVO: `ReplayStorage` usa `audit_id=sha256(asset+timeframe+len(evidences))` que pode colidir; não alterado (documentado).
+- INFORMATIVO: `ReplayStorage` usava `audit_id=sha256(asset+timeframe+len(evidences))` que podia colidir; não alterado (documentado).
+- [ATUALIZAÇÃO 2026-08-11] O trabalho em andamento (B5-C4) em `replay_storage.py` e `learning_engine.py` adiciona `replay_id` (derivado do conteúdo do snapshot) e `run_id` para distinguir execuções independentes do mesmo snapshot, e passa a lançar `ValueError` em caso de identidade duplicada com conteúdo diferente — abordando diretamente a preocupação de colisão acima. Validado por 5 testes aprovados (test_replay_identity_pairing.py + test_replay_storage.py, 5 passed in 8.27s).
 
 29. Pendências
 - Executar suíte completa (≈5h).
-- Avaliar correção de `ReplayStorage` em ambiente controlado.
+- Avaliar correção de `ReplayStorage` em ambiente controlado (em andamento via B5-C4).
 
 30. Veredito Final
 B4 — PASS (Nenhuma falha crítica de regressão temporal encontrada; produzir recomendações para correção de `ReplayStorage` como tarefa separada).
+
+31. Pós-escrita (2026-08-11)
+- HEAD atual: d8599ad5 (merge de origin/main, 2026-08-10 22:35:23 -0300), ocorrido ~5h após a escrita deste relatório.
+- Correção adicional: `confidence_calibration_auditor.py` agora captura `MarketClosedException` (dados insuficientes <20 barras) em vez de propagar; todos os 25 testes passam.
+- Trabalho em andamento B5-C4 (replay_id/run_id) validado: 5 testes aprovados.
 
 Assinatura: Auditor automático

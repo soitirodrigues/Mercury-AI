@@ -1635,7 +1635,7 @@
         "expected_risk": 96.39093485008324,
         "expected_reward": 99.31187226978273,
         "expected_drawdown": 5.0,
-        "audit_id": "b2e6311669ce0bcf61c4b9b31301b93133789ef999e72f200720029deb286853",
+        "audit_id": "760e5182197e20d0cfad84dfbc667d059dc9547ff5cc10f9f7339febf6a31da6",
         "version_metadata": {
             "engine_version": "1.2.0",
             "pipeline_version": "1.2.0",
@@ -2597,7 +2597,8 @@
         "weights_version": "1.2.0"
     },
     "audit_events": [],
-    "session_id": "91f49a09-af96-4104-b68f-819bcf04a951",
+    "session_id": "7af8e992-6e88-4841-83d3-f9351b8815ad",
+    "replay_id": "b75baba77f89310c65966efab674d3c0d72b6a0777659f6906614df246f2c842",
     "evidence_ranking": {
         "ranked_evidences": [
             {

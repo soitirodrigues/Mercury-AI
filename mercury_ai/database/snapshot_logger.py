@@ -1,3 +1,4 @@
+import hashlib
 import json
 import os
 import re
@@ -41,6 +42,32 @@ def _sanitize_filename_component(value: str) -> str:
     return safe
 
 
+def compute_replay_id_from_snapshot(snapshot: DecisionSnapshot) -> str:
+    """Compute a deterministic replay_id for the snapshot artifact."""
+    replay_input = (
+        f"{snapshot.asset}|"
+        f"{snapshot.timeframe}|"
+        f"{snapshot.timestamp}|"
+        f"{snapshot.session_id}|"
+        f"{snapshot.decision_result.audit_id}"
+    )
+    return hashlib.sha256(replay_input.encode()).hexdigest()
+
+
+def snapshot_filename_for(snapshot: DecisionSnapshot) -> str:
+    """Return the filename used by DecisionSnapshotLogger for a snapshot."""
+    def _safe_component(value: Any) -> str:
+        raw = str(value)
+        try:
+            return _sanitize_filename_component(raw)
+        except ValueError:
+            return hashlib.sha256(raw.encode()).hexdigest()
+
+    safe_asset = _safe_component(snapshot.asset)
+    safe_timestamp = _safe_component(snapshot.timestamp)
+    return f"{safe_asset}_{safe_timestamp}.json"
+
+
 class DecisionSnapshotLogger:
     """Logger de snapshots de decisão com escrita atômica e thread-safe.
 
@@ -62,7 +89,12 @@ class DecisionSnapshotLogger:
 
         with self._lock:
             # Escrita atômica: temp file no mesmo diretório + os.replace
-            data = json.dumps(asdict(snapshot), indent=4, default=str)
+            data = asdict(snapshot)
+            replay_id = snapshot.replay_id or compute_replay_id_from_snapshot(snapshot)
+            if snapshot.replay_id and snapshot.replay_id != replay_id:
+                raise ValueError("Snapshot.replay_id is inconsistent with snapshot content.")
+            data["replay_id"] = replay_id
+            data = json.dumps(data, indent=4, default=str)
             fd, tmp_path = tempfile.mkstemp(
                 suffix=".tmp", prefix=".snap_", dir=str(self.base_path)
             )

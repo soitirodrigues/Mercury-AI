@@ -21,5 +21,6 @@ class DecisionSnapshot:
     version_metadata: VersionMetadata
     audit_events: Tuple[str, ...]
     session_id: str
+    replay_id: str = ""
     evidence_ranking: Optional[EvidenceRankingResult] = None
     version: str = field(default_factory=lambda: settings.VERSION)

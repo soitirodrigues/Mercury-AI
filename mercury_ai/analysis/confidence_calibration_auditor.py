@@ -4,6 +4,7 @@ from mercury_ai.database.snapshot_logger import DecisionSnapshotLogger
 from mercury_ai.analysis.trade_outcome_engine import TradeOutcomeEngine
 from mercury_ai.data.market_data import MarketDataService
 from mercury_ai.providers.yahoo_finance_provider import YahooFinanceProvider
+from mercury_ai.core.exceptions import MarketClosedException
 
 class ConfidenceCalibrationAuditor:
     def __init__(self):
@@ -30,14 +31,14 @@ class ConfidenceCalibrationAuditor:
             try:
                 df = self.market_service.get_data(data['asset'])
                 current_price = df.iloc[-1]['Close']
-            except (KeyError, IndexError, ValueError, ConnectionError, RuntimeError):
+            except (KeyError, IndexError, ValueError, ConnectionError, RuntimeError, MarketClosedException):
                 continue
                 
             outcome = self.outcome_engine.determine_outcome(data, current_price)
             if outcome not in ["WIN", "LOSS"]:
                 continue
             
-            predicted_confidences.append(data['decision_result']['confidence'])
+            predicted_confidences.append(data['decision_result']['confidence'] / 100.0)
             outcomes.append(1 if outcome == "WIN" else 0)
 
         if not predicted_confidences:

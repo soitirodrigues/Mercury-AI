@@ -1,26 +1,24 @@
 import json
-from pathlib import Path
-from unittest.mock import MagicMock
+import logging
+from types import SimpleNamespace
 
 import pytest
 
 from mercury_ai.database.replay_storage import ReplayStorage, ReplayMetrics
-from mercury_ai.models.evidence import Evidence
-from mercury_ai.models.market_evidence_bundle import MarketEvidenceBundle
-from mercury_ai.models.trading_explanation import TradingExplanation
-from mercury_ai.models.confluence_result import ConfluenceResult
-from mercury_ai.models.evidence_ranking import EvidenceRankingResult
-from mercury_ai.models.confidence_result import ConfidenceResult
-from mercury_ai.models.direction import AnalysisDirection
 
 
 def _make_snapshot(audit_id: str):
-    snapshot = MagicMock()
-    snapshot.decision_result.decision = "BUY"
-    snapshot.decision_result.confidence = 0.75
-    snapshot.timestamp = "2025-01-01T00:00:00Z"
-    snapshot.decision_result.audit_id = audit_id
-    return snapshot
+    return SimpleNamespace(
+        timestamp="2025-01-01T00:00:00Z",
+        asset="TEST-ASSET",
+        timeframe="5m",
+        session_id="TEST-SESSION",
+        decision_result=SimpleNamespace(
+            decision="BUY",
+            confidence=0.75,
+            audit_id=audit_id,
+        ),
+    )
 
 
 def test_replay_storage_overwrite_logs_warning(tmp_path, caplog):
@@ -29,11 +27,12 @@ def test_replay_storage_overwrite_logs_warning(tmp_path, caplog):
     metrics = ReplayMetrics(mae=0.1, mfe=0.2, pl=1.0, hit=True)
     snapshot = _make_snapshot(audit_id)
 
-    storage.save(audit_id, snapshot, metrics)
-    storage.save(audit_id, snapshot, metrics)
+    with caplog.at_level(logging.INFO, logger="mercury_ai.database.replay_storage"):
+        storage.save(audit_id, snapshot, metrics)
+        storage.save(audit_id, snapshot, metrics)
 
     assert any(
-        "overwriting existing replay_result" in record.message
+        "already exists and is identical" in record.message
         for record in caplog.records
     )
 
@@ -45,9 +44,27 @@ def test_replay_storage_file_written(tmp_path):
     snapshot = _make_snapshot(audit_id)
 
     storage.save(audit_id, snapshot, metrics)
-    path = tmp_path / f"{audit_id}.json"
-    assert path.exists()
+    files = list(tmp_path.glob("*.json"))
+    assert len(files) == 1
 
-    data = json.loads(path.read_text(encoding="utf-8"))
+    data = json.loads(files[0].read_text(encoding="utf-8"))
     assert data["audit_id"] == audit_id
     assert data["hit"] is False
+    assert "replay_id" in data
+    assert data["session_id"] == snapshot.session_id
+    assert data["snapshot_filename"].endswith(".json")
+
+
+def test_replay_storage_replay_id_duplicate_rejects_different_content(tmp_path):
+    storage = ReplayStorage(output_dir=str(tmp_path))
+    audit_id = "TEST-DUPLICATE"
+    metrics = ReplayMetrics(mae=0.1, mfe=0.2, pl=1.0, hit=False)
+    snapshot = _make_snapshot(audit_id)
+
+    # first save should succeed
+    storage.save(audit_id, snapshot, metrics)
+
+    # second save of same replay identity with altered metrics should raise
+    metrics_changed = ReplayMetrics(mae=0.1, mfe=0.2, pl=2.0, hit=True)
+    with pytest.raises(ValueError, match="duplicate replay identity"):
+        storage.save(audit_id, snapshot, metrics_changed)

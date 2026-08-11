@@ -51,14 +51,22 @@ class InstitutionalAnalyticsEngine:
             except (json.JSONDecodeError, IOError):
                 continue
 
+            replay_id = snapshot.get("replay_id")
             audit_id = snapshot.get("decision_result", {}).get("audit_id", "")
-            if not audit_id or audit_id not in replay_metrics:
+            metrics = None
+
+            if replay_id and replay_id in replay_metrics:
+                metrics = replay_metrics[replay_id]
+            elif audit_id and audit_id in replay_metrics:
+                metrics = replay_metrics[audit_id]
+
+            if not metrics:
                 continue
 
-            metrics = replay_metrics[audit_id]
             evidences = snapshot.get("evidence_bundle", {}).get("evidences", [])
             record = {
                 "audit_id": audit_id,
+                "replay_id": replay_id,
                 "asset": snapshot.get("asset", "unknown"),
                 "timestamp": snapshot.get("timestamp", ""),
                 "decision": snapshot.get("decision_result", {}).get("decision", ""),
@@ -91,7 +99,7 @@ class InstitutionalAnalyticsEngine:
         return df
 
     def _load_replay_metrics(self) -> Dict[str, Dict[str, Any]]:
-        """Load replay result files keyed by audit_id."""
+        """Load replay result files keyed by replay_id or audit_id."""
         replay_metrics: Dict[str, Dict[str, Any]] = {}
         if not os.path.isdir(self.replay_dir):
             return replay_metrics
@@ -101,9 +109,17 @@ class InstitutionalAnalyticsEngine:
             filepath = os.path.join(self.replay_dir, filename)
             try:
                 with open(filepath, "r") as f:
-                    replay_metrics[filename.replace(".json", "")] = json.load(f)
+                    replay = json.load(f)
             except (json.JSONDecodeError, IOError):
                 continue
+            basename = filename.replace(".json", "")
+            if "replay_id" in replay:
+                replay_metrics[replay["replay_id"]] = replay
+            # Fallback legado por audit_id: garante que snapshots sem replay_id
+            # continuam pareando com métricas de arquivos com run_id (B5-C4).
+            if "audit_id" in replay and replay["audit_id"]:
+                replay_metrics.setdefault(replay["audit_id"], replay)
+            replay_metrics[basename] = replay
         return replay_metrics
 
     # ------------------------------------------------------------------ #

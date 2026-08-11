@@ -13,6 +13,7 @@ Otimizações Bloco 5:
 """
 
 from typing import Dict, List, Optional
+import hashlib
 
 import pandas as pd
 
@@ -22,6 +23,22 @@ from mercury_ai.database.replay_storage import ReplayStorage, ReplayMetrics
 from mercury_ai.data.market_data import MarketDataService
 from mercury_ai.providers.historical_replay_provider import HistoricalReplayProvider
 from mercury_ai.analysis.replay_cache import ReplayCache
+
+
+def _compute_replay_run_id(symbol: str, n_candles: int, full_df: pd.DataFrame) -> str:
+    """Fingerprint determinístico da execução de replay (B5-C4).
+
+    Identifica a configuração de reexecução: símbolo + janela forward + dataset
+    (série de preços). Reexecuções idempotentes com os mesmos dados produzem o
+    mesmo run_id; configurações diferentes (n_candles, dataset, símbolo) geram
+    arquivos de métricas distintos, sem colisão de identidade de replay.
+    """
+    h = hashlib.sha256()
+    h.update(f"{symbol}|{n_candles}|{len(full_df)}".encode("utf-8"))
+    for value in full_df["close"].values:
+        # Round fixo: evita ruído de ponto flutuante entre execuções
+        h.update(f"{value:.8f}|".encode("utf-8"))
+    return h.hexdigest()
 
 
 class HistoricalReplayEngine:
@@ -104,6 +121,10 @@ class HistoricalReplayEngine:
             providers=[provider]
         )
         storage = ReplayStorage()
+        # B5-C4: identifica esta execução de replay de forma determinística para
+        # diferenciar reexecuções com configurações distintas (ex.: n_candles
+        # diferente) sem colidir com a identidade do snapshot (replay_id).
+        run_id = _compute_replay_run_id(symbol, n_candles, full_df)
 
         # Pré-aloca lista de métricas
         all_metrics: List[ReplayMetrics] = []
@@ -115,6 +136,7 @@ class HistoricalReplayEngine:
         next_progress_mark = progress_step
 
         cache_hits_before = self._cache.stats["hits"]
+        cache_misses_before = self._cache.stats["misses"]
 
         # B4-C1: isola o relógio determinístico durante o replay.
         # Captura o estado temporal anterior e restaura em finally, garantindo
@@ -169,14 +191,14 @@ class HistoricalReplayEngine:
                     hit = pl < 0
 
                 metrics = ReplayMetrics(mae=mae, mfe=mfe, pl=pl, hit=hit)
-                storage.save(snapshot.decision_result.audit_id, snapshot, metrics)
+                storage.save(snapshot.decision_result.audit_id, snapshot, metrics, run_id=run_id)
                 all_metrics.append(metrics)
         finally:
             DeterministicClock.restore(clock_state)
 
         wall_time = time_module.perf_counter() - t_start
         cache_hits = self._cache.stats["hits"] - cache_hits_before
-        cache_total = cache_hits + (self._cache.stats["misses"] - (self._cache.stats.get("misses_before", 0)))
+        cache_total = cache_hits + (self._cache.stats["misses"] - cache_misses_before)
 
         self._replay_stats = {
             "total_candles": total_candles,
