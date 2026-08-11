@@ -52,7 +52,8 @@
     "audit_events": [
         "Data quality issue detected"
     ],
-    "session_id": "698bd90c-ddb5-4310-80b6-297e00e31240",
+    "session_id": "4f4876da-549a-48de-8aeb-d752d7ec0583",
+    "replay_id": "2fa648ca177e11d876e5476b1cac204e6f6c5fdfb115e6295fba125614589a3d",
     "evidence_ranking": null,
     "version": "0.1"
 }
