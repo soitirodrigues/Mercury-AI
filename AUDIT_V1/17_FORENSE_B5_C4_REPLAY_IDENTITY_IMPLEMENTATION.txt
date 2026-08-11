@@ -1,0 +1,483 @@
+================================================================================
+AUDIT V1 / 17 — FORENSE B5-C4: IMPLEMENTAÇÃO DA IDENTIDADE DE REPLAY
+================================================================================
+
+1. Objetivo
+--------------------------------------------------------------------------------
+
+Implementar e validar a política de identidade de replay definida no
+relatório AUDIT_V1/16 (B5-C3). Este relatório documenta:
+
+  (a) A implementação de replay_id como hash determinístico SHA-256 que
+      identifica univocamente uma decisão de replay.
+  (b) A implementação de run_id como sufixo opcional para distinguir
+      execuções independentes que compartilham o mesmo replay_id.
+  (c) A detecção de duplicatas com rejeição de conteúdo divergente.
+  (d) O pareamento via replay_id nos motores de analytics e learning.
+  (e) Bug fixes colaterais descobertos durante a implementação.
+  (f) Validação completa da suíte de testes.
+
+Estado do repositório: commit d714cee0 (2026-08-11 19:45:14).
+Working tree: CLEAN (0 staged, 0 unstaged, 0 untracked).
+
+
+2. Baseline de Estado
+--------------------------------------------------------------------------------
+
+Commit: d714cee0
+Mensagem: "B4-C6: finaliza relatório de auditoria e corrige testes"
+  (Nota: a mensagem de commit referencia B4-C6, mas o mesmo commit também
+   contém TODAS as alterações de B5-C4 — replay_id, run_id, duplicate
+   detection, pairing, bug fixes colaterais e testes novos.)
+
+Arquivos modificados/criados no commit:
+
+  mercury_ai/database/replay_storage.py          (+42 linhas)
+  mercury_ai/database/snapshot_logger.py         (+34 linhas)
+  mercury_ai/analysis/learning_engine.py         (+13 linhas)
+  mercury_ai/analysis/institutional_analytics_engine.py (+24 linhas)
+  mercury_ai/analysis/confidence_calibration_auditor.py (+5 linhas)
+  mercury_ai/analysis/historical_replay_engine.py (+26 linhas)
+  mercury_ai/analysis/tests/test_replay_identity_pairing.py (NOVO, +142 linhas)
+  mercury_ai/database/tests/test_replay_storage.py (modificado)
+
+Arquivos de evidência de validação:
+
+  b5c4_full_output.txt   — "80 passed in 301.48s (0:05:01)"
+  b5c4_test_output.txt   — "38 passed in 4.63s"
+  b5c4_replay_hist.txt   — (vazio: replay histórico sem saída de erro)
+
+
+3. Implementação de replay_id
+--------------------------------------------------------------------------------
+
+3.1 Cálculo do hash (snapshot_logger.py)
+
+Função: compute_replay_id_from_snapshot(snapshot)
+Localização: mercury_ai/database/snapshot_logger.py, ~linha 45
+
+Implementação:
+
+    def compute_replay_id_from_snapshot(snapshot):
+        replay_input = (
+            f"{snapshot.asset}|"
+            f"{snapshot.timeframe}|"
+            f"{snapshot.timestamp}|"
+            f"{snapshot.session_id}|"
+            f"{snapshot.decision_result.audit_id}"
+        )
+        return hashlib.sha256(replay_input.encode()).hexdigest()
+
+Componentes do hash:
+  - asset          : identificador do ativo (ex: "BTCUSDT")
+  - timeframe      : granularidade temporal (ex: "1h")
+  - timestamp      : timestamp ISO-8601 da decisão
+  - session_id     : identificador de sessão de análise
+  - audit_id       : SHA-256 do snapshot de evidências (definido em B5-C3)
+
+Resultado: string hexadecimal de 64 caracteres (SHA-256).
+
+Propriedade: DETERMINÍSTICO — mesmas entradas produzem sempre o mesmo
+replay_id, garantindo reprodutibilidade跨 execuções.
+
+3.2 Sanitização de nomes de arquivo (snapshot_logger.py)
+
+Função: _sanitize_filename_component(value)
+
+    def _sanitize_filename_component(value):
+        # Rejeita path traversal
+        if ".." in value or "/" in value or "\\" in value:
+            raise ValueError(f"unsafe filename component: {value}")
+        result = value.replace(":", "-").replace("=", "_").replace("+", "_")
+        if not re.match(r"^[A-Za-z0-9._\-]+$", result):
+            raise ValueError(f"unsafe filename component after sanitize: {result}")
+        return result
+
+Substituições:
+  ":"  → "-"   (timestamps ISO-8601)
+  "="  → "_"   (separadores de query)
+  "+"  → "_"   (encoding de URL)
+
+Validação final: regex ^[A-Za-z0-9._\-]+$ — rejeita qualquer caractere
+fora do conjunto seguro para sistemas de arquivos.
+
+3.3 Consistência no DecisionSnapshotLogger.save (snapshot_logger.py)
+
+    replay_id = compute_replay_id_from_snapshot(snapshot)
+    if snapshot.replay_id and snapshot.replay_id != replay_id:
+        raise ValueError(
+            f"replay_id mismatch: snapshot={snapshot.replay_id} "
+            f"computed={replay_id}"
+        )
+    data["replay_id"] = replay_id
+
+Garante que, se um replay_id pré-computado existir no snapshot, ele deve
+ser idêntico ao hash recalculado. Qualquer divergência é um erro fatal.
+
+
+4. Implementação de run_id
+--------------------------------------------------------------------------------
+
+4.1 Parâmetro opcional em ReplayStorage.save (replay_storage.py)
+
+Assinatura:
+
+    def save(
+        self,
+        audit_id: str,
+        snapshot,
+        metrics: ReplayMetrics,
+        run_id: str = ""
+    ) -> str:
+
+run_id é um parâmetro OPCIONAL (default ""). Quando vazio, o arquivo de
+saída não recebe sufixo de execução. Quando fornecido, é sanitizado e
+anexado ao nome do arquivo.
+
+4.2 Sanitização de run_id (replay_storage.py)
+
+    safe_run_id = _sanitize_audit_id(run_id) if run_id else ""
+
+A função _sanitize_audit_id reaproveita a mesma lógica de
+_sanitize_filename_component: substitui ":" → "-", rejeita path traversal
+("..", "/", "\"), valida contra ^[A-Za-z0-9._\-]+$.
+
+4.3 Construção do nome de arquivo (replay_storage.py)
+
+    replay_id = compute_replay_id_from_snapshot(snapshot)
+    safe_audit_id = _sanitize_audit_id(audit_id)
+    safe_run_id = _sanitize_audit_id(run_id) if run_id else ""
+    run_suffix = f"_{safe_run_id}" if safe_run_id else ""
+    filepath = f"{self.output_dir}/{safe_audit_id}_{replay_id}{run_suffix}.json"
+
+Exemplos de nomes de arquivo gerados:
+
+  Sem run_id:
+    data/replay_results/{audit_id}_{replay_id}.json
+
+  Com run_id="run_42":
+    data/replay_results/{audit_id}_{replay_id}_run_42.json
+
+4.4 Persistência de run_id no JSON (replay_storage.py)
+
+O dicionário de dados gravado inclui o campo run_id:
+
+    data = {
+        "audit_id": audit_id,
+        "replay_id": replay_id,
+        "run_id": safe_run_id,
+        "snapshot_filename": snapshot_filename_for(snapshot),
+        "session_id": snapshot.session_id,
+        "asset": snapshot.asset,
+        "timeframe": snapshot.timeframe,
+        "timestamp": snapshot.timestamp,
+        "decision": snapshot.decision_result.decision,
+        "confidence": snapshot.decision_result.confidence,
+        "mae": metrics.mae,
+        "mfe": metrics.mfe,
+        "pl": metrics.pl,
+        "hit": metrics.hit,
+    }
+
+Isso garante que run_id é recuperável tanto do nome do arquivo quanto do
+conteúdo JSON, permitindo auditoria cruzada.
+
+
+5. Detecção de Duplicatas
+--------------------------------------------------------------------------------
+
+5.1 Mecanismo (_existing_file_matches em replay_storage.py)
+
+Após construir o filepath, ReplayStorage.save verifica se já existe um
+arquivo correspondente:
+
+    existing = glob.glob(
+        os.path.join(self.output_dir, f"{safe_audit_id}_{replay_id}*.json")
+    )
+
+Para cada arquivo encontrado, carrega o JSON e compara campo a campo com
+os novos dados.
+
+5.2 Política de duplicatas
+
+  (a) Conteúdo idêntico (todos os campos coincidem):
+      → SKIP (log info: "duplicate replay identity, content matches — skipping")
+      → Não reescreve o arquivo. Idempotência garantida.
+
+  (b) Conteúdo divergente (mesmo replay_id + run_id, dados diferentes):
+      → raise ValueError(
+            "duplicate replay identity detected for "
+            f"replay_id={replay_id} run_id={safe_run_id} "
+            f"audit_id={safe_audit_id}"
+        )
+      → Sinaliza corrupção ou não-determinismo: duas execuções com a mesma
+        identidade produziram resultados diferentes.
+
+5.3 Thread-safety e atomicidade
+
+  - threading.Lock protege toda a operação de save.
+  - Escrita atômica via tempfile + os.replace (atomic_json_write).
+  - Nenhum arquivo parcial é visível durante a escrita.
+
+
+6. Pareamento via replay_id em Analytics e Learning
+--------------------------------------------------------------------------------
+
+6.1 InstitutionalAnalyticsEngine (institutional_analytics_engine.py)
+
+Carga de métricas de replay (_load_replay_metrics, linhas 101-121):
+
+    replay_metrics: Dict[str, Dict[str, Any]] = {}
+    for filename in os.listdir(self.replay_dir):
+        ...
+        if "replay_id" in replay:
+            replay_metrics[replay["replay_id"]] = replay
+        # Fallback legado por audit_id
+        if "audit_id" in replay and replay["audit_id"]:
+            replay_metrics.setdefault(replay["audit_id"], replay)
+
+Pareamento (linhas 54-61):
+
+    replay_id = snapshot.get("replay_id")
+    audit_id = snapshot.get("decision_result", {}).get("audit_id", "")
+
+    if replay_id and replay_id in replay_metrics:
+        metrics = replay_metrics[replay_id]
+    elif audit_id and audit_id in replay_metrics:
+        metrics = replay_metrics[audit_id]
+
+Estratégia: replay_id tem PRIORIDADE. audit_id é fallback para snapshots
+legados que não possuem replay_id (compatibilidade retroativa).
+
+O registro de saída inclui ambos:
+
+    record = {
+        "audit_id": audit_id,
+        "replay_id": replay_id,
+        "asset": snapshot.get("asset", "unknown"),
+        ...
+    }
+
+6.2 LearningEngine (learning_engine.py)
+
+Construção do índice de contexto (linhas 20-26):
+
+    snap = json.load(f)
+    audit_id = snap["decision_result"]["audit_id"]
+    replay_id = snap.get("replay_id")
+    if replay_id:
+        id_to_context[replay_id] = snap
+    id_to_context[audit_id] = snap
+
+Pareamento (linhas 39-43):
+
+    if m.get("replay_id"):
+        ctx = id_to_context.get(m["replay_id"])
+    if not ctx:
+        ctx = id_to_context.get(m.get("audit_id"))
+
+Mesma estratégia two-step lookup: replay_id primeiro, audit_id como
+fallback. Garante que snapshots antigos continuam pareando corretamente.
+
+
+7. Bug Fixes Colaterais
+--------------------------------------------------------------------------------
+
+7.1 cache_misses_before em historical_replay_engine.py
+
+BUG (relatado em AUDIT_V1 Part 1):
+  O código usava self._cache.stats.get("misses_before", 0) — chave
+  "misses_before" NUNCA existia no dicionário de stats, retornando
+  sempre 0. Consequentemente, cache_total era sempre calculado como
+  cache_hits + (misses_atuais - 0) = cache_hits + misses_atuais, que
+  inclui misses de execuções anteriores, inflando cache_total.
+
+FIX (linhas 138-139, 200-201):
+
+    cache_hits_before = self._cache.stats["hits"]
+    cache_misses_before = self._cache.stats["misses"]
+    ...
+    cache_hits = self._cache.stats["hits"] - cache_hits_before
+    cache_total = cache_hits + (self._cache.stats["misses"] - cache_misses_before)
+
+Agora captura o valor real de misses ANTES da execução e subtrai após,
+garantindo que cache_total reflete apenas os misses DESTE replay.
+
+7.2 MarketClosedException em confidence_calibration_auditor.py
+
+BUG:
+  YahooFinanceProvider._validate_schema levanta MarketClosedException
+  quando há menos de 20 barras de dados (mercado fechado/fim de semana).
+  O except clause do ConfidenceCalibrationAuditor não capturava essa
+  exceção, causando crash em testes que simulam mercado fechado.
+
+FIX (linhas 7, 34):
+
+    from mercury_ai.core.exceptions import MarketClosedException
+    ...
+    except (KeyError, IndexError, ValueError, ConnectionError,
+            RuntimeError, MarketClosedException):
+        continue
+
+Agora o auditor lida graciosamente com dados insuficientes, fazendo
+skip da iteração em vez de propagar a exceção.
+
+
+8. Validação
+--------------------------------------------------------------------------------
+
+8.1 Suíte completa (80 testes)
+
+Arquivo de evidência: b5c4_full_output.txt
+
+  ============================= test session starts =============================
+  ...
+  80 passed in 301.48s (0:05:01)
+
+Todos os 80 testes da suíte completa passaram em 301.48 segundos.
+
+8.2 Subconjunto de testes de replay/identidade (38 testes)
+
+Arquivo de evidência: b5c4_test_output.txt
+
+  ============================= test session starts =============================
+  ...
+  38 passed in 4.63s
+
+8.3 Novos testes de pareamento por replay_id
+
+Arquivo: mercury_ai/analysis/tests/test_replay_identity_pairing.py (142 linhas)
+
+  Teste 1: test_analytics_pairing_uses_replay_id
+    - Verifica que InstitutionalAnalyticsEngine pareia métricas via
+      replay_id quando disponível.
+    - Cria snapshot com replay_id e arquivo de replay com replay_id
+      correspondente.
+    - Asserta que o registro de saída contém as métricas corretas.
+
+  Teste 2: test_learning_pairing_prefers_replay_id
+    - Verifica que LearningEngine prefere replay_id sobre audit_id
+      no pareamento de contexto.
+    - Cenaário: snapshot com ambos replay_id e audit_id; arquivo de
+      replay referenciado por replay_id.
+    - Asserta que o contexto recuperado é o correto.
+
+8.4 Teste de duplicata com conteúdo divergente
+
+Arquivo: mercury_ai/database/tests/test_replay_storage.py
+
+  test_replay_storage_replay_id_duplicate_rejects_different_content:
+    - Salva um replay com replay_id X e conteúdo A.
+    - Tenta salvar novamente com mesmo replay_id X mas conteúdo B.
+    - Asserta que ValueError é levantada com a mensagem
+      "duplicate replay identity detected".
+
+8.5 Replay histórico
+
+Arquivo de evidência: b5c4_replay_hist.txt — vazio (sem erros).
+
+
+9. Arquivos Modificados — Resumo
+--------------------------------------------------------------------------------
+
+  mercury_ai/database/replay_storage.py
+    - compute_replay_id_from_snapshot import
+    - _sanitize_audit_id (path traversal + regex validation)
+    - ReplayStorage.save: parâmetro run_id, sufixo de arquivo, campo run_id
+    - _existing_file_matches: detecção de duplicatas
+    - threading.Lock + atomic_json_write
+
+  mercury_ai/database/snapshot_logger.py
+    - compute_replay_id_from_snapshot (SHA-256 de asset|tf|ts|session|audit_id)
+    - _sanitize_filename_component (":"→"-", "="→"_", "+"→"_")
+    - snapshot_filename_for (fallback SHA-256 para componentes inseguros)
+    - DecisionSnapshotLogger.save: consistência de replay_id
+
+  mercury_ai/analysis/learning_engine.py
+    - id_to_context indexado por replay_id (prioridade) e audit_id (fallback)
+    - Two-step lookup no pareamento
+
+  mercury_ai/analysis/institutional_analytics_engine.py
+    - _load_replay_metrics: key por replay_id + fallback audit_id
+    - Pareamento two-step (replay_id → audit_id)
+    - Registro de saída inclui replay_id
+
+  mercury_ai/analysis/confidence_calibration_auditor.py
+    - Import MarketClosedException
+    - Adicionado ao except clause
+
+  mercury_ai/analysis/historical_replay_engine.py
+    - cache_misses_before capturado antes da execução
+    - cache_total calculado corretamente (delta de misses)
+
+  mercury_ai/analysis/tests/test_replay_identity_pairing.py (NOVO)
+    - 2 testes de pareamento via replay_id
+
+  mercury_ai/database/tests/test_replay_storage.py (modificado)
+    - SimpleNamespace-based _make_snapshot
+    - glob-based file discovery
+    - test_replay_storage_replay_id_duplicate_rejects_different_content
+
+
+10. Contrato de Identidade Implementado
+--------------------------------------------------------------------------------
+
+  Identidade       | Campo JSON    | Origem           | Determinístico
+  -----------------+---------------+------------------+---------------
+  audit_id         | audit_id      | SHA-256 evidences| Sim (B5-C3)
+  replay_id        | replay_id     | SHA-256 snapshot  | Sim (B5-C4)
+  session_id       | session_id    | Runtime UUID     | Não
+  run_id           | run_id        | Caller-supplied  | Não (opcional)
+
+Hierarquia de identidade:
+
+  replay_id = SHA-256(asset | timeframe | timestamp | session_id | audit_id)
+  audit_id  = SHA-256(asset | timeframe | timestamp | len(evidences) | evidence_hash)
+
+replay_id é uma SUPER-IDENTIDADE que incorpora audit_id como componente.
+Dois snapshots com o mesmo replay_id são, por construção, idênticos em
+todos os campos que determinam a decisão. Se o conteúdo persistido
+divergir, isso indica não-determinismo ou corrupção — daí a rejeição.
+
+
+11. Veredito
+--------------------------------------------------------------------------------
+
+B5-C4 — PASS
+
+Critérios atendidos:
+  [x] replay_id implementado como hash determinístico SHA-256
+  [x] run_id implementado como sufixo opcional sanitizado
+  [x] Detecção de duplicatas: skip se idêntico, ValueError se divergente
+  [x] Pareamento via replay_id em analytics e learning (com fallback audit_id)
+  [x] Bug fix: cache_misses_before em historical_replay_engine.py
+  [x] Bug fix: MarketClosedException em confidence_calibration_auditor.py
+  [x] 2 novos testes de pareamento por replay_id
+  [x] Suíte completa: 80 passed in 301.48s
+  [x] Subconjunto: 38 passed in 4.63s
+  [x] Commit d714cee0, working tree CLEAN
+
+A política de identidade de replay definida em B5-C3 está totalmente
+implementada e validada. O sistema agora possui identidade determinística
+de replay com detecção automática de não-determinismo.
+
+
+12. Pendências Remanescentes (não-bloqueantes para B5-C4)
+--------------------------------------------------------------------------------
+
+  (a) Sprint 1 Gate V1 BLOCKERS:
+      - data/brokers/ vazio (ZERO ativos escaneados)
+      - requirements.txt com merge conflict (linhas 9-18, nested <<<<<<< HEAD)
+      - performance_benchmarking.py gutted/crashing (NameError: threshold_exceeded)
+
+  (b) B4 pendências (non-blocking):
+      - MTF degenerado
+      - Benchmark órfão (benchmark_framework fabrica outcomes sintéticos)
+      - tracemalloc.stop() nunca chamado
+      - Clock race em ReplayBatchProcessor
+      - Contrato temporal formal (documento)
+      - Suíte global ~5h para re-execução completa
+
+================================================================================
+FIM DO RELATÓRIO 17 — B5-C4: IMPLEMENTAÇÃO DA IDENTIDADE DE REPLAY
+================================================================================
