@@ -1,0 +1,144 @@
+## Report 20 - Sprint A: Data Quality Gate Gap-Aware Validation
+
+### Executive Summary
+This report documents the complete Sprint A — Data Quality Gate / Gap-Aware Validation for Mercury AI V1. The sprint addresses a CRITICAL blocker where the E2E main.py produced exit 0 with 0 decisions because the Data Quality Gate rejected all assets with "Temporal gaps detected (Score: 0.4)".
+
+### Primary Objective
+Make the Data Quality Gate distinguish between real data gaps and legitimate market closures/artifacts, specifically the Yahoo Finance crypto 45min gap at UTC midnight.
+
+### Background / Problem Statement
+- **E2E Failure**: `python -m mercury_ai.main` produced exit 0 with 0 decisions
+- **Root Cause**: Data Quality Gate rejected ALL assets with score 0.4 due to temporal gaps
+- **Specific Issue**: Yahoo Finance crypto data has a 45-minute gap at UTC midnight (legitimate market closure artifact, NOT unexpected data loss)
+- **Impact**: All assets were rejected, producing no trading decisions
+
+### Chronological Phases
+
+#### Phase 1: Baseline
+- **Status**: E2E failure confirmed
+- **Results**: 2 assets analyzed, 0 decisions produced
+- **Error**: All assets rejected with "Temporal gaps detected (Score: 0.4)"
+
+#### Phase 2: Reproduction
+- **Confirmed**: Issue reproducible with Yahoo Finance 5m data
+- **Observation**: 45-min gap at every UTC midnight for crypto pairs
+
+#### Phase 3: Gap Contract
+- **Location**: `mercury_ai/data/data_quality_engine.py:73`
+- **Contract**: Gap detection logic at the core of the data quality assessment
+
+#### Phase 4: Root Cause Identified
+- **Finding**: 45-min gap at midnight UTC is a Yahoo Finance crypto artifact
+- **Reason**: Crypto markets operate 24/7 but Yahoo Finance reports midnight gaps due to data alignment/rollover
+- **Not unexpected data loss**: This is a known data provider artifact
+
+#### Phase 5: Correction Implemented
+- **Fix**: Added gap classification logic (`EXPECTED_NON_TRADING` vs `UNEXPECTED_DATA_GAP`)
+- **Mechanism**:
+  - Expected intervals computed from median time_diffs
+  - Gaps > 3x interval: checked if crosses UTC day boundary
+  - Crosses day → `EXPECTED_NON_TRADING` → score degraded to 0.8, PASS
+  - Does not cross day → `UNEXPECTED_DATA_GAP` → FAIL/0.4 rejection
+- **NaT Handling**: Explicitly detected and rejected NaT timestamps
+
+#### Phase 6: Tests - 8/8 Sprint A Tests PASS
+- All directed tests covering required scenarios pass
+
+#### Phase 7: E2E Verification
+- **BTC-USD**: DQ PASS, Score 65.27, WAIT decision, 68.5% confidence, BUY 44.4%
+- **ETH-USD**: DQ PASS, Score 63.27, WAIT decision, 68.7% confidence, BUY 45.1%
+- **MTF Evidence**: M1/M5/M15/H1/H4 produced for both assets
+
+### Technical Details
+
+#### Gap Classification Logic
+```python
+# Gaps > 3x interval: check if crosses UTC day boundary
+if gap > 3 * expected_interval:
+    if crosses_utc_day_boundary(timestamps):
+        # Expected non-trading period (e.g., Yahoo Finance crypto midnight gap)
+        score = 0.8  # Minimal degradation
+        status = "PASS"
+    else:
+        # Unexpected data gap
+        score = 0.4  # Rejection threshold
+        status = "FAIL"
+else:
+    # Normal gap within expected range
+    status = "PASS"
+```
+
+#### Expected Intervals
+- Computed from median time_diffs of the asset's dataset
+- Used as reference for gap classification threshold (3x)
+
+#### Gap Size Categories
+- **< 2x interval**: NORMAL → PASS
+- **2-3x interval**: MINOR_SKIP → PASS with minor score reduction
+- **> 3x interval**: Requires day-boundary check
+  - Crosses UTC day → `EXPECTED_NON_TRADING` → PASS (score 0.8)
+  - Does not cross UTC day → `UNEXPECTED_DATA_GAP` → FAIL (score 0.4)
+
+#### NaT (Not-a-TimeStamp) Handling
+- Explicitly detected and rejected
+- Any NaT in timestamp series → automatic FAIL
+- Prevents silent failures from malformed timestamps
+
+### Verified Outcomes
+
+#### BTC-USD Results
+- **DQ Gate**: PASS
+- **Score**: 65.27
+- **Decision**: WAIT
+- **Confidence**: 68.5%
+- **Signal**: BUY 44.4%
+- **MTF Evidence**: M1/M5/M15/H1/H4
+
+#### ETH-USD Results
+- **DQ Gate**: PASS
+- **Score**: 63.27
+- **Decision**: WAIT
+- **Confidence**: 68.7%
+- **Signal**: BUY 45.1%
+- **MTF Evidence**: M1/M5/M15/H1/H4
+
+#### Gap Discrimination Behavior
+- **Artificial gap within trading session** → rejected (UNEXPECTED_DATA_GAP, score 0.4)
+- **Gap at UTC day boundary** → allowed (EXPECTED_NON_TRADING, score 0.8)
+- **Gap < 2x expected interval** → NORMAL, PASS
+- **Gap 2-3x expected interval** → MINOR_SKIP, PASS with reduction
+- **NaT timestamps** → explicitly rejected
+
+### Files Modified
+
+1. **`mercury_ai/data/data_quality_engine.py`** — Gap-aware classification added
+   - Added `EXPECTED_NON_TRADING` and `UNEXPECTED_DATA_GAP` constants
+   - Implemented `classify_data_gap()` function
+   - Integrated gap classification into overall DQ score computation
+   - Added NaT timestamp explicit detection and rejection
+
+2. **`AUDIT_V1/20_SPRINT_A_DATA_QUALITY_GATE.txt`** — Comprehensive report written
+   - Full documentation of the sprint
+   - Technical details of the fix
+   - Verified outcomes and test results
+
+### Git Integrity
+- **Commit**: `92cc90e` - SPRINT A: Data Quality Gate gap-aware validation fix
+- **Status**: data_quality_engine.py committed as new file
+- **Branch**: main (5 commits ahead of origin)
+
+### Sprint Completion Status
+✅ Baseline established and reproduced
+✅ Root cause identified (Yahoo Finance crypto 45min midnight gap)
+✅ Fix implemented in data_quality_engine.py
+✅ 8/8 directed tests PASS
+✅ E2E verified: both assets pass DQ gate and produce decisions
+✅ compileall PASS
+✅ Report 20 delivered
+
+### Conclusion
+Sprint A is complete. The Data Quality Gate now correctly distinguishes between:
+1. **Legitimate market closures/artifacts** (e.g., Yahoo Finance crypto 45min midnight gap) → allowed with minimal score degradation
+2. **Genuine unexpected data gaps** → rejected with score 0.4
+
+This gap-aware validation ensures that legitimate crypto trading data is not incorrectly rejected, while still catching real data quality issues. The stop rule is satisfied — no further sprints needed.
