@@ -1,6 +1,6 @@
 {
     "timestamp": "2024-01-03T12:00:00",
-    "asset": "TEST",
+    "asset": "ASSET-A",
     "timeframe": "M5",
     "context": null,
     "evidence_bundle": null,
@@ -19,14 +19,14 @@
         "expected_risk": 0.0,
         "expected_reward": 0.0,
         "expected_drawdown": 0.0,
-        "audit_id": "DATA_PROVIDER_UNAVAILABLE",
+        "audit_id": "INSUFFICIENT_DATA",
         "version_metadata": {
             "engine_version": "1.0.0",
             "pipeline_version": "1.0.0",
             "context_version": "1.0.0",
             "weights_version": "1.0.0"
         },
-        "explanation": "Data provider returned no data; cannot analyze.",
+        "explanation": "Pipeline cannot proceed with insufficient historical data.",
         "mtf_consensus": null,
         "market_regime": null,
         "trade_allowed": true,
@@ -37,7 +37,7 @@
         "warnings": [],
         "weaknesses": [],
         "blockers": [],
-        "summary": "No data returned by provider for TEST",
+        "summary": "Insufficient data: only 1 rows (need 11)",
         "technical_reason": "",
         "institutional_alignment": false,
         "evidence_ranking": null,
@@ -49,11 +49,9 @@
         "context_version": "1.0.0",
         "weights_version": "1.0.0"
     },
-    "audit_events": [
-        "Data provider unavailable"
-    ],
-    "session_id": "bbffb355-eba2-41f8-bc89-b6e5c3cf03f3",
-    "replay_id": "64f1b865dd6b75f35b613fba108dac85eb86173044ab338ab6824f9e972584b5",
+    "audit_events": [],
+    "session_id": "6c0aeec2-948d-4fc2-8794-d271235d4906",
+    "replay_id": "dc8564d8e768831d0331aa1b7fc6687bb0376e78bd44d6a8f6b2b9605391d55e",
     "evidence_ranking": null,
     "version": "0.1"
 }

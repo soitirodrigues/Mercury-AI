@@ -57,7 +57,15 @@ class SignalFormatter:
         )
 
 
-        if explanation:
+        # Fallback branches (DATA_QUALITY_FAIL, INSUFFICIENT_DATA, MARKET_CLOSED,
+        # PIPELINE_ERROR, DATA_PROVIDER_UNAVAILABLE) pass a plain str as
+        # explanation. Handle it gracefully instead of assuming a
+        # TradingExplanation object.
+        if isinstance(explanation, str):
+
+            lines.append(explanation)
+
+        elif explanation:
 
             lines.append(explanation.market_context)
             lines.append(explanation.trend_context)
@@ -68,7 +76,11 @@ class SignalFormatter:
         lines.append("ANÁLISE")
 
 
-        if explanation:
+        if isinstance(explanation, str):
+
+            lines.append("\n⚠️ Análise detalhada indisponível (estado de erro).")
+
+        elif explanation:
 
             lines.append("\nFORÇAS:")
 
