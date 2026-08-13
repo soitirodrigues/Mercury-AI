@@ -1,6 +1,6 @@
 {
     "timestamp": "2024-01-03T12:00:00",
-    "asset": "TEST",
+    "asset": "EURUSD=X",
     "timeframe": "M5",
     "context": null,
     "evidence_bundle": null,
@@ -19,14 +19,14 @@
         "expected_risk": 0.0,
         "expected_reward": 0.0,
         "expected_drawdown": 0.0,
-        "audit_id": "DATA_PROVIDER_UNAVAILABLE",
+        "audit_id": "DATA_QUALITY_FAIL",
         "version_metadata": {
             "engine_version": "1.0.0",
             "pipeline_version": "1.0.0",
             "context_version": "1.0.0",
             "weights_version": "1.0.0"
         },
-        "explanation": "Data provider returned no data; cannot analyze.",
+        "explanation": "Pipeline cannot proceed with invalid or insufficient data.",
         "mtf_consensus": null,
         "market_regime": null,
         "trade_allowed": true,
@@ -37,7 +37,7 @@
         "warnings": [],
         "weaknesses": [],
         "blockers": [],
-        "summary": "No data returned by provider for TEST",
+        "summary": "Data quality issue: Invalid candle",
         "technical_reason": "",
         "institutional_alignment": false,
         "evidence_ranking": null,
@@ -50,10 +50,10 @@
         "weights_version": "1.0.0"
     },
     "audit_events": [
-        "Data provider unavailable"
+        "Data quality issue detected"
     ],
-    "session_id": "bbffb355-eba2-41f8-bc89-b6e5c3cf03f3",
-    "replay_id": "64f1b865dd6b75f35b613fba108dac85eb86173044ab338ab6824f9e972584b5",
+    "session_id": "01d8d95c-b752-4282-b07d-9601c979a49d",
+    "replay_id": "a6eb2555cd39bfe35d10601297c5df13e653b39d03341d39604bbfa0cb9038e5",
     "evidence_ranking": null,
     "version": "0.1"
 }

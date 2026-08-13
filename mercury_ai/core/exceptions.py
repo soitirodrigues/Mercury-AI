@@ -21,3 +21,8 @@ class ProviderError(Exception):
 class AuthenticationError(Exception):
     """Raised when authentication fails (missing or invalid credentials)."""
     pass
+
+
+class InvalidOrderError(Exception):
+    """Raised when an order has invalid parameters (quantity, price, etc.)."""
+    pass

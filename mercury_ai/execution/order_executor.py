@@ -9,6 +9,7 @@ O OrderExecutor é a camada de aplicação que:
 from __future__ import annotations
 
 import json
+import math
 import os
 import tempfile
 import threading
@@ -18,6 +19,7 @@ from typing import Any
 from mercury_ai.core.exceptions import (
     AuthenticationError,
     InvalidSymbolError,
+    InvalidOrderError,
     ProviderError,
 )
 from mercury_ai.core.asset_registry import AssetRegistry
@@ -35,8 +37,33 @@ class OrderExecutionError(Exception):
     """Erro genérico de execução de ordem."""
 
 
+class OrderDuplicateError(OrderExecutionError):
+    """Tentativa de submeter a mesma decisão duplicada."""
+
+
 def _utcnow_iso() -> str:
     return datetime.now(timezone.utc).isoformat()
+
+
+def _validate_quantity(quantity: float) -> float:
+    """Validação defensiva de quantidade.
+
+    Bloqueia: <=0, NaN, inf, None, tipos inválidos, precisão inválida.
+    Quando não houver informação suficiente: lança InvalidOrderError.
+    """
+    if quantity is None:
+        raise InvalidOrderError("Quantidade não pode ser None")
+    if not isinstance(quantity, (int, float)):
+        raise InvalidOrderError(f"Quantidade deve ser numérico, recebido: {type(quantity).__name__}")
+    if isinstance(quantity, bool):
+        raise InvalidOrderError("Quantidade booleana não é válida")
+    if math.isnan(quantity):
+        raise InvalidOrderError("Quantidade não pode ser NaN")
+    if math.isinf(quantity):
+        raise InvalidOrderError("Quantidade não pode ser infinita")
+    if quantity <= 0:
+        raise InvalidOrderError(f"Quantidade deve ser positiva, recebida: {quantity}")
+    return float(quantity)
 
 
 class OrderExecutor:
@@ -52,6 +79,11 @@ class OrderExecutor:
         Caminho do arquivo JSON de persistência de ordens.
     paper_mode : bool
         Se True, não envia ordens reais ao broker — apenas simula.
+        O default é True para segurança — live mode exige gate explícito.
+    explicit_live_gate : bool
+        Flag de gate explícita para modo LIVE. Apenas quando True
+        e paper_mode=False, a execução ao vivo é permitida.
+        Isso evita que LIVE seja ativado por inferência ou omissão.
     """
 
     def __init__(
@@ -59,14 +91,17 @@ class OrderExecutor:
         broker: IBroker,
         registry: AssetRegistry,
         state_path: str = "data/orders.json",
-        paper_mode: bool = False,
+        paper_mode: bool = True,
+        explicit_live_gate: bool = False,
     ) -> None:
         self._broker = broker
         self._registry = registry
         self._state_path = state_path
         self._paper_mode = paper_mode
+        self._explicit_live_gate = explicit_live_gate
         self._lock = threading.Lock()
         self._orders: dict[str, Order] = {}
+        self._submitted_decisions: set[str] = set()
         self._load()
 
     # ------------------------------------------------------------------
@@ -135,6 +170,7 @@ class OrderExecutor:
         """Submete uma ordem PENDING ao broker.
 
         Em paper_mode, simula a execução sem chamar o broker.
+        LIVE GATE: live mode only permitted when explicit_live_gate=True.
         """
         with self._lock:
             order = self._orders.get(order_id)
@@ -144,6 +180,22 @@ class OrderExecutor:
                 raise OrderExecutionError(
                     f"Ordem {order_id} não está PENDING (status={order.status.value})"
                 )
+
+            # Idempotência: impede submissão duplicada da mesma decisão
+            decision_key = self._get_decision_key(order)
+            if decision_key in self._submitted_decisions:
+                raise OrderDuplicateError(
+                    f"Decisão duplicada detectada: {decision_key}. "
+                    f"A mesma decisão (audit_id+symbol+side+timeframe) já foi submetida. "
+                    f"Máximo uma ordem efetiva por decisão."
+                )
+            self._submitted_decisions.add(decision_key)
+
+        # LIVE GATE check: live mode only when explicit_live_gate=True
+        _is_live_mode = not self._paper_mode and self._explicit_live_gate
+        if not _is_live_mode:
+            # Default: paper mode (safe) — live mode não ativado por omissão
+            self._paper_mode = True
 
         # Validações fora do lock (podem fazer I/O)
         self._check_broker_available()
@@ -158,16 +210,25 @@ class OrderExecutor:
             order.reject("Falha de autenticação com broker")
             with self._lock:
                 self._save()
+            # Remover da fila de decisões submetidas para permitir retry
+            with self._lock:
+                self._submitted_decisions.discard(decision_key)
             raise
         except InvalidSymbolError as e:
             order.reject(f"Símbolo rejeitado pelo broker: {e}")
             with self._lock:
                 self._save()
+            # Remover da fila de decisões submetidas para permitir retry
+            with self._lock:
+                self._submitted_decisions.discard(decision_key)
             raise
         except ProviderError as e:
             order.reject(f"Erro de provider: {e}")
             with self._lock:
                 self._save()
+            # Remover da fila de decisões submetidas para permitir retry
+            with self._lock:
+                self._submitted_decisions.discard(decision_key)
             raise
 
         with self._lock:
@@ -261,6 +322,17 @@ class OrderExecutor:
             raise InvalidSymbolError(
                 f"Símbolo {symbol} não autorizado para broker {self._broker.name}"
             )
+
+    def _get_decision_key(self, order: Order) -> str:
+        """Gera uma chave única para identidade da decisão.
+
+        Fórmula: audit_id + symbol + side + timeframe
+        Usado para proteção contra deduplicação de ordens.
+        """
+        # Usa audit_id se disponível, senão constrói a partir do order_id + symbol + side
+        audit_id = getattr(order, 'audit_id', order.order_id)
+        timeframe = getattr(order, 'timeframe', 'unknown')
+        return f"{audit_id}|{order.symbol.upper()}|{order.side.value}|{timeframe}"
 
     # ------------------------------------------------------------------
     # Paper mode

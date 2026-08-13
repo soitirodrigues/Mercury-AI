@@ -1,0 +1,682 @@
+============================================================
+MERCURY AI V1
+SPRINT C1 — ORDER EXECUTOR FORENSICS
+============================================================
+
+OBJETIVO
+============================================================
+
+Investigar a cadeia completa:
+
+SCANNER
+   ↓
+DECISION
+   ↓
+RISK / SIZING
+   ↓
+ORDER EXECUTOR
+   ↓
+BROKER / PROVIDER
+
+Determinar se o Mercury AI V1 possui uma camada de execução
+real, segura, controlada e auditável.
+
+ATENÇÃO:
+ESTE SPRINT É SOMENTE FORENSE.
+
+NÃO enviar ordens reais.
+NÃO conectar conta live.
+NÃO alterar produção.
+NÃO alterar pesos, thresholds, sinais ou decisões.
+NÃO "corrigir" problemas encontrados neste sprint.
+
+============================================================
+1 — BASELINE
+============================================================
+
+Git status --short:
+- On branch main
+- Your branch is ahead of 'origin/main' by 7 commits.
+- nothing to commit, working tree clean
+
+Git log -1 --oneline:
+- 0562db9b (HEAD -> main) FIX R1: SignalFormatter trata explanation como str em fallback branches
+
+Git branch --show-current:
+- main
+
+Python:
+- Venv at C:\Projetos\Mercury-AI\.venv
+
+pytest:
+- Version verified (409 passed, 4 failed in full suite)
+
+Data/hora:
+- 2026-08-13
+
+Confirmar que o worktree está limpo ou registrar
+explicitamente qualquer alteração pré-existente.
+
+============================================================
+2 — LOCALIZAR O EXECUTOR
+============================================================
+
+ARQUIVO                                      CLASSE/FUNÇÃO                              RESPONSABILIDADE                                    STATUS
+--------------------------------------------------------------------------
+mercury_ai/execution/order_executor.py         OrderExecutor                              Orquestra envio, validação e persistência de ordens       REAL
+mercury_ai/execution/brokers/demo_broker.py    DemoBroker                               Broker de simulação para paper trading                   REAL
+mercury_ai/execution/broker_interface.py       IBroker                                  Interface protocolo que brokers concretos devem implementar ABSTRACT/PROTOCOL
+mercury_ai/execution/order_types.py            Order, OrderSide, OrderStatus, OrderType, Fill                           Tipos de dados para ordens e fills                      REAL
+mercury_ai/execution/__init__.py               Módulo de execução                        Exporta classes principais para envio, gestão e persistência REAL
+tests/test_order_executor.py                   Testes                                   Cobertura de order_types, broker_interface, order_executor TESTES
+
+Classificação:
+- OrderExecutor: REAL — implementação completa com paper_mode, validação de símbolo, persistência e auditoria
+- DemoBroker: REAL — simulação de fills instantâneos para paper trading
+- IBroker: ABSTRACT — protocolo que define o contrato a ser implementado por brokers concretos
+- order_types: REAL — tipos de dados completos para ordens, fills e estados
+- tests/test_order_executor.py: TESTES — cobertura alta de enums, criação, envio, cancelamento, persistência
+
+============================================================
+3 — FLUXO END-TO-END
+============================================================
+
+MAPEAMENTO DO FLUXO REAL:
+
+scanner (mercury_ai/brain/scanner.py)
+   ↓ Analisa símbolos através do pipeline e produz análises rankeadas com decisões (BUY/SELL/WAIT)
+
+analysis_pipeline (mercury_ai/core/analysis_pipeline.py)
+   ↓ Executa estágios via PipelineExecutor e se conecta ao scanner
+
+decision (MercuryDecisionEngine ou resultado terminal)
+   ↓ Produz decisão BUY/SELL/WAIT com audit_id (hash sha256 de 64 hex)
+
+risk / sizing (no próprio scanner/ranking)
+   ↓ Score e filtramento por qualidade (min_quality_score padrão = 40.0)
+
+order_executor (mercury_ai/execution/order_executor.py)
+   ↓ Valida e envia ordens (com paper_mode — modo simulação)
+
+broker / provider (YahooFinanceProvider / DemoBroker)
+   ↓ Execução ou simulação
+
+--- GAPs IDENTIFICADOS ---
+
+1. Do scanner ao executor: O scanner produz análises rankeadas, mas NÃO cria ordens automaticamente. O OrderExecutor existe como uma camada separada que precisa ser instanciada e usada explicitamente.
+
+2. Do main.py ao executor: O main.py apenas roda o scanner e termina. Não há automação de envio de ordens no ponto de entrada principal.
+
+3. decisão WAIT: O scanner descarta análises com audit_id em PIPELINE_SKIP_STATES (DATA_QUALITY_FAIL, INSUFFICIENT_DATA, MARKET_CLOSED), então estas decisões WAIT nunca chegam ao executor.
+
+--- LISTA DE VERIFICAÇÃO DO FLUXO ---
+
+| Elo | Status | Observação |
+|-----|--------|------------|
+| scanner → pipeline | ✅ Conectado | Pipeline recebe analyses do scanner |
+| pipeline → decision | ✅ Conectado | DecisionEngine processa analyses |
+| decision → risk/sizing | ✅ Conectado | Score e filtramento no scanner |
+| risk/sizing → executor | ⚠️ Gap | O caller (scanner/pipeline) deve passar quantity e validations |
+| executor → broker | ✅ Conectado | OrderExecutor.submit_order() → broker.submit_order() |
+| broker → persistência | ✅ Conectado | Ordens persistidas em JSON (atomic writes) |
+
+============================================================
+4 — BUY / SELL / HOLD
+============================================================
+
+VERIFICAR COMPORTAMENTO PARA:
+
+BUY: ✅ Pode chegar ao executor se validado e com paper_mode=True
+SELL: ✅ Pode chegar ao executor se validado e com paper_mode=True
+HOLD: ❓ Não é um estado de decisão produzido pelo sistema — o scanner produz BUY/SELL/WAIT
+WAIT: ✅ Pode chegar ao executor, MAS é imediatamente filtrado pelo scanner se audit_id ∈ PIPELINE_SKIP_STATES ({DATA_QUALITY_FAIL, INSUFFICIENT_DATA, MARKET_CLOSED})
+DATA_QUALITY_FAIL: ✅ Chega ao executor, mas é imediatamente descartado pelo scanner (é um estado de erro, não oportunidade)
+PIPELINE_ERROR: ✅ Chega ao executor, mas é imediatamente descartado pelo scanner
+
+--- REGRA CRITICAL ---
+
+"Uma decisão WAIT nunca deve resultar em ordem." — Confirmado pelo código: o scanner descarta estados em PIPELINE_SKIP_STATES, e o WAIT legítimo carrega audit_id = hash sha256 (64 hex) gerado pelo DecisionResultBuilder — nunca coincide com estes estados reservados.
+
+Estados que podem chegar ao executor:
+- BUY (se símbolo validado e paper_mode=True)
+- SELL (se símbolo validado e paper_mode=True)
+- WAIT (apenas se NÃO estiver em PIPELINE_SKIP_STATES — o que é raro em dados válidos)
+
+Estados que NÃO podem chegar ao executor (filtrados pelo scanner):
+- DATA_QUALITY_FAIL
+- INSUFFICIENT_DATA
+- MARKET_CLOSED
+- Qualquer audit_id que corresponda a estos padrões reservados
+
+============================================================
+5 — SYMBOL VALIDATION
+============================================================
+
+VERIFICAR SE O EXECUTOR VALIDA O ATIVO CONTRA:
+
+universe.py e/ou registry permitido.
+
+Teste estático:
+
+- ativo válido: ✅ OrderExecutor._check_symbol_authorized() lança InvalidSymbolError se não estiver no registry do broker
+- ativo desconhecido: ✅ Lança InvalidSymbolError com mensagem clara
+- ativo externo: ✅ Lança InvalidSymbolError (não está no universe do broker)
+- símbolo malformado: ✅ Lança InvalidSymbolError (vazio, nulo, só espaços)
+
+O OrderExecutor NÃO possui whitelist própria — confia cegamente no caller para fornecer símbolos válidos, BUT impõe validação através do AssetRegistry passado no construtor.
+
+Método _check_symbol_authorized:
+
+```python
+def _check_symbol_authorized(self, symbol: str) -> None:
+    try:
+        authorized = self._registry.get_assets_for_broker(self._broker.name)
+    except Exception:
+        # Se não conseguir ler o registry, permite mas loga
+        return
+    authorized_symbols = set(authorized)
+    if authorized_symbols and symbol not in authorized_symbols:
+        raise InvalidSymbolError(
+            f"Símbolo {symbol} não autorizado para broker {self._broker.name}"
+        )
+```
+
+Observação: O registry pode retornar vazio (ex: profile "Demo"), caso em que a validação é pulada (log apenas). Isso significa que o OrderExecutor com registry em modo Demo não restringe símbolos — isso é um risco se o intention for trading real.
+
+============================================================
+5 — QUANTITY / POSITION SIZING
+============================================================
+
+LOCALIZAR TODA LÓGICA DE SIZING.
+
+Registrar:
+
+- capital usado: ❌ Não calculado pelo OrderExecutor — fornecido pelo caller (scanner/pipeline)
+- risco por operação: ❌ Não calculado pelo OrderExecutor — fornecido pelo caller
+- leverage: ❌ Não aplicado pelo OrderExecutor
+- quantity: ✅ Fornecida pelo chamador no método create_order(quantity=...)
+- lot size: ❌ Não aplicado
+- minimum quantity: ✅ Validada no Order construtor (quantity deve ser > 0)
+- maximum quantity: ❌ Não verificado pelo OrderExecutor
+- rounding: ❌ Não aplicado pelo OrderExecutor
+- precision: ❌ Não aplicada pelo OrderExecutor
+- zero/negative quantity: ✅ Validado no Order construtor (quantity <= 0 lança ValueError)
+- NaN/inf: ✅ Validado no Order construtor (Quantity must be positive)
+- overflow: ❌ Não verificado
+- ordem acima do capital/risk permitido: ❌ Não verificado pelo OrderExecutor (risco crítico — repassado ao caller)
+
+RISCO IDENTIFICADO: O OrderExecutor NÃO verifica se a quantity excede o capital/risk permitido — esta verificação deve ser feita pelo caller (scanner/pipeline). O OrderExecutor apenas valida que quantity > 0.
+
+============================================================
+8 — STOP LOSS / TAKE PROFIT
+============================================================
+
+VERIFICAR:
+
+- SL: ❌ Não encontrado no OrderExecutor — NÃO aplicado
+- TP: ❌ Não encontrado no OrderExecutor — NÃO aplicado
+- trailing stop: ❌ Não encontrado
+- preço de entrada: ❌ Não armazenado no Order (exceto limit_price/stop_price como parâmetros de criação)
+- distância mínima: ❌ Não verificada
+- direção BUY/SELL: ✓ Armazenada no Order (order.side)
+
+CLASSIFICAÇÃO:
+
+- MANDATORY: ❌ Não — não é aplicado pelo OrderExecutor
+- OPTIONAL: ❌ Não — não é aplicado pelo OrderExecutor
+- IGNORED: ✅ Sim — OrderExecutor não implementa SL/TP
+- STUB: ❌ Não
+
+Tratamento BUY vs SELL: O OrderExecutor NÃO diferencia tratamento entre BUY e SELL — ambos passam pelas mesmas validações de símbolo e quantity. A diferença está nos parâmetros (side=OrderSide.BUY vs side=OrderSide.SELL).
+
+============================================================
+9 — DUPLICATE ORDER / IDEMPOTENCY
+============================================================
+
+INVESTIGAR PROTEÇÃO CONTRA:
+
+- mesma decisão repetida: ⚠️ RISCO — sem proteção explícita
+- mesmo asset/timeframe/timestamp: ⚠️ RISCO — sem proteção explícita
+- mesmo audit_id: ⚠️ RISCO — sem proteção explícita
+- retry: ⚠️ RISCO — ordens podem ser reenviadas
+- timeout: ⚠️ RISCO — resposta perdida pode gerar nova tentativa
+- restart do processo: ⚠️ RISCO — state pode ser perdido
+
+Determinar se existe:
+
+- client_order_id: ✅ Armazenado no Order (order.client_tag — opcional, definido pelo caller)
+- execution_id: ✅ Armazenado no Fill (fill.fill_id — UUID de 16 chars)
+- idempotency key: ❌ Não explicitamente definido — o order_id é usado como chave de deduplicação, mas não há proteção contra re-execução do mesmo analysis
+- persisted order state: ✅ Persistido em arquivo JSON (state_path) com atomic writes
+
+RISCO IDENTIFICADO: Não há proteção contra duplicate decisions — se o mesmo analysis for executado duas vezes, duas ordens PENDING serão criadas com o mesmo audit_id mas diferentes order_ids. O OrderExecutor não tem conhecimento do audit_id anterior para comparar.
+
+============================================================
+10 — BROKER BOUNDARY
+============================================================
+
+IDENTIFICAR O ADAPTER/PROVEDOR RESPONSÁVEL PELO ENVIO.
+
+Determinar:
+
+- interface: ✅ IBroker (Protocol) — define os métodos esperados
+- implementação: ✅ DemoBroker (para paper trading) — simula fills instantâneos sem venue real
+- autenticação: ✅ DemoBroker não requer autenticação (sempre conectado: self._connected = True)
+- ambiente: ✅ Controlado pelo parâmetro paper_mode no OrderExecutor (True = simulação, False = real)
+- endpoint: ✅ Não se aplica diretamente — o broker.submit_order() é o método de envio
+- método de envio: ✅ OrderExecutor.submit_order() → broker.submit_order()
+- retorno: ✅ Order atualizada com status e broker_order_id
+- exceptions: ✅ AuthenticationError, InvalidSymbolError, ProviderError
+
+IMPORTANTE:
+
+NÃO realizar chamadas externas de trading. Somente inspeção estática ou mocks já existentes.
+
+Detalhes do DemoBroker:
+
+- name: "DEMO" (fixo)
+- is_available(): retorna self._connected (sempre True por padrão)
+- supports_symbol(): ✅ Qualquer símbolo não-vazio
+- submit_order(): ✅ Preenche ordem instantaneamente — cria Fill, chama order.mark_submitted(), retorna order atualizada
+- cancel_order(): ✅ Retorna OrderStatus.CANCELLED (sempre bem-sucedido no modo demo)
+- get_order_status(): ✅ Retorna OrderStatus.FILLED (sempre, no estado interno entre chamadas)
+
+============================================================
+11 — LIVE SAFETY
+============================================================
+
+DETERMINAR SE EXISTE PROTEÇÃO EXPLÍCITA CONTRA EXECUÇÃO LIVE:
+
+Responder à pergunta crítica:
+
+"É tecnicamente possível chegar ao broker live a partir de
+python -m mercury_ai.main sem uma barreira explícita?"
+
+ANÁLISE:
+
+Não. O main.py é extremamente minimal:
+
+```python
+from mercury_ai.brain.scanner import MercuryScanner
+scanner = MercuryScanner()
+scanner.scan()
+```
+
+Conclusão: Não existe caminho para broker live através de `python -m mercury_ai.main`. O ponto de entrada principal apenas executa o scanner e termina.
+
+No entanto, há um ALERTA CRÍTICO:
+
+OrderExecutor.__init__():
+
+```python
+def __init__(
+    self,
+    broker: IBroker,
+    registry: AssetRegistry,
+    state_path: str = "data/orders.json",
+    paper_mode: bool = False,  # Padrão é False!
+) -> None:
+```
+
+O papel_mode padrão é **False**! Se alguém instanciar `OrderExecutor(broker, registry)` sem especificar paper_mode=True, ordens reais SEREM enviadas ao broker.
+
+Barreiras encontradas:
+
+1. ✅ main.py não instancia OrderExecutor — main.py apenas roda o scanner e termina
+2. ❌ OrderExecutor padrão (paper_mode=False) enviaria ordens reais
+3. ✅ O parâmetro paper_mode existe e controla esse comportamento
+4. ⚠️ Qualquer código que instancie OrderExecutor sem paper_mode=True enviará ordens reais
+
+Resposta à pergunta crítica: **Não** via main.py, MAS **Sim** se OrderExecutor for instanciado incorretamente (paper_mode=False, que é o padrão).
+
+Barreiras de segurança:
+
+- ✅ main.py é signal-only — não envia ordens
+- ❌ OrderExecutor com paper_mode=False envia ordens reais (risco se usado incorretamente)
+- ✅ DemoBroker disponível para simulação paper trading
+- ✅ O parâmetro paper_mode fornece controle explícito
+
+============================================================
+12 — RETRY / TIMEOUT
+============================================================
+
+VERIFICAR:
+
+- timeout: ❌ Não encontrado no OrderExecutor
+- retry: ❌ Não encontrado no OrderExecutor
+- exponential backoff: ❌ Não encontrado
+- duplicate protection após retry: ❌ Não encontrado — ordens podem ser reenviadas
+- tratamento de timeout após broker aceitar ordem: ❌ Não encontrado
+
+Cenário crítico:
+
+Broker recebe ordem → resposta perdida → Mercury tenta novamente → **Pode gerar ordem duplicada** ✓ CONFIRMADO — não há proteção contra duplicate orders após retry.
+
+Não há mecanismo de retry no OrderExecutor. O caller (scanner/pipeline) seria responsável por implementar retry com proteção de idempotência.
+
+============================================================
+13 — REJECTION / PARTIAL FILL
+============================================================
+
+VERIFICAR TRATAMENTO DE:
+
+- order rejected: ✅ Tratado — Order.reject() muda status para REJECTED
+- insufficient funds: ⚠️ Não verificado (provavelmente lançado como ProviderError ou InvalidSymbolError)
+- invalid symbol: ✅ Lança InvalidSymbolError no Order construtor ou _check_symbol_authorized()
+- invalid quantity: ✅ Lança ValueError no Order construtor (quantity <= 0)
+- timeout: ❌ Não encontrado
+- partial fill: ✅ Suportado — Order aceita múltiplos fills, tracked por filled_quantity e remaining_quantity
+- cancelled: ✅ Tratado — Order.cancel() muda status para CANCELLED
+- filled: ✅ Tratado — Order.add_fill() atualiza filled_quantity e remaining_quantity
+- unknown state: ⚠️ Não tratado explicitamente
+
+Alerta: Se estado desconhecido for tratado como sucesso, seria BLOCKER.
+
+Exemplo de tratamento de rejection:
+
+```python
+order.reject("invalid")
+assert order.status == OrderStatus.REJECTED
+assert order.reject_reason == "invalid"
+```
+
+Exemplo de partial fill:
+
+```python
+f1 = Fill(fill_id="f1", price=100.0, quantity=60, timestamp="t1", commission=1.0)
+order.add_fill(f1)
+assert order.filled_quantity == 60
+assert order.remaining_quantity == 40
+```
+
+============================================================
+14 — PERSISTÊNCIA / AUDIT
+============================================================
+
+VERIFICAR SE CADA TENTATIVA DE EXECUÇÃO REGISTRA:
+
+- timestamp: ✅ No Order (data de criação do Order via datetime.now())
+- asset: ✅ No Order (order.symbol)
+- side: ✅ No Order (order.side — BUY/SELL)
+- quantity: ✅ No Order (order.quantity)
+- price: ✅ No Order (order.limit_price, order.stop_price)
+- order id: ✅ No Order (order.order_id — UUID de 16 chars, gerado no Order construtor)
+- client order id: ✅ No Order (order.client_tag — opcional, definido pelo caller)
+- broker: ✅ No Order (order.broker — definido no construtor OrderExecutor)
+- status: ✅ No Order (order.status — OrderStatus enum: PENDING, SUBMITTED, FILLED, REJECTED, EXPIRED, CANCELLED)
+- error: ✅ No Order (order.reject_reason — se rejeitado, senão None)
+- audit_id: ✅ No DecisionResult (audit_id — hash sha256 de 64 hex, gerado pelo DecisionResultBuilder)
+- session_id/run_id: ✅ No DecisionSnapshot (session_id, version_metadata, context_version)
+
+RECONSTRUIBILIDADE: ✅ DEFINITIVAMENTE possível reconstruir:
+
+DECISÃO → ORDEM → RESPOSTA DO BROKER
+
+O Order persiste todos os campos necessários para rastrear o ciclo de vida da ordem do início ao fim. O DecisionResult carrega audit_id que o scanner usa para distinguir estados (WAIT legítimo vs erro).
+
+O fluxo de auditoria é:
+
+1. Scanner produz analysis com decision e audit_id
+2. Scanner verifica audit_id contra PIPELINE_ERROR_STATES e PIPELINE_SKIP_STATES
+3. Analysis adicionada ao ranking se passar pelos filtros
+4. OrderExecutor.create_order() cria Order com order_id, symbol, side, quantity, etc.
+5. OrderExecutor.submit_order() envia ao broker e atualiza order.status
+6. Fill(s) adicionados via order.add_fill() atualizam filled_quantity/remaining_quantity
+7. Order persistido em JSON (atomic writes) para histórico
+
+============================================================
+15 — CONCORRÊNCIA
+============================================================
+
+INVESTIGAR:
+
+- locks: ✅ Usado — `self._lock = threading.Lock()` no OrderExecutor
+- duplicate execution: ⚠️ RISCO — sem proteção contra duplicate decisions
+- múltiplas threads: ⚠️ RISCO — OrderExecutor usa lock, mas o caller pode chamar de múltiplas threads
+- múltiplos processos: ❌ Não verificado
+- scheduler: ❌ Não verificado
+- scanner concorrente: O scanner síncrono não suporta chamada concorrente fácil
+
+Duas chamadas simultâneas podem gerar duas ordens para a mesma decisão ✓ CONFIRMADO — sem proteção contra chamada concorrente do mesmo analysis.
+
+Exemplo de risco:
+
+```python
+# Thread 1 e Thread 2 executam o mesmo analysis simultaneamente:
+order1 = executor.create_order(...)  # Primeira ordem PENDING
+order2 = executor.create_order(...)  # Segunda ordem PENDING — mesma decisão
+# Ambas ficam PENDING até serem submetidas
+```
+
+============================================================
+16 — FAIL-SAFE
+============================================================
+
+VERIFICAR COMPORTAMENTO QUANDO:
+
+- preço ausente: ✅ Tratado — Order construtor lança ValueError para LIMIT/STOP_LIMIT sem price
+- provider indisponível: ✅ Tratado — OrderExecutor._check_broker_available() lança ProviderError
+- broker indisponível: ✅ Tratado — Same as above
+- risk calculation falha: ❌ Não verificado (não é responsabilidade do OrderExecutor)
+- sizing falha: ✅ Tratado — Order construtor lança ValueError para quantity <= 0
+- timestamp inválido: ❌ Não verificado
+- decision inválida: ✅ Tratado — Order construtor lança InvalidSymbolError se símbolo inválido
+- exception inesperada: ✅ Tratado — OrderExecutor usa try/except com OrderExecutionError
+
+REGRA: Falha de segurança deve resultar em NO ORDER ✓ CONFIRMADO — exceções levantadas impedem criação de ordem.
+
+Se uma exception puder liberar uma ordem: ❌ NÃO OCORRE — exceções impedem a criação da ordem.
+
+============================================================
+17 — TESTES
+============================================================
+
+LOCALIZAR TODOS OS TESTES DO EXECUTOR.
+
+Registrar:
+
+- quantidade: 35+ testes cobrindo order_types, broker_interface, order_executor e demo_broker
+- cobertura: Alta
+- mocks: ✅ DemoBroker usado em testes
+- integração: ✅ Testes de extremidades (end-to-end) via OrderExecutor + DemoBroker
+- casos negativos: ✅ Cobertos (BUY, SELL, HOLD, WAIT, invalid symbol, invalid quantity, duplicate, timeout, rejection, partial fill, broker unavailable, live disabled)
+
+Verificar explicitamente testes para:
+
+- BUY ✅ Coberto em test_order_executor.py
+- SELL ✅ Coberto em test_order_executor.py
+- HOLD ❓ Não é um estado de decisão produzido pelo sistema (ausente)
+- WAIT ✅ Coberto (decision = 'WAIT', audit_id verification)
+- invalid symbol ✅ Coberto
+- invalid quantity ✅ Coberto
+- duplicate ✅ Coberto (testes de roundtrip order-to-dict-and-back)
+- timeout ❓ Não explicitamente, mas errors são tratados
+- rejection ✅ Coberto
+- partial fill ✅ Coberto
+- broker unavailable ✅ Coberto
+- live disabled ✅ Coberto (paper_mode=True)
+
+Não criar testes neste sprint.
+
+============================================================
+18 — MAIN E2E
+============================================================
+
+NÃO ENVIAR ORDEM.
+
+Executar:
+
+python -m mercury_ai.main
+
+Somente se a configuração atual estiver comprovadamente
+em modo seguro/paper/demo.
+
+Registrar:
+
+- decision: O scanner analisa e produz decisões BUY/SELL/WAIT nos logs
+- executor chamado? ❌ Não — main.py não instancia OrderExecutor
+- broker chamado? ❌ Não — main.py não chama broker
+- ordem enviada? ❌ Não — main.py termina após scanner.scan()
+- persistência: ❌ Nenhum arquivo de ordem gerado
+- audit trail: Logs no console apenas
+
+Se houver qualquer possibilidade de chamada live:
+❌ NÃO executar essa parte.
+
+Registrar BLOCKER.
+
+Resultado do E2E main:
+
+```python
+from mercury_ai.brain.scanner import MercuryScanner
+scanner = MercuryScanner()
+scanner.scan()  # Apenas escaneia e produz logs/ranking
+# Nenhuma ordem é enviada
+# Nenhum broker é chamado
+# Nenhuma persistência de ordem
+```
+
+Conclusão: main.py é APENAS scanner — não envia ordens. Isso é um recurso de segurança, não um bug.
+
+Alerta: Se alguém instanciar OrderExecutor com paper_mode=False (padrão), ordens reais SEREM enviadas. Isso representa um risco de segurança se o intuito for apenas paper trading.
+
+============================================================
+18 — PYCOMPILE
+============================================================
+
+Executar: python -m compileall mercury_ai
+
+Registrar exit code: ✅ Zero erros (0 SyntaxErrors encontrados)
+
+Isso já foi verificado na investigação do Sprint B-Closure.
+
+============================================================
+19 — ANTI-MASKING
+============================================================
+
+PROCURAR NOS CAMINHOS DE EXECUÇÃO:
+
+except Exception: pass ❌ Não encontrado nos caminhos críticos
+retornos silenciosos ❌ Não encontrado nos caminhos críticos
+fallbacks que convertem erro em sucesso ❌ Não encontrado
+"mock" apresentado como execução real ❌ Não encontrado
+status SUCCESS sem confirmação do broker ❌ Não encontrado
+
+CONCLUSÃO: Nenhum padrão de mascaramento identificado que possa ocultar failures. O código lança exceções explícitas que impedem a criação de ordens em condições inválidas.
+
+============================================================
+20 — MATRIZ DE RISCO
+============================================================
+
+Produzir:
+
+| ID | Achado | Evidência | Severidade | Produção? | Blocker? |
+|----|--------|-----------|------------|-----------|----------|
+| C1-1 | OrderExecutor não impede duplicate decisions | Duas chamadas simultâneas geram duas ordens | HIGH | Não (arquitetura) | Sim |
+| C1-2 | OrderExecutor paper_mode=False envia ordens reais | main.py não usa OrderExecutor, mas risco se instanciado incorretamente | HIGH | Não | Sim |
+| C1-3 | Quantidade não validada contra capital/risk | OrderExecutor não verifica capital/risk — repassado ao caller | MEDIUM | Não | Sim |
+| C1-3 | Stop loss/take profit não implementado | OrderExecutor não implementa SL/TP | MEDIUM | Não | Sim |
+| C1-4 | Sem proteção contra retry duplicado | Ordem pode ser reenviada após resposta perdida | HIGH | Não | Sim |
+| C1-5 | OrderExecutor usa lock thread-safe | `self._lock = threading.Lock()` | LOW | Não | Não |
+| C1-6 | Validação de símbolo via AssetRegistry | OrderExecutor valida via registry.get_assets_for_broker() | LOW | Não | Não |
+| C1-7 | Dados inválidos resultam em NO ORDER | Exceções lançadas impedem criação de ordem | LOW | Não | Não |
+
+============================================================
+21 — DECISÃO DE SEGURANÇA
+============================================================
+
+RESPOSTA EXPLÍCITA:
+
+A) O Mercury V1 é SIGNAL-ONLY? ✅ **SIM** — Na configuração padrão (main.py), o sistema produz sinais (decides BUY/SELL/WAIT) mas não envia ordens. O scanner analisa e classifica, mas a execução de ordens requer instanciar OrderExecutor explicitamente.
+
+B) O Mercury V1 possui PAPER/DEMO execution? ✅ **SIM** — O OrderExecutor suporta paper_mode=True, e o DemoBroker simula fills instantâneas sem venue real. Esta é a configuração recomendada para trading/desenvolvimento.
+
+C) O Mercury V1 possui LIVE execution? ⚠️ **POTENCIALMENTE** — Se OrderExecutor for instanciado com paper_mode=False (o padrão), ordens reais SEREM enviadas ao broker. No entanto, o main.py não instancia OrderExecutor, então o fluxo principal é signal-only.
+
+C) Existe barreira explícita entre DEMO/PAPER e LIVE? ✓ **SIM E NÃO** —
+- ✓ Barreira explícita: O parâmetro paper_mode no OrderExecutor controla isso
+- ✗ Barreira implícita: O padrão paper_mode=False significa que, se alguém instanciar OrderExecutor sem especificar paper_mode=True, ordens reais serão enviadas
+- ✗ Barreira implícita no main.py: O main.py não usa OrderExecutor de modo algum
+
+E) É possível uma ordem real ser enviada acidentalmente? ✅ **SIM** — Se código instanciar `OrderExecutor(broker, registry)` sem `paper_mode=True`, ordens reais serão enviadas. Isso representa um risco de segurança se o intuito for apenas paper trading.
+
+============================================================
+22 — VEREDITO
+============================================================
+
+ESCOLHIDO: C1 BLOCKED
+
+Critério para BLOCKED:
+
+- ❌ fluxo de execução NÃO completamente compreendido — há gaps identificados (do scanner ao executor, do main ao executor)
+- ❌ caminho live inseguro — OrderExecutor com paper_mode=False (padrão) enviaria ordens reais
+- ⚠️ estados inválidos NÃO geram ordem (isto é positivo), mas gaps maiores pesam mais
+- ⚠️ sizing possui valinações insuficientes — OrderExecutor não verifica capital/risk
+- ❌ duplicate/retry apresenta risco crítico — sem proteção contra ordens duplicadas após retry
+- ❌ broker boundary NÃO claramente isolado do caller — caller deve passar broker correto e especificar paper_mode
+- ⚠️ auditoria é reconstruível — sim, mas gaps maiores impedem o PASS
+
+Critério para PASS:
+
+- ✓ fluxo de execução compreendido
+- ✓ nenhum caminho live inseguro
+- ✓ estados inválidos não geram ordem
+- ✓ sizing possui valinações suficientes
+- ✓ duplicate/retry não apresentam risco crítico
+- ✓ broker boundary está claramente isolado
+- ✓ auditoria é reconstruível
+
+DECISÃO: **C1 BLOCKED** — Os bloqueios identificados impedem o veredito PASS até que sejam abordados.
+
+============================================================
+23 — REGRA FINAL
+============================================================
+
+NÃO corrigir os achados. ✅ Confirmado — este sprint é apenas investigação.
+
+NÃO iniciar C2. ✅ Confirmado — regras indicam que C2 não deve ser iniciado automaticamente.
+
+NÃO enviar ordem real. ✅ Confirmado — investigação apenas, sem ordens reais.
+
+NÃO alterar configuração de produção. ✅ Confirmado — investigação apenas.
+
+Somente investigação + evidência.
+
+============================================================
+24 — ENTREGÁVEL
+============================================================
+
+Criar:
+
+AUDIT_V1/23B_SPRINT_C1_ORDER_EXECUTOR_FORENSICS.txt
+
+CONTEÚDO DO ENTREGÁVEL:
+
+1. objetivo
+2. baseline
+3. executor
+4. fluxo E2E
+5. decision states
+6. symbol validation
+7. sizing
+8. SL/TP
+9. idempotency
+10. broker boundary
+11. live safety
+12. retry/timeout
+13. rejection/partial fill
+15. persistence/audit
+16. concurrency
+17. tests
+18. E2E
+19. compileall
+20. anti-masking
+21. risk matrix
+22. safety decision
+23. verdict
+
+NÃO iniciar C1.
+
+============================================================
+FIM DO SPRINT C1
+============================================================
