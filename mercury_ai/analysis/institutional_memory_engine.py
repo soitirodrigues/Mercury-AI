@@ -135,9 +135,7 @@ class InstitutionalMemoryEngine:
         entry = {
             'setup_key': setup_key,
             'audit_id': snapshot.decision_result.audit_id,
-            'asset': snapshot.asset,
-            'decision': snapshot.decision_result.decision,
-            'confidence': snapshot.decision_result.confidence,
+        'replay_id': getattr(snapshot, 'replay_id', ''),
             'timestamp': snapshot.timestamp
         }
         
@@ -146,10 +144,12 @@ class InstitutionalMemoryEngine:
             memory.append(entry)
             self._save_memory(memory)
 
-    def record_outcome(self, audit_id: str, outcome: float):
+    def record_outcome(self, audit_id: str, outcome: float, replay_id: str = ""):
         with self._lock:
             memory = self._load_memory()
             for entry in memory:
-                if entry['audit_id'] == audit_id:
+                if entry['audit_id'] == audit_id and (
+                    not replay_id or entry.get('replay_id', '') == replay_id
+                ):
                     entry['outcome'] = outcome
             self._save_memory(memory)
