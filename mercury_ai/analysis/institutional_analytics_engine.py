@@ -55,10 +55,10 @@ class InstitutionalAnalyticsEngine:
             audit_id = snapshot.get("decision_result", {}).get("audit_id", "")
             metrics = None
 
-            if replay_id and replay_id in replay_metrics:
-                metrics = replay_metrics[replay_id]
-            elif audit_id and audit_id in replay_metrics:
-                metrics = replay_metrics[audit_id]
+            if replay_id:
+                metrics = replay_metrics.get(replay_id)
+            elif audit_id:
+                metrics = replay_metrics.get(audit_id)
 
             if not metrics:
                 continue
