@@ -15,11 +15,18 @@ class DeterministicClock:
     @classmethod
     def _get_current_time(cls) -> Optional[datetime]:
         """Obtém o _current_time específico desta thread."""
+        # Use object getattr with default to safely access thread-local storage
         return getattr(cls._local, '_current_time', None)
 
     @classmethod
     def _set_current_time(cls, dt: datetime) -> None:
-        """Define o _current_time específico desta thread."""
+        """Define o _current_time específico desta thread via threading.local().
+
+        O threading.local() garante que cada thread tenha sua própria instância
+        de _current_time, evitando contaminação entre threads concurrentes.
+        """
+        # Set the attribute on the thread-local storage
+        # This ensures each thread has its own _current_time
         cls._local._current_time = dt
 
     @classmethod
@@ -45,8 +52,15 @@ class DeterministicClock:
 
     @classmethod
     def reset(cls) -> None:
-        """Limpa o tempo determinístico da thread corrente, voltando ao relógio real."""
-        cls._local._current_time = None
+        """Limpa o tempo determinístico da thread corrente, voltando ao relógio real.
+
+        Important: This clears the thread-local _current_time, not a class-level
+        variable. Each thread must call reset() independently to avoid
+        contamination from other threads.
+        """
+        # Safely clear the thread-local _current_time
+        if hasattr(cls._local, '_current_time'):
+            del cls._local._current_time
 
     @classmethod
     def snapshot(cls) -> Optional[datetime]:

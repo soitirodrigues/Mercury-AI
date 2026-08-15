@@ -1,0 +1,5 @@
+{"cycle": 1, "event": "READY", "pid": 2764, "source": "child", "timestamp": 377080.093}
+{"cycle": 1, "event": "GO_RECEIVED", "pid": 2764, "source": "child", "timestamp": 377080.093}
+{"cycle": 1, "event": "BEFORE_REPLACE", "pid": 2764, "source": "child", "timestamp": 377080.093}
+{"cycle": 1, "event": "REPLACE_DONE", "pid": 2764, "source": "child", "timestamp": 377080.093}
+{"cycle": 1, "event": "KILL_COMMAND", "pid": 2764, "source": "child", "timestamp": 377080.109}

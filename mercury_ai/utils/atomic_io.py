@@ -24,6 +24,16 @@ logger = logging.getLogger(__name__)
 
 __all__ = ["atomic_json_write"]
 
+# Sinalizadores de checkpoint para testes de robustez contra crash
+CHECKPOINT_BEFORE_REPLACE = "BEFORE_REPLACE"
+CHECKPOINT_AFTER_REPLACE = "AFTER_REPLACE"
+
+# Sinalizadores de handshake externo para S32-E3
+# Estes nao são escritos pelo processo apos os.replace()
+# Em vez disso, o processo pai observa o resultado externamente
+HANDHAKE_READY = "READY_TO_REPLACE"
+HANDHAKE_COMPLETED = "EXTERNAL_COMPLETION"
+
 
 def atomic_json_write(
     path: str,
@@ -33,6 +43,9 @@ def atomic_json_write(
     max_retries: int = 5,
     backoff_base: float = 0.05,
     default: Any = None,
+    signal_checkpoints: bool = False,
+    status_file: str | None = None,
+    handshake_mode: bool = False,
 ) -> None:
     """Write *data* as JSON to *path* atomically.
 
@@ -57,6 +70,14 @@ def atomic_json_write(
     default:
         Optional ``default`` callable/object passed to ``json.dump``
         for non-serializable values (e.g. ``default=str``).
+    signal_checkpoints:
+        When True, write status markers to status_file at key points
+        during the write operation. Useful for deterministic crash
+        injection testing.
+    status_file:
+        Path to a status file for checkpoint signaling. When signal_checkpoints
+        is True, markers CHECKPOINT_BEFORE_REPLACE and CHECKPOINT_AFTER_REPLACE
+        will be written at the appropriate points.
 
     Raises
     ------
@@ -96,7 +117,29 @@ def atomic_json_write(
                 json.dump(data, f, **dump_kwargs)
                 f.flush()
                 os.fsync(f.fileno())
+
+            # Write checkpoint: BEFORE REPLACE (tempfile complete, about to replace)
+            # Ou handshake: child sinaliza ao pai que esta pronto para substituir
+            if signal_checkpoints and status_file is not None and not handshake_mode:
+                try:
+                    with open(status_file, "w", encoding="utf-8") as sf:
+                        sf.write(CHECKPOINT_BEFORE_REPLACE)
+                except OSError:
+                    pass
+
+            if handshake_mode and status_file is not None:
+                # Child process sinais ao pai que esta pronto para o os.replace()
+                try:
+                    with open(status_file, "w", encoding="utf-8") as sf:
+                        sf.write(HANDHAKE_READY)
+                except OSError:
+                    pass
+
             os.replace(temp_path, path)
+
+            # NOTE: Nao escrevemos CHECKPOINT_AFTER_REPLACE nem HANDHAKE_COMPLETION
+            # per E3-01: nao usar marcador escrito pelo processo apos os.replace()
+            # O processo pai observa o resultado externamente
             return
         except (OSError, PermissionError) as e:
             last_exc = e

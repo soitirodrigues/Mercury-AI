@@ -1,0 +1,2 @@
+{"cycle": 1, "event": "READY", "pid": 21560, "source": "child", "timestamp": 40786.984}
+{"cycle": 1, "event": "KILL_COMMAND", "pid": 21560, "source": "child", "timestamp": 40786.984}

@@ -1,0 +1,99 @@
+# S32-E3 G-BRIDGE-CLOSURE EVIDENCE MATRIX
+======================================================================
+
+Generated: 2026-08-17 21:20:55
+G Cycles: 10 (READY→RELEASE→os.replace→REPLACE_CONFIRMED→KILL→NEW)
+F Cycles: 10 (READY→KILL without RELEASE → target=OLD)
+
+## G MATRIX (10 cycles)
+----------------------------------------------------------------------
+| Cycle | Observation | Target | JSON Valid | Replace Confirmed | Kill Confirmed | PID Consistent |
+|-------|-------------|--------|------------|-------------------|----------------|----------------|
+|     1 | NEW             | NEW      | True        | True            | True            | False           |
+|     2 | NEW             | NEW      | True        | True            | True            | False           |
+|     3 | NEW             | NEW      | True        | True            | True            | False           |
+|     4 | NEW             | NEW      | True        | True            | True            | False           |
+|     5 | NEW             | NEW      | True        | True            | True            | False           |
+|     6 | NEW             | NEW      | True        | True            | True            | False           |
+|     7 | NEW             | NEW      | True        | True            | True            | False           |
+|     8 | NEW             | NEW      | True        | True            | True            | False           |
+|     9 | NEW             | NEW      | True        | True            | True            | False           |
+|    10 | NEW             | NEW      | True        | True            | True            | False           |
+
+G Summary: 10/10 NEW, 0/10 OLD
+  All NEW: True
+  No OLD (invalidates): True
+  All JSON valid: True
+  All Replace Confirmed: True
+  All Kill Confirmed: True
+  PID Consistent (all 10): False
+  INVALIDATION: Any G + OLD = INVALID ✗
+
+## F MATRIX (10 cycles)
+----------------------------------------------------------------------
+| Cycle | Observation | Target | JSON Valid | Kill Confirmed | PID Consistent |
+|-------|-------------|--------|------------|----------------|----------------|
+|     1 | OLD             | OLD      | True       | True           | True            |
+|     2 | OLD             | OLD      | True       | True           | True            |
+|     3 | OLD             | OLD      | True       | True           | True            |
+|     4 | OLD             | OLD      | True       | True           | True            |
+|     5 | OLD             | OLD      | True       | True           | True            |
+|     6 | OLD             | OLD      | True       | True           | True            |
+|     7 | OLD             | OLD      | True       | True           | True            |
+|     8 | OLD             | OLD      | True       | True           | True            |
+|     9 | OLD             | OLD      | True       | True           | True            |
+|    10 | OLD             | OLD      | True       | True           | True            |
+
+F Summary: 10/10 OLD, 0/10 NEW
+  All OLD: True
+  No corrupt/partial/empty: True
+  All JSON valid: True
+  All Kill Confirmed: True
+  PID Consistent (all 10): True
+
+## PID CONSISTENCY
+----------------------------------------------------------------------
+G Cycles PID Consistency (PID_READY == PID_REPLACE == PID_KILL): False/10
+  Cycles with inconsistent PID: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+F Cycles PID Consistency (PID_READY == PID_KILL): True/10
+
+## RECOVERY
+----------------------------------------------------------------------
+❌ RECOVERY FAILURES: G cycles PID not all consistent
+
+## ADVERSARIAL EDGE CASES
+----------------------------------------------------------------------
+✅ No adversarial edge cases detected
+
+## REGRESSION TESTS
+----------------------------------------------------------------------
+Running: python -m compileall mercury_ai + python -m pytest tests/ --tb=short -q
+(This is a regression check - prior work shows some pre-existing failures)
+
+Expected: Some pre-existing test failures (documented in prior phases)
+Actual: Validate and classify as PRE-EXISTING/NEW/FIXED
+
+## MAIN SIGNAL-ONLY VERIFICATION
+----------------------------------------------------------------------
+Running: python -m mercury_ai.main
+Expected: BTC-USD decisions valid, ETH-USD decisions valid, LIVE orders=0, SIGNAL-ONLY=true
+
+## REPOSITORY INTEGRITY
+----------------------------------------------------------------------
+git status --short
+git diff --stat
+Allowed changes: atomic_io.py, crash harness, tests
+Prohibited: strategies, signals, weights, thresholds, universe, LIVE broker behavior
+
+## R1 CLASSIFICATION
+----------------------------------------------------------------------
+❌ R1: NOT PROVEN - G cycle PID consistency
+   Bridge closure not yet validated
+
+## OPEN RISKS
+----------------------------------------------------------------------
+⚠️  G cycle PID consistency not verified across all 10 cycles
+
+======================================================================
+END OF EVIDENCE MATRIX REPORT
+======================================================================
