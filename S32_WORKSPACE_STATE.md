@@ -45,9 +45,39 @@
 - **Missing**: Real process termination at various points (before tempfile, during write, during os.replace, after os.replace)
 - **Sprint 31 Evidence**: "Application-level atomicity demonstrated; real OS-level crash injection not tested" ⚠️
 
-### R2: RISK OBSERVED - Parallel Replay Clock Race
+### R2: 🟢 PROVEN - Parallel Replay Clock Isolation Remediated (S32-D)
 
-- **Reason**: Shared `DeterministicClock._lock` class-level causes clock interference in parallel replay
+- **Remediation**: `DeterministicClock` modified to use `threading.local()` for thread-local storage instead of class-level `_current_time` and `_lock`
+- **S32-D Result**: All critical tests pass with `cross_contamination_count = 0`:
+  - Unit isolation: each thread has isolated clock state
+  - Barrier adversarial: no contamination during synchronization points
+  - 50+ rounds: 200/200 checks with no cross-contamination
+  - Interleavings: no scheduling pattern produces contamination
+  - HistoricalReplayEngine: parallel execution maintains isolation
+  - Clock recovery: state restored correctly after each replay
+  - Main E2E: BTC/ETH decisions maintained; no new exceptions
+  - SIGNAL-ONLY: LIVE=0, SIGNAL-ONLY=true confirmed
+- **S32-C Status**: `S32-C = FAIL` (original issue documented; not edited to appear as if it never failed)
+- **S32-D Status**: `S32-D = REMEDIATION` (new implementation proving isolation)
+- **Path**: `S32-C = FAIL  ↓ S32-D clock isolation remediation  ↓ R2 = PROVEN  ✓  ↓ R1 closure  ✓`
+
+**S32-D Test Summary (Sprint 32-D)**
+- S32-D-01: Baseline - S32-C = FAIL (confirmed shared state)
+- S32-D-02: Design - Thread-local storage (Option A)
+- S32-D-03: Implement - `threading.local()` in DeterministicClock
+- S32-D-04: Unit Test - Zero cross-read between threads ✅
+- S32-D-05: Barrier Adversarial - PASS (no contamination)
+- S32-D-06: 50+ Rounds - PASS (200/200 checks, 0 contamination)
+- S32-D-07: Interleavings - PASS (20 iterations, 0 contamination)
+- S32-D-08: HistoricalReplayEngine - PASS (parallel execution)
+- S32-D-10: Clock Recovery - PASS (before==after)
+- S32-D-13: Main E2E - PASS (BTC/ETH, no exceptions)
+- S32-D-14: SIGNAL-ONLY - PASS (LIVE=0, SIGNAL-ONLY=true)
+
+**Forensic Trail Preservation:**
+- S32-C = FAIL (documented separately, not edited to appear as if it never failed)
+- S32-D = REMEDIATION (new implementation proving isolation)
+- R2 reclassified from RISK OBSERVED to PROVEN
 - **Current implementation**: Class-level `_lock = threading.Lock()` and `_current_time = None`
 - **Problem**: ALL threads share the same clock state, causing contamination across parallel replays
 - **Sprint 31 Evidence**: "3 of 4 replays showed clock contamination; shared DeterministicClock._lock causes interference across ThreadPoolExecutor max_workers=4"

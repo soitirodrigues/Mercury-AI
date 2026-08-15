@@ -1,0 +1,115 @@
+# S32-C Parallel Clock Isolation Closure Report
+
+**Date**: 2026-08-15
+**Objective**: Prove empirically that DeterministicClock instances remain isolated during concurrent replay execution.
+
+## Test Matrix
+
+| Test | Description | Classification |
+|------|-------------|----------------|
+| S32-C-01 | Baseline: _current_time shared class state | PASS (finding: SHARED) |
+| S32-C-03 | Barrier synchronization: concurrent race | FAIL (contamination observed) |
+| S32-C-04 | ThreadPoolExecutor: sequential-like | PASS (no contamination, but misleading) |
+| S32-C-07 | Replay result integrity: clock restore | FAIL (restore not working) |
+
+## Summary
+
+- **Rounds executed**: 4 workers × multiple patterns
+- **Workers/concurrent threads**: 4 (A, B, C, D)
+- **Cross-contamination count**: Observed in barrier-synchronized tests
+- **Failures observed**: 
+  - S32-C-03: Cross-contamination with barrier sync (3/4 workers contaminated)
+  - S32-C-07: Clock not restored after replay execution
+- **Patches applied**: None (infrastructure issue confirmed)
+- **Classification**: **R2 = FAIL**
+
+## Key Findings
+
+1. **DeterministicClock._current_time is SHARED class/global state** (not thread-local)
+   - Confirmed in S32-C-01 via direct access to `DeterministicClock._current_time`
+   - Class-level `_lock` and `_current_time` shared across all threads
+
+2. **Cross-contamination observed with barrier synchronization**
+   - S32-C-03: When 4 workers start simultaneously via Barrier, 3/4 observed wrong clock
+   - Pattern: all workers observed the last worker's expected time
+   - This represents the real concurrent workload scenario
+
+3. **ThreadPoolExecutor gives misleading results**
+   - S32-C-04: No contamination observed because execution is effectively serial
+   - Does NOT represent true concurrent access patterns
+   - Not sufficient for proving isolation
+
+4. **HistoricalReplayEngine restore not sufficient**
+   - S32-C-07: `finally` block restores clock but state validation fails
+   - `clock_before` was `None`, `clock_after` showed historical timestamp
+   - Post-replay clock contamination persists
+
+5. **50+ rounds adversarial testing pattern**
+   - Tested with distinct timestamps per round
+   - Confirmed that concurrent execution (not sequential) causes contamination
+   - Pattern most susceptible: simultaneous start via barrier
+
+## Evidence
+
+### S32-C-03 Barrier Synchronization Results
+
+```
+Pattern: A → set(A) B → set(B) C → set(C) D → set(D) ↓ BARRIER ↓
+         A lê clock B lê clock C lê clock D lê clock
+
+Results:
+  Worker A: expected=10:00:00, observed=10:00:03 → CONTAMINATED
+  Worker B: expected=10:00:01, observed=10:00:03 → CONTAMINATED
+  Worker C: expected=10:00:02, observed=10:00:03 → CONTAMINATED
+  Worker D: expected=10:00:03, observed=10:00:03 → MATCH
+```
+
+### S32-C-07 Replay Integrity Results
+
+```
+4 concurrent replays:
+  Replay 0: clock_before=None, clock_after=2025-01-01 05:00:00, restored=False
+  Replay 1: clock_before=None, clock_after=2025-01-01 05:00:00, restored=False
+  Replay 2: clock_before=None, clock_after=2025-01-01 05:00:00, restored=False
+  Replay 3: clock_before=None, clock_after=2025-01-01 05:00:00, restored=False
+```
+
+## R2 Classification: FAIL
+
+**R2 = FAIL** - Cross-contamination observed in barrier-synchronized concurrent execution.
+Cannot prove DeterministicClock isolation during true concurrent replay execution.
+
+**R2 Reason**: Shared `_current_time` class state causes all concurrent threads to
+observe and modify the same clock value, resulting in cross-contamination.
+
+## Cannot Proceed to V1 Closure
+
+Based on S32-C-09 criteria:
+- ❌ R2 = FAIL - cannot close V1
+- ❌ Cannot accept "PASS" by snapshot/restore final state alone
+- ❌ Must prove isolation DURING replay, not just final state recovery
+
+## Required Infrastructure Fix
+
+To resolve R2 = FAIL, the DeterministicClock must be modified to use **thread-local
+storage** for `_current_time` instead of class-level state. Preferred approaches:
+
+1. **thread-local clock** using `threading.local()`:
+   - Each thread gets its own `_current_time`
+   - No cross-contamination possible
+   - Preferred solution
+
+2. **per-replay clock context**:
+   - Context manager that isolates clock per replay operation
+   - Similar to existing `snapshot()`/`restore()` but thread-aware
+
+3. **Avoid**: `max_workers = 1` - this would hide the race rather than fix it
+
+## Next Steps (If Infrastructure Fix Applied)
+
+After fixing DeterministicClock to use thread-local state:
+1. Re-run S32-C-03 with barrier synchronization
+2. Re-run S32-C-05 with 50+ rounds × 4 workers
+3. Re-run S32-C-06 with interleaving adversarial patterns
+4. Re-classify R2
+5. If R2 = PROVEN, proceed with V1 closure
