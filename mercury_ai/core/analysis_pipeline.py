@@ -187,7 +187,10 @@ class AnalysisPipeline:
             with self.profiler.stage("DataQuality"):
                 is_valid, quality_score, reason = self.quality_engine.validate(df)
                 if not is_valid and not silent:
-                    print(f"Data quality issue for {symbol}: {reason} (Score: {quality_score})")
+                    print(
+                        f"Data quality issue for {symbol}: "
+                        f"{reason} (Score: {quality_score})"
+                    )
             self._record_telemetry("DataQuality", start, df, is_valid)
 
             # Graceful handling: se dados inválidos (vazio, NaN, etc.),

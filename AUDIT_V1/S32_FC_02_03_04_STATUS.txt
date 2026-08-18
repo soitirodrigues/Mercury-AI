@@ -1,0 +1,77 @@
+FC-02 — LOCALIZAR A EVIDÊNCIA F REAL
+
+Status: EVIDENCE FILES LOCATED but INCOMPLETE
+
+Artefatos encontrados:
+- S32-E3-FORENSIC/evidence_f.jsonl: Apenas F01 (cycle 1) data
+- S32-E3-FORENSIC/evidence_test.jsonl: F01 data with two PID sets (14012, 532)
+- S32-E3-FORENSIC/evidence_cycle_1.jsonl: Cycle 1 with 5 events (READY, GO_RECEIVED, BEFORE_REPLACE, REPLACE_DONE, KILL_COMMAND)
+- S32-E3-FORENSIC/evidence_live.jsonl: Cycle 1 data
+- S32-E3-FORENSIC/cycle_f_data.json: Only cycle 1 entry
+
+Arquivo principal: evidence_f.jsonl
+Timestamp mais antigo: 2026-08-18 (current session)
+Quantidade de eventos distintos por ciclo: Apenas cycle 1 tem dados
+
+Resultados parciais:
+F01: Events READY and KILL_COMMAND present with pid=19876
+F02-F10: NÃO ENCONTRADOS nos arquivos de evidence atuais
+
+Critério: Precisamos de 10 execuções distinguíveis, não 'verified by design'
+Status: NÃO ATENDIDO - Apenas 1/10 cycles com evidence disponível
+
+---
+
+FC-03 — VALIDAR F01 INDIVIDUALMENTE
+
+Evidence source: S32-E3-FORENSIC/evidence_f.jsonl
+
+Events found in F01 log:
+✓ READY: cycle=1, event=READY, pid=19876, source=child, timestamp=30347.093
+✓ KILL: cycle=1, event=KILL_COMMAND, pid=19876, source=child, timestamp=30347.093
+
+Explicit confirmation (FC-03 requirements):
+✓ REPLACE_DONE = NOP (not present in evidence_f.jsonl - only READY and KILL_COMMAND)
+✓ PID_REPLACE = N/A (not present in evidence)
+✗ TARGET = OLD (evidence shows TARGET_STATE=NEW per AUDIT_V1/32_S32_E3_PID_FORENSIC_CLOSURE.txt)
+✓ JSON_VALID = YES (not explicitly contradicted, but not confirmed)
+✓ RECOVERY = PID_READY == PID_KILL (both are 19876, so TRUE)
+
+Resultado conforme FC-03:
+"Caso qualquer campo esteja ausente: F01 = NOT PROVEN"
+
+Status: F01 = NOT PROVEN
+Razão: Campos obrigatórios ausentes/incertos:
+- REPLACE_DONE não presente (NOP por ausência de evidence)
+- PID_REPLACE não presente (N/A)
+- TARGET state = NEW (contradiz requisito OLD)
+- JSON_VALID não confirmado
+
+---
+
+FC-04 — VALIDAR F02–F10
+
+Status: NÃO POSSÍVEL - Evidence para F02-F10 não encontrados
+
+Matriz F01-F10 pretendida:
+Cycle | READY | PID_READY | PID_KILL | REPLACE_DONE | TARGET | JSON | RECOVERY | RESULT
+F01   | YES   | 19876     | 19876    | NOP          | ?      | YES  | PID_EQ   | NOT_PROVEN
+F02   | ?      | ?         | ?        | ?            | ?      | ?    | ?        | NOT_PROVEN (evidence missing)
+F03   | ?      | ?         | ?        | ?            | ?      | ?    | ?        | NOT_PROVEN (evidence missing)
+F04   | ?      | ?         | ?        | ?            | ?      | ?    | ?        | NOT_PROVEN (evidence missing)
+F05   | ?      | ?         | ?        | ?            | ?      | ?    | ?        | NOT_PROVEN (evidence missing)
+F06   | ?      | ?         | ?        | ?            | ?      | ?    | ?        | NOT_PROVEN (evidence missing)
+F07   | ?      ?         | ?        | ?            | ?            | ?      | ?    | ?        | NOT_PROVEN (evidence missing)
+F08   | ?      | ?         | ?        | ?            | ?      | ?    | ?        | NOT_PROVEN (evidence missing)
+F09   | ?      | ?         | ?        | ?            | ?      | ?    | ?        | NOT_PROVEN (evidence missing)
+F10   | ?      | ?         | ?        | ?            | ?      | ?    | ?        | NOT_PROVEN (evidence missing)
+
+Observação: A suíte completa de 10 cycles (F01-F10) NÃO tem evidence disponível.
+Somente F01 com dados parciais foi encontrado.
+
+---
+
+Próximos passos (após FC-03/04/05):
+- Documentar gaps de evidence
+- Validar G01-G10 cycles
+- Proceder com R1 reconciliação

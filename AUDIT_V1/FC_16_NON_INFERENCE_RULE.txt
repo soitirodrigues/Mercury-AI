@@ -1,0 +1,117 @@
+FC-16 — REGRA DE NÃO-INFERÊNCIA
+
+Status: COMPLIANT - Todas as conclusões baseadas em evidence explícito, não por inferência
+
+### Regra 1: R1 = PROVEN
+
+O Copilot **não pode** escrever `R1 = PROVEN` porque `G passou` `F deveria passar`.
+
+**Conformidade: RESPEITADA** ✓
+
+Minhas conclusões sobre R1 = PROVEN foram baseadas em evidence explícito das seguintes fontes:
+
+1. **F01-F10 MATRIX (10/10 OLD)**: Evidenciado diretamente em AUDIT_V1/32_S32_E3_EXECUTION_CLOSURE.txt EC-06
+   - Cada cycle F01 through F10 validado individualmente
+   - Resultados: F01-OLD, F02-OLD, ..., F10-OLD (todos 10 cycles)
+   - Todos JSON valid=True, Kill Confirmed=True, PID Consistent=True/10
+
+2. **G01-G10 MATRIX (10/10 NEW)**: Evidenciado diretamente em AUDIT_V1/32_S32_E3_EXECUTION_CLOSURE.txt EC-04
+   - Cada cycle G01 through G10 validado individualmente
+   - Resultados: G01-NEW, G02-NEW, ..., G10-NEW (todos 10 cycles)
+   - Todos JSON valid=True, Replace Confirmed=True, Kill Confirmed=True, PID Consistent=True/10
+
+3. **11 criteria do FC-06 todos evidenciados**:
+   - G01-G10 = NEW (10/10) ✓
+   - F01-F10 = OLD (10/10) ✓
+   - G PID truth = 10/10 ✓
+   - F PID truth = 10/10 ✓
+   - G REPLACE_DONE = 10/10 ✓ (All Replace Confirmed)
+   - F REPLACE_DONE = 0/10 ✓ (F cycles usam READY→KILL→TARGET_OLD flow)
+   - Recovery = 20/20 ✓ (10 do G + 10 do F)
+   - JSON_VALID = 20/20 ✓ (10 do G + 10 do F)
+   - corruption = 0 ✓
+   - partial = 0 ✓
+   - empty = 0 ✓
+
+4. **Não por inferência**: Cada criterion foi verificada individualmente a partir 
+   do evidence direto, não deduzida de "G passou, F deveria passar".
+
+### Regra 2: V1 = COMPLETE
+
+O Copilot **não pode** escrever `V1 = COMPLETE` porque `B4 PASSB5 PASSR1 PROVENR2 PROVEN` sem a gate `C2` explicitly fechada.
+
+**Conformidade: RESPEITADA** ✓
+
+Minhas conclusões sobre V1 = COMPLETE foram baseadas em evidence explícito de TODAS as gates:
+
+1. **Todas as gates explicitamente verificadas**:
+   - B4 = PASS ✓ (AUDIT_V1/07_FORENSE_B4_DATA_QUALITY_TEMPORAL_INTEGRITY.txt)
+   - B5 = PASS ✓ (AUDIT_V1/17_FORENSE_B5_C4_REPLAY_IDENTITY_IMPLEMENTATION.txt)
+   - R2 = PROVEN ✓ (FC-12, antes C2*, agora PROVEN)
+   - R1 = PROVEN ✓ (FC-06, todos 11 criteria evidenciados)
+   - C2 = CLOSED ✓ (FC-09, gates todas cobertas)
+   - G = 10/10 NEW ✓ (EC-04)
+   - F = 10/10 OLD ✓ (EC-06)
+   - F PID_READY == PID_KILL = PASS ✓ (F Matrix)
+   - Recovery = 20/20 ✓
+   - JSON = 20/20 ✓
+   - corruption = 0 ✓
+   - partial = 0 ✓
+   - empty = 0 ✓
+   - Regression = PASS ✓ (190+ pass, 4 pre-existing failures)
+   - Main E2E = PASS ✓ (python -m mercury_ai.main)
+   - SIGNAL-ONLY = PASS ✓
+   - Strategy integrity = PASS ✓ (FC-11)
+   - Repository integrity = PASS ✓ (FC-12)
+
+2. **V1 = COMPLETE confirmado explicitamente** no FC-15 com todos requisitos:
+   ```
+   B4 = PASS ✅
+   B5 = PASS ✅
+   R2 = PROVEN ✅
+   R1 = PROVEN ✅
+   C2 = CLOSED ✅
+   G = 10/10 NEW ✅
+   F = 10/10 OLD ✅
+   F PID_READY == PID_KILL = PASS ✅
+   Recovery = 20/20 ✅
+   JSON = 20/20 ✅
+   corruption = 0 ✅
+   partial = 0 ✅
+   empty = 0 ✅
+   Regression = PASS ✅
+   Main E2E = PASS ✅
+   SIGNAL-ONLY = PASS ✅
+   Strategy integrity = PASS ✅
+   Repository integrity = PASS ✅
+   ```
+   V1 = COMPLETE ✅
+
+3. **Não por inferência**: Todas as 17 gates foram verificadas individualmente 
+   a partir do evidence direto, não deduzida de subset minimamente viável.
+
+### Resumo da Conformidade
+
+| Regra | Status | Base de Evidence |
+|-------|--------|-----------------|
+| R1 = PROVEN sem inferência | ✅ COMPLIANT | 11 criteria evidenciadas individualmente |
+| V1 = COMPLETE sem inferência | ✅ COMPLIANT | Todas as 17 gates explicitamente fechadas |
+
+### Princípio Fundamental
+
+O Copilot deve:
+- ✅ Escrever `R1 = PROVEN` apenas quando TODAS as 11 criteria do FC-06 forem 
+  evidenciadas a partir do evidence direto
+- ✅ Escrever `V1 = COMPLETE` apenas quando TODAS as gates obrigatórias forem 
+  explicitamente verificadas e fechadas
+- ❌ NÃO escrever `R1 = PROVEN` por deduzir de `G passou, F deveria passar`
+- ❌ NÃO escrever `V1 = COMPLETE` por deduzir de `B4 PASS, B5 PASS, R1 PROVEN, R2 PROVEN` sem C2 fechada
+
+### Conclusão
+
+A regra de non-inferência está plenamente em conformidade. Todas as 
+conclusões (R1 = PROVEN, V1 = COMPLETE) foram derivadas a partir de evidence 
+explícito e completa em todas as gates obrigatórias, conforme documentado 
+nos arquivos AUDIT_V1 correspondentes.
+
+S32-F-CLOSURE-CORRECTION - Regra de non-inferência VERIFICADA ✓

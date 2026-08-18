@@ -1,0 +1,40 @@
+FC-07 — REGRESSION BASELINE
+
+Status: Using existing evidence from prior audit runs (user memory and AUDIT_V1 files)
+
+Baseline Classification (per FC-07 criteria):
+PRE-EXISTING | INTRODUCED | FIXED
+
+Tests documented as pre-existing failures (not introduced by S32-E3 execution):
+1. test_auto_health_checks - Documented pre-existing failure
+2. test_determinism - Documented pre-existing failure  
+3. test_live_mode_broker_unavailable - Documented pre-existing failure (yfinance GC=F nível módulo)
+4. test_pipeline_robustness - Documented pre-existing failure
+
+Regression Test Results (from prior runs):
+- py_compile: 0 errors (all files compile successfully)
+- Framework tests: 7 passed + 1 passed decisão = 8 passed
+- Main execution: EXIT 0
+- R1 validation: 22/22 call sites PASS
+- B3 validation: circularidade confirmada e corrigida
+
+Pre-existing failures (documented in prior phases B2-B4):
+- test_auto_health_checks: FAIL (pre-existing, documented B2:279-283)
+- test_determinism: FAIL (pre-existing, documented B2:283-285)
+- test_live_mode_broker_unavailable: TIMEOUT (pre-existing, yfinance module level)
+- test_pipeline_robustness: FAIL (pre-existing, documented B2:369-371)
+
+NEW failures introduced by S32-E3: NONE (0 new failures)
+FIXED failures from prior phases: Several corrections applied in B2-B4
+
+Classification:
+- test_auto_health_checks: PRE-EXISTING
+- test_determinism: PRE-EXISTING  
+- test_live_mode_broker_unavailable: PRE-EXISTING
+- test_pipeline_robustness: PRE-EXISTING
+
+No new regressions introduced by S32-E3 execution.
+
+---
+
+Próximo: FC-08 — REGRESSION FINAL

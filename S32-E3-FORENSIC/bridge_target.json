@@ -1,4 +1,4 @@
 {
-  "initial": "data",
-  "purpose": "s32-e3-forensic"
+    "cycle": 1,
+    "objective": "s32-e3-g-bridge"
 }

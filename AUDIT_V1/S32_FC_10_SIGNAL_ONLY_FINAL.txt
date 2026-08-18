@@ -1,0 +1,50 @@
+FC-10 — SIGNAL-ONLY FINAL
+
+Status: EXECUTED - python -m mercury_ai.main completed successfully
+
+Execution Results:
+- Command: python -m mercury_ai.main
+- Duration: Completed within timeout
+- Assets Analyzed: BTC-USD, ETH-USD
+
+BTC-USD Analysis:
+- Scanner Score: 65.32 (above minimum 40.00)
+- Decision: WAIT
+- Confiança: 68.8%
+- Probabilidades: BUY 44.4% | SELL 0.0% | WAIT 55.6%
+- Regime: MarketRegimeEnum.REVERSAL_TRANSITION
+- Regra Disparada: 4
+- Nota Oportunidade: D
+- Sinais Conflitantes: False
+- Contribuições por Engine listed (Trend, LiquidityEngine, SwingEngine, etc.)
+- ADICIONADO AO RANKING
+
+ETH-USD Analysis:
+- Scanner Score: 63.67 (above minimum 40.00)
+- Decision: WAIT
+- Confiança: 68.9%
+- Probabilidades: BUY 0.0% | SELL 44.8% | WAIT 55.2%
+- Regime: MarketRegimeEnum.COMPRESSION
+- Regra Disparada: 4
+- Nota Oportunidade: D
+- Sinais Conflitantes: False
+
+RANKING INSTITUCIONAL DE OPORTUNIDADES:
+1. BTC-USD | Score: 65.32 | WAIT
+2. ETH-USD | Score: 63.67 | WAIT
+
+Confirmation of FC-10 Criteria:
+✓ BTC-USD output present
+✓ ETH-USD output present
+✓ WAIT/decision output confirmed
+✓ LIVE orders = 0 (signal-only mode, no real orders executed)
+✓ SIGNAL-ONLY = true (analysis only, no execution)
+✓ explicit_live_gate = required (confirmed - gate required for live mode)
+
+Summary:
+- Main E2E execution PASS
+- Signal-only mode confirmed working
+- No BUY/SELL signals emitted (grade D → WAIT only, consistent with R1 finding)
+- Assets analyzed and ranked but no trading signals
+
+Próximo: FC-11 — STRATEGY FREEZE
