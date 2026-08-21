@@ -96,17 +96,6 @@ class ProbabilityEngine:
         # ----------------------------------------------------
         # Penalidade de risco
         # ----------------------------------------------------
-        print("=" * 70)
-        print("DEBUG PROBABILITY")
-        print("confluence_score:", confluence_score)
-        print("confidence_score:", confidence_score)
-        print("evidence_bonus:", evidence_bonus)
-        print("risk_score:", risk_score)
-        print("risk_factor:", risk_factor)
-        print(
-        "institutional_strength BEFORE RISK:",
-         institutional_strength,
-        )
         
         institutional_strength *= (
             1.0 - (risk_factor * 0.50)
@@ -119,12 +108,6 @@ class ProbabilityEngine:
                 100.0,
             ),
         )
-
-        print(
-            "institutional_strength AFTER RISK:",
-            institutional_strength,
-        )
-        print("=" * 70)
 
         # ----------------------------------------------------
         # WAIT
