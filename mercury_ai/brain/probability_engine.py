@@ -1,4 +1,4 @@
-    def analyze(
+def analyze(
         self,
         context: MarketContext,
         evidence_bundle: Any,
