@@ -1,36 +1,3 @@
-from typing import (
-    Any,
-    Dict,
-    Optional,
-)
-
-from mercury_ai.models.market_context import MarketContext
-from mercury_ai.models.probability_result import ProbabilityResult
-
-
-class ProbabilityEngine:
-    """
-    Probability Engine V2
-
-    Responsável apenas por converter a análise institucional em
-    probabilidades operacionais.
-
-    Ele NÃO decide BUY ou SELL.
-
-    Quem decide é o ConfluenceEngine.
-
-    Este engine apenas calcula:
-
-        BUY %
-        SELL %
-        WAIT %
-
-    coerentes com a direção já definida.
-    """
-
-    def __init__(self, weights: Dict[str, float]):
-        self.weights = weights
-
     def analyze(
         self,
         context: MarketContext,
@@ -67,7 +34,7 @@ class ProbabilityEngine:
             else:
                 dominant_direction = "WAIT"
 
-                        # ----------------------------------------------------
+        # ----------------------------------------------------
         # Risk
         # ----------------------------------------------------
 
@@ -95,43 +62,39 @@ class ProbabilityEngine:
         )
 
         # ----------------------------------------------------
-        # Score Institucional (composição canônica)
+        # Score Institucional
         # ----------------------------------------------------
 
-        # Composição canônica documentada (Sprint 1.7 / comentário do autor):
-        # - confluence_score (alinhamento multi-engine) ..... 50%
-        # - confidence_score (qualidade geral) .............. 35%
-        # - evidence_bonus (profundidade da análise) ........ 15%
-        #
-        # Soma dos coeficientes = 1.0 (0.50 + 0.35 + 0.15),
-        # independentemente dos pesos configurados.
+        # Composição canônica:
+        # - confluence_score ..... 50%
+        # - confidence_score ..... 35%
+        # - evidence_bonus ....... 15%
+
         confluence_coef = 0.50
         confidence_coef = 0.35
         evidence_coef = 0.15
 
         institutional_strength = (
-
-            confluence_score * confluence_coef +
-
-            confidence_score * confidence_coef +
-
-            evidence_bonus * evidence_coef
-
+            confluence_score * confluence_coef
+            + confidence_score * confidence_coef
+            + evidence_bonus * evidence_coef
         )
 
+        # ----------------------------------------------------
+        # Penalidade de risco
+        # ----------------------------------------------------
+
         print("=" * 70)
-print("DEBUG PROBABILITY")
-print("confluence_score:", confluence_score)
-print("confidence_score:", confidence_score)
-print("evidence_bonus:", evidence_bonus)
-print("risk_score:", risk_score)
-print("risk_factor:", risk_factor)
-print("institutional_strength BEFORE RISK:", institutional_strength)
-institutional_strength *= (
-    1.0 - (risk_factor * 0.50)
-)
-print("institutional_strength AFTER RISK:", institutional_strength)
-print("=" * 70)
+        print("DEBUG PROBABILITY")
+        print("confluence_score:", confluence_score)
+        print("confidence_score:", confidence_score)
+        print("evidence_bonus:", evidence_bonus)
+        print("risk_score:", risk_score)
+        print("risk_factor:", risk_factor)
+        print(
+            "institutional_strength BEFORE RISK:",
+            institutional_strength,
+        )
 
         institutional_strength *= (
             1.0 - (risk_factor * 0.50)
@@ -145,12 +108,18 @@ print("=" * 70)
             ),
         )
 
+        print(
+            "institutional_strength AFTER RISK:",
+            institutional_strength,
+        )
+        print("=" * 70)
+
         # ----------------------------------------------------
         # WAIT
         # ----------------------------------------------------
 
-        # quanto menor a força institucional,
-        # maior a chance de WAIT
+        # Quanto menor a força institucional,
+        # maior a chance de WAIT.
 
         wait_probability = max(
             5.0,
@@ -164,7 +133,7 @@ print("=" * 70)
 
         remaining = 100.0 - wait_probability
 
-                # ----------------------------------------------------
+        # ----------------------------------------------------
         # Distribuição das probabilidades
         # ----------------------------------------------------
 
@@ -181,11 +150,8 @@ print("=" * 70)
             buy_probability = 0.0
 
         else:
-            # NEUTRAL ou desconhecido:
-            # a probabilidade direcional é mínima,
-            # o WAIT já domina o cenário.
-            # O remanescente é dividido igualmente
-            # para não enviesar BUY ou SELL.
+
+            # NEUTRAL ou desconhecido.
             buy_probability = directional_probability / 2.0
             sell_probability = directional_probability / 2.0
 
@@ -208,33 +174,27 @@ print("=" * 70)
         else:
             grade = "D"
 
-                # ----------------------------------------------------
+        # ----------------------------------------------------
         # Resultado
         # ----------------------------------------------------
 
         return ProbabilityResult(
-
             buy_probability=round(
                 buy_probability,
                 2,
             ),
-
             sell_probability=round(
                 sell_probability,
                 2,
             ),
-
             neutral_probability=round(
                 wait_probability,
                 2,
             ),
-
             expected_risk=risk_score,
-
             opportunity_grade=grade,
-
             institutional_confidence=round(
                 confidence_score,
                 2,
             ),
-        )    
+        )
