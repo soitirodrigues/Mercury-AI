@@ -1,4 +1,17 @@
-def analyze(
+from typing import (Any, Dict, Optional
+)
+from mercury_ai.models.market_context import MarketContext
+from mercury_ai.models.probability_result import ProbabilityResult
+
+class ProbabilityEngine:
+    def __init__(self, weights: Optional[dict] = None):
+        self.weights = weights or {
+            "trend": 0.50,
+            "structure": 0.35,
+            "liquidity": 0.15,
+        }
+
+    def analyze(
         self,
         context: MarketContext,
         evidence_bundle: Any,
