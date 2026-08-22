@@ -1,0 +1,537 @@
+{
+  "generated_at": "2026-09-02T22:18:47.702203+00:00",
+  "universe": 12,
+  "baseline": {
+    "workers": 1,
+    "wall_ms": 60058.0
+  },
+  "workers_tested": [
+    4,
+    8
+  ],
+  "passed": false,
+  "results": {
+    "baseline_wall": 60058.0,
+    "baseline_first": 4608.8,
+    "4": {
+      "wall_ms": 42664.1,
+      "passed": false,
+      "mismatches": [
+        {
+          "symbol": "GBPUSD=X",
+          "baseline": {
+            "status": "REAL_SIGNAL",
+            "decision": "SELL",
+            "audit_id": "b462ba18463ad07469c18ee2cd4ebc23f619be6322f2145e0cb3cd5b916b50b0",
+            "trade_allowed": true,
+            "prob_sum_ok": true,
+            "fresh": true,
+            "buy_probability": 0.0,
+            "sell_probability": 44.45,
+            "wait_probability": 55.55
+          },
+          "optimized": {
+            "status": "REAL_SIGNAL",
+            "decision": "SELL",
+            "audit_id": "72ca0b0d047eba5d80655542a534666d8bab0bad9ddb03f589fe23193cadcf17",
+            "trade_allowed": true,
+            "prob_sum_ok": true,
+            "fresh": true,
+            "buy_probability": 0.0,
+            "sell_probability": 44.46,
+            "wait_probability": 55.54
+          },
+          "audit_match": true,
+          "prob_ok": false,
+          "fields_match": true
+        },
+        {
+          "symbol": "USDCHF=X",
+          "baseline": {
+            "status": "REAL_SIGNAL",
+            "decision": "BUY",
+            "audit_id": "89a97e5d27a2aa2b5fb41656d27636f3beaf25542b63a7840f49b98b015fe9e6",
+            "trade_allowed": true,
+            "prob_sum_ok": true,
+            "fresh": true,
+            "buy_probability": 44.54,
+            "sell_probability": 0.0,
+            "wait_probability": 55.46
+          },
+          "optimized": {
+            "status": "REAL_SIGNAL",
+            "decision": "BUY",
+            "audit_id": "d0347205858ba1e5e2901f139da3ead4eaf0e8f660a52a4c1fc8c91bbf944067",
+            "trade_allowed": true,
+            "prob_sum_ok": true,
+            "fresh": true,
+            "buy_probability": 44.53,
+            "sell_probability": 0.0,
+            "wait_probability": 55.47
+          },
+          "audit_match": true,
+          "prob_ok": false,
+          "fields_match": true
+        },
+        {
+          "symbol": "AUDUSD=X",
+          "baseline": {
+            "status": "REAL_SIGNAL",
+            "decision": "SELL",
+            "audit_id": "4c74ca9d9e6fb546b52495b94c26c65a8be5aea4e6a0900fe877f86a7be6e7e5",
+            "trade_allowed": true,
+            "prob_sum_ok": true,
+            "fresh": true,
+            "buy_probability": 0.0,
+            "sell_probability": 44.06,
+            "wait_probability": 55.94
+          },
+          "optimized": {
+            "status": "REAL_SIGNAL",
+            "decision": "SELL",
+            "audit_id": "3299b2e053faa4a5091b3d6680706fd16b855713a673e13e0fba239a90d547f1",
+            "trade_allowed": true,
+            "prob_sum_ok": true,
+            "fresh": true,
+            "buy_probability": 0.0,
+            "sell_probability": 44.01,
+            "wait_probability": 55.99
+          },
+          "audit_match": true,
+          "prob_ok": false,
+          "fields_match": true
+        },
+        {
+          "symbol": "NZDUSD=X",
+          "baseline": {
+            "status": "REAL_SIGNAL",
+            "decision": "SELL",
+            "audit_id": "9301c1ef64c4dc2a4a1f9e36907e9bbe0f621880e8c90b9cfed885304e661e04",
+            "trade_allowed": true,
+            "prob_sum_ok": true,
+            "fresh": true,
+            "buy_probability": 0.0,
+            "sell_probability": 59.09,
+            "wait_probability": 40.91
+          },
+          "optimized": {
+            "status": "REAL_SIGNAL",
+            "decision": "SELL",
+            "audit_id": "9ba690c6ee6d34ce9e2ddd5815235630edd83910ffff3ac798a2f0f3a91d5950",
+            "trade_allowed": true,
+            "prob_sum_ok": true,
+            "fresh": true,
+            "buy_probability": 0.0,
+            "sell_probability": 43.81,
+            "wait_probability": 56.19
+          },
+          "audit_match": true,
+          "prob_ok": false,
+          "fields_match": true
+        },
+        {
+          "symbol": "EURGBP=X",
+          "baseline": {
+            "status": "REAL_SIGNAL",
+            "decision": "BUY",
+            "audit_id": "f7ba9f0dd04fa72ee4c6e3b0a1fb31013f9fe39ef0cc88c721abb105b4017bc3",
+            "trade_allowed": true,
+            "prob_sum_ok": true,
+            "fresh": true,
+            "buy_probability": 44.41,
+            "sell_probability": 0.0,
+            "wait_probability": 55.59
+          },
+          "optimized": {
+            "status": "REAL_SIGNAL",
+            "decision": "BUY",
+            "audit_id": "9da850aaba085b21418c1a82c3cc56ea633215f9c2a454deb32d302e6868ff1a",
+            "trade_allowed": true,
+            "prob_sum_ok": true,
+            "fresh": true,
+            "buy_probability": 44.49,
+            "sell_probability": 0.0,
+            "wait_probability": 55.51
+          },
+          "audit_match": true,
+          "prob_ok": false,
+          "fields_match": true
+        },
+        {
+          "symbol": "EURCHF=X",
+          "baseline": {
+            "status": "REAL_SIGNAL",
+            "decision": "BUY",
+            "audit_id": "d0c012f4739bdacf4a8c1cd2c198622e65f8b86f9cee33e5a26a63cb96e7391b",
+            "trade_allowed": true,
+            "prob_sum_ok": true,
+            "fresh": true,
+            "buy_probability": 43.83,
+            "sell_probability": 0.0,
+            "wait_probability": 56.17
+          },
+          "optimized": {
+            "status": "REAL_SIGNAL",
+            "decision": "BUY",
+            "audit_id": "18c0990c5ad3ece331d844d93eb8016c3bbfda70f5662f35c7f75b9462e8b01e",
+            "trade_allowed": true,
+            "prob_sum_ok": true,
+            "fresh": true,
+            "buy_probability": 45.28,
+            "sell_probability": 0.0,
+            "wait_probability": 54.72
+          },
+          "audit_match": true,
+          "prob_ok": false,
+          "fields_match": true
+        },
+        {
+          "symbol": "EURAUD=X",
+          "baseline": {
+            "status": "REAL_SIGNAL",
+            "decision": "SELL",
+            "audit_id": "3422a464520ed0a09e853277d15861fd650b442c76d92189fb2a01be416239df",
+            "trade_allowed": true,
+            "prob_sum_ok": true,
+            "fresh": true,
+            "buy_probability": 0.0,
+            "sell_probability": 44.5,
+            "wait_probability": 55.5
+          },
+          "optimized": {
+            "status": "REAL_SIGNAL",
+            "decision": "SELL",
+            "audit_id": "26bbad93f661cd0c31f2f60e13caa9f2105b56b8d1abfa6c1560cde3d9ed0e56",
+            "trade_allowed": true,
+            "prob_sum_ok": true,
+            "fresh": true,
+            "buy_probability": 0.0,
+            "sell_probability": 44.65,
+            "wait_probability": 55.35
+          },
+          "audit_match": true,
+          "prob_ok": false,
+          "fields_match": true
+        },
+        {
+          "symbol": "EURNZD=X",
+          "baseline": {
+            "status": "REAL_SIGNAL",
+            "decision": "SELL",
+            "audit_id": "d60062b6dd5ae42e1431b7eb76bd227f7228bf992bedbfd407a4f95ef61b2c87",
+            "trade_allowed": true,
+            "prob_sum_ok": true,
+            "fresh": true,
+            "buy_probability": 0.0,
+            "sell_probability": 44.52,
+            "wait_probability": 55.48
+          },
+          "optimized": {
+            "status": "REAL_SIGNAL",
+            "decision": "SELL",
+            "audit_id": "ebbc6384df63670a6c1b38cbca793be0b5307786038e44f15b742ceeb6977ef1",
+            "trade_allowed": true,
+            "prob_sum_ok": true,
+            "fresh": true,
+            "buy_probability": 0.0,
+            "sell_probability": 44.89,
+            "wait_probability": 55.11
+          },
+          "audit_match": true,
+          "prob_ok": false,
+          "fields_match": true
+        }
+      ],
+      "mismatch_count": 8
+    },
+    "8": {
+      "wall_ms": 44073.3,
+      "passed": false,
+      "mismatches": [
+        {
+          "symbol": "GBPUSD=X",
+          "baseline": {
+            "status": "REAL_SIGNAL",
+            "decision": "SELL",
+            "audit_id": "b462ba18463ad07469c18ee2cd4ebc23f619be6322f2145e0cb3cd5b916b50b0",
+            "trade_allowed": true,
+            "prob_sum_ok": true,
+            "fresh": true,
+            "buy_probability": 0.0,
+            "sell_probability": 44.45,
+            "wait_probability": 55.55
+          },
+          "optimized": {
+            "status": "REAL_SIGNAL",
+            "decision": "SELL",
+            "audit_id": "ed12534825ffd9060c51a913abe81b7a2e16393d46c78efd05d5528ec0084bf9",
+            "trade_allowed": true,
+            "prob_sum_ok": true,
+            "fresh": true,
+            "buy_probability": 0.0,
+            "sell_probability": 44.46,
+            "wait_probability": 55.54
+          },
+          "audit_match": true,
+          "prob_ok": false,
+          "fields_match": true
+        },
+        {
+          "symbol": "AUDUSD=X",
+          "baseline": {
+            "status": "REAL_SIGNAL",
+            "decision": "SELL",
+            "audit_id": "4c74ca9d9e6fb546b52495b94c26c65a8be5aea4e6a0900fe877f86a7be6e7e5",
+            "trade_allowed": true,
+            "prob_sum_ok": true,
+            "fresh": true,
+            "buy_probability": 0.0,
+            "sell_probability": 44.06,
+            "wait_probability": 55.94
+          },
+          "optimized": {
+            "status": "REAL_SIGNAL",
+            "decision": "SELL",
+            "audit_id": "d1c49f745cd746be7742baf6fe154d61defc13bb696008127cbdb43650fbe5c9",
+            "trade_allowed": true,
+            "prob_sum_ok": true,
+            "fresh": true,
+            "buy_probability": 0.0,
+            "sell_probability": 44.01,
+            "wait_probability": 55.99
+          },
+          "audit_match": true,
+          "prob_ok": false,
+          "fields_match": true
+        },
+        {
+          "symbol": "NZDUSD=X",
+          "baseline": {
+            "status": "REAL_SIGNAL",
+            "decision": "SELL",
+            "audit_id": "9301c1ef64c4dc2a4a1f9e36907e9bbe0f621880e8c90b9cfed885304e661e04",
+            "trade_allowed": true,
+            "prob_sum_ok": true,
+            "fresh": true,
+            "buy_probability": 0.0,
+            "sell_probability": 59.09,
+            "wait_probability": 40.91
+          },
+          "optimized": {
+            "status": "REAL_SIGNAL",
+            "decision": "SELL",
+            "audit_id": "00ef3de690e243e65c0d5e3fc6d819aa28ff528116436bf1d930ecca3aac25ef",
+            "trade_allowed": true,
+            "prob_sum_ok": true,
+            "fresh": true,
+            "buy_probability": 0.0,
+            "sell_probability": 43.81,
+            "wait_probability": 56.19
+          },
+          "audit_match": true,
+          "prob_ok": false,
+          "fields_match": true
+        },
+        {
+          "symbol": "EURCHF=X",
+          "baseline": {
+            "status": "REAL_SIGNAL",
+            "decision": "BUY",
+            "audit_id": "d0c012f4739bdacf4a8c1cd2c198622e65f8b86f9cee33e5a26a63cb96e7391b",
+            "trade_allowed": true,
+            "prob_sum_ok": true,
+            "fresh": true,
+            "buy_probability": 43.83,
+            "sell_probability": 0.0,
+            "wait_probability": 56.17
+          },
+          "optimized": {
+            "status": "REAL_SIGNAL",
+            "decision": "BUY",
+            "audit_id": "12158f48c3a89c96c72ebf3dcc05f283b2eecc833d4e8efe09d3632f076a5962",
+            "trade_allowed": true,
+            "prob_sum_ok": true,
+            "fresh": true,
+            "buy_probability": 45.28,
+            "sell_probability": 0.0,
+            "wait_probability": 54.72
+          },
+          "audit_match": true,
+          "prob_ok": false,
+          "fields_match": true
+        },
+        {
+          "symbol": "EURAUD=X",
+          "baseline": {
+            "status": "REAL_SIGNAL",
+            "decision": "SELL",
+            "audit_id": "3422a464520ed0a09e853277d15861fd650b442c76d92189fb2a01be416239df",
+            "trade_allowed": true,
+            "prob_sum_ok": true,
+            "fresh": true,
+            "buy_probability": 0.0,
+            "sell_probability": 44.5,
+            "wait_probability": 55.5
+          },
+          "optimized": {
+            "status": "REAL_SIGNAL",
+            "decision": "SELL",
+            "audit_id": "f7152814c26f45457cde7ffe6b8dc1dd729d764861aa486fa5bee103503b496f",
+            "trade_allowed": true,
+            "prob_sum_ok": true,
+            "fresh": true,
+            "buy_probability": 0.0,
+            "sell_probability": 44.65,
+            "wait_probability": 55.35
+          },
+          "audit_match": true,
+          "prob_ok": false,
+          "fields_match": true
+        }
+      ],
+      "mismatch_count": 5
+    }
+  },
+  "mismatch_sample": [
+    {
+      "symbol": "GBPUSD=X",
+      "baseline": {
+        "status": "REAL_SIGNAL",
+        "decision": "SELL",
+        "audit_id": "b462ba18463ad07469c18ee2cd4ebc23f619be6322f2145e0cb3cd5b916b50b0",
+        "trade_allowed": true,
+        "prob_sum_ok": true,
+        "fresh": true,
+        "buy_probability": 0.0,
+        "sell_probability": 44.45,
+        "wait_probability": 55.55
+      },
+      "optimized": {
+        "status": "REAL_SIGNAL",
+        "decision": "SELL",
+        "audit_id": "72ca0b0d047eba5d80655542a534666d8bab0bad9ddb03f589fe23193cadcf17",
+        "trade_allowed": true,
+        "prob_sum_ok": true,
+        "fresh": true,
+        "buy_probability": 0.0,
+        "sell_probability": 44.46,
+        "wait_probability": 55.54
+      },
+      "audit_match": true,
+      "prob_ok": false,
+      "fields_match": true
+    },
+    {
+      "symbol": "USDCHF=X",
+      "baseline": {
+        "status": "REAL_SIGNAL",
+        "decision": "BUY",
+        "audit_id": "89a97e5d27a2aa2b5fb41656d27636f3beaf25542b63a7840f49b98b015fe9e6",
+        "trade_allowed": true,
+        "prob_sum_ok": true,
+        "fresh": true,
+        "buy_probability": 44.54,
+        "sell_probability": 0.0,
+        "wait_probability": 55.46
+      },
+      "optimized": {
+        "status": "REAL_SIGNAL",
+        "decision": "BUY",
+        "audit_id": "d0347205858ba1e5e2901f139da3ead4eaf0e8f660a52a4c1fc8c91bbf944067",
+        "trade_allowed": true,
+        "prob_sum_ok": true,
+        "fresh": true,
+        "buy_probability": 44.53,
+        "sell_probability": 0.0,
+        "wait_probability": 55.47
+      },
+      "audit_match": true,
+      "prob_ok": false,
+      "fields_match": true
+    },
+    {
+      "symbol": "AUDUSD=X",
+      "baseline": {
+        "status": "REAL_SIGNAL",
+        "decision": "SELL",
+        "audit_id": "4c74ca9d9e6fb546b52495b94c26c65a8be5aea4e6a0900fe877f86a7be6e7e5",
+        "trade_allowed": true,
+        "prob_sum_ok": true,
+        "fresh": true,
+        "buy_probability": 0.0,
+        "sell_probability": 44.06,
+        "wait_probability": 55.94
+      },
+      "optimized": {
+        "status": "REAL_SIGNAL",
+        "decision": "SELL",
+        "audit_id": "3299b2e053faa4a5091b3d6680706fd16b855713a673e13e0fba239a90d547f1",
+        "trade_allowed": true,
+        "prob_sum_ok": true,
+        "fresh": true,
+        "buy_probability": 0.0,
+        "sell_probability": 44.01,
+        "wait_probability": 55.99
+      },
+      "audit_match": true,
+      "prob_ok": false,
+      "fields_match": true
+    },
+    {
+      "symbol": "NZDUSD=X",
+      "baseline": {
+        "status": "REAL_SIGNAL",
+        "decision": "SELL",
+        "audit_id": "9301c1ef64c4dc2a4a1f9e36907e9bbe0f621880e8c90b9cfed885304e661e04",
+        "trade_allowed": true,
+        "prob_sum_ok": true,
+        "fresh": true,
+        "buy_probability": 0.0,
+        "sell_probability": 59.09,
+        "wait_probability": 40.91
+      },
+      "optimized": {
+        "status": "REAL_SIGNAL",
+        "decision": "SELL",
+        "audit_id": "9ba690c6ee6d34ce9e2ddd5815235630edd83910ffff3ac798a2f0f3a91d5950",
+        "trade_allowed": true,
+        "prob_sum_ok": true,
+        "fresh": true,
+        "buy_probability": 0.0,
+        "sell_probability": 43.81,
+        "wait_probability": 56.19
+      },
+      "audit_match": true,
+      "prob_ok": false,
+      "fields_match": true
+    },
+    {
+      "symbol": "EURGBP=X",
+      "baseline": {
+        "status": "REAL_SIGNAL",
+        "decision": "BUY",
+        "audit_id": "f7ba9f0dd04fa72ee4c6e3b0a1fb31013f9fe39ef0cc88c721abb105b4017bc3",
+        "trade_allowed": true,
+        "prob_sum_ok": true,
+        "fresh": true,
+        "buy_probability": 44.41,
+        "sell_probability": 0.0,
+        "wait_probability": 55.59
+      },
+      "optimized": {
+        "status": "REAL_SIGNAL",
+        "decision": "BUY",
+        "audit_id": "9da850aaba085b21418c1a82c3cc56ea633215f9c2a454deb32d302e6868ff1a",
+        "trade_allowed": true,
+        "prob_sum_ok": true,
+        "fresh": true,
+        "buy_probability": 44.49,
+        "sell_probability": 0.0,
+        "wait_probability": 55.51
+      },
+      "audit_match": true,
+      "prob_ok": false,
+      "fields_match": true
+    }
+  ]
+}

@@ -1,5 +1,8 @@
+import pytest
+
 from mercury_ai.analysis.operational_history import OperationalHistory
 
+@pytest.mark.slow
 def test_operational_history_query():
     history = OperationalHistory()
     results = history.query()

@@ -86,20 +86,21 @@ def parent_process(pipe_cycle_results, cycle_num, target_path, data):
             child.join(timeout=2)
         except: pass
 
-all_results = []
-for cycle in range(1, CYCLES + 1):
-    print("--- Cycle %d ---" % cycle)
-    data = {"_state": "NEW", "timestamp": int(time.time()), "cycle": cycle, "test": "test"}
-    parent_conn, child_conn = multiprocessing.Pipe()
-    parent_process(parent_conn, cycle, TARGET_JSON, data)
-    result = parent_conn.recv(timeout=10)
-    all_results.append(result)
-    time.sleep(0.3)
-    print("Cycle %d complete: all_pids_equal=%s" % (cycle, result["all_pids_equal"]))
-    print()
+if __name__ == "__main__":
+    all_results = []
+    for cycle in range(1, CYCLES + 1):
+        print("--- Cycle %d ---" % cycle)
+        data = {"_state": "NEW", "timestamp": int(time.time()), "cycle": cycle, "test": "test"}
+        parent_conn, child_conn = multiprocessing.Pipe()
+        parent_process(parent_conn, cycle, TARGET_JSON, data)
+        result = parent_conn.recv(timeout=10)
+        all_results.append(result)
+        time.sleep(0.3)
+        print("Cycle %d complete: all_pids_equal=%s" % (cycle, result["all_pids_equal"]))
+        print()
 
-print("=== ANALYSIS ===")
-pids_equal = all(r["all_pids_equal"] for r in all_results)
-target_new = all(r["target_state"] == "NEW" for r in all_results)
-json_valid = all(r["json_valid"] for r in all_results)
-print("PIDs equal: %s, Target NEW: %s, JSON valid: %s" % (pids_equal, target_new, json_valid))
+    print("=== ANALYSIS ===")
+    pids_equal = all(r["all_pids_equal"] for r in all_results)
+    target_new = all(r["target_state"] == "NEW" for r in all_results)
+    json_valid = all(r["json_valid"] for r in all_results)
+    print("PIDs equal: %s, Target NEW: %s, JSON valid: %s" % (pids_equal, target_new, json_valid))

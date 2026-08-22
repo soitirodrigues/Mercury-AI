@@ -1,0 +1,352 @@
+{
+  "session_id": "m5s64-a5eb9a9a",
+  "replay_total": 3,
+  "replay_pass": 3,
+  "replay_fail": 0,
+  "replay_divergence_total": 0,
+  "replay_results": [
+    {
+      "cycle_id": "m5s64-live-202609051740-9b74",
+      "status": "REPLAY_MATCH",
+      "checks": {
+        "target_candle": {
+          "expected": "2026-09-05T17:40:00+00:00",
+          "replayed": "2026-09-05T17:40:00+00:00",
+          "match": true
+        },
+        "universe": {
+          "expected": 64,
+          "replayed": 64,
+          "match": true
+        },
+        "freshness_state": {
+          "fresh_assets": 54,
+          "expected_fresh": 54,
+          "match": true,
+          "stale_as_fresh_preserved": true
+        },
+        "ranking_signature": {
+          "expected": "a9a428e90d0d3d44",
+          "replayed": "a9a428e90d0d3d44",
+          "match": true
+        },
+        "decision_signature": {
+          "expected": "2af10eed9b8bfb36",
+          "replayed": "2af10eed9b8bfb36",
+          "match": true
+        },
+        "Top3": {
+          "expected": [
+            {
+              "rank": 1,
+              "symbol": "C",
+              "decision": "BUY",
+              "grade": "B",
+              "confidence": 0.7113924923076924,
+              "confluence": 100.0,
+              "score": 148.5278,
+              "audit_id": "f12e7ae21473008b3b6c64237e95efa8cfd3268d905842151ede39af954ce62b"
+            },
+            {
+              "rank": 2,
+              "symbol": "META",
+              "decision": "BUY",
+              "grade": "B",
+              "confidence": 0.7029001241379311,
+              "confluence": 100.0,
+              "score": 148.143,
+              "audit_id": "f0bfe756879928a018ea2c8c8863c7cfdaa8c50d7bcd9c44e850804bca07ad83"
+            },
+            {
+              "rank": 3,
+              "symbol": "PYPL",
+              "decision": "BUY",
+              "grade": "B",
+              "confidence": 0.7027415393939394,
+              "confluence": 100.0,
+              "score": 148.1362,
+              "audit_id": "d743de5658af67fc97e069172e973da7ba741a4685b4ebedcb5d0da39ae00c71"
+            }
+          ],
+          "replayed": [
+            {
+              "rank": 1,
+              "symbol": "C",
+              "decision": "BUY",
+              "grade": "B",
+              "confidence": 0.7113924923076924,
+              "confluence": 100.0,
+              "score": 148.5278,
+              "audit_id": "f12e7ae21473008b3b6c64237e95efa8cfd3268d905842151ede39af954ce62b"
+            },
+            {
+              "rank": 2,
+              "symbol": "META",
+              "decision": "BUY",
+              "grade": "B",
+              "confidence": 0.7029001241379311,
+              "confluence": 100.0,
+              "score": 148.143,
+              "audit_id": "f0bfe756879928a018ea2c8c8863c7cfdaa8c50d7bcd9c44e850804bca07ad83"
+            },
+            {
+              "rank": 3,
+              "symbol": "PYPL",
+              "decision": "BUY",
+              "grade": "B",
+              "confidence": 0.7027415393939394,
+              "confluence": 100.0,
+              "score": 148.1362,
+              "audit_id": "d743de5658af67fc97e069172e973da7ba741a4685b4ebedcb5d0da39ae00c71"
+            }
+          ],
+          "match": true
+        },
+        "final_decision": {
+          "expected": "C",
+          "replayed": "C",
+          "match": true
+        },
+        "decision_candle_per_asset": {
+          "checked": true
+        },
+        "replay_stale_as_fresh_total": 0,
+        "replay_error_as_wait_total": 0
+      },
+      "blocked": false,
+      "reason": null
+    },
+    {
+      "cycle_id": "m5s64-live-202609051745-f2cd",
+      "status": "REPLAY_MATCH",
+      "checks": {
+        "target_candle": {
+          "expected": "2026-09-05T17:45:00+00:00",
+          "replayed": "2026-09-05T17:45:00+00:00",
+          "match": true
+        },
+        "universe": {
+          "expected": 64,
+          "replayed": 64,
+          "match": true
+        },
+        "freshness_state": {
+          "fresh_assets": 54,
+          "expected_fresh": 54,
+          "match": true,
+          "stale_as_fresh_preserved": true
+        },
+        "ranking_signature": {
+          "expected": "977a9ddef2604c63",
+          "replayed": "977a9ddef2604c63",
+          "match": true
+        },
+        "decision_signature": {
+          "expected": "64fe6b83d9224292",
+          "replayed": "64fe6b83d9224292",
+          "match": true
+        },
+        "Top3": {
+          "expected": [
+            {
+              "rank": 1,
+              "symbol": "C",
+              "decision": "BUY",
+              "grade": "B",
+              "confidence": 0.7113924923076924,
+              "confluence": 100.0,
+              "score": 148.5278,
+              "audit_id": "97f1a79b171bc84563e62f46c7951b3d5de503aeb73dde7b2f80f067e175295f"
+            },
+            {
+              "rank": 2,
+              "symbol": "META",
+              "decision": "BUY",
+              "grade": "B",
+              "confidence": 0.7029001241379311,
+              "confluence": 100.0,
+              "score": 148.143,
+              "audit_id": "8f04ced24438ebbd76a751a72a5aa27121470c2f255fa5d6879cb1087f5411b3"
+            },
+            {
+              "rank": 3,
+              "symbol": "PYPL",
+              "decision": "BUY",
+              "grade": "B",
+              "confidence": 0.7027415393939394,
+              "confluence": 100.0,
+              "score": 148.1362,
+              "audit_id": "a9110949389df3ac36042edab07af2a22e19d01d7fcfcb21130fc08a37b5aadb"
+            }
+          ],
+          "replayed": [
+            {
+              "rank": 1,
+              "symbol": "C",
+              "decision": "BUY",
+              "grade": "B",
+              "confidence": 0.7113924923076924,
+              "confluence": 100.0,
+              "score": 148.5278,
+              "audit_id": "97f1a79b171bc84563e62f46c7951b3d5de503aeb73dde7b2f80f067e175295f"
+            },
+            {
+              "rank": 2,
+              "symbol": "META",
+              "decision": "BUY",
+              "grade": "B",
+              "confidence": 0.7029001241379311,
+              "confluence": 100.0,
+              "score": 148.143,
+              "audit_id": "8f04ced24438ebbd76a751a72a5aa27121470c2f255fa5d6879cb1087f5411b3"
+            },
+            {
+              "rank": 3,
+              "symbol": "PYPL",
+              "decision": "BUY",
+              "grade": "B",
+              "confidence": 0.7027415393939394,
+              "confluence": 100.0,
+              "score": 148.1362,
+              "audit_id": "a9110949389df3ac36042edab07af2a22e19d01d7fcfcb21130fc08a37b5aadb"
+            }
+          ],
+          "match": true
+        },
+        "final_decision": {
+          "expected": "C",
+          "replayed": "C",
+          "match": true
+        },
+        "decision_candle_per_asset": {
+          "checked": true
+        },
+        "replay_stale_as_fresh_total": 0,
+        "replay_error_as_wait_total": 0
+      },
+      "blocked": false,
+      "reason": null
+    },
+    {
+      "cycle_id": "m5s64-live-202609051750-54a4",
+      "status": "REPLAY_MATCH",
+      "checks": {
+        "target_candle": {
+          "expected": "2026-09-05T17:50:00+00:00",
+          "replayed": "2026-09-05T17:50:00+00:00",
+          "match": true
+        },
+        "universe": {
+          "expected": 64,
+          "replayed": 64,
+          "match": true
+        },
+        "freshness_state": {
+          "fresh_assets": 54,
+          "expected_fresh": 54,
+          "match": true,
+          "stale_as_fresh_preserved": true
+        },
+        "ranking_signature": {
+          "expected": "c0f431ac61768c5e",
+          "replayed": "c0f431ac61768c5e",
+          "match": true
+        },
+        "decision_signature": {
+          "expected": "5905aac27c86cffd",
+          "replayed": "5905aac27c86cffd",
+          "match": true
+        },
+        "Top3": {
+          "expected": [
+            {
+              "rank": 1,
+              "symbol": "C",
+              "decision": "BUY",
+              "grade": "B",
+              "confidence": 0.7113924923076924,
+              "confluence": 100.0,
+              "score": 148.5278,
+              "audit_id": "a9213c0e517a92e4ce089da9a551caf22219f63cfc2805b16a2a162879cc0ed8"
+            },
+            {
+              "rank": 2,
+              "symbol": "SOL-USD",
+              "decision": "BUY",
+              "grade": "B",
+              "confidence": 0.7065844800000001,
+              "confluence": 100.0,
+              "score": 148.2735,
+              "audit_id": "48c25fb63aa2809fd2c14a8354ea6cbd7b9944ad800f060b552aa4aa2d849c98"
+            },
+            {
+              "rank": 3,
+              "symbol": "AVAX-USD",
+              "decision": "BUY",
+              "grade": "B",
+              "confidence": 0.7062671999999999,
+              "confluence": 100.0,
+              "score": 148.256,
+              "audit_id": "1a87bf0c8876eb2a4236fb66513b97a78a090e0d7344248856e25e102cb3a0d1"
+            }
+          ],
+          "replayed": [
+            {
+              "rank": 1,
+              "symbol": "C",
+              "decision": "BUY",
+              "grade": "B",
+              "confidence": 0.7113924923076924,
+              "confluence": 100.0,
+              "score": 148.5278,
+              "audit_id": "a9213c0e517a92e4ce089da9a551caf22219f63cfc2805b16a2a162879cc0ed8"
+            },
+            {
+              "rank": 2,
+              "symbol": "SOL-USD",
+              "decision": "BUY",
+              "grade": "B",
+              "confidence": 0.7065844800000001,
+              "confluence": 100.0,
+              "score": 148.2735,
+              "audit_id": "48c25fb63aa2809fd2c14a8354ea6cbd7b9944ad800f060b552aa4aa2d849c98"
+            },
+            {
+              "rank": 3,
+              "symbol": "AVAX-USD",
+              "decision": "BUY",
+              "grade": "B",
+              "confidence": 0.7062671999999999,
+              "confluence": 100.0,
+              "score": 148.256,
+              "audit_id": "1a87bf0c8876eb2a4236fb66513b97a78a090e0d7344248856e25e102cb3a0d1"
+            }
+          ],
+          "match": true
+        },
+        "final_decision": {
+          "expected": "C",
+          "replayed": "C",
+          "match": true
+        },
+        "decision_candle_per_asset": {
+          "checked": true
+        },
+        "replay_stale_as_fresh_total": 0,
+        "replay_error_as_wait_total": 0
+      },
+      "blocked": false,
+      "reason": null
+    }
+  ],
+  "tamper": {
+    "tamper_detected": true,
+    "integrity_failure_type": "hash_mismatch",
+    "affected_artifact": "cycle_audit/m5s64-live-202609051725-d961.json",
+    "expected_hash": "8309282bb6c4d0e435e6222a24ec3e30af318e8f57a60c1337b41eb838ec337c",
+    "actual_hash": "010425b79f872049a25dd8bb46a4905e006516574bbe28d024f870227a09c771",
+    "restored_hash": "8309282bb6c4d0e435e6222a24ec3e30af318e8f57a60c1337b41eb838ec337c",
+    "replay_blocked": true
+  },
+  "replay_stale_as_fresh_total": 0
+}

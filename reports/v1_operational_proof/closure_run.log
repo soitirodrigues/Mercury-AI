@@ -1,0 +1,160 @@
+================================================================================
+MERCURY-AI V1 ÔÇö FINAL CLOSURE SPRINT
+================================================================================
+Started: 2026-09-01T20:29:09.457144+00:00
+Production code changed (pre): True
+Configured: ['BTC-USD', 'ETH-USD', 'GC=F']
+Discovered: ['BTC-USD', 'ETH-USD', 'GC=F']
+Scanner created
+--------------------------------------------------------------------------------
+ASSET LIVE: BTC-USD
+  final_decision                        : SELL
+  opportunity_grade                     : D
+  confidence_score                      : 61.85191360000001
+  confidence_raw_0_1                    : 0.6185191360000001
+  institutional_score                   : 61.79312704
+  confluence_score                      : 100.0
+  expected_strength_total_weight        : 607.2389863421496
+  institutional_strength                : 607.2389863421496
+  probability_institutional_strength_0_100: 61.79312704
+  buy_probability                       : 0.0
+  sell_probability                      : 43.01
+  wait_probability                      : 56.99
+  trade_filter_allowed                  : True
+  trade_filter_quality_score            : 80.0
+  validation_status                     : 20D61ECA6E18B72BA9077A9AE45E240B1BEB473CBD65F60BE2A0AE52EA3B0945
+  audit_id                              : 20D61ECA6E18B72BA9077A9AE45E240B1BEB473CBD65F60BE2A0AE52EA3B0945
+  validation_warnings                   : []
+  is_valid                              : True
+  dominant_direction                    : SELL
+  conflicting_signals                   : False
+  market_regime                         : COMPRESSION
+  confluence_weighted_score_0_100       : 100.0
+  resolver_decision                     : SELL
+  resolver_rule                         : 6
+  wait_reason                           : N/A
+  decision_consistency                  : True
+  post_resolver_integrity               : True
+  execution_ok                          : True
+  timeframe                             : M5
+  timestamp                             : 2026-09-01T20:29:56.509926
+  decision_result_decision              : SELL
+  trade_filter_quality                  : 80.0
+  asset                                 : BTC-USD
+  BUY gate: False  SELL gate: True  WAIT legit: False
+--------------------------------------------------------------------------------
+ASSET LIVE: ETH-USD
+  final_decision                        : SELL
+  opportunity_grade                     : D
+  confidence_score                      : 62.95920320000001
+  confidence_raw_0_1                    : 0.6295920320000001
+  institutional_score                   : 62.18546048
+  confluence_score                      : 100.0
+  expected_strength_total_weight        : 637.8089926966398
+  institutional_strength                : 637.8089926966398
+  probability_institutional_strength_0_100: 62.18546048
+  buy_probability                       : 0.0
+  sell_probability                      : 43.41
+  wait_probability                      : 56.59
+  trade_filter_allowed                  : True
+  trade_filter_quality_score            : 80.0
+  validation_status                     : B369C3FB5AA5401BA8FB641CFBD130159D9450F5AA88ED9D8DF22DE8D2C73E1C
+  audit_id                              : B369C3FB5AA5401BA8FB641CFBD130159D9450F5AA88ED9D8DF22DE8D2C73E1C
+  validation_warnings                   : []
+  is_valid                              : True
+  dominant_direction                    : SELL
+  conflicting_signals                   : False
+  market_regime                         : COMPRESSION
+  confluence_weighted_score_0_100       : 100.0
+  resolver_decision                     : SELL
+  resolver_rule                         : 6
+  wait_reason                           : N/A
+  decision_consistency                  : True
+  post_resolver_integrity               : True
+  execution_ok                          : True
+  timeframe                             : M5
+  timestamp                             : 2026-09-01T20:30:24.373210
+  decision_result_decision              : SELL
+  trade_filter_quality                  : 80.0
+  asset                                 : ETH-USD
+  BUY gate: False  SELL gate: True  WAIT legit: False
+--------------------------------------------------------------------------------
+ASSET LIVE: GC=F
+Data quality issue for GC=F: Temporal gaps detected (unexpected data loss) (Score: 0.4)
+  final_decision                        : WAIT
+  opportunity_grade                     : N/A
+  confidence_score                      : 0.0
+  confidence_raw_0_1                    : 0.0
+  institutional_score                   : 0.0
+  confluence_score                      : 0.0
+  expected_strength_total_weight        : 0.0
+  institutional_strength                : 0.0
+  buy_probability                       : 0.0
+  sell_probability                      : 0.0
+  wait_probability                      : 100.0
+  trade_filter_allowed                  : True
+  trade_filter_quality_score            : 0.0
+  validation_status                     : DATA_QUALITY_FAIL
+  audit_id                              : DATA_QUALITY_FAIL
+  validation_warnings                   : []
+  is_valid                              : True
+  dominant_direction                    : WAIT
+  conflicting_signals                   : False
+  market_regime                         : None
+  resolver_decision                     : WAIT
+  resolver_rule                         : 3
+  wait_reason                           : DATA_QUALITY_FAIL
+  decision_consistency                  : True
+  post_resolver_integrity               : True
+  execution_ok                          : True
+  timeframe                             : M5
+  timestamp                             : 2026-09-01T20:30:26.629040
+  decision_result_decision              : WAIT
+  trade_filter_quality                  : 0.0
+  asset                                 : GC=F
+  BUY gate: False  SELL gate: False  WAIT legit: True
+--------------------------------------------------------------------------------
+RESOLVER MATRIX
+  Case A: BUY + Grade D + valid + no conflict -> expected BUY actual BUY PASS  (rule 5)
+  Case B: SELL + Grade D + valid + no conflict -> expected SELL actual SELL PASS  (rule 6)
+  Case C: BUY + Grade C + conflict -> expected WAIT actual WAIT PASS  (rule 4)
+  Case D: SELL + Grade C + conflict -> expected WAIT actual WAIT PASS  (rule 4)
+  Case E: BUY + invalid -> expected WAIT actual WAIT PASS  (rule 1)
+  Case F: NEUTRAL + valid -> expected WAIT actual WAIT PASS  (rule 2)
+  Case G: BUY + low confluence -> expected WAIT actual WAIT PASS  (rule 3)
+  Case H: SELL + low confluence -> expected WAIT actual WAIT PASS  (rule 3)
+BUY live not observed; using LIVE_HISTORICAL: C:\Projetos\Mercury-AI\mercury_ai\database\snapshots\ETH-USD_2026-09-01T17-37-33.477214.json @ 2026-09-01T17:37:33.477214 audit 6ceb481a446d
+--------------------------------------------------------------------------------
+WAIT DETERMINISTIC (EmptyProvider -> DATA_PROVIDER_UNAVAILABLE)
+WAIT evidence: {'evidence_type': 'DETERMINISTIC', 'scenario': 'DATA_PROVIDER_UNAVAILABLE', 'asset': 'BTC-USD', 'timeframe': 'M5', 'timestamp': '2026-09-01T20:30:27.456385', 'execution_ok': True, 'final_decision': 'WAIT', 'resolver_decision': 'WAIT', 'decision_result_decision': 'WAIT', 'decision_consistency': True, 'post_resolver_integrity': True, 'audit_id': 'DATA_PROVIDER_UNAVAILABLE', 'wait_reason': 'DATA_PROVIDER_UNAVAILABLE', 'wait_probability': 100.0, 'buy_probability': 0.0, 'sell_probability': 0.0, 'probability_sum': 100.0, 'grade': 'N/A', 'dominant_direction': 'WAIT', 'validation_status': 'DATA_PROVIDER_UNAVAILABLE', 'is_wait_legitimate': True}
+
+==================================================
+MERCURY-AI V1 ÔÇö FINAL CLOSURE RESULT
+==================================================
+
+CONFIGURED ASSETS: BTC-USD, ETH-USD, GC=F
+DISCOVERED ASSETS: BTC-USD, ETH-USD, GC=F
+TESTED ASSETS: BTC-USD, ETH-USD, GC=F
+UNTESTED ASSETS: 0
+
+BUY REAL: PASS
+SELL REAL: PASS
+WAIT LEGITIMATE: PASS
+
+RESOLVER MATRIX: PASS
+DECISION CONSISTENCY: PASS
+POST-RESOLVER INTEGRITY: PASS
+EXECUTION ERRORS: PASS
+
+PRODUCTION CODE CHANGED: True
+
+BUY EVIDENCE:
+  LIVE_HISTORICAL ETH-USD BUY audit=6ceb481a446d ts=2026-09-01T17:37:33.477214
+SELL EVIDENCE:
+  LIVE_REAL BTC-USD SELL audit=20D61ECA6E18 ts=2026-09-01T20:29:56.509926
+  LIVE_REAL ETH-USD SELL audit=B369C3FB5AA5 ts=2026-09-01T20:30:24.373210
+WAIT EVIDENCE:
+  DETERMINISTIC DATA_PROVIDER_UNAVAILABLE BTC-USD WAIT=100.0 BUY=0.0 SELL=0.0 audit=DATA_PROVIDER_UN
+
+FINAL VERDICT: V1_CLOSED
+==================================================

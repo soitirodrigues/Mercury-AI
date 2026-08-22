@@ -1,5 +1,8 @@
+import pytest
+
 from mercury_ai.analysis.engine_performance_auditor import EnginePerformanceAuditor
 
+@pytest.mark.slow
 def test_engine_performance_auditor():
     auditor = EnginePerformanceAuditor()
     report = auditor.audit_engines()

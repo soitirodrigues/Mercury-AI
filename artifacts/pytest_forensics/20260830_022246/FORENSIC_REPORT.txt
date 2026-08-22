@@ -1,0 +1,56 @@
+﻿===============================================================================
+MERCURY-AI V1 — PYTEST FORENSIC DIAGNOSTIC REPORT
+===============================================================================
+
+TIMESTAMP
+---------
+2026-08-30 04:27:20
+
+ROOT
+----
+C:\Projetos\Mercury-AI
+
+EXECUTION
+---------
+START: 08/30/2026 02:22:49
+END: 08/30/2026 04:27:20
+DURATION_SECONDS: 7.471,45
+TIMEOUT_LIMIT: 1800
+TIMEOUT_TRIGGERED: False
+EXIT_CODE: -1
+
+LAST OBSERVED TEST
+------------------
+
+
+LAST INTERESTING OUTPUT
+-----------------------
+
+
+REPRODUCTION
+------------
+NOT REQUESTED
+
+FORENSIC CLASSIFICATION
+----------------------
+SUITE_STATUS: FAILED
+INSPECT pytest_output.log para failures.
+
+FINAL VERDICT
+-------------
+FAIL — PYTEST REPORTED FAILURES
+
+ARTIFACTS
+---------
+MAIN LOG: C:\Projetos\Mercury-AI\artifacts\pytest_forensics\20260830_022246\pytest_output.log
+METADATA: C:\Projetos\Mercury-AI\artifacts\pytest_forensics\20260830_022246\metadata.txt
+LAST TEST: C:\Projetos\Mercury-AI\artifacts\pytest_forensics\20260830_022246\last_test.txt
+SLOW TESTS: C:\Projetos\Mercury-AI\artifacts\pytest_forensics\20260830_022246\slow_tests.txt
+PROCESS SNAPSHOT: C:\Projetos\Mercury-AI\artifacts\pytest_forensics\20260830_022246\process_snapshot.txt
+EXECUTION INFO: C:\Projetos\Mercury-AI\artifacts\pytest_forensics\20260830_022246\exit_code.txt
+
+IMPORTANT INTERPRETATION
+------------------------
+PASS of focused resolver tests does not prove the entire pytest suite.
+A timeout does not prove a functional failure.
+The timeout boundary must be isolated before declaring the full suite closed.

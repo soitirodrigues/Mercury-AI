@@ -33,20 +33,17 @@ class DecisionResolverEngine:
            → WAIT (confluência institucional insuficiente)
            O threshold é adaptativo conforme o regime de mercado.
 
-        4. opportunity_grade == "D"
-           → WAIT
-
-        5. conflicting_signals == True
+        4. conflicting_signals == True
            AND opportunity_grade in ("C", "D")
            → WAIT
 
-        6. dominant_direction == BUY
+        5. dominant_direction == BUY
            → BUY
 
-        7. dominant_direction == SELL
+        6. dominant_direction == SELL
            → SELL
 
-        8. Fallback
+        7. Fallback
            → WAIT
     """
 
@@ -155,41 +152,33 @@ class DecisionResolverEngine:
                 triggered_rule=3,
             )
 
-        # Regra 4: Oportunidade muito baixa
-        if opportunity_grade == "D":
+        # Regra 4: Conflito com força insuficiente (Grade C ou D)
+        if conflicting_signals and opportunity_grade in ("C", "D"):
             return DecisionResolverResult(
                 decision="WAIT",
                 confidence_override=None,
                 triggered_rule=4,
             )
 
-        # Regra 5: Conflito com força insuficiente
-        if conflicting_signals and opportunity_grade in ("C", "D"):
-            return DecisionResolverResult(
-                decision="WAIT",
-                confidence_override=None,
-                triggered_rule=5,
-            )
-
-        # Regra 6: BUY
+        # Regra 5: BUY
         if dominant_direction == "BUY":
             return DecisionResolverResult(
                 decision="BUY",
                 confidence_override=None,
-                triggered_rule=6,
+                triggered_rule=5,
             )
 
-        # Regra 7: SELL
+        # Regra 6: SELL
         if dominant_direction == "SELL":
             return DecisionResolverResult(
                 decision="SELL",
                 confidence_override=None,
-                triggered_rule=7,
+                triggered_rule=6,
             )
 
-        # Regra 8: Fallback
+        # Regra 7: Fallback
         return DecisionResolverResult(
             decision="WAIT",
             confidence_override=None,
-            triggered_rule=8,
+            triggered_rule=7,
         )

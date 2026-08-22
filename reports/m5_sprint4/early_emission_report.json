@@ -1,0 +1,119 @@
+{
+  "generated_at": "2026-09-02T22:16:20.583860+00:00",
+  "universe": 12,
+  "workers": 4,
+  "wall_ms": 47424.0,
+  "first_ms": 19556.3,
+  "partial_top3_ms": 19827.9,
+  "complete_ms": 47424.0,
+  "decision_events": 12,
+  "top3_events": 12,
+  "monotonic_elapsed": true,
+  "elapsed_sequence": [
+    19556.3,
+    19729.7,
+    19827.9,
+    19842.6,
+    20820.8,
+    27138.9,
+    33274.3,
+    35440.5,
+    38475.4,
+    42471.9
+  ],
+  "top3_updates_sample": [
+    {
+      "event": "TOP3_UPDATE",
+      "rank": 1,
+      "symbol": "GBPUSD=X",
+      "decision": "SELL",
+      "score": 148.0445,
+      "elapsed_ms": 19827.9,
+      "partial": true
+    },
+    {
+      "event": "TOP3_UPDATE",
+      "rank": 2,
+      "symbol": "USDCHF=X",
+      "decision": "BUY",
+      "score": 134.7883,
+      "elapsed_ms": 19827.9,
+      "partial": true
+    },
+    {
+      "event": "TOP3_UPDATE",
+      "rank": 3,
+      "symbol": "EURUSD=X",
+      "decision": "BUY",
+      "score": 132.6269,
+      "elapsed_ms": 19827.9,
+      "partial": true
+    },
+    {
+      "event": "TOP3_UPDATE",
+      "rank": 1,
+      "symbol": "USDJPY=X",
+      "decision": "BUY",
+      "score": 148.1136,
+      "elapsed_ms": 19842.6,
+      "partial": true
+    },
+    {
+      "event": "TOP3_UPDATE",
+      "rank": 2,
+      "symbol": "GBPUSD=X",
+      "decision": "SELL",
+      "score": 148.0445,
+      "elapsed_ms": 19842.6,
+      "partial": true
+    },
+    {
+      "event": "TOP3_UPDATE",
+      "rank": 3,
+      "symbol": "USDCHF=X",
+      "decision": "BUY",
+      "score": 134.7883,
+      "elapsed_ms": 19842.6,
+      "partial": true
+    }
+  ],
+  "stale_as_fresh": 0,
+  "early_before_complete": true,
+  "passed": true,
+  "fresh": 11,
+  "unavailable": 1,
+  "errors": 0,
+  "top3": [
+    {
+      "rank": 1,
+      "symbol": "USDJPY=X",
+      "decision": "BUY",
+      "grade": "B",
+      "confidence": 0.700585875862069,
+      "confluence": 100.0,
+      "score": 148.1136,
+      "audit_id": "84bfe1cff13ab25b1947bb7b534c29f402ef8a8d144aea8a30ede798dc8f02f0"
+    },
+    {
+      "rank": 2,
+      "symbol": "GBPUSD=X",
+      "decision": "SELL",
+      "grade": "B",
+      "confidence": 0.7012842000000002,
+      "confluence": 100.0,
+      "score": 148.0445,
+      "audit_id": "ec8b6629cdebc5107486cd0b0f1346b89f0cdad471ca6bb23a89bac2f1a2c3e3"
+    },
+    {
+      "rank": 3,
+      "symbol": "EURJPY=X",
+      "decision": "BUY",
+      "grade": "B",
+      "confidence": 0.6940110620689657,
+      "confluence": 100.0,
+      "score": 147.9223,
+      "audit_id": "dca54313489bd5a6231586c95b24b8060413828b50ecce29f45572eccff22eab"
+    }
+  ],
+  "top3_status": "TOP3_COMPLETE"
+}

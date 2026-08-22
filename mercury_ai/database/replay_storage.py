@@ -87,6 +87,8 @@ class ReplayStorage:
             "mfe": metrics.mfe,
             "pl": metrics.pl,
             "hit": metrics.hit,
+            "dataset_hash": getattr(snapshot, "dataset_hash", ""),
+            "config_hash": getattr(snapshot, "config_hash", ""),
         }
         with self._lock:
             if os.path.exists(filepath):

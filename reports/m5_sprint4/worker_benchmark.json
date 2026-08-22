@@ -1,0 +1,345 @@
+{
+  "generated_at": "2026-09-02T22:15:04.428833+00:00",
+  "universe": 64,
+  "executor": "thread",
+  "worker_counts": [
+    1,
+    2,
+    4,
+    8,
+    16
+  ],
+  "results": {
+    "1": {
+      "workers": 1,
+      "executor": "thread",
+      "wall_ms": 236846.2,
+      "wall_s": 236.85,
+      "first_decision_ms": 6381.4,
+      "time_to_5_ms": 24852.2,
+      "time_to_10_ms": 43989.9,
+      "partial_top3_ms": 16702.4,
+      "complete_top3_ms": 236846.2,
+      "throughput_assets_per_sec": 0.27,
+      "fresh": 57,
+      "stale": 0,
+      "unavailable": 7,
+      "errors": 0,
+      "peak_memory_mb": 87.5,
+      "memory_delta_mb": 6.2,
+      "cpu_percent": 32.1,
+      "top3": [
+        {
+          "rank": 1,
+          "symbol": "AUDNZD=X",
+          "decision": "BUY",
+          "grade": "B",
+          "confidence": 0.709632290909091,
+          "confluence": 100.0,
+          "score": 148.435,
+          "audit_id": "57b4bad005437a577d6b397549bd09065737122b5a9468b246ad6e3c98dc6146"
+        },
+        {
+          "rank": 2,
+          "symbol": "AUDCHF=X",
+          "decision": "BUY",
+          "grade": "B",
+          "confidence": 0.7043736625000001,
+          "confluence": 100.0,
+          "score": 148.2612,
+          "audit_id": "ba1c7932f62c86dae0303568e6dbdeb509676f11feb8f2475e6a45f57b1309d9"
+        },
+        {
+          "rank": 3,
+          "symbol": "INTC",
+          "decision": "BUY",
+          "grade": "B",
+          "confidence": 0.7042558303030304,
+          "confluence": 100.0,
+          "score": 148.2157,
+          "audit_id": "f7b5e8c5ef11d4cec42e2ec247193baf05b75c5af16a849a858b3162364d4e89"
+        }
+      ],
+      "top3_status": "TOP3_COMPLETE"
+    },
+    "2": {
+      "workers": 2,
+      "executor": "thread",
+      "wall_ms": 179283.3,
+      "wall_s": 179.28,
+      "first_decision_ms": 8022.6,
+      "time_to_5_ms": 22184.8,
+      "time_to_10_ms": 40471.2,
+      "partial_top3_ms": 16700.2,
+      "complete_top3_ms": 179283.3,
+      "throughput_assets_per_sec": 0.357,
+      "fresh": 57,
+      "stale": 0,
+      "unavailable": 7,
+      "errors": 0,
+      "peak_memory_mb": 94.1,
+      "memory_delta_mb": 6.6,
+      "cpu_percent": 31.0,
+      "top3": [
+        {
+          "rank": 1,
+          "symbol": "AUDNZD=X",
+          "decision": "BUY",
+          "grade": "B",
+          "confidence": 0.709632290909091,
+          "confluence": 100.0,
+          "score": 148.435,
+          "audit_id": "73cb618d278cc04c810c825afacd95f874c4fb4d111de723cbc447743aa068ec"
+        },
+        {
+          "rank": 2,
+          "symbol": "INTC",
+          "decision": "BUY",
+          "grade": "B",
+          "confidence": 0.7042558303030304,
+          "confluence": 100.0,
+          "score": 148.2157,
+          "audit_id": "0a31363f069f4f378e82ee57c710076bce09a2fd27e7fad6a7dbd439bcb01c0e"
+        },
+        {
+          "rank": 3,
+          "symbol": "TSLA",
+          "decision": "BUY",
+          "grade": "B",
+          "confidence": 0.7041109444444446,
+          "confluence": 100.0,
+          "score": 148.2073,
+          "audit_id": "2c1c3173e7d4ac34ee0f8da01182b168ef2db8240a231590a37d46938b3350bb"
+        }
+      ],
+      "top3_status": "TOP3_COMPLETE"
+    },
+    "4": {
+      "workers": 4,
+      "executor": "thread",
+      "wall_ms": 173265.5,
+      "wall_s": 173.27,
+      "first_decision_ms": 16976.2,
+      "time_to_5_ms": 18023.9,
+      "time_to_10_ms": 34098.9,
+      "partial_top3_ms": 17256.5,
+      "complete_top3_ms": 173265.5,
+      "throughput_assets_per_sec": 0.369,
+      "fresh": 57,
+      "stale": 0,
+      "unavailable": 7,
+      "errors": 0,
+      "peak_memory_mb": 101.1,
+      "memory_delta_mb": 6.8,
+      "cpu_percent": 22.2,
+      "top3": [
+        {
+          "rank": 1,
+          "symbol": "INTC",
+          "decision": "BUY",
+          "grade": "B",
+          "confidence": 0.7042558303030304,
+          "confluence": 100.0,
+          "score": 148.2157,
+          "audit_id": "488bdea28f385847a58eb1469cd19afda83b0c236a9edb243db52d5562392b5c"
+        },
+        {
+          "rank": 2,
+          "symbol": "TSLA",
+          "decision": "BUY",
+          "grade": "B",
+          "confidence": 0.7041109444444446,
+          "confluence": 100.0,
+          "score": 148.2073,
+          "audit_id": "ce2710e20c3ff0bd93621ee8a5410cac95ef0bcba82b3321398e331f0e617742"
+        },
+        {
+          "rank": 3,
+          "symbol": "C",
+          "decision": "BUY",
+          "grade": "B",
+          "confidence": 0.7050731354838711,
+          "confluence": 100.0,
+          "score": 148.1922,
+          "audit_id": "55b51b96b552c97b3e3653edcb34674a0f1b633cf8f43cdf65ee6db2bafde04d"
+        }
+      ],
+      "top3_status": "TOP3_COMPLETE"
+    },
+    "8": {
+      "workers": 8,
+      "executor": "thread",
+      "wall_ms": 162003.2,
+      "wall_s": 162.0,
+      "first_decision_ms": 2841.8,
+      "time_to_5_ms": 28876.0,
+      "time_to_10_ms": 32680.0,
+      "partial_top3_ms": 28320.6,
+      "complete_top3_ms": 162003.2,
+      "throughput_assets_per_sec": 0.395,
+      "fresh": 57,
+      "stale": 0,
+      "unavailable": 7,
+      "errors": 0,
+      "peak_memory_mb": 99.9,
+      "memory_delta_mb": -1.4,
+      "cpu_percent": 66.7,
+      "top3": [
+        {
+          "rank": 1,
+          "symbol": "AUDNZD=X",
+          "decision": "BUY",
+          "grade": "B",
+          "confidence": 0.709632290909091,
+          "confluence": 100.0,
+          "score": 148.435,
+          "audit_id": "cf05b58cb9f61628fed331d267d0faeba05e5c767b42dd19926dd5eda733ee58"
+        },
+        {
+          "rank": 2,
+          "symbol": "EURCHF=X",
+          "decision": "BUY",
+          "grade": "B",
+          "confidence": 0.7060110620689656,
+          "confluence": 100.0,
+          "score": 148.3483,
+          "audit_id": "c20479f1527dc5ca434d78d0dbdd89b799ef1218ad95e820367f2676a73c088a"
+        },
+        {
+          "rank": 3,
+          "symbol": "INTC",
+          "decision": "BUY",
+          "grade": "B",
+          "confidence": 0.7042558303030304,
+          "confluence": 100.0,
+          "score": 148.2157,
+          "audit_id": "a7059f5b6416d6aa64dd29e0d91a3d847056c7b743267d3efc6baed4ac2e0e25"
+        }
+      ],
+      "top3_status": "TOP3_COMPLETE"
+    },
+    "16": {
+      "workers": 16,
+      "executor": "thread",
+      "wall_ms": 174637.1,
+      "wall_s": 174.64,
+      "first_decision_ms": 1982.0,
+      "time_to_5_ms": 24313.2,
+      "time_to_10_ms": 70009.1,
+      "partial_top3_ms": 24313.2,
+      "complete_top3_ms": 174637.1,
+      "throughput_assets_per_sec": 0.366,
+      "fresh": 57,
+      "stale": 0,
+      "unavailable": 7,
+      "errors": 0,
+      "peak_memory_mb": 108.8,
+      "memory_delta_mb": 8.2,
+      "cpu_percent": 52.0,
+      "top3": [
+        {
+          "rank": 1,
+          "symbol": "INTC",
+          "decision": "BUY",
+          "grade": "B",
+          "confidence": 0.7042558303030304,
+          "confluence": 100.0,
+          "score": 148.2157,
+          "audit_id": "7f49b57c85c121dd94b6bc87a43368b266667493e06f2f03dc29f40a20aac270"
+        },
+        {
+          "rank": 2,
+          "symbol": "TSLA",
+          "decision": "BUY",
+          "grade": "B",
+          "confidence": 0.7041109444444446,
+          "confluence": 100.0,
+          "score": 148.2073,
+          "audit_id": "75220971ed3ab6d25a9551ff63578385ea209562f815603e3c6aad4d29fecb61"
+        },
+        {
+          "rank": 3,
+          "symbol": "C",
+          "decision": "BUY",
+          "grade": "B",
+          "confidence": 0.7050731354838711,
+          "confluence": 100.0,
+          "score": 148.1922,
+          "audit_id": "2d2968ffc9b839a507c3775ec6873de9b814ab498e83abeb77c2001f46967acc"
+        }
+      ],
+      "top3_status": "TOP3_COMPLETE"
+    },
+    "4_process": {
+      "workers": 4,
+      "executor": "process",
+      "wall_ms": 105474.0,
+      "wall_s": 105.47,
+      "first_decision_ms": 18102.4,
+      "partial_top3_ms": 19395.3,
+      "complete_top3_ms": 105474.0,
+      "peak_memory_mb": 16.8,
+      "errors": 0,
+      "fresh": 57,
+      "unavailable": 7
+    }
+  },
+  "table": [
+    {
+      "workers": 1,
+      "wall_s": 236.85,
+      "first_ms": 6381.4,
+      "partial_ms": 16702.4,
+      "complete_ms": 236846.2,
+      "cpu": 32.1,
+      "ram_mb": 87.5,
+      "errors": 7
+    },
+    {
+      "workers": 2,
+      "wall_s": 179.28,
+      "first_ms": 8022.6,
+      "partial_ms": 16700.2,
+      "complete_ms": 179283.3,
+      "cpu": 31.0,
+      "ram_mb": 94.1,
+      "errors": 7
+    },
+    {
+      "workers": 4,
+      "wall_s": 173.27,
+      "first_ms": 16976.2,
+      "partial_ms": 17256.5,
+      "complete_ms": 173265.5,
+      "cpu": 22.2,
+      "ram_mb": 101.1,
+      "errors": 7
+    },
+    {
+      "workers": 8,
+      "wall_s": 162.0,
+      "first_ms": 2841.8,
+      "partial_ms": 28320.6,
+      "complete_ms": 162003.2,
+      "cpu": 66.7,
+      "ram_mb": 99.9,
+      "errors": 7
+    },
+    {
+      "workers": 16,
+      "wall_s": 174.64,
+      "first_ms": 1982.0,
+      "partial_ms": 24313.2,
+      "complete_ms": 174637.1,
+      "cpu": 52.0,
+      "ram_mb": 108.8,
+      "errors": 7
+    }
+  ],
+  "best": {
+    "workers": 4,
+    "executor": "process",
+    "wall_s": 105.47,
+    "score": 0.0
+  }
+}

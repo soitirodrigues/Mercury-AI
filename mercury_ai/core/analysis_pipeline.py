@@ -2,6 +2,8 @@ from typing import List, Optional, Dict
 import uuid
 import logging
 from dataclasses import replace
+import hashlib
+import json
 
 from mercury_ai.utils.deterministic_clock import DeterministicClock
 from mercury_ai.data.market_data import MarketDataService
@@ -59,7 +61,7 @@ from mercury_ai.core.audit_sink import MemoryAuditSink, AuditEvent
 ...
 class AnalysisPipeline:
 
-    def __init__(self, market_service: MarketDataService, providers: List[MarketDataProvider]):
+    def __init__(self, market_service: MarketDataService, providers: List[MarketDataProvider], institutional_memory_path: str = None):
 
         self.market_service = market_service
         self.indicators = IndicatorEngine()
@@ -73,7 +75,50 @@ class AnalysisPipeline:
 
         self.context_engine = ContextEngine(self.executor, self.profiler)
         self.evidence_engine = EvidenceEngine()
-        self.decision_engine = MercuryDecisionEngine(self.executor, self.profiler)
+        import os as _os
+        # Sprint 5 — produção ProcessPool precisa de isolamento por worker para
+        # InstitutionalMemory (arquivo compartilhado race). Workers do M5OperationalRunner
+        # são processos isolados: cada worker cria sua própria pipeline; memória
+        # em ProcessPool deve ser isolada por processo (sem flush concorrente para
+        # arquivo compartilhado). Flag M5_WORKER_ISOLATED_MEMORY habilita isso.
+        _m5_isolated = _os.environ.get("M5_WORKER_ISOLATED_MEMORY") == "1"
+        if institutional_memory_path is not None:
+            _os.environ["FROZEN_EQUIVALENCE_ISOLATED"] = "1"
+            from mercury_ai.analysis.institutional_memory_engine import InstitutionalMemoryEngine as _IME
+            _isolated = object.__new__(_IME)
+            _isolated.memory_path = institutional_memory_path
+            _isolated._memory_cache = []
+            _isolated._dirty = False
+            _isolated._initialized = True
+            _isolated._lock = _IME._lock
+            if not _os.path.exists(institutional_memory_path):
+                _isolated._initialize_memory()
+            _isolated._load_into_cache()
+            self._isolated_memory = _isolated
+            self.memory = _isolated
+            self.decision_engine = MercuryDecisionEngine(self.executor, self.profiler, institutional_memory=_isolated)
+        elif _m5_isolated:
+            # M5 worker isolado — não compartilha arquivo principal nem singleton global
+            import tempfile as _tf
+            from mercury_ai.analysis.institutional_memory_engine import InstitutionalMemoryEngine as _IME2
+            _tmp = _tf.NamedTemporaryFile(delete=False, suffix=".json")
+            _tmp.write(b"[]")
+            _tmp.close()
+            _isolated2 = object.__new__(_IME2)
+            _isolated2.memory_path = _tmp.name
+            _isolated2._memory_cache = []
+            _isolated2._dirty = False
+            _isolated2._initialized = True
+            import threading as _th
+            _isolated2._lock = _th.Lock()
+            _isolated2._load_into_cache()
+            self._isolated_memory = _isolated2
+            self._isolated_tmp = _tmp.name
+            self.memory = _isolated2
+            self.decision_engine = MercuryDecisionEngine(self.executor, self.profiler, institutional_memory=_isolated2)
+        else:
+            self.memory = InstitutionalMemoryEngine()
+            self.decision_engine = MercuryDecisionEngine(self.executor, self.profiler)
         self.snapshot_logger = DecisionSnapshotLogger()
         self.last_snapshot: Optional[DecisionSnapshot] = None
         self.last_snapshots: Dict[str, DecisionSnapshot] = {}
@@ -111,9 +156,21 @@ class AnalysisPipeline:
         self.ranking_engine = EvidenceRankingEngine()
         self.evidence_quality_engine = EvidenceQualityEngine()
         self.context_intel_engine = ContextIntelligenceEngine()
-        self.memory = InstitutionalMemoryEngine()
+        # NÃO recriar memory se já foi isolado acima — senão sobrescreve _isolated
+        if not hasattr(self, 'memory'):
+            self.memory = InstitutionalMemoryEngine()
 
         self.context_builder = MarketContextBuilder()
+
+    def _compute_fingerprints(self, df) -> tuple[str, str]:
+        """S7.1: retorna (dataset_hash, config_hash) de forma best-effort."""
+        try:
+            from mercury_ai.analysis.replay_fingerprint import compute_dataset_hash, compute_config_hash
+            dh = compute_dataset_hash(df) if df is not None else ""
+            ch = compute_config_hash(version_metadata=getattr(self, "_last_version_metadata", None))
+            return dh, ch
+        except Exception:
+            return "", ""
 
     def _record_telemetry(self, stage_name, start_time, input_obj, output_obj, **metrics):
         if self.runtime_report is None:
@@ -195,10 +252,11 @@ class AnalysisPipeline:
 
             # Graceful handling: se dados inválidos (vazio, NaN, etc.),
             # retorna resultado WAIT em vez de propagar exceção.
+            # Escala de probabilidades: 0-100 (não 0-1) — contrato ProbabilityEngine.
             if not is_valid:
                 decision = DecisionResult(
                     decision='WAIT', grade='N/A', confidence=0.0, clarity=0.0, risk_score=0.0, score=0.0, quality=0.0,
-                    expected_strength=0.0, buy_probability=0.0, sell_probability=0.0, wait_probability=1.0,
+                    expected_strength=0.0, buy_probability=0.0, sell_probability=0.0, wait_probability=100.0,
                     expected_risk=0.0, expected_reward=0.0, expected_drawdown=0.0, audit_id='DATA_QUALITY_FAIL',
                     version_metadata=VersionMetadata(engine_version='1.0.0', pipeline_version='1.0.0', context_version='1.0.0', weights_version='1.0.0'),
                     summary=f"Data quality issue: {reason}",
@@ -232,7 +290,7 @@ class AnalysisPipeline:
             if df is None or df.empty or len(df) < min_rows_required:
                 decision = DecisionResult(
                     decision='WAIT', grade='N/A', confidence=0.0, clarity=0.0, risk_score=0.0, score=0.0, quality=0.0,
-                    expected_strength=0.0, buy_probability=0.0, sell_probability=0.0, wait_probability=1.0,
+                    expected_strength=0.0, buy_probability=0.0, sell_probability=0.0, wait_probability=100.0,
                     expected_risk=0.0, expected_reward=0.0, expected_drawdown=0.0, audit_id='INSUFFICIENT_DATA',
                     version_metadata=VersionMetadata(engine_version='1.0.0', pipeline_version='1.0.0', context_version='1.0.0', weights_version='1.0.0'),
                     summary=f"Insufficient data: only {len(df) if df is not None else 0} rows (need {min_rows_required})",
@@ -283,7 +341,7 @@ class AnalysisPipeline:
 
             start = DeterministicClock.utcnow()
             with self.profiler.stage("MTFAnalysis"):
-                mtf_evidences, mtf_consensus = self.mtf_engine.analyze(symbol)
+                mtf_evidences, mtf_consensus = self.mtf_engine.analyze(symbol, main_m5_df=df)
             self._record_telemetry("MTFAnalysis", start, symbol, mtf_evidences, evidence_count=len(mtf_evidences))
 
             start = DeterministicClock.utcnow()
@@ -425,6 +483,7 @@ class AnalysisPipeline:
             # 6. Persist
             start = DeterministicClock.utcnow()
             with self.profiler.stage("Persistence"):
+                _dh, _ch = self._compute_fingerprints(df)
                 snapshot = DecisionSnapshot(
                     timestamp=DeterministicClock.utcnow().isoformat(),
                     asset=symbol,
@@ -435,7 +494,9 @@ class AnalysisPipeline:
                     version_metadata=decision.version_metadata,
                     audit_events=("Data quality issue detected",) if not is_valid else (),
                     evidence_ranking=decision.evidence_ranking,
-                    session_id=self.session_id
+                    session_id=self.session_id,
+                    dataset_hash=_dh,
+                    config_hash=_ch,
                 )
                 self.snapshot_logger.save(snapshot)
                 self.memory.record_decision(snapshot)
@@ -443,11 +504,12 @@ class AnalysisPipeline:
                 self.last_snapshots[symbol] = snapshot
                 self._record_telemetry("Persistence", start, decision, snapshot)
 
-                # Confluência final da análise
-                confluence = self.decision_engine.confluence.analyze(
+                # Confluência final da análise (unwrap tuple)
+                _confl_tuple = self.decision_engine.confluence.analyze(
                 context,
                 evidence_bundle
                 )
+                confluence = _confl_tuple[0] if isinstance(_confl_tuple, tuple) else _confl_tuple
 
             # Final Result Assembly
             result = AnalysisResult(
@@ -475,14 +537,23 @@ class AnalysisPipeline:
             
             if self.runtime_report:
                 atomic_json_write(f"runtime_report_{symbol}_{DeterministicClock.utcnow().strftime('%Y%m%d%H%M%S')}.json", self.runtime_report.to_dict(), indent=4)
+                # S7.1: escrita secundária em reports/replay/ (compatibilidade + novo path)
+                try:
+                    import os as _os2
+                    _ts = DeterministicClock.utcnow().strftime('%Y%m%d%H%M%S')
+                    _secondary = _os2.path.join("reports", "replay", f"runtime_report_{symbol}_{_ts}.json")
+                    atomic_json_write(_secondary, self.runtime_report.to_dict(), indent=4)
+                except Exception:
+                    pass
             
             return result
 
         except MarketClosedException as e:
             # Decision for Market Closed (Simplified, logic remains identical)
+            # Probabilities 0-100
             decision = DecisionResult(
                 decision='WAIT', grade='N/A', confidence=0.0, clarity=0.0, risk_score=0.0, score=0.0, quality=0.0,
-                expected_strength=0.0, buy_probability=0.0, sell_probability=0.0, wait_probability=1.0,
+                expected_strength=0.0, buy_probability=0.0, sell_probability=0.0, wait_probability=100.0,
                 expected_risk=0.0, expected_reward=0.0, expected_drawdown=0.0, audit_id='MARKET_CLOSED',
                 version_metadata=VersionMetadata(engine_version='1.0.0', pipeline_version='1.0.0', context_version='1.0.0', weights_version='1.0.0'),
                 summary=str(e),
@@ -522,7 +593,7 @@ class AnalysisPipeline:
             ))
             decision = DecisionResult(
                 decision='WAIT', grade='N/A', confidence=0.0, clarity=0.0, risk_score=0.0, score=0.0, quality=0.0,
-                expected_strength=0.0, buy_probability=0.0, sell_probability=0.0, wait_probability=1.0,
+                expected_strength=0.0, buy_probability=0.0, sell_probability=0.0, wait_probability=100.0,
                 expected_risk=0.0, expected_reward=0.0, expected_drawdown=0.0, audit_id='PIPELINE_ERROR',
                 version_metadata=VersionMetadata(engine_version='1.0.0', pipeline_version='1.0.0', context_version='1.0.0', weights_version='1.0.0'),
                 summary=str(exc),
@@ -565,7 +636,7 @@ class AnalysisPipeline:
         """
         decision = DecisionResult(
             decision='WAIT', grade='N/A', confidence=0.0, clarity=0.0, risk_score=0.0, score=0.0, quality=0.0,
-            expected_strength=0.0, buy_probability=0.0, sell_probability=0.0, wait_probability=1.0,
+            expected_strength=0.0, buy_probability=0.0, sell_probability=0.0, wait_probability=100.0,
             expected_risk=0.0, expected_reward=0.0, expected_drawdown=0.0, audit_id=audit_id,
             version_metadata=VersionMetadata(engine_version='1.0.0', pipeline_version='1.0.0', context_version='1.0.0', weights_version='1.0.0'),
             summary=summary,

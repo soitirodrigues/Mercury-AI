@@ -1,0 +1,59 @@
+{
+    "timestamp": "2026-09-04T17:45:59.702059",
+    "asset": "SUI-USD",
+    "timeframe": "M5",
+    "context": null,
+    "evidence_bundle": null,
+    "decision_result": {
+        "decision": "WAIT",
+        "grade": "N/A",
+        "confidence": 0.0,
+        "clarity": 0.0,
+        "risk_score": 0.0,
+        "score": 0.0,
+        "quality": 0.0,
+        "expected_strength": 0.0,
+        "buy_probability": 0.0,
+        "sell_probability": 0.0,
+        "wait_probability": 100.0,
+        "expected_risk": 0.0,
+        "expected_reward": 0.0,
+        "expected_drawdown": 0.0,
+        "audit_id": "DATA_PROVIDER_UNAVAILABLE",
+        "version_metadata": {
+            "engine_version": "1.0.0",
+            "pipeline_version": "1.0.0",
+            "context_version": "1.0.0",
+            "weights_version": "1.0.0"
+        },
+        "explanation": "Data provider returned no data; cannot analyze.",
+        "mtf_consensus": null,
+        "market_regime": null,
+        "trade_allowed": true,
+        "trade_block_reasons": [],
+        "trade_quality_score": 0.0,
+        "trade_quality_level": "N/A",
+        "trace": null,
+        "warnings": [],
+        "weaknesses": [],
+        "blockers": [],
+        "summary": "No data returned by provider for SUI-USD",
+        "technical_reason": "",
+        "institutional_alignment": false,
+        "evidence_ranking": null,
+        "explainability": null
+    },
+    "version_metadata": {
+        "engine_version": "1.0.0",
+        "pipeline_version": "1.0.0",
+        "context_version": "1.0.0",
+        "weights_version": "1.0.0"
+    },
+    "audit_events": [
+        "Data provider unavailable"
+    ],
+    "session_id": "8d3fa3fa-a8f0-4ab4-b34a-764375ced982",
+    "replay_id": "c9a16422fa098b6dbe909302bcb50865bfe3c3c6a5b59888451029162d7a8425",
+    "evidence_ranking": null,
+    "version": "0.1"
+}

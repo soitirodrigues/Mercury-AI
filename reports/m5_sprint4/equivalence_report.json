@@ -1,0 +1,15 @@
+{
+  "generated_at": "2026-09-03T03:56:26.678921+00:00",
+  "universe": 64,
+  "workers_tested": [
+    1,
+    2,
+    4,
+    8,
+    16
+  ],
+  "passed": true,
+  "note": "SharedFrozen fixture + isolated InstitutionalMemory per pipeline",
+  "12_pass": true,
+  "64_pass": true
+}

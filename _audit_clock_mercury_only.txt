@@ -1,0 +1,465 @@
+mercury_ai/analysis/benchmark_framework.py:  15 [import time           ] -::- | import time
+mercury_ai/analysis/benchmark_framework.py:  30 [DeterministicClock    ] -::- | from mercury_ai.utils.deterministic_clock import DeterministicClock
+mercury_ai/analysis/benchmark_framework.py: 142 [time.perf_counter     ] MercuryBenchmarkFramework::_run_single_symbol | start_time = time.perf_counter()
+mercury_ai/analysis/benchmark_framework.py: 161 [time.perf_counter     ] MercuryBenchmarkFramework::_run_single_symbol | end_time = time.perf_counter()
+mercury_ai/analysis/benchmark_framework.py: 182 [isoformat             ] MercuryBenchmarkFramework::_run_single_symbol | timestamp=DeterministicClock.utcnow().isoformat(),
+mercury_ai/analysis/benchmark_framework.py: 391 [time.perf_counter     ] MercuryBenchmarkFramework::run_benchmark | wall_start = time.perf_counter()
+mercury_ai/analysis/benchmark_framework.py: 463 [time.perf_counter     ] MercuryBenchmarkFramework::run_benchmark | wall_end = time.perf_counter()
+mercury_ai/analysis/benchmark_framework.py: 500 [time.perf_counter     ] MercuryBenchmarkFramework::run_quick_benchmark | start_time = time.perf_counter()
+mercury_ai/analysis/benchmark_framework.py: 515 [time.perf_counter     ] MercuryBenchmarkFramework::run_quick_benchmark | end_time = time.perf_counter()
+mercury_ai/analysis/benchmark_framework.py: 523 [isoformat             ] MercuryBenchmarkFramework::run_quick_benchmark | timestamp=DeterministicClock.utcnow().isoformat(),
+mercury_ai/analysis/candlestick_engine.py:   1 [import time           ] -::- | import time
+mercury_ai/analysis/candlestick_engine.py:  22 [time.perf_counter     ] CandlestickEngine::analyze | start_time = time.perf_counter()
+mercury_ai/analysis/candlestick_engine.py:  25 [time.perf_counter     ] CandlestickEngine::analyze | exec_time = time.perf_counter() - start_time
+mercury_ai/analysis/candlestick_engine.py:  61 [time.perf_counter     ] CandlestickEngine::analyze | exec_time = time.perf_counter() - start_time
+mercury_ai/analysis/data_quality_engine.py:   3 [import datetime       ] -::- | from datetime import datetime
+mercury_ai/analysis/data_quality_engine.py:  36 [datetime.now          ] DataQualityEngine::generate_report | delay = (datetime.now() - df.index.max()).total_seconds()
+mercury_ai/analysis/evidence_engine.py:   8 [DeterministicClock    ] -::- | from mercury_ai.utils.deterministic_clock import DeterministicClock
+mercury_ai/analysis/evidence_engine.py:  33 [isoformat             ] EvidenceEngine::process | timestamp=DeterministicClock.utcnow().isoformat(),
+mercury_ai/analysis/health_checker.py:   8 [DeterministicClock    ] -::- | from mercury_ai.utils.deterministic_clock import DeterministicClock
+mercury_ai/analysis/health_checker.py:  35 [clock var             ] HealthChecker::check | "Clock": "OK",
+mercury_ai/analysis/health_checker.py:  51 [isoformat             ] HealthChecker::check | timestamp=DeterministicClock.utcnow().isoformat()
+mercury_ai/analysis/historical_replay_engine.py:  21 [DeterministicClock    ] -::- | from mercury_ai.utils.deterministic_clock import DeterministicClock
+mercury_ai/analysis/historical_replay_engine.py:  94 [import time           ] HistoricalReplayEngine::run_replay | import time as time_module
+mercury_ai/analysis/historical_replay_engine.py: 143 [clock var             ] HistoricalReplayEngine::run_replay | # que o clock NÃO permaneça congelado em timestamp histórico após o
+mercury_ai/analysis/historical_replay_engine.py: 145 [DeterministicClock    ] HistoricalReplayEngine::run_replay | clock_state = DeterministicClock.snapshot()
+mercury_ai/analysis/historical_replay_engine.py: 157 [pd.to_datetime        ] HistoricalReplayEngine::run_replay | current_time = pd.to_datetime(timestamps[i]).to_pydatetime()
+mercury_ai/analysis/historical_replay_engine.py: 158 [DeterministicClock    ] HistoricalReplayEngine::run_replay | DeterministicClock.set_time(current_time)
+mercury_ai/analysis/historical_replay_engine.py: 197 [DeterministicClock    ] HistoricalReplayEngine::run_replay | DeterministicClock.restore(clock_state)
+mercury_ai/analysis/institutional_analytics_engine.py:   6 [timedelta             ] -::- | from datetime import datetime, timedelta
+mercury_ai/analysis/institutional_analytics_engine.py:  86 [timezone              ] InstitutionalAnalyticsEngine::_load_data | # naive UTC (tempo real) e timezone-aware (replay com dataset
+mercury_ai/analysis/institutional_analytics_engine.py:  95 [pd.to_datetime        ] InstitutionalAnalyticsEngine::_load_data | df["timestamp"] = pd.to_datetime(
+mercury_ai/analysis/institutional_memory_engine.py:   7 [import time           ] -::- | import time
+mercury_ai/analysis/institutional_memory_engine.py: 124 [time.sleep            ] InstitutionalMemoryEngine::flush | time.sleep(0.05 * (2 ** i))
+mercury_ai/analysis/live_monitor.py:   1 [import time           ] -::- | import time
+mercury_ai/analysis/notification_center.py:   4 [DeterministicClock    ] -::- | from mercury_ai.utils.deterministic_clock import DeterministicClock
+mercury_ai/analysis/notification_center.py:  11 [isoformat             ] Notification::- | timestamp: str = field(default_factory=lambda: DeterministicClock.utcnow().isoformat())
+mercury_ai/analysis/performance_analytics.py:   6 [import datetime       ] -::- | from datetime import datetime
+mercury_ai/analysis/performance_analytics.py:  20 [datetime.fromisoformat] PerformanceAnalytics::analyze_performance | entry_time = datetime.fromisoformat(data['timestamp'])
+mercury_ai/analysis/performance_analytics.py:  28 [timezone              ] PerformanceAnalytics::analyze_performance | # Normalize entry_time to match df index timezone
+mercury_ai/analysis/performance_analytics.py:  29 [datetime.fromisoformat] PerformanceAnalytics::analyze_performance | entry_time = datetime.fromisoformat(data['timestamp'])
+mercury_ai/analysis/replay_batch_processor.py:  14 [import time           ] -::- | import time
+mercury_ai/analysis/replay_batch_processor.py: 110 [time.perf_counter     ] ReplayBatchProcessor::run_batch | start_time = time.perf_counter()
+mercury_ai/analysis/replay_batch_processor.py: 134 [time.perf_counter     ] ReplayBatchProcessor::run_batch | total_wall_time = time.perf_counter() - start_time
+mercury_ai/analysis/replay_batch_processor.py: 170 [import time           ] ReplayBatchProcessor::_run_single_symbol | import time as time_module
+mercury_ai/analysis/session_engine.py:   2 [DeterministicClock    ] -::- | from mercury_ai.utils.deterministic_clock import DeterministicClock
+mercury_ai/analysis/session_engine.py:  12 [DeterministicClock    ] SessionEngine::analyze | hour = DeterministicClock.utcnow().hour
+mercury_ai/analysis/tests/test_historical_replay_engine.py:  12 [DeterministicClock    ] -::- | from mercury_ai.utils.deterministic_clock import DeterministicClock
+mercury_ai/analysis/tests/test_historical_replay_engine.py: 189 [DeterministicClock    ] TestDeterministicClockIsolation::- | """B4-C1: DeterministicClock deve ser isolado durante o replay.
+mercury_ai/analysis/tests/test_historical_replay_engine.py: 192 [clock var             ] TestDeterministicClockIsolation::- | após run_replay, o clock NÃO pode permanecer no passado (contaminação
+mercury_ai/analysis/tests/test_historical_replay_engine.py: 197 [clock var             ] TestDeterministicClockIsolation::test_clock_restored_after_normal_replay | """A) Restauração normal: clock volta ao relógio real após replay."""
+mercury_ai/analysis/tests/test_historical_replay_engine.py: 198 [DeterministicClock    ] TestDeterministicClockIsolation::test_clock_restored_after_normal_replay | DeterministicClock.reset()
+mercury_ai/analysis/tests/test_historical_replay_engine.py: 202 [DeterministicClock    ] TestDeterministicClockIsolation::test_clock_restored_after_normal_replay | assert DeterministicClock._current_time is None
+mercury_ai/analysis/tests/test_historical_replay_engine.py: 205 [clock var             ] TestDeterministicClockIsolation::test_clock_restored_after_exception | """B) Restauração após exceção: clock volta ao real mesmo com erro.
+mercury_ai/analysis/tests/test_historical_replay_engine.py: 209 [DeterministicClock    ] TestDeterministicClockIsolation::test_clock_restored_after_exception | DeterministicClock.reset()
+mercury_ai/analysis/tests/test_historical_replay_engine.py: 229 [DeterministicClock    ] TestDeterministicClockIsolation::test_clock_restored_after_exception | assert DeterministicClock._current_time is None
+mercury_ai/analysis/tests/test_historical_replay_engine.py: 233 [DeterministicClock    ] TestDeterministicClockIsolation::test_double_replay_deterministic_and_clock_restored | DeterministicClock.reset()
+mercury_ai/analysis/tests/test_historical_replay_engine.py: 237 [DeterministicClock    ] TestDeterministicClockIsolation::test_double_replay_deterministic_and_clock_restored | clock_after_a = DeterministicClock._current_time
+mercury_ai/analysis/tests/test_historical_replay_engine.py: 240 [DeterministicClock    ] TestDeterministicClockIsolation::test_double_replay_deterministic_and_clock_restored | clock_after_b = DeterministicClock._current_time
+mercury_ai/analysis/tests/test_historical_replay_engine.py: 255 [DeterministicClock    ] TestDeterministicClockIsolation::test_no_contamination_of_normal_execution | DeterministicClock.reset()
+mercury_ai/analysis/tests/test_historical_replay_engine.py: 259 [DeterministicClock    ] TestDeterministicClockIsolation::test_no_contamination_of_normal_execution | assert DeterministicClock._current_time is None
+mercury_ai/analysis/tests/test_historical_replay_engine.py: 263 [DeterministicClock    ] TestDeterministicClockIsolation::test_no_contamination_of_normal_execution | assert DeterministicClock._current_time is None
+mercury_ai/analysis/tests/test_historical_replay_engine.py: 267 [DeterministicClock    ] TestDeterministicClockIsolation::test_no_contamination_of_normal_execution | assert DeterministicClock._current_time is None
+mercury_ai/analysis/tests/test_historical_replay_engine.py: 270 [clock var             ] TestDeterministicClockIsolation::test_empty_replay_does_not_touch_clock | """Replay vazio (dados insuficientes) não altera o estado do clock."""
+mercury_ai/analysis/tests/test_historical_replay_engine.py: 271 [DeterministicClock    ] TestDeterministicClockIsolation::test_empty_replay_does_not_touch_clock | DeterministicClock.reset()
+mercury_ai/analysis/tests/test_historical_replay_engine.py: 282 [DeterministicClock    ] TestDeterministicClockIsolation::test_empty_replay_does_not_touch_clock | assert DeterministicClock._current_time is None
+mercury_ai/analysis/tests/test_institutional_analytics_engine.py:   4 [pd.to_datetime        ] -::- | Valida a correção R2 (B4-C5): `pd.to_datetime` com `format="mixed"` + `utc=True`
+mercury_ai/analysis/tests/test_institutional_analytics_engine.py:  85 [pd.Timestamp          ] -::test_valid_timestamp_not_lost | assert df.loc[0, "timestamp"] == pd.Timestamp(expected_naive_utc)
+mercury_ai/analysis/tests/test_institutional_analytics_engine.py: 151 [pd.Timestamp          ] -::test_mixed_timestamps_all_preserved | expected_order = sorted(pd.Timestamp(e) for _t, e in mix)
+mercury_ai/analysis/tests/test_institutional_analytics_engine.py: 157 [pd.Timestamp          ] -::test_mixed_timestamps_all_preserved | epochs_in = {pd.Timestamp(ts).timestamp() for ts, _exp in mix}
+mercury_ai/analysis/tests/test_institutional_analytics_engine.py: 158 [pd.Timestamp          ] -::test_mixed_timestamps_all_preserved | epochs_out = {pd.Timestamp(t).timestamp() for t in df["timestamp"]}
+mercury_ai/analysis/tests/test_replay_tzaware_snapshot.py:   2 [timezone              ] -::- | """B4-C5 - Testes de replay com dataset timezone-aware (snapshot save).
+mercury_ai/analysis/tests/test_replay_tzaware_snapshot.py:   5 [DeterministicClock    ] -::- | (ex.: Europe/London) faz o DeterministicClock virar tz-aware e a pipeline
+mercury_ai/analysis/tests/test_replay_tzaware_snapshot.py:   8 [clock var             ] -::- | preservar o determinismo e restaurar o clock ao final.
+mercury_ai/analysis/tests/test_replay_tzaware_snapshot.py:  19 [DeterministicClock    ] -::- | from mercury_ai.utils.deterministic_clock import DeterministicClock
+mercury_ai/analysis/tests/test_replay_tzaware_snapshot.py:  79 [clock var             ] -::test_replay_tz_aware_dataset_no_crash | # Clock determinístico restaurado ao final (relógio real = None).
+mercury_ai/analysis/tests/test_replay_tzaware_snapshot.py:  80 [DeterministicClock    ] -::test_replay_tz_aware_dataset_no_crash | assert DeterministicClock.snapshot() is None
+mercury_ai/analysis/tests/test_replay_tzaware_snapshot.py:  96 [DeterministicClock    ] -::test_replay_naive_dataset_no_crash | assert DeterministicClock.snapshot() is None
+mercury_ai/analysis/tests/test_replay_tzaware_snapshot.py: 114 [DeterministicClock    ] -::test_replay_tz_aware_deterministic | assert DeterministicClock.snapshot() is None
+mercury_ai/brain/tests/test_mercury_decision_benchmark.py:   1 [import time           ] -::- | import time
+mercury_ai/brain/tests/test_mercury_decision_benchmark.py:  63 [time.time             ] -::test_decision_engine_benchmark | start_time = time.time()
+mercury_ai/brain/tests/test_mercury_decision_benchmark.py:  66 [time.time             ] -::test_decision_engine_benchmark | end_time = time.time()
+mercury_ai/calendar/economic_calendar.py:   1 [import datetime       ] -::- | from datetime import datetime
+mercury_ai/calendar/economic_calendar.py:   8 [datetime.now          ] EconomicCalendar::get_events | today = datetime.now().strftime("%Y-%m-%d")
+mercury_ai/core/analysis_pipeline.py:   6 [DeterministicClock    ] -::- | from mercury_ai.utils.deterministic_clock import DeterministicClock
+mercury_ai/core/analysis_pipeline.py: 167 [DeterministicClock    ] AnalysisPipeline::_record_telemetry | execution_time = (DeterministicClock.utcnow() - start_time).total_seconds()
+mercury_ai/core/analysis_pipeline.py: 200 [isoformat             ] AnalysisPipeline::_record_telemetry | start_time=start_time.isoformat(),
+mercury_ai/core/analysis_pipeline.py: 201 [isoformat             ] AnalysisPipeline::_record_telemetry | end_time=DeterministicClock.utcnow().isoformat(),
+mercury_ai/core/analysis_pipeline.py: 214 [DeterministicClock    ] AnalysisPipeline::analyze | start = DeterministicClock.utcnow()
+mercury_ai/core/analysis_pipeline.py: 231 [DeterministicClock    ] AnalysisPipeline::analyze | start = DeterministicClock.utcnow()
+mercury_ai/core/analysis_pipeline.py: 257 [isoformat             ] AnalysisPipeline::analyze | timestamp=DeterministicClock.utcnow().isoformat(), asset=symbol, timeframe=DEFAULT_TIMEFRAME,
+mercury_ai/core/analysis_pipeline.py: 291 [isoformat             ] AnalysisPipeline::analyze | timestamp=DeterministicClock.utcnow().isoformat(), asset=symbol, timeframe=DEFAULT_TIMEFRAME,
+mercury_ai/core/analysis_pipeline.py: 309 [DeterministicClock    ] AnalysisPipeline::analyze | start = DeterministicClock.utcnow()
+mercury_ai/core/analysis_pipeline.py: 318 [DeterministicClock    ] AnalysisPipeline::analyze | start = DeterministicClock.utcnow()
+mercury_ai/core/analysis_pipeline.py: 325 [DeterministicClock    ] AnalysisPipeline::analyze | start = DeterministicClock.utcnow()
+mercury_ai/core/analysis_pipeline.py: 330 [DeterministicClock    ] AnalysisPipeline::analyze | start = DeterministicClock.utcnow()
+mercury_ai/core/analysis_pipeline.py: 335 [DeterministicClock    ] AnalysisPipeline::analyze | start = DeterministicClock.utcnow()
+mercury_ai/core/analysis_pipeline.py: 341 [DeterministicClock    ] AnalysisPipeline::analyze | start = DeterministicClock.utcnow()
+mercury_ai/core/analysis_pipeline.py: 346 [DeterministicClock    ] AnalysisPipeline::analyze | start = DeterministicClock.utcnow()
+mercury_ai/core/analysis_pipeline.py: 351 [DeterministicClock    ] AnalysisPipeline::analyze | start = DeterministicClock.utcnow()
+mercury_ai/core/analysis_pipeline.py: 356 [DeterministicClock    ] AnalysisPipeline::analyze | start = DeterministicClock.utcnow()
+mercury_ai/core/analysis_pipeline.py: 361 [DeterministicClock    ] AnalysisPipeline::analyze | start = DeterministicClock.utcnow()
+mercury_ai/core/analysis_pipeline.py: 367 [DeterministicClock    ] AnalysisPipeline::analyze | start = DeterministicClock.utcnow()
+mercury_ai/core/analysis_pipeline.py: 372 [DeterministicClock    ] AnalysisPipeline::analyze | start = DeterministicClock.utcnow()
+mercury_ai/core/analysis_pipeline.py: 377 [DeterministicClock    ] AnalysisPipeline::analyze | start = DeterministicClock.utcnow()
+mercury_ai/core/analysis_pipeline.py: 382 [DeterministicClock    ] AnalysisPipeline::analyze | start = DeterministicClock.utcnow()
+mercury_ai/core/analysis_pipeline.py: 387 [DeterministicClock    ] AnalysisPipeline::analyze | start = DeterministicClock.utcnow()
+mercury_ai/core/analysis_pipeline.py: 419 [DeterministicClock    ] AnalysisPipeline::analyze | start = DeterministicClock.utcnow()
+mercury_ai/core/analysis_pipeline.py: 435 [DeterministicClock    ] AnalysisPipeline::analyze | start = DeterministicClock.utcnow()
+mercury_ai/core/analysis_pipeline.py: 455 [DeterministicClock    ] AnalysisPipeline::analyze | start = DeterministicClock.utcnow()
+mercury_ai/core/analysis_pipeline.py: 460 [DeterministicClock    ] AnalysisPipeline::analyze | start = DeterministicClock.utcnow()
+mercury_ai/core/analysis_pipeline.py: 465 [DeterministicClock    ] AnalysisPipeline::analyze | start = DeterministicClock.utcnow()
+mercury_ai/core/analysis_pipeline.py: 472 [DeterministicClock    ] AnalysisPipeline::analyze | start = DeterministicClock.utcnow()
+mercury_ai/core/analysis_pipeline.py: 475 [isoformat             ] AnalysisPipeline::analyze | timestamp=DeterministicClock.utcnow().isoformat(),
+mercury_ai/core/analysis_pipeline.py: 524 [DeterministicClock    ] AnalysisPipeline::analyze | atomic_json_write(f"runtime_report_{symbol}_{DeterministicClock.utcnow().strftime('%Y%m%d%H%M%S')}.json", self.runtime_report.to_dict(), indent=4)
+mercury_ai/core/analysis_pipeline.py: 543 [isoformat             ] AnalysisPipeline::analyze | timestamp=DeterministicClock.utcnow().isoformat(), asset=symbol, timeframe=DEFAULT_TIMEFRAME,
+mercury_ai/core/analysis_pipeline.py: 565 [isoformat             ] AnalysisPipeline::analyze | timestamp=DeterministicClock.utcnow().isoformat(),
+mercury_ai/core/analysis_pipeline.py: 583 [isoformat             ] AnalysisPipeline::analyze | timestamp=DeterministicClock.utcnow().isoformat(), asset=symbol, timeframe=DEFAULT_TIMEFRAME,
+mercury_ai/core/analysis_pipeline.py: 626 [isoformat             ] AnalysisPipeline::_build_terminal_result | timestamp=DeterministicClock.utcnow().isoformat(), asset=symbol, timeframe=DEFAULT_TIMEFRAME,
+mercury_ai/core/asset_registry.py:   5 [import time           ] -::- | import time
+mercury_ai/core/asset_registry.py: 107 [time.time             ] AssetRegistry::update_asset_stats | self.assets[symbol].last_operated = time.time()
+mercury_ai/core/health_center.py:   2 [import time           ] -::- | import time
+mercury_ai/core/health_center.py:  16 [time.time             ] HealthCenter::get_system_metrics | "timestamp": time.time()
+mercury_ai/core/job_manager.py:   1 [import time           ] -::- | import time
+mercury_ai/core/job_manager.py:  30 [time.sleep            ] JobManager::_job_loop | time.sleep(self.interval)
+mercury_ai/core/observability_center.py:   2 [import time           ] -::- | import time
+mercury_ai/core/observability_center.py:  30 [time.time             ] ObservabilityCenter::get_metrics | "timestamp": time.time()
+mercury_ai/core/pipeline_audit_middleware.py:   1 [import time           ] -::- | import time
+mercury_ai/core/pipeline_audit_middleware.py:   6 [timezone              ] -::- | from datetime import datetime, timezone
+mercury_ai/core/pipeline_audit_middleware.py:  22 [datetime.now          ] PipelineAuditMiddleware::__call__ | start_ts = datetime.now(timezone.utc).isoformat()
+mercury_ai/core/pipeline_audit_middleware.py:  23 [time.perf_counter     ] PipelineAuditMiddleware::__call__ | t0 = time.perf_counter()
+mercury_ai/core/pipeline_audit_middleware.py:  39 [time.perf_counter     ] PipelineAuditMiddleware::__call__ | duration_ms = (time.perf_counter() - t0) * 1000.0
+mercury_ai/core/pipeline_audit_middleware.py:  42 [datetime.now          ] PipelineAuditMiddleware::__call__ | timestamp=datetime.now(timezone.utc).isoformat(),
+mercury_ai/core/pipeline_profiler.py:   1 [import time           ] -::- | import time
+mercury_ai/core/pipeline_profiler.py:  49 [time.perf_counter     ] PipelineProfiler::start_stage | builder.start_time = time.perf_counter()
+mercury_ai/core/pipeline_profiler.py:  54 [time.perf_counter     ] PipelineProfiler::end_stage | builder.end_time = time.perf_counter()
+mercury_ai/core/security_center.py:  10 [DeterministicClock    ] -::- | from mercury_ai.utils.deterministic_clock import DeterministicClock
+mercury_ai/core/security_center.py:  19 [isoformat             ] AuditEvent::- | timestamp: str = field(default_factory=lambda: DeterministicClock.utcnow().isoformat())
+mercury_ai/core/session_manager.py:   3 [DeterministicClock    ] -::- | from mercury_ai.utils.deterministic_clock import DeterministicClock
+mercury_ai/core/session_manager.py:  14 [isoformat             ] SessionManager::__init__ | self.timestamp = DeterministicClock.utcnow().isoformat()
+mercury_ai/data/mercury_data_provider.py:   3 [import time           ] -::- | import time
+mercury_ai/data/mercury_data_provider.py: 112 [time.monotonic        ] MercuryDataProvider::get_candles | now = time.monotonic()
+mercury_ai/data/mercury_data_provider.py: 122 [time.time             ] MercuryDataProvider::get_candles | start_time = time.time()
+mercury_ai/data/mercury_data_provider.py: 124 [time.time             ] MercuryDataProvider::get_candles | if time.time() - start_time > timeout:
+mercury_ai/data/mercury_data_provider.py: 134 [time.sleep            ] MercuryDataProvider::get_candles | time.sleep(2 ** attempt)
+mercury_ai/database/history_logger.py:   3 [import datetime       ] -::- | from datetime import datetime
+mercury_ai/database/history_logger.py:  36 [datetime.now          ] HistoryLogger::save | datetime.now(),
+mercury_ai/database/snapshot_logger.py:  25 [timezone              ] -::_sanitize_filename_component | '+01:00' em timestamps timezone-aware).
+mercury_ai/database/tests/test_snapshot_logger.py:   2 [timezone              ] -::- | """B4-C5 - Testes R1: SnapshotLogger aceita timestamps timezone-aware.
+mercury_ai/database/tests/test_snapshot_logger.py:  52 [pd.Timestamp          ] -::_epoch | return pd.Timestamp(iso_str).timestamp()
+mercury_ai/execution/brokers/demo_broker.py:   9 [timezone              ] -::- | from datetime import datetime, timezone
+mercury_ai/execution/brokers/demo_broker.py:  20 [datetime.now          ] -::_utcnow_iso | return datetime.now(timezone.utc).isoformat()
+mercury_ai/execution/order_executor.py:  16 [timezone              ] -::- | from datetime import datetime, timezone
+mercury_ai/execution/order_executor.py:  45 [datetime.now          ] -::_utcnow_iso | return datetime.now(timezone.utc).isoformat()
+mercury_ai/execution/order_types.py:   8 [timezone              ] -::- | from datetime import datetime, timezone
+mercury_ai/execution/order_types.py:  84 [datetime.now          ] -::_utcnow_iso | return datetime.now(timezone.utc).isoformat()
+mercury_ai/models/analysis_result.py:   4 [DeterministicClock    ] -::- | from mercury_ai.utils.deterministic_clock import DeterministicClock
+mercury_ai/models/analysis_result.py:  49 [isoformat             ] AnalysisResult::- | timestamp: str = field(default_factory=lambda: DeterministicClock.utcnow().isoformat())
+mercury_ai/models/evidence.py:   6 [DeterministicClock    ] -::- | from mercury_ai.utils.deterministic_clock import DeterministicClock
+mercury_ai/models/evidence.py:  21 [isoformat             ] Evidence::- | timestamp: str = field(default_factory=lambda: DeterministicClock.utcnow().isoformat())
+mercury_ai/models/evidence.py:  43 [isoformat             ] Evidence::create | ts = timestamp if timestamp is not None else DeterministicClock.utcnow().isoformat()
+mercury_ai/models/memory_audit.py:   4 [import time           ] -::- | import time
+mercury_ai/news/news_provider.py:   1 [import datetime       ] -::- | from datetime import datetime
+mercury_ai/news/news_provider.py:   8 [datetime.now          ] NewsProvider::get_news | now = datetime.now().strftime("%d/%m/%Y %H:%M")
+mercury_ai/operations/demo_manager.py:   7 [DeterministicClock    ] -::- | from mercury_ai.utils.deterministic_clock import DeterministicClock
+mercury_ai/operations/demo_manager.py:  33 [isoformat             ] DemoOperationsManager::run_simulation | 'timestamp': DeterministicClock.utcnow().isoformat(),
+mercury_ai/operations/m5_incremental/asset_state.py:  19 [timezone              ] -::- | from datetime import datetime, timezone
+mercury_ai/operations/m5_incremental/asset_state.py:  91 [datetime.now          ] AssetScanState::mark_processing | self.updated_at = datetime.now(timezone.utc).isoformat()
+mercury_ai/operations/m5_incremental/asset_state.py: 101 [datetime.now          ] AssetScanState::mark_error | self.updated_at = datetime.now(timezone.utc).isoformat()
+mercury_ai/operations/m5_incremental/asset_state.py: 113 [datetime.fromisoformat] AssetScanState::age_seconds | dt = datetime.fromisoformat(self.decision_timestamp.replace("Z", "+00:00"))
+mercury_ai/operations/m5_incremental/asset_state.py: 115 [timezone              ] AssetScanState::age_seconds | dt = dt.replace(tzinfo=timezone.utc)
+mercury_ai/operations/m5_incremental/asset_state.py: 117 [datetime.now          ] AssetScanState::age_seconds | now = datetime.now(timezone.utc)
+mercury_ai/operations/m5_incremental/asset_state.py: 119 [timezone              ] AssetScanState::age_seconds | now = now.replace(tzinfo=timezone.utc)
+mercury_ai/operations/m5_incremental/cache_tracker.py:  13 [timezone              ] -::- | from datetime import datetime, timezone
+mercury_ai/operations/m5_incremental/cache_tracker.py:  68 [datetime.now          ] CacheTracker::put | now = datetime.now(timezone.utc)
+mercury_ai/operations/m5_incremental/cache_tracker.py: 144 [isoformat             ] CacheTracker::check | reason=f"cached {cached.isoformat()} < latest {effective_required.isoformat()} (nova vela disponível)",
+mercury_ai/operations/m5_incremental/cache_tracker.py: 151 [isoformat             ] CacheTracker::check | reason=f"cached == required ({cached.isoformat()})",
+mercury_ai/operations/m5_incremental/cache_tracker.py: 160 [isoformat             ] CacheTracker::check | reason=f"cached {cached.isoformat()} < required {required_candle.isoformat()} — REFRESH REQUIRED",
+mercury_ai/operations/m5_incremental/cache_tracker.py: 169 [isoformat             ] CacheTracker::check | reason=f"cached {cached.isoformat()} > required {required_candle.isoformat()} (inconsistente)",
+mercury_ai/operations/m5_incremental/freshness.py:  14 [timezone              ] -::- | from datetime import datetime, timezone, timedelta
+mercury_ai/operations/m5_incremental/freshness.py:  64 [datetime.now          ] FreshnessGate::check | now = datetime.now(timezone.utc)
+mercury_ai/operations/m5_incremental/freshness.py: 115 [isoformat             ] FreshnessGate::check | reason=f"decision_candle == latest_candle ({decision_candle.isoformat()})",
+mercury_ai/operations/m5_incremental/freshness.py: 126 [isoformat             ] FreshnessGate::check | reason=f"decision_candle {decision_candle.isoformat()} < latest {latest_candle.isoformat()} ({delta_candles} vela(s) atrás)",
+mercury_ai/operations/m5_incremental/freshness.py: 136 [isoformat             ] FreshnessGate::check | reason=f"decision_candle {decision_candle.isoformat()} > latest {latest_candle.isoformat()} (inconsistente/futuro)",
+mercury_ai/operations/m5_incremental/freshness.py: 149 [datetime.fromisoformat] FreshnessGate::check_state | dec = datetime.fromisoformat(state_decision_candle_iso.replace("Z", "+00:00"))
+mercury_ai/operations/m5_incremental/rolling_queue.py:  14 [timezone              ] -::- | from datetime import datetime, timezone
+mercury_ai/operations/m5_incremental/rolling_queue.py:  58 [datetime.now          ] RollingQueue::build | cycle_start = datetime.now(timezone.utc)
+mercury_ai/operations/m5_incremental/rolling_queue.py: 101 [datetime.fromisoformat] RollingQueue::build | dec_dt = datetime.fromisoformat(state.decision_candle_timestamp.replace("Z", "+00:00"))
+mercury_ai/operations/m5_incremental/rolling_queue.py: 103 [timezone              ] RollingQueue::build | dec_dt = dec_dt.replace(tzinfo=timezone.utc)
+mercury_ai/operations/m5_incremental/rolling_queue.py: 106 [timezone              ] RollingQueue::build | latest_f = floor_m5(latest) if latest.tzinfo else floor_m5(latest.replace(tzinfo=timezone.utc))
+mercury_ai/operations/m5_incremental/temporal.py:  12 [timezone              ] -::- | from datetime import datetime, timezone, timedelta
+mercury_ai/operations/m5_incremental/temporal.py:  18 [timezone              ] -::_ensure_utc | """Garante datetime timezone-aware UTC. Naive -> assume UTC."""
+mercury_ai/operations/m5_incremental/temporal.py:  20 [timezone              ] -::_ensure_utc | return dt.replace(tzinfo=timezone.utc)
+mercury_ai/operations/m5_incremental/temporal.py:  21 [timezone              ] -::_ensure_utc | return dt.astimezone(timezone.utc)
+mercury_ai/operations/m5_incremental/temporal.py:  47 [timedelta             ] -::ceil_m5 | return floored + timedelta(minutes=5)
+mercury_ai/operations/m5_incremental/temporal.py:  49 [timedelta             ] -::ceil_m5 | return floored + timedelta(minutes=5)
+mercury_ai/operations/m5_incremental/temporal.py:  70 [datetime.now          ] -::expected_latest_candle_open | now = datetime.now(timezone.utc)
+mercury_ai/operations/m5_incremental/temporal.py:  77 [timedelta             ] -::expected_latest_candle_open | return floored - timedelta(minutes=5)
+mercury_ai/operations/m5_incremental/temporal.py: 106 [datetime.now          ] -::current_candle | now = datetime.now(timezone.utc)
+mercury_ai/operations/m5_incremental/temporal.py: 113 [datetime.now          ] -::previous_candle | now = datetime.now(timezone.utc)
+mercury_ai/operations/m5_incremental/temporal.py: 114 [timedelta             ] -::previous_candle | return floor_m5(now) - timedelta(minutes=5)
+mercury_ai/operations/m5_incremental/temporal.py: 120 [datetime.now          ] -::next_candle | now = datetime.now(timezone.utc)
+mercury_ai/operations/m5_incremental/temporal.py: 135 [pd.Timestamp          ] -::decision_candle_timestamp_from_df | if isinstance(ts, pd.Timestamp):
+mercury_ai/operations/m5_incremental/temporal.py: 142 [pd.to_datetime        ] -::decision_candle_timestamp_from_df | return _ensure_utc(pd.to_datetime(ts).to_pydatetime())
+mercury_ai/operations/m5_incremental/temporal.py: 152 [datetime.now          ] -::decision_age_seconds | now = datetime.now(timezone.utc)
+mercury_ai/operations/m5_incremental/temporal.py: 166 [datetime.now          ] -::candle_age_seconds | now = datetime.now(timezone.utc)
+mercury_ai/operations/m5_operational/clock.py:   1 [sleep(                ] -::- | """M5 Clock / Cycle Scheduler — alinhado ao candle M5, não sleep() acumulativo."""
+mercury_ai/operations/m5_operational/clock.py:   4 [import time           ] -::- | import time
+mercury_ai/operations/m5_operational/clock.py:   8 [timezone              ] -::- | from datetime import datetime, timezone, timedelta
+mercury_ai/operations/m5_operational/clock.py:  33 [datetime.now          ] M5Clock::_next_boundary | now = datetime.now(timezone.utc)
+mercury_ai/operations/m5_operational/clock.py:  46 [datetime.now          ] M5Clock::_loop | now = datetime.now(timezone.utc)
+mercury_ai/operations/m5_operational/clock.py:  54 [time.sleep            ] M5Clock::_loop | time.sleep(chunk)
+mercury_ai/operations/m5_operational/clock.py:  62 [isoformat             ] M5Clock::_loop | logger.info("[M5Clock] triggering cycle %s target=%s", cycle_id, target.isoformat())
+mercury_ai/operations/m5_operational/clock.py:  79 [clock var             ] M5Clock::start | self._thread = threading.Thread(target=_loop, name="m5-clock", daemon=True)
+mercury_ai/operations/m5_operational/clock.py: 103 [datetime.now          ] M5Clock::run_cycles_blocking | target_start = floor_m5(datetime.now(timezone.utc))
+mercury_ai/operations/m5_operational/clock.py: 115 [timedelta             ] M5Clock::run_cycles_blocking | cur = cur + timedelta(minutes=5)
+mercury_ai/operations/m5_operational/runner.py:  17 [import time           ] -::- | import time
+mercury_ai/operations/m5_operational/runner.py:  25 [timezone              ] -::- | from datetime import datetime, timezone
+mercury_ai/operations/m5_operational/runner.py:  42 [time.perf_counter     ] -::_analyze_one_isolated | t0 = time.perf_counter()
+mercury_ai/operations/m5_operational/runner.py:  63 [time.perf_counter     ] -::_analyze_one_isolated | wall_ms = (time.perf_counter() - t0) * 1000
+mercury_ai/operations/m5_operational/runner.py: 110 [timezone              ] -::_analyze_one_isolated | from datetime import datetime as _dt, timezone as _tz
+mercury_ai/operations/m5_operational/runner.py: 187 [time.perf_counter     ] -::_analyze_one_isolated | "wall_ms": round((time.perf_counter() - t0) * 1000, 1),
+mercury_ai/operations/m5_operational/runner.py: 225 [datetime.now          ] M5OperationalRunner::_next_target_candle | now = datetime.now(timezone.utc)
+mercury_ai/operations/m5_operational/runner.py: 284 [isoformat             ] M5OperationalRunner::run_cycle | "target_candle": (target_candle or self._next_target_candle()).isoformat(),
+mercury_ai/operations/m5_operational/runner.py: 293 [time.perf_counter     ] M5OperationalRunner::run_cycle | cycle_start_wall = time.perf_counter()
+mercury_ai/operations/m5_operational/runner.py: 294 [datetime.now          ] M5OperationalRunner::run_cycle | cycle_start_iso = datetime.now(timezone.utc).isoformat()
+mercury_ai/operations/m5_operational/runner.py: 295 [isoformat             ] M5OperationalRunner::run_cycle | target_iso = target_candle.isoformat()
+mercury_ai/operations/m5_operational/runner.py: 382 [time.perf_counter     ] M5OperationalRunner::_refresh_deadlines | now_t = time.perf_counter()
+mercury_ai/operations/m5_operational/runner.py: 403 [time.perf_counter     ] M5OperationalRunner::run_cycle | now_wall = time.perf_counter()
+mercury_ai/operations/m5_operational/runner.py: 431 [time.perf_counter     ] M5OperationalRunner::run_cycle | now2 = time.perf_counter()
+mercury_ai/operations/m5_operational/runner.py: 457 [time.perf_counter     ] M5OperationalRunner::run_cycle | elapsed_ms = (time.perf_counter() - cycle_start_wall) * 1000
+mercury_ai/operations/m5_operational/runner.py: 637 [time.perf_counter     ] M5OperationalRunner::run_cycle | if time.perf_counter() > deadline_wall:
+mercury_ai/operations/m5_operational/runner.py: 647 [time.perf_counter     ] M5OperationalRunner::run_cycle | wall_ms = (time.perf_counter() - cycle_start_wall) * 1000
+mercury_ai/operations/m5_operational/runner.py: 686 [datetime.now          ] M5OperationalRunner::run_cycle | "cycle_end": datetime.now(timezone.utc).isoformat(),
+mercury_ai/operations/m5_operational/watchdog.py:   4 [import time           ] -::- | import time
+mercury_ai/operations/m5_operational/watchdog.py:  42 [time.monotonic        ] CycleWatchdog::__init__ | self._last_progress_t = time.monotonic()
+mercury_ai/operations/m5_operational/watchdog.py:  43 [time.monotonic        ] CycleWatchdog::__init__ | self._start_t = time.monotonic()
+mercury_ai/operations/m5_operational/watchdog.py:  57 [time.monotonic        ] CycleWatchdog::notify_progress | self._last_progress_t = time.monotonic()
+mercury_ai/operations/m5_operational/watchdog.py:  62 [time.monotonic        ] CycleWatchdog::_loop | now = time.monotonic()
+mercury_ai/operations/m5_operational/watchdog.py:  87 [time.monotonic        ] CycleWatchdog::start | self._start_t = time.monotonic()
+mercury_ai/operations/m5_sprint6/alerts.py:   7 [timezone              ] -::- | from datetime import datetime, timezone
+mercury_ai/operations/m5_sprint6/alerts.py:  44 [datetime.now          ] AlertSink::emit | timestamp=datetime.now(timezone.utc).isoformat(),
+mercury_ai/operations/m5_sprint6/deadline.py:  32 [timezone              ] -::- | from datetime import datetime, timezone, timedelta
+mercury_ai/operations/m5_sprint6/deadline.py:  48 [timedelta             ] -::next_candle_start_for | return floor_m5(_ensure_utc(target_candle)) + timedelta(minutes=5)
+mercury_ai/operations/m5_sprint6/live_session.py:  14 [timezone              ] -::- | from datetime import datetime, timezone, timedelta
+mercury_ai/operations/m5_sprint6/live_session.py:  19 [clock var             ] -::- | from mercury_ai.operations.m5_operational.clock import M5Clock
+mercury_ai/operations/m5_sprint6/live_session.py:  38 [datetime.fromisoformat] -::_parse_cycle_wall | base = datetime.fromisoformat(str(cs).replace("Z", "+00:00"))
+mercury_ai/operations/m5_sprint6/live_session.py:  42 [timedelta             ] -::_parse_cycle_wall | return base + timedelta(milliseconds=float(ms))
+mercury_ai/operations/m5_sprint6/live_session.py:  46 [datetime.fromisoformat] -::_parse_cycle_wall | return datetime.fromisoformat(str(ce).replace("Z", "+00:00"))
+mercury_ai/operations/m5_sprint6/live_session.py: 108 [datetime.now          ] LiveSession::run | self.start_wall = datetime.now(timezone.utc).isoformat()
+mercury_ai/operations/m5_sprint6/live_session.py: 112 [clock var             ] LiveSession::run | # target_candle incremental de 5m e no-overlap garantido. Prova live clock
+mercury_ai/operations/m5_sprint6/live_session.py: 114 [datetime.now          ] LiveSession::run | target_start = floor_m5(datetime.now(timezone.utc))
+mercury_ai/operations/m5_sprint6/live_session.py: 125 [datetime.fromisoformat] LiveSession::run | target_dt = datetime.fromisoformat(str(target_iso).replace("Z", "+00:00"))
+mercury_ai/operations/m5_sprint6/live_session.py: 127 [datetime.now          ] LiveSession::run | target_dt = floor_m5(datetime.now(timezone.utc))
+mercury_ai/operations/m5_sprint6/live_session.py: 132 [datetime.fromisoformat] LiveSession::run | cs_dt = datetime.fromisoformat(str(r.get("cycle_start")).replace("Z", "+00:00"))
+mercury_ai/operations/m5_sprint6/live_session.py: 134 [datetime.now          ] LiveSession::run | cs_dt = datetime.now(timezone.utc)
+mercury_ai/operations/m5_sprint6/live_session.py: 136 [datetime.fromisoformat] LiveSession::run | ce_dt = datetime.fromisoformat(str(r.get("cycle_end")).replace("Z", "+00:00")) if r.get("cycle_end") else None
+mercury_ai/operations/m5_sprint6/live_session.py: 145 [timedelta             ] LiveSession::run | decision_ready_dt = cs_dt + timedelta(milliseconds=float(first_fresh_ms))
+mercury_ai/operations/m5_sprint6/live_session.py: 182 [isoformat             ] LiveSession::run | enriched_cycle["target_candle_close"] = tcc.isoformat()
+mercury_ai/operations/m5_sprint6/live_session.py: 185 [timedelta             ] LiveSession::run | enriched_cycle["first_fresh_decision"] = (cs_dt + timedelta(milliseconds=float(first_fresh_ms))).isoformat() if first_fresh_ms is not None else None
+mercury_ai/operations/m5_sprint6/live_session.py: 186 [timedelta             ] LiveSession::run | enriched_cycle["first_top3"] = (cs_dt + timedelta(milliseconds=float(first_top3_ms))).isoformat() if first_top3_ms is not None else None
+mercury_ai/operations/m5_sprint6/live_session.py: 187 [isoformat             ] LiveSession::run | enriched_cycle["decision_ready"] = decision_ready_dt.isoformat() if decision_ready_dt else None
+mercury_ai/operations/m5_sprint6/live_session.py: 188 [isoformat             ] LiveSession::run | enriched_cycle["next_candle_start"] = ncs.isoformat()
+mercury_ai/operations/m5_sprint6/live_session.py: 192 [isoformat             ] LiveSession::run | enriched_cycle["cycle_complete"] = ce_dt.isoformat() if ce_dt else None
+mercury_ai/operations/m5_sprint6/live_session.py: 201 [isoformat             ] LiveSession::run | "target_candle_close": tcc.isoformat(),
+mercury_ai/operations/m5_sprint6/live_session.py: 202 [isoformat             ] LiveSession::run | "next_candle_start": ncs.isoformat(),
+mercury_ai/operations/m5_sprint6/live_session.py: 203 [isoformat             ] LiveSession::run | "decision_ready": decision_ready_dt.isoformat() if decision_ready_dt else None,
+mercury_ai/operations/m5_sprint6/live_session.py: 211 [datetime.now          ] LiveSession::run | self.end_wall = datetime.now(timezone.utc).isoformat()
+mercury_ai/operations/m5_sprint6/live_session.py: 222 [datetime.fromisoformat] LiveSession::run | datetime.fromisoformat(str(r["target_candle"]).replace("Z","+00:00")),
+mercury_ai/operations/m5_sprint6/live_session.py: 223 [datetime.fromisoformat] LiveSession::run | (datetime.fromisoformat(str(r["cycle_start"]).replace("Z","+00:00")) + timedelta(milliseconds=float(r["first_fresh_decision_ms"]))) if r.get("first_fresh_decision_ms") is not None else None
+mercury_ai/operations/m5_sprint6/live_session.py: 238 [datetime.fromisoformat] LiveSession::run | pt = datetime.fromisoformat(str(prev["target_candle"]).replace("Z","+00:00"))
+mercury_ai/operations/m5_sprint6/live_session.py: 239 [datetime.fromisoformat] LiveSession::run | ct2 = datetime.fromisoformat(str(cur["target_candle"]).replace("Z","+00:00"))
+mercury_ai/operations/m5_sprint61/__init__.py:   1 [clock var             ] -::- | """M5 Sprint 6.1 — LIVE CLOCK INTEGRITY / REAL-TIME CERTIFICATION."""
+mercury_ai/operations/m5_sprint61/live_clock_integrity.py:  26 [timezone              ] -::- | from datetime import datetime, timezone, timedelta
+mercury_ai/operations/m5_sprint61/live_clock_integrity.py:  83 [isoformat             ] -::_iso | return _ensure_utc(dt).isoformat()
+mercury_ai/operations/m5_sprint61/live_clock_integrity.py: 101 [timedelta             ] -::classify_cycle | next_start = target + timedelta(minutes=5)
+mercury_ai/operations/m5_sprint61/live_session61.py:  18 [timezone              ] -::- | from datetime import datetime, timezone, timedelta
+mercury_ai/operations/m5_sprint61/live_session61.py:  23 [clock var             ] -::- | from mercury_ai.operations.m5_operational.clock import M5Clock
+mercury_ai/operations/m5_sprint61/live_session61.py:  85 [datetime.now          ] Sprint61LiveSession::_wait_for_next_boundary | now = datetime.now(timezone.utc)
+mercury_ai/operations/m5_sprint61/live_session61.py:  90 [time.sleep            ] Sprint61LiveSession::_wait_for_next_boundary | time.sleep(0.05)
+mercury_ai/operations/m5_sprint61/live_session61.py:  91 [datetime.now          ] Sprint61LiveSession::_wait_for_next_boundary | return datetime.now(timezone.utc)
+mercury_ai/operations/m5_sprint61/live_session61.py:  95 [time.sleep            ] Sprint61LiveSession::_wait_for_next_boundary | time.sleep(chunk)
+mercury_ai/operations/m5_sprint61/live_session61.py:  96 [sleep(                ] Sprint61LiveSession::- | # loop recalcula nxt a partir do novo now (evita acumulo sleep(300) incorreto)
+mercury_ai/operations/m5_sprint61/live_session61.py:  99 [datetime.now          ] Sprint61LiveSession::run | self.start_wall = datetime.now(timezone.utc).isoformat()
+mercury_ai/operations/m5_sprint61/live_session61.py: 109 [datetime.now          ] Sprint61LiveSession::run | target_start = floor_m5(datetime.now(timezone.utc))
+mercury_ai/operations/m5_sprint61/live_session61.py: 116 [datetime.fromisoformat] Sprint61LiveSession::run | cs_dt = datetime.fromisoformat(str(r.get("cycle_start")).replace("Z", "+00:00"))
+mercury_ai/operations/m5_sprint61/live_session61.py: 118 [datetime.now          ] Sprint61LiveSession::run | cs_dt = datetime.now(timezone.utc)
+mercury_ai/operations/m5_sprint61/live_session61.py: 120 [datetime.fromisoformat] Sprint61LiveSession::run | target_dt = datetime.fromisoformat(str(r.get("target_candle")).replace("Z", "+00:00"))
+mercury_ai/operations/m5_sprint61/live_session61.py: 124 [timedelta             ] Sprint61LiveSession::run | decision_ready_dt = (cs_dt + timedelta(milliseconds=float(first_fresh_ms))) if first_fresh_ms is not None else None
+mercury_ai/operations/m5_sprint61/live_session61.py: 173 [datetime.now          ] Sprint61LiveSession::run | now_probe = datetime.now(timezone.utc)
+mercury_ai/operations/m5_sprint61/live_session61.py: 181 [time.sleep            ] Sprint61LiveSession::run | time.sleep(sleep_for)
+mercury_ai/operations/m5_sprint61/live_session61.py: 184 [datetime.now          ] Sprint61LiveSession::run | clock_now_at_start = datetime.now(timezone.utc)
+mercury_ai/operations/m5_sprint61/live_session61.py: 187 [clock var             ] Sprint61LiveSession::run | # mas se clock_now for exatamente na fronteira, floor==clock_now, ainda ok (target <= clock)
+mercury_ai/operations/m5_sprint61/live_session61.py: 193 [time.sleep            ] Sprint61LiveSession::run | time.sleep(wait_s)
+mercury_ai/operations/m5_sprint61/live_session61.py: 194 [datetime.now          ] Sprint61LiveSession::run | clock_now_at_start = datetime.now(timezone.utc)
+mercury_ai/operations/m5_sprint61/live_session61.py: 202 [datetime.fromisoformat] Sprint61LiveSession::run | cs_dt = datetime.fromisoformat(str(r.get("cycle_start")).replace("Z", "+00:00"))
+mercury_ai/operations/m5_sprint61/live_session61.py: 206 [timedelta             ] Sprint61LiveSession::run | decision_ready_dt = (cs_dt + timedelta(milliseconds=float(first_fresh_ms))) if first_fresh_ms is not None else None
+mercury_ai/operations/m5_sprint61/live_session61.py: 247 [datetime.now          ] Sprint61LiveSession::run | self.end_wall = datetime.now(timezone.utc).isoformat()
+mercury_ai/operations/m5_sprint61/live_session61.py: 255 [datetime.fromisoformat] Sprint61LiveSession::run | td = datetime.fromisoformat(str(ec["target_candle"]).replace("Z", "+00:00"))
+mercury_ai/operations/m5_sprint61/live_session61.py: 257 [datetime.now          ] Sprint61LiveSession::run | td = floor_m5(datetime.now(timezone.utc))
+mercury_ai/operations/m5_sprint61/live_session61.py: 259 [datetime.fromisoformat] Sprint61LiveSession::run | dr = datetime.fromisoformat(str(ec["decision_ready"]).replace("Z", "+00:00")) if ec.get("decision_ready") else None
+mercury_ai/operations/m5_sprint61/live_session61.py: 358 [clock var             ] Sprint61LiveSession::write_artifacts | lines.append(f"- Live clock certification: {s.get('live_clock_certification')}  pass_rate {s.get('next_candle_pass_rate')}")
+mercury_ai/operations/m5_sprint62/live_session62.py:   9 [import time           ] -::- | import time
+mercury_ai/operations/m5_sprint62/live_session62.py:  14 [timezone              ] -::- | from datetime import datetime, timezone, timedelta
+mercury_ai/operations/m5_sprint62/live_session62.py:  19 [clock var             ] -::- | from mercury_ai.operations.m5_operational.clock import M5Clock
+mercury_ai/operations/m5_sprint62/live_session62.py:  96 [datetime.now          ] Sprint62LiveSession::run | self.start_wall = datetime.now(timezone.utc).isoformat()
+mercury_ai/operations/m5_sprint62/live_session62.py: 102 [time.perf_counter     ] Sprint62LiveSession::run | session_start_perf = time.perf_counter()
+mercury_ai/operations/m5_sprint62/live_session62.py: 111 [datetime.now          ] Sprint62LiveSession::run | now_probe = datetime.now(timezone.utc)
+mercury_ai/operations/m5_sprint62/live_session62.py: 118 [time.sleep            ] Sprint62LiveSession::run | time.sleep(sleep_for)
+mercury_ai/operations/m5_sprint62/live_session62.py: 120 [datetime.now          ] Sprint62LiveSession::run | clock_now_at_start = datetime.now(timezone.utc)
+mercury_ai/operations/m5_sprint62/live_session62.py: 127 [isoformat             ] Sprint62LiveSession::run | self.alerts.emit("CLOCK_INTEGRITY_FAIL", "CRITICAL", f"cycle-{idx}", f"CLOCK_INTEGRITY_FAIL target {target_dt.isoformat()} > clock_now {clock_now_at_start.isoformat()} delta {delta:.3f}s")
+mercury_ai/operations/m5_sprint62/live_session62.py: 138 [time.sleep            ] Sprint62LiveSession::run | time.sleep(wait_s)
+mercury_ai/operations/m5_sprint62/live_session62.py: 139 [datetime.now          ] Sprint62LiveSession::run | clock_now_at_start = datetime.now(timezone.utc)
+mercury_ai/operations/m5_sprint62/live_session62.py: 156 [datetime.fromisoformat] Sprint62LiveSession::run | cs_dt = datetime.fromisoformat(str(r.get("cycle_start")).replace("Z", "+00:00"))
+mercury_ai/operations/m5_sprint62/live_session62.py: 160 [datetime.fromisoformat] Sprint62LiveSession::run | ce_dt = datetime.fromisoformat(str(r.get("cycle_end")).replace("Z", "+00:00")) if r.get("cycle_end") else None
+mercury_ai/operations/m5_sprint62/live_session62.py: 169 [timedelta             ] Sprint62LiveSession::run | decision_ready_dt = (cs_dt + timedelta(milliseconds=float(first_fresh_ms))) if first_fresh_ms is not None else None
+mercury_ai/operations/m5_sprint62/live_session62.py: 170 [timedelta             ] Sprint62LiveSession::run | first_fresh_dt = (cs_dt + timedelta(milliseconds=float(first_fresh_ms))) if first_fresh_ms is not None else None
+mercury_ai/operations/m5_sprint62/live_session62.py: 171 [timedelta             ] Sprint62LiveSession::run | first_top3_dt = (cs_dt + timedelta(milliseconds=float(first_top3_ms))) if first_top3_ms is not None else None
+mercury_ai/operations/m5_sprint62/live_session62.py: 174 [timedelta             ] Sprint62LiveSession::run | next_start_dt = target_dt + timedelta(minutes=5)
+mercury_ai/operations/m5_sprint62/live_session62.py: 196 [clock var             ] Sprint62LiveSession::run | self.alerts.emit("CLOCK_INTEGRITY_FAIL", "CRITICAL", cycle_id, f"target_is_future but PASS — integrity bug target {gate_rep.target_candle} clock {gate_rep.clock_now_at_cycle_start}")
+mercury_ai/operations/m5_sprint62/live_session62.py: 224 [isoformat             ] Sprint62LiveSession::run | "cycle_start": cycle_start_dt.isoformat() if cycle_start_dt else r.get("cycle_start"),
+mercury_ai/operations/m5_sprint62/live_session62.py: 225 [isoformat             ] Sprint62LiveSession::run | "first_fresh_decision": first_fresh_dt.isoformat() if first_fresh_dt else None,
+mercury_ai/operations/m5_sprint62/live_session62.py: 226 [isoformat             ] Sprint62LiveSession::run | "first_top3": first_top3_dt.isoformat() if first_top3_dt else None,
+mercury_ai/operations/m5_sprint62/live_session62.py: 229 [isoformat             ] Sprint62LiveSession::run | "cycle_complete": cycle_complete_dt.isoformat() if cycle_complete_dt else r.get("cycle_end"),
+mercury_ai/operations/m5_sprint62/live_session62.py: 247 [datetime.now          ] Sprint62LiveSession::run | self.end_wall = datetime.now(timezone.utc).isoformat()
+mercury_ai/operations/m5_sprint62/live_session62.py: 249 [time.perf_counter     ] Sprint62LiveSession::run | session_wall_s = time.perf_counter() - session_start_perf
+mercury_ai/operations/m5_sprint62/live_session62.py: 312 [clock var             ] Sprint62LiveSession::run | # All target <= clock check §3 §15
+mercury_ai/operations/m5_sprint62/live_session62.py: 481 [datetime.now          ] Sprint62LiveSession::write_artifacts | ts = datetime.now(timezone.utc).strftime("%Y%m%d%H%M%S")
+mercury_ai/operations/m5_sprint63/fault_harness.py:  20 [import time           ] -::- | import time
+mercury_ai/operations/m5_sprint63/fault_harness.py:  26 [timezone              ] -::- | from datetime import datetime, timezone, timedelta
+mercury_ai/operations/m5_sprint63/fault_harness.py:  56 [datetime.now          ] -::_now_iso | return datetime.now(timezone.utc).isoformat()
+mercury_ai/operations/m5_sprint63/fault_harness.py:  62 [datetime.fromisoformat] -::_make_incident | det = datetime.fromisoformat(detection_time.replace("Z", "+00:00"))
+mercury_ai/operations/m5_sprint63/fault_harness.py:  63 [datetime.fromisoformat] -::_make_incident | comp = datetime.fromisoformat(recovery_complete.replace("Z", "+00:00"))
+mercury_ai/operations/m5_sprint63/fault_harness.py: 102 [datetime.now          ] -::run_data_provider_failure | target = floor_m5(datetime.now(timezone.utc))
+mercury_ai/operations/m5_sprint63/fault_harness.py: 114 [isoformat             ] -::run_data_provider_failure | inc = _make_incident("DATA_PROVIDER_FAILURE", cid, target.isoformat(), target_sym,
+mercury_ai/operations/m5_sprint63/fault_harness.py: 146 [datetime.now          ] -::run_worker_crash | target = floor_m5(datetime.now(timezone.utc))
+mercury_ai/operations/m5_sprint63/fault_harness.py: 149 [time.perf_counter     ] -::run_worker_crash | t0 = time.perf_counter()
+mercury_ai/operations/m5_sprint63/fault_harness.py: 152 [time.perf_counter     ] -::run_worker_crash | recovery_time = time.perf_counter() - t0
+mercury_ai/operations/m5_sprint63/fault_harness.py: 160 [isoformat             ] -::run_worker_crash | inc = _make_incident("WORKER_CRASH", cid, target.isoformat(), target_sym,
+mercury_ai/operations/m5_sprint63/fault_harness.py: 191 [time.sleep            ] -::slow | time.sleep(0.6)
+mercury_ai/operations/m5_sprint63/fault_harness.py: 200 [datetime.now          ] -::run_timeout_test | target = floor_m5(datetime.now(timezone.utc))
+mercury_ai/operations/m5_sprint63/fault_harness.py: 207 [isoformat             ] -::run_timeout_test | inc = _make_incident("WORKER_TIMEOUT", cid, target.isoformat(), target_sym,
+mercury_ai/operations/m5_sprint63/fault_harness.py: 237 [datetime.now          ] -::run_per_asset_isolation | target = floor_m5(datetime.now(timezone.utc))
+mercury_ai/operations/m5_sprint63/fault_harness.py: 249 [isoformat             ] -::run_per_asset_isolation | inc = _make_incident("PER_ASSET_EXCEPTION", cid, target.isoformat(), failing_sym,
+mercury_ai/operations/m5_sprint63/fault_harness.py: 268 [datetime.now          ] -::run_queue_pressure | target = floor_m5(datetime.now(timezone.utc))
+mercury_ai/operations/m5_sprint63/fault_harness.py: 275 [isoformat             ] -::run_queue_pressure | inc = _make_incident("QUEUE_PRESSURE", cid, target.isoformat(), syms[0],
+mercury_ai/operations/m5_sprint63/fault_harness.py: 293 [time.monotonic        ] -::run_watchdog_stall | t0 = time.monotonic()
+mercury_ai/operations/m5_sprint63/fault_harness.py: 296 [time.sleep            ] -::run_watchdog_stall | time.sleep(stall_threshold_s + 0.25)
+mercury_ai/operations/m5_sprint63/fault_harness.py: 298 [time.sleep            ] -::run_watchdog_stall | time.sleep(0.15)
+mercury_ai/operations/m5_sprint63/fault_harness.py: 302 [time.monotonic        ] -::run_watchdog_stall | recovery_time = time.monotonic() - t0
+mercury_ai/operations/m5_sprint63/fault_harness.py: 305 [datetime.now          ] -::run_watchdog_stall | inc = _make_incident("WATCHDOG_STALL", cid, floor_m5(datetime.now(timezone.utc)).isoformat(), "WATCHDOG",
+mercury_ai/operations/m5_sprint63/fault_harness.py: 321 [datetime.now          ] -::run_graceful_shutdown | target = floor_m5(datetime.now(timezone.utc))
+mercury_ai/operations/m5_sprint63/fault_harness.py: 330 [time.sleep            ] -::run_graceful_shutdown | time.sleep(0.35)
+mercury_ai/operations/m5_sprint63/fault_harness.py: 339 [isoformat             ] -::run_graceful_shutdown | inc = _make_incident(f"GRACEFUL_{signal_name}", cid, target.isoformat(), signal_name,
+mercury_ai/operations/m5_sprint63/fault_harness.py: 354 [clock var             ] -::run_restart_integrity | from mercury_ai.operations.m5_operational.clock import M5Clock
+mercury_ai/operations/m5_sprint63/fault_harness.py: 356 [clock var             ] -::run_restart_integrity | clock = M5Clock(runner=runner, config=cfg)
+mercury_ai/operations/m5_sprint63/fault_harness.py: 358 [clock var             ] -::run_restart_integrity | r1 = clock.run_cycles_blocking(count=2)
+mercury_ai/operations/m5_sprint63/fault_harness.py: 362 [datetime.fromisoformat] -::run_restart_integrity | prev_dt = datetime.fromisoformat(str(previous_target).replace("Z", "+00:00"))
+mercury_ai/operations/m5_sprint63/fault_harness.py: 363 [clock var             ] -::run_restart_integrity | # Simulate restart: new runner/clock, should continue from next candle
+mercury_ai/operations/m5_sprint63/fault_harness.py: 364 [timedelta             ] -::run_restart_integrity | expected_next = floor_m5(prev_dt + timedelta(minutes=5))
+mercury_ai/operations/m5_sprint63/fault_harness.py: 372 [isoformat             ] -::run_restart_integrity | no_dup = previous_target != next_target and next_target == expected_next.isoformat()
+mercury_ai/operations/m5_sprint63/fault_harness.py: 375 [isoformat             ] -::run_restart_integrity | inc = _make_incident("RESTART_INTEGRITY", r2[0].get("cycle_id", "restart") if r2 else "restart", expected_next.isoformat(), "RESTART",
+mercury_ai/operations/m5_sprint63/live_session63.py:  10 [import time           ] -::- | import time, uuid, json
+mercury_ai/operations/m5_sprint63/live_session63.py:  13 [timezone              ] -::- | from datetime import datetime, timezone, timedelta
+mercury_ai/operations/m5_sprint63/live_session63.py:  18 [clock var             ] -::- | from mercury_ai.operations.m5_operational.clock import M5Clock
+mercury_ai/operations/m5_sprint63/live_session63.py:  83 [datetime.now          ] Sprint63LiveSession::run | self.start_wall = datetime.now(timezone.utc).isoformat()
+mercury_ai/operations/m5_sprint63/live_session63.py:  89 [time.perf_counter     ] Sprint63LiveSession::run | session_start_perf = time.perf_counter()
+mercury_ai/operations/m5_sprint63/live_session63.py:  95 [datetime.now          ] Sprint63LiveSession::run | now_probe = datetime.now(timezone.utc)
+mercury_ai/operations/m5_sprint63/live_session63.py: 102 [time.sleep            ] Sprint63LiveSession::run | time.sleep(sleep_for)
+mercury_ai/operations/m5_sprint63/live_session63.py: 104 [datetime.now          ] Sprint63LiveSession::run | clock_now_at_start = datetime.now(timezone.utc)
+mercury_ai/operations/m5_sprint63/live_session63.py: 109 [isoformat             ] Sprint63LiveSession::run | self.alerts.emit("CLOCK_INTEGRITY_FAIL", "CRITICAL", f"cycle-{idx}", f"CLOCK_INTEGRITY_FAIL target {target_dt.isoformat()} > clock_now {clock_now_at_start.isoformat()} delta {delta:.3f}s")
+mercury_ai/operations/m5_sprint63/live_session63.py: 116 [time.sleep            ] Sprint63LiveSession::run | time.sleep(wait_s)
+mercury_ai/operations/m5_sprint63/live_session63.py: 117 [datetime.now          ] Sprint63LiveSession::run | clock_now_at_start = datetime.now(timezone.utc)
+mercury_ai/operations/m5_sprint63/live_session63.py: 129 [datetime.fromisoformat] Sprint63LiveSession::run | cs_dt = datetime.fromisoformat(str(r.get("cycle_start")).replace("Z", "+00:00"))
+mercury_ai/operations/m5_sprint63/live_session63.py: 133 [timedelta             ] Sprint63LiveSession::run | decision_ready_dt = (cs_dt + timedelta(milliseconds=float(first_fresh_ms))) if first_fresh_ms is not None else None
+mercury_ai/operations/m5_sprint63/live_session63.py: 134 [timedelta             ] Sprint63LiveSession::run | first_fresh_dt = (cs_dt + timedelta(milliseconds=float(first_fresh_ms))) if first_fresh_ms is not None else None
+mercury_ai/operations/m5_sprint63/live_session63.py: 135 [timedelta             ] Sprint63LiveSession::run | first_top3_dt = (cs_dt + timedelta(milliseconds=float(r.get("first_top3_ms")))) if r.get("first_top3_ms") is not None else None
+mercury_ai/operations/m5_sprint63/live_session63.py: 137 [datetime.fromisoformat] Sprint63LiveSession::run | ce_dt = datetime.fromisoformat(str(r.get("cycle_end")).replace("Z", "+00:00")) if r.get("cycle_end") else None
+mercury_ai/operations/m5_sprint63/live_session63.py: 141 [timedelta             ] Sprint63LiveSession::run | next_start_dt = target_dt + timedelta(minutes=5)
+mercury_ai/operations/m5_sprint63/live_session63.py: 155 [clock var             ] Sprint63LiveSession::run | self.alerts.emit("CLOCK_INTEGRITY_FAIL", "CRITICAL", cycle_id, f"target_is_future but PASS — integrity bug target {gate_rep.target_candle} clock {gate_rep.clock_now_at_cycle_start}")
+mercury_ai/operations/m5_sprint63/live_session63.py: 176 [isoformat             ] Sprint63LiveSession::run | "cycle_start": cycle_start_dt.isoformat() if cycle_start_dt else r.get("cycle_start"),
+mercury_ai/operations/m5_sprint63/live_session63.py: 177 [isoformat             ] Sprint63LiveSession::run | "first_fresh_decision": first_fresh_dt.isoformat() if first_fresh_dt else None,
+mercury_ai/operations/m5_sprint63/live_session63.py: 178 [isoformat             ] Sprint63LiveSession::run | "first_top3": first_top3_dt.isoformat() if first_top3_dt else None,
+mercury_ai/operations/m5_sprint63/live_session63.py: 181 [isoformat             ] Sprint63LiveSession::run | "cycle_complete": ce_dt.isoformat() if ce_dt else r.get("cycle_end"),
+mercury_ai/operations/m5_sprint63/live_session63.py: 196 [datetime.now          ] Sprint63LiveSession::run | self.end_wall = datetime.now(timezone.utc).isoformat()
+mercury_ai/operations/m5_sprint63/live_session63.py: 198 [time.perf_counter     ] Sprint63LiveSession::run | session_wall_s = time.perf_counter() - session_start_perf
+mercury_ai/operations/m5_sprint64/artifact.py:   8 [timezone              ] -::- | from datetime import datetime, timezone
+mercury_ai/operations/m5_sprint64/artifact.py:  23 [datetime.now          ] -::_now_iso | return datetime.now(timezone.utc).isoformat()
+mercury_ai/operations/m5_sprint64/audit.py:   8 [timezone              ] -::- | from datetime import datetime, timezone
+mercury_ai/operations/m5_sprint64/audit.py:  17 [datetime.now          ] -::_now_iso | return datetime.now(timezone.utc).isoformat()
+mercury_ai/operations/m5_sprint64/audit.py: 112 [timedelta             ] AuditRecord::from_cycle_report | from datetime import timedelta
+mercury_ai/operations/m5_sprint64/audit.py: 113 [datetime.fromisoformat] AuditRecord::from_cycle_report | tdt = datetime.fromisoformat(str(target).replace("Z", "+00:00")) if target else None
+mercury_ai/operations/m5_sprint64/audit.py: 114 [timedelta             ] AuditRecord::from_cycle_report | next_start = (tdt + timedelta(minutes=5)).isoformat() if tdt else None
+mercury_ai/operations/m5_sprint64/events.py:   5 [timezone              ] -::- | from datetime import datetime, timezone
+mercury_ai/operations/m5_sprint64/events.py:  74 [datetime.now          ] ObservabilityEvent::new | timestamp=datetime.now(timezone.utc).isoformat(),
+mercury_ai/operations/m5_sprint64/live_session64.py:  10 [import time           ] -::- | import time, uuid, json, hashlib, tempfile, os
+mercury_ai/operations/m5_sprint64/live_session64.py:  13 [timezone              ] -::- | from datetime import datetime, timezone, timedelta
+mercury_ai/operations/m5_sprint64/live_session64.py: 104 [datetime.now          ] Sprint64LiveSession::run | self.start_wall = datetime.now(timezone.utc).isoformat()
+mercury_ai/operations/m5_sprint64/live_session64.py: 116 [time.perf_counter     ] Sprint64LiveSession::run | session_start_perf = time.perf_counter()
+mercury_ai/operations/m5_sprint64/live_session64.py: 122 [datetime.now          ] Sprint64LiveSession::run | now_probe = datetime.now(timezone.utc)
+mercury_ai/operations/m5_sprint64/live_session64.py: 129 [time.sleep            ] Sprint64LiveSession::run | time.sleep(sleep_for)
+mercury_ai/operations/m5_sprint64/live_session64.py: 131 [datetime.now          ] Sprint64LiveSession::run | clock_now_at_start = datetime.now(timezone.utc)
+mercury_ai/operations/m5_sprint64/live_session64.py: 136 [isoformat             ] Sprint64LiveSession::run | self.alerts.emit("CLOCK_INTEGRITY_FAIL", "CRITICAL", f"cycle-{idx}", f"CLOCK_INTEGRITY_FAIL target {target_dt.isoformat()} > clock_now {clock_now_at_start.isoformat()} delta {delta:.3f}s")
+mercury_ai/operations/m5_sprint64/live_session64.py: 143 [time.sleep            ] Sprint64LiveSession::run | time.sleep(wait_s)
+mercury_ai/operations/m5_sprint64/live_session64.py: 144 [datetime.now          ] Sprint64LiveSession::run | clock_now_at_start = datetime.now(timezone.utc)
+mercury_ai/operations/m5_sprint64/live_session64.py: 149 [isoformat             ] Sprint64LiveSession::run | self.event_stream.emit(ObservabilityEvent.new("CYCLE_START", self.session_id, cycle_id, target_dt.isoformat()))
+mercury_ai/operations/m5_sprint64/live_session64.py: 150 [isoformat             ] Sprint64LiveSession::run | self.event_stream.emit(ObservabilityEvent.new("TARGET_SELECTED", self.session_id, cycle_id, target_dt.isoformat()))
+mercury_ai/operations/m5_sprint64/live_session64.py: 151 [isoformat             ] Sprint64LiveSession::run | self.event_stream.emit(ObservabilityEvent.new("DATA_START", self.session_id, cycle_id, target_dt.isoformat()))
+mercury_ai/operations/m5_sprint64/live_session64.py: 152 [isoformat             ] Sprint64LiveSession::run | clock_start_iso = clock_now_at_start.isoformat()
+mercury_ai/operations/m5_sprint64/live_session64.py: 161 [isoformat             ] Sprint64LiveSession::run | self.event_stream.emit(ObservabilityEvent.new("DATA_TIMEOUT", self.session_id, cycle_id, target_dt.isoformat(), asset=sym))
+mercury_ai/operations/m5_sprint64/live_session64.py: 163 [isoformat             ] Sprint64LiveSession::run | self.event_stream.emit(ObservabilityEvent.new("DATA_UNAVAILABLE", self.session_id, cycle_id, target_dt.isoformat(), asset=sym))
+mercury_ai/operations/m5_sprint64/live_session64.py: 165 [isoformat             ] Sprint64LiveSession::run | self.event_stream.emit(ObservabilityEvent.new("DATA_ERROR", self.session_id, cycle_id, target_dt.isoformat(), asset=sym))
+mercury_ai/operations/m5_sprint64/live_session64.py: 167 [isoformat             ] Sprint64LiveSession::run | self.event_stream.emit(ObservabilityEvent.new("DATA_COMPLETE", self.session_id, cycle_id, target_dt.isoformat(), asset=sym))
+mercury_ai/operations/m5_sprint64/live_session64.py: 169 [isoformat             ] Sprint64LiveSession::run | self.event_stream.emit(ObservabilityEvent.new("WORKER_COMPLETE", self.session_id, cycle_id, target_dt.isoformat(), asset=sym, worker_id=rec.get("worker_id") or "worker"))
+mercury_ai/operations/m5_sprint64/live_session64.py: 171 [isoformat             ] Sprint64LiveSession::run | self.event_stream.emit(ObservabilityEvent.new("QUEUE_PRESSURE", self.session_id, cycle_id, target_dt.isoformat(), details={"queue_max_depth": r.get("queue_max_depth"), "queue_maxsize": r.get("queue_maxsize")}))
+mercury_ai/operations/m5_sprint64/live_session64.py: 175 [isoformat             ] Sprint64LiveSession::run | self.event_stream.emit(ObservabilityEvent.new(et, self.session_id, cycle_id, target_dt.isoformat(), details=wd))
+mercury_ai/operations/m5_sprint64/live_session64.py: 176 [isoformat             ] Sprint64LiveSession::run | self.event_stream.emit(ObservabilityEvent.new("ANALYSIS_COMPLETE", self.session_id, cycle_id, target_dt.isoformat()))
+mercury_ai/operations/m5_sprint64/live_session64.py: 177 [isoformat             ] Sprint64LiveSession::run | self.event_stream.emit(ObservabilityEvent.new("RANKING_COMPLETE", self.session_id, cycle_id, target_dt.isoformat()))
+mercury_ai/operations/m5_sprint64/live_session64.py: 179 [datetime.fromisoformat] Sprint64LiveSession::run | cs_dt = datetime.fromisoformat(str(r.get("cycle_start")).replace("Z", "+00:00"))
+mercury_ai/operations/m5_sprint64/live_session64.py: 183 [datetime.fromisoformat] Sprint64LiveSession::run | ce_dt = datetime.fromisoformat(str(r.get("cycle_end")).replace("Z", "+00:00")) if r.get("cycle_end") else None
+mercury_ai/operations/m5_sprint64/live_session64.py: 187 [timedelta             ] Sprint64LiveSession::run | decision_ready_dt = (cs_dt + timedelta(milliseconds=float(first_fresh_ms))) if first_fresh_ms is not None else None
+mercury_ai/operations/m5_sprint64/live_session64.py: 188 [isoformat             ] Sprint64LiveSession::run | self.event_stream.emit(ObservabilityEvent.new("DECISION_READY", self.session_id, cycle_id, target_dt.isoformat(), details={"decision_ready": decision_ready_dt.isoformat() if decision_ready_dt else None}))
+mercury_ai/operations/m5_sprint64/live_session64.py: 189 [isoformat             ] Sprint64LiveSession::run | self.event_stream.emit(ObservabilityEvent.new("DECISION_EMITTED", self.session_id, cycle_id, target_dt.isoformat(), details={"decision_ready": decision_ready_dt.isoformat() if decision_ready_dt else None}))
+mercury_ai/operations/m5_sprint64/live_session64.py: 203 [isoformat             ] Sprint64LiveSession::run | "cycle_start": cs_dt.isoformat() if cs_dt else r.get("cycle_start"),
+mercury_ai/operations/m5_sprint64/live_session64.py: 204 [timedelta             ] Sprint64LiveSession::run | "first_fresh_decision": (cs_dt + timedelta(milliseconds=float(first_fresh_ms))).isoformat() if first_fresh_ms is not None else None,
+mercury_ai/operations/m5_sprint64/live_session64.py: 207 [isoformat             ] Sprint64LiveSession::run | "cycle_complete": ce_dt.isoformat() if ce_dt else r.get("cycle_end"),
+mercury_ai/operations/m5_sprint64/live_session64.py: 220 [time.perf_counter     ] Sprint64LiveSession::run | t0 = time.perf_counter()
+mercury_ai/operations/m5_sprint64/live_session64.py: 222 [time.perf_counter     ] Sprint64LiveSession::run | t1 = time.perf_counter()
+mercury_ai/operations/m5_sprint64/live_session64.py: 225 [isoformat             ] Sprint64LiveSession::run | self.event_stream.emit(ObservabilityEvent.new("AUDIT_COLLISION", self.session_id, cycle_id, target_dt.isoformat(), details=wr))
+mercury_ai/operations/m5_sprint64/live_session64.py: 230 [isoformat             ] Sprint64LiveSession::run | self.event_stream.emit(ObservabilityEvent.new("ARTIFACT_WRITTEN", self.session_id, cycle_id, target_dt.isoformat(), details={"artifact": f"cycle_audit/{cycle_id}.json"}))
+mercury_ai/operations/m5_sprint64/live_session64.py: 233 [datetime.now          ] Sprint64LiveSession::run | self.end_wall = datetime.now(timezone.utc).isoformat()
+mercury_ai/operations/m5_sprint64/live_session64.py: 255 [clock var             ] Sprint64LiveSession::run | # aggregate live clock
+mercury_ai/operations/m5_sprint64/live_session64.py: 278 [time.perf_counter     ] Sprint64LiveSession::run | t0 = time.perf_counter()
+mercury_ai/operations/m5_sprint64/live_session64.py: 280 [time.perf_counter     ] Sprint64LiveSession::run | t1 = time.perf_counter()
+mercury_ai/operations/m5_sprint64/live_session64.py: 294 [time.perf_counter     ] Sprint64LiveSession::run | "session_wall_s": time.perf_counter() - session_start_perf,
+mercury_ai/providers/future_tradingview_provider.py:  20 [import time           ] -::- | import time
+mercury_ai/providers/future_tradingview_provider.py:  79 [time.monotonic        ] _CacheEntry::__init__ | self.expires_at = time.monotonic() + ttl_seconds
+mercury_ai/providers/future_tradingview_provider.py:  82 [time.monotonic        ] _CacheEntry::is_valid | return time.monotonic() < self.expires_at
+mercury_ai/providers/future_tradingview_provider.py: 231 [time.sleep            ] FutureTradingViewProvider::_fetch_with_retry | time.sleep(wait)
+mercury_ai/providers/market_provider.py:   3 [import time           ] -::- | import time
+mercury_ai/providers/market_provider.py: 195 [time.time             ] MercuryDataProvider::get_candles | start = time.time()
+mercury_ai/providers/market_provider.py: 199 [time.time             ] MercuryDataProvider::get_candles | elapsed = time.time() - start
+mercury_ai/providers/market_provider.py: 217 [time.sleep            ] MercuryDataProvider::get_candles | time.sleep(0.5)
+mercury_ai/providers/market_provider.py: 225 [time.sleep            ] MercuryDataProvider::get_candles | time.sleep(0.5)
+mercury_ai/providers/yahoo_finance_provider.py:   2 [import time           ] -::- | import time
+mercury_ai/providers/yahoo_finance_provider.py:   4 [timedelta             ] -::- | from datetime import datetime, timedelta
+mercury_ai/providers/yahoo_finance_provider.py:  30 [time.monotonic        ] _CacheEntry::__init__ | self.expires_at = time.monotonic() + ttl_seconds
+mercury_ai/providers/yahoo_finance_provider.py:  33 [time.monotonic        ] _CacheEntry::is_valid | return time.monotonic() < self.expires_at
+mercury_ai/providers/yahoo_finance_provider.py: 114 [time.sleep            ] YahooFinanceProvider::_fetch_with_retry | time.sleep(wait)
+mercury_ai/sessions/market_sessions.py:   1 [import datetime       ] -::- | from datetime import datetime
+mercury_ai/sessions/market_sessions.py:   9 [datetime.utcnow       ] MarketSessions::get_current_session | hour = datetime.utcnow().hour
+mercury_ai/sessions/market_sessions.py:  27 [datetime.utcnow       ] MarketSessions::is_high_liquidity | hour = datetime.utcnow().hour
+mercury_ai/sessions/tests/test_market_sessions.py:   1 [market_sessions       ] -::- | from mercury_ai.sessions.market_sessions import MarketSessions
+mercury_ai/utils/atomic_io.py:  20 [import time           ] -::- | import time
+mercury_ai/utils/atomic_io.py: 161 [time.sleep            ] -::atomic_json_write | time.sleep(backoff_base * (2 ** attempt))
+mercury_ai/utils/deterministic_clock.py:   2 [timezone              ] -::- | from datetime import datetime, timezone
+mercury_ai/utils/deterministic_clock.py:   6 [DeterministicClock    ] DeterministicClock::- | class DeterministicClock:
+mercury_ai/utils/deterministic_clock.py:  51 [datetime.now          ] DeterministicClock::utcnow | return datetime.now(timezone.utc).replace(tzinfo=None)
+mercury_ai/utils/performance_collector.py:   1 [import time           ] -::- | import time
+mercury_ai/utils/performance_collector.py:  37 [time.perf_counter     ] PerformanceCollector::stage | builder.start_time = time.perf_counter()
+mercury_ai/utils/performance_collector.py:  42 [time.perf_counter     ] PerformanceCollector::stage | builder.end_time = time.perf_counter()
+mercury_ai/utils/report_generator.py:   5 [import datetime       ] -::- | import datetime
+mercury_ai/utils/report_generator.py:  16 [datetime.now          ] BenchmarkReportGenerator::__init__ | "timestamp": datetime.datetime.now().isoformat()
+mercury_ai/utils/stress_tester.py:   1 [import time           ] -::- | import time
+mercury_ai/utils/stress_tester.py:  30 [time.perf_counter     ] StressTester::run | start_time = time.perf_counter()
+mercury_ai/utils/stress_tester.py:  38 [time.perf_counter     ] StressTester::run | end_time = time.perf_counter()

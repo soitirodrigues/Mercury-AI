@@ -1,0 +1,36 @@
+{
+  "generated_at": "2026-09-03T03:09:33.937903+00:00",
+  "gates": [
+    {
+      "gate": "top3_scanner",
+      "pass": true,
+      "exit": 0
+    },
+    {
+      "gate": "top3_determinism",
+      "pass": true,
+      "exit": 0
+    },
+    {
+      "gate": "pytest_m5_incremental",
+      "pass": true,
+      "exit": 0
+    },
+    {
+      "gate": "pytest_m5_ranking",
+      "pass": false,
+      "exit": 2
+    },
+    {
+      "gate": "FRESHNESS_GATE",
+      "pass": true,
+      "exit": 0
+    },
+    {
+      "gate": "pytest_decision",
+      "pass": false,
+      "exit": 2
+    }
+  ],
+  "overall": "FAIL"
+}

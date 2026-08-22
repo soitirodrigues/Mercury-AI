@@ -33,27 +33,36 @@ class ReplayCache:
         self._hits = 0
         self._misses = 0
 
-    def get(self, symbol: str, index: int) -> Optional[Any]:
-        """Recupera um resultado do cache. Retorna None se não encontrado."""
-        key = (symbol, index)
+    def get(self, symbol: str, index: int, run_id: str = "") -> Optional[Any]:
+        """Recupera um resultado do cache. Retorna None se não encontrado.
+
+        Args:
+            symbol: Símbolo do ativo.
+            index: Índice do candle.
+            run_id: Identificador de execução (S7.1 RISK-002). Quando
+                fornecido, a chave passa a ser (symbol, index, run_id),
+                evitando hit falso entre datasets diferentes. Quando vazio
+                (compatibilidade legada), usa (symbol, index).
+        """
+        key = (symbol, index, run_id) if run_id else (symbol, index)
         with self._lock:
             if key in self._cache:
-                self._cache.move_to_end(key)
+                self._cache.move_to_end(key)  # type: ignore[arg-type]
                 self._hits += 1
-                return self._cache[key]
+                return self._cache[key]  # type: ignore[index]
             self._misses += 1
             return None
 
-    def put(self, symbol: str, index: int, value: Any) -> None:
+    def put(self, symbol: str, index: int, value: Any, run_id: str = "") -> None:
         """Armazena um resultado no cache com evicção LRU."""
-        key = (symbol, index)
+        key = (symbol, index, run_id) if run_id else (symbol, index)
         with self._lock:
             if key in self._cache:
-                self._cache.move_to_end(key)
+                self._cache.move_to_end(key)  # type: ignore[arg-type]
             else:
                 if len(self._cache) >= self._maxsize:
                     self._cache.popitem(last=False)
-            self._cache[key] = value
+            self._cache[key] = value  # type: ignore[index]
 
     def clear(self) -> None:
         """Limpa o cache completamente."""
@@ -91,6 +100,6 @@ class ReplayCache:
     def __len__(self) -> int:
         return self.size
 
-    def __contains__(self, key: Tuple[str, int]) -> bool:
+    def __contains__(self, key: Tuple[str, int]) -> bool:  # type: ignore[type-arg]
         with self._lock:
-            return key in self._cache
+            return key in self._cache  # type: ignore[operator]

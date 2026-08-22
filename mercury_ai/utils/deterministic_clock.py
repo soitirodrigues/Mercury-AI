@@ -78,4 +78,12 @@ class DeterministicClock:
 
         Se state for None, o relógio volta ao comportamento normal (real).
         """
-        cls._set_current_time(state)
+        if state is None:
+            cls.reset()
+        else:
+            cls._set_current_time(state)
+
+    @classmethod
+    def is_frozen(cls) -> bool:
+        """Retorna True se a thread corrente está com clock congelado (replay)."""
+        return cls._get_current_time() is not None

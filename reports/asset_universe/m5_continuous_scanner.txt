@@ -1,0 +1,29 @@
+M5 CONTINUOUS SCANNER — SPRINT 2 REPORT
+Generated: 2026-09-02T15:22:46.609552+00:00
+Universe: 12  Cycles: 2/2  Workers: 1  No-wait: True
+Overall duration: 581.92s
+
+CYCLE 1: candle=2026-09-02T15:10:00+00:00 duration=285.182s queue P1=0 P2=12 P3=0
+  fresh=12 stale=0 unavailable=0 errors=0
+  time_to_first=27.854s (AUDUSD=X)  time_to_partial=84.987s  time_to_complete=285.182s  status=TOP3_COMPLETE
+    Top1: EURAUD=X SELL score=142.806 audit=31a2e4990b
+    Top2: EURGBP=X BUY score=140.915 audit=aeb104db6f
+    Top3: EURCHF=X BUY score=140.844 audit=2cce82a147
+
+CYCLE 2: candle=2026-09-02T15:15:00+00:00 duration=296.234s queue P1=12 P2=0 P3=0
+  fresh=12 stale=0 unavailable=0 errors=0
+  time_to_first=21.917s (AUDUSD=X)  time_to_partial=70.267s  time_to_complete=296.234s  status=TOP3_COMPLETE
+    Top1: EURGBP=X BUY score=148.223 audit=2e8f2657ef
+    Top2: USDCHF=X BUY score=148.0117 audit=756d9a7d63
+    Top3: USDJPY=X SELL score=147.8996 audit=f0346a2a05
+
+SUMMARY: fresh=24 stale=0 unavailable=0 errors=0
+CACHE: HIT=24 MISS=12 STALE=12 REFRESH=24
+TIMING last cycle: first=21.917s partial=70.267s complete=296.234s
+TOP3 status: TOP3_COMPLETE eligible=3
+
+MTF SAFE_INCREMENTAL (4): MTFConsensus aggregation (_build_consensus), Prefixo engine_name 'TF - name' + timeframe tagging, DataNormalizer.normalize(df)...
+MTF REQUIRES_FULL_RECALC (7): MarketDataService.get_data(TF, period=1mo) — fetch, IndicatorEngine.calculate(df) por TF (EMA 9/21/50,...
+MTF UNKNOWN (3): TrendAnalyzer.analyze(market) por TF, LiquidityEngine.analyze(df, swings, profile) por T...
+
+CONSTRAINTS: DecisionResolverEngine / DecisionResult / ranking / DataQuality / trade_allowed — TODOS PRESERVADOS

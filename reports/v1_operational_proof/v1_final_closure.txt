@@ -1,0 +1,136 @@
+MERCURY-AI V1
+FINAL CLOSURE PROOF
+
+==================================================
+
+CONFIGURED ASSETS: 3
+TESTED ASSETS: 3
+UNTESTED ASSETS: 0
+
+BUY REAL: PASS
+SELL REAL: PASS
+WAIT LEGITIMATE: PASS
+
+RESOLVER MATRIX: PASS
+DECISION CONSISTENCY: PASS
+POST-RESOLVER INTEGRITY: PASS
+EXECUTION ERRORS: PASS
+
+==================================================
+
+FINAL VERDICT:
+
+V1_CLOSED
+
+==================================================
+
+ASSET TABLE (Asset | Executed | Decision | Resolver | Consistent | Error)
+BTC-USD | true | SELL | SELL | True | -
+ETH-USD | true | BUY | BUY | True | -
+GC=F | true | WAIT | WAIT | True | -
+
+==================================================
+
+EVIDENCE SUMMARY:
+  BUY: 1 evidence(s)
+    - LIVE_REAL ETH-USD BUY audit=C5679F54C762 ts=2026-09-01T20:33:41.402988
+  SELL: 1 evidence(s)
+    - LIVE_REAL BTC-USD SELL audit=AA31A5A5075B ts=2026-09-01T20:33:16.131061
+  WAIT: 1 evidence(s)
+    - DETERMINISTIC BTC-USD WAIT audit=DATA_PROVIDE ts=2026-09-01T20:33:43.331715
+
+PER-ASSET RESULTS (§18):
+
+Asset: BTC-USD
+  Timestamp: 2026-09-01T20:33:16.131061
+  Timeframe: M5
+  Execution OK: true
+  Final Decision: SELL
+  Resolver Decision: SELL
+  Decision Consistency: True
+  Dominant Direction: SELL
+  Opportunity Grade: C
+  Confluence Score: 100.0
+  Confidence Score: 62.90383666666668
+  Institutional Strength: 587.2389863421496
+  Buy Probability: 0.0
+  Sell Probability: 58.31
+  Wait Probability: 41.69
+  Trade Filter Allowed: True
+  Trade Filter Quality: 80.0
+  Validation Status: AA31A5A5075BAFAE83C9D415A866FF91ABA4E31FA7541AD1B4ABA8E1B7B1FFEA
+  Validation Warnings: []
+  Resolver Decision: SELL
+  Decision Result Decision: SELL
+  Post-Resolver Integrity: True
+  Wait Reason: N/A
+
+Asset: ETH-USD
+  Timestamp: 2026-09-01T20:33:41.402988
+  Timeframe: M5
+  Execution OK: true
+  Final Decision: BUY
+  Resolver Decision: BUY
+  Decision Consistency: True
+  Dominant Direction: BUY
+  Opportunity Grade: B
+  Confluence Score: 100.0
+  Confidence Score: 70.01623407407408
+  Institutional Strength: 600.0907685916078
+  Buy Probability: 60.69
+  Sell Probability: 0.0
+  Wait Probability: 39.31
+  Trade Filter Allowed: True
+  Trade Filter Quality: 80.0
+  Validation Status: C5679F54C7626995DD9EC8E3901D752216E97CADDF93D75253E1CB60CAB5442A
+  Validation Warnings: []
+  Resolver Decision: BUY
+  Decision Result Decision: BUY
+  Post-Resolver Integrity: True
+  Wait Reason: N/A
+
+Asset: GC=F
+  Timestamp: 2026-09-01T20:33:43.288849
+  Timeframe: M5
+  Execution OK: true
+  Final Decision: WAIT
+  Resolver Decision: WAIT
+  Decision Consistency: True
+  Dominant Direction: WAIT
+  Opportunity Grade: N/A
+  Confluence Score: 0.0
+  Confidence Score: 0.0
+  Institutional Strength: 0.0
+  Buy Probability: 0.0
+  Sell Probability: 0.0
+  Wait Probability: 100.0
+  Trade Filter Allowed: True
+  Trade Filter Quality: 0.0
+  Validation Status: DATA_QUALITY_FAIL
+  Validation Warnings: []
+  Resolver Decision: WAIT
+  Decision Result Decision: WAIT
+  Post-Resolver Integrity: True
+  Wait Reason: DATA_QUALITY_FAIL
+
+WAIT DETERMINISTIC PROOF:
+  Scenario: DATA_PROVIDER_UNAVAILABLE
+  Asset: BTC-USD
+  Final Decision: WAIT
+  Wait Probability: 100.0
+  Buy Probability: 0.0
+  Sell Probability: 0.0
+  Probability Sum: 100.0
+  Audit ID: DATA_PROVIDER_UNAVAILABLE
+  Wait Reason: DATA_PROVIDER_UNAVAILABLE
+  Evidence Type: DETERMINISTIC
+
+RESOLVER MATRIX DETAIL:
+  A: BUY + Grade D + valid + no conflict expected=BUY actual=BUY PASS rule=5
+  B: SELL + Grade D + valid + no conflict expected=SELL actual=SELL PASS rule=6
+  C: BUY + Grade C + conflict expected=WAIT actual=WAIT PASS rule=4
+  D: SELL + Grade C + conflict expected=WAIT actual=WAIT PASS rule=4
+  E: BUY + invalid expected=WAIT actual=WAIT PASS rule=1
+  F: NEUTRAL + valid expected=WAIT actual=WAIT PASS rule=2
+  G: BUY + low confluence expected=WAIT actual=WAIT PASS rule=3
+  H: SELL + low confluence expected=WAIT actual=WAIT PASS rule=3

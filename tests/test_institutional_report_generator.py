@@ -1,5 +1,8 @@
+import pytest
+
 from mercury_ai.analysis.institutional_report_generator import InstitutionalReportGenerator
 
+@pytest.mark.slow
 def test_institutional_report_generator():
     generator = InstitutionalReportGenerator()
     report = generator.generate()

@@ -1,5 +1,8 @@
+import pytest
+
 from mercury_ai.analysis.performance_analytics import PerformanceAnalytics
 
+@pytest.mark.slow
 def test_performance_analytics():
     analytics = PerformanceAnalytics()
     report = analytics.analyze_performance()

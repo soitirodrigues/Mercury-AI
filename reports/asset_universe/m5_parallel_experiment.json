@@ -1,0 +1,29 @@
+{
+  "generated_at": "2026-09-02T06:14:32.146297+00:00",
+  "sample_size": 12,
+  "sequential_seconds": 237.33,
+  "parallel_seconds": 183.67,
+  "speedup": 1.29,
+  "sequential_avg_per_symbol_s": 19.78,
+  "parallel_avg_per_symbol_s": 15.31,
+  "mismatches": [
+    "EURUSD=X",
+    "GBPUSD=X",
+    "USDJPY=X",
+    "USDCHF=X",
+    "AUDUSD=X",
+    "NZDUSD=X",
+    "EURGBP=X",
+    "EURJPY=X",
+    "EURCHF=X",
+    "EURAUD=X",
+    "EURNZD=X"
+  ],
+  "determinism_pass": false,
+  "provider_errors_seq": 0,
+  "provider_errors_par": 0,
+  "projected_full_scan_seq_s": 1026,
+  "projected_full_scan_par4_s": 794.02,
+  "projected_margin_for_M5_par4_s": -494.02,
+  "thread_safety_notes": "DeterministicClock thread-local SAFE; SnapshotLogger lock SAFE; PipelineProfiler tracemalloc global RACE; per-thread pipeline mitigates last_snapshot race; yfinance rate limit UNKNOWN"
+}

@@ -1,0 +1,12 @@
+Frozen equivalence universe=12 workers=4 runs=3
+BASELINE vs OPTIMIZED workers=4: mismatches=12
+  EURUSD=X: base {'decision': 'SELL', 'grade': 'D', 'confidence': 0.6246569538461538, 'confluence': 100.0, 'buy_probability': 0.0, 'sell_probability': 43.4, 'wait_probability': 56.6, 'trade_allowed': True, 'audit_id': '49b8e279bd3845d826c8d71323fb4f602023a8a6be58f5e3113b619f54419dd4', 'score': 64.15223892307692} vs opt {'decision': 'SELL', 'grade': 'D', 'confidence': 0.6255538800000001, 'confluence': 100.0, 'buy_probability': 0.0, 'sell_probability': 43.5, 'wait_probability': 56.5, 'trade_allowed': True, 'audit_id': '934d4b5162a9dcd22d03729cc56aff836fb414b3cd403da0e9b70275f5eba983', 'score': 64.23800820000001}
+  GBPUSD=X: base {'decision': 'SELL', 'grade': 'B', 'confidence': 0.6930953739130437, 'confluence': 100.0, 'buy_probability': 0.0, 'sell_probability': 60.41, 'wait_probability': 39.59, 'trade_allowed': True, 'audit_id': 'e44e42c67799bafb38e3e6986e9b9ff137720f0a252e422c2e191908dac02fca', 'score': 73.20880017391303} vs opt {'decision': 'SELL', 'grade': 'B', 'confidence': 0.6979688000000001, 'confluence': 100.0, 'buy_probability': 0.0, 'sell_probability': 60.44, 'wait_probability': 39.56, 'trade_allowed': True, 'audit_id': '636da2403f178bfeb0e6bb28b6f63597620de9bcd7439025c102bd3744440202', 'score': 73.245532}
+  USDJPY=X: base {'decision': 'SELL', 'grade': 'D', 'confidence': 0.6847905866666667, 'confluence': 100.0, 'buy_probability': 0.0, 'sell_probability': 44.37, 'wait_probability': 55.63, 'trade_allowed': True, 'audit_id': '193f0a5f47d99f67aadc6a5825bb93d117c779ab5208d686e7adf1ab68f26839', 'score': 63.27449213333334} vs opt {'decision': 'BUY', 'grade': 'C', 'confidence': 0.6980051111111112, 'confluence': 100.0, 'buy_probability': 59.92, 'sell_probability': 0.0, 'wait_probability': 40.08, 'trade_allowed': True, 'audit_id': 'c88ce33c5377f06786fa0c21430450dc52b6c08edc9028ad2d1274312f7937d6', 'score': 72.81596555555556}
+  Run 1 sig 5deb21611177e17a
+  Run 2 sig ae36ab9991c39063
+  Run 3 sig d930da3cb3f01df7
+
+EQUIVALENCE (frozen) = FAIL
+DETERMINISM (frozen) = FAIL
+Wrote reports\m5_sprint4\frozen_equivalence_report.json

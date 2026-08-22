@@ -1,6 +1,9 @@
 import time
+import pytest
+
 from mercury_ai.core.job_manager import JobManager
 
+@pytest.mark.slow
 def test_job_manager():
     manager = JobManager(interval_seconds=1)
     

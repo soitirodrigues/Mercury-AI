@@ -1,0 +1,206 @@
+{
+  "_meta": {
+    "generated_at": "2026-09-02T20:00:14Z",
+    "source": "MTFEngine.analyze forense + SwingEngine + IndicatorEngine + MarketDataService",
+    "profile_ref": "reports/m5_mtf_optimization/mtf_profile.json",
+    "classification_rule": "SAFE_REUSE=stateless idempotente + só depende do DF do TF; SAFE_PARALLEL=stateless + sem efeito colateral + não compartilha mutável; SEQUENTIAL_REQUIRED=depende de outro engine ou rede sequencial; REQUIRES_REVIEW=estado mutável ou ordem relevante; UNSAFE=compartilha mutável com race"
+  },
+  "operations": [
+    {
+      "id": "OP01_FETCH_M1",
+      "operation": "MarketDataService.get_data(symbol, interval=1m, period=1mo) -> df M1",
+      "pure_deterministic": false,
+      "depends_only_on_df": false,
+      "depends_on_other_engine": false,
+      "has_mutable_state": false,
+      "has_side_effects": true,
+      "network_io": true,
+      "classification": "SEQUENTIAL_REQUIRED",
+      "parallelizable": false,
+      "reusable": false,
+      "reason": "Fetch de rede Yahoo; depende de símbolo+intervalo, não de outro engine. Não pode ser paralel-homem sem controle de concorrência Yahoo (limite). Não reutilizável via TTL pois último candle deve ser FRESH.",
+      "m5_reuse_candidate": false
+    },
+    {
+      "id": "OP02_FETCH_M5",
+      "operation": "MarketDataService.get_data(symbol, interval=5m, period=1mo) -> df M5 (dentro MTF)",
+      "pure_deterministic": false,
+      "depends_only_on_df": false,
+      "depends_on_other_engine": false,
+      "has_mutable_state": false,
+      "has_side_effects": true,
+      "network_io": true,
+      "classification": "REQUIRES_REVIEW",
+      "parallelizable": false,
+      "reusable": true,
+      "reason": "Mesmo símbolo e granularidade do DataLoading principal (M5 5d vs M5 1mo). Provider Yahoo ignora period -> ambos retornam 5d window efetiva. REUSE permitido SOMENTE se janelas e último candle forem idênticos (ver Fase M5). Sem prova, marcar REQUIRES_REVIEW.",
+      "m5_reuse_candidate": true,
+      "reuse_condition": "symbol==, interval==5m, último candle timestamp idêntico, número de barras suficiente (>=20), mesma origem/normalização"
+    },
+    {
+      "id": "OP03_FETCH_M15",
+      "operation": "MarketDataService.get_data(M15)",
+      "pure_deterministic": false,
+      "depends_only_on_df": false,
+      "has_mutable_state": false,
+      "has_side_effects": true,
+      "classification": "SEQUENTIAL_REQUIRED",
+      "parallelizable": true,
+      "reusable": false,
+      "reason": "Fetch distinto por TF. Paralelizável com OP01/OP02/OP04/OP05 se limitar workers=2 e não compartilhar estado mutável."
+    },
+    {
+      "id": "OP04_FETCH_H1",
+      "operation": "MarketDataService.get_data(H1)",
+      "classification": "SEQUENTIAL_REQUIRED",
+      "parallelizable": true,
+      "reusable": false,
+      "reason": "Idem OP03"
+    },
+    {
+      "id": "OP05_FETCH_H4",
+      "operation": "MarketDataService.get_data(H4)",
+      "classification": "SEQUENTIAL_REQUIRED",
+      "parallelizable": true,
+      "reusable": false,
+      "reason": "Idem OP03"
+    },
+    {
+      "id": "OP06_NORMALIZE",
+      "operation": "DataNormalizer.normalize(df) dentro MarketDataService._normalize_dataframe",
+      "pure_deterministic": true,
+      "depends_only_on_df": true,
+      "has_mutable_state": false,
+      "has_side_effects": false,
+      "classification": "SAFE_REUSE",
+      "parallelizable": true,
+      "reusable": true,
+      "reason": "Idempotente: lower->rename->duplicação open..Close. Pode ser chamada uma vez por df; reuso se df já normalizado é seguro."
+    },
+    {
+      "id": "OP07_INDICATOR_Mx",
+      "operation": "IndicatorEngine.calculate(df) por TF (ema9/21/50 rsi14 atr14 adx macd bollinger)",
+      "pure_deterministic": true,
+      "depends_only_on_df": true,
+      "has_mutable_state": false,
+      "has_side_effects": false,
+      "classification": "SAFE_REUSE",
+      "parallelizable": true,
+      "reusable": true,
+      "reason": "Puro sobre df; faz df.copy() + ewm/rolling. Não depende de outro engine. Pode ser paralelizado por TF e reusado se df idêntico (hash). Custo ~4-140ms por TF; M1 domina por df grande (6955 rows).",
+      "bottleneck_share_pct": 0.4
+    },
+    {
+      "id": "OP08_TREND_Mx",
+      "operation": "TrendAnalyzer.analyze(market: MarketData) por TF",
+      "pure_deterministic": true,
+      "depends_only_on_df": false,
+      "depends_on": "OP07 MarketData",
+      "has_mutable_state": false,
+      "classification": "SAFE_REUSE",
+      "parallelizable": true,
+      "reusable": true,
+      "reason": "Puro sobre MarketData (scalar). Barato (~0.07ms). Paralelizável por TF após OP07."
+    },
+    {
+      "id": "OP09_SWING_DETECT_Mx",
+      "operation": "SwingEngine.detect_swings(df) — 1ª chamada explícita por TF",
+      "pure_deterministic": true,
+      "depends_only_on_df": true,
+      "has_mutable_state": false,
+      "has_side_effects": false,
+      "classification": "SAFE_REUSE",
+      "parallelizable": true,
+      "reusable": true,
+      "reason": "Puro sobre df (ATR via ewm + pivot scan). Custo dominante em M1 (~2.4-5.0s). Duplicado — ver OP10. Após fix, UMA chamada e reuso do resultado.",
+      "bottleneck_share_pct": 27.4
+    },
+    {
+      "id": "OP10_STRUCTURE_EVALUATE_Mx",
+      "operation": "MarketStructureIntelligenceEngine.evaluate(df) por TF — chama detect_swings DF novamente internamente",
+      "pure_deterministic": true,
+      "depends_only_on_df": true,
+      "has_mutable_state": false,
+      "classification": "SAFE_REUSE",
+      "parallelizable": true,
+      "reusable": false,
+      "reason": "Chama detect_swings de novo (2ª vez por TF) + BOS/CHoCH/MSS + displacement. Custo ~24.5% total. SAFE_REUSE após eliminar duplicação: passar swings já computados (OP09) em vez de recalcular. Sem mudança de semântica se engineer aceita swings param (já existe overload com avg_volume).",
+      "redundancy": "Duplicação OP09==OP10 belső detect_swings",
+      "safe_fix": "Fazer evaluate reutilizar swings de OP09: novo método evaluate_with_swings(df, swings) ou cachear ATR/swings por df hash"
+    },
+    {
+      "id": "OP11_LIQUIDITY_Mx",
+      "operation": "LiquidityEngine.analyze(df, swings, profile) por TF",
+      "pure_deterministic": true,
+      "depends_only_on_df": false,
+      "depends_on": "OP09+OP10",
+      "has_mutable_state": false,
+      "classification": "SAFE_PARALLEL",
+      "parallelizable": true,
+      "reusable": false,
+      "reason": "Puro sobre df+swings+profile. Barato (~0.4-55ms). Depende de OP09/OP10, mas por TF é independente dos outros TFs -> paralelizável após swings."
+    },
+    {
+      "id": "OP12_VOLATILITY_Mx",
+      "operation": "VolatilityEngine.analyze(df, market) por TF — recalcula ATR via ta.volatility",
+      "pure_deterministic": true,
+      "depends_only_on_df": true,
+      "depends_on": "OP07 market",
+      "has_mutable_state": false,
+      "classification": "SAFE_REUSE",
+      "parallelizable": true,
+      "reusable": true,
+      "reason": "Recalcula ATR (duplicado com SwingEngine.calculate_atr e IndicatorEngine ATR). Poderia reusar ATR já computado, mas ganho é pequeno (~18ms avg). Seguro reusar ATR series se provar equivalência (mesma fórmula e window). Por enquanto classificado SAFE_REUSE mas não otimizar ATR sharing sem prova.",
+      "redundancy": "ATR triplicado: IndicatorEngine ATR (rolling 14), SwingEngine ATR (ewm alpha=1/14), VolatilityEngine ATR (ta AverageTrueRange)"
+    },
+    {
+      "id": "OP13_EVIDENCE_TAGGING",
+      "operation": "replace(e, engine_name=f'{TF} - {name}', timeframe=TF) + append",
+      "pure_deterministic": true,
+      "depends_only_on_df": false,
+      "has_mutable_state": false,
+      "classification": "SAFE_REUSE",
+      "parallelizable": false,
+      "reason": "Transformação nominal barata (~1-13ms). Sequencial por simplicidade, mas sem dependência cruzada."
+    },
+    {
+      "id": "OP14_CONSENSUS",
+      "operation": "MTFEngine._build_consensus(engine_results, timeframe_status)",
+      "pure_deterministic": true,
+      "depends_only_on_df": false,
+      "has_mutable_state": false,
+      "classification": "SAFE_REUSE",
+      "parallelizable": false,
+      "reason": "Agregação pura sobre 20 direções (4 engines x 5 TFs). ~0.05ms. Sempre recalcular — barato e determinístico."
+    },
+    {
+      "id": "OP15_DF_COPY_OVERHEAD",
+      "operation": "pd.DataFrame.copy() — observado 220 cópias/asset (44/TF)",
+      "pure_deterministic": true,
+      "depends_only_on_df": true,
+      "has_mutable_state": false,
+      "classification": "SAFE_REUSE",
+      "parallelizable": true,
+      "reason": "Cada engine faz df.copy() defensivo. 220 copies/asset é excessivo; reduzir com view/copy-on-write onde seguro. NÃO mutar df original. Ganho moderado."
+    }
+  ],
+  "parallelism_policy": {
+    "allowed": ["OP01..OP05 fetches com workers=2", "OP07..OP12 por TF após fetch daquele TF"],
+    "forbidden": ["Compartilhar MarketDataService/YahooFinanceProvider mutable sem lock; compartilhar DataFrame mutável entre threads"],
+    "workers": 2,
+    "rationale": "Yahoo tem limite e rede é gargalo; workers=2 evita 5 conexões simultâneas e race no DeterministicClock"
+  },
+  "reuse_policy": {
+    "m5_reuse_from_main": {
+      "verdict": "REQUIRES_REVIEW -> CONDITIONAL SAFE",
+      "condition": "SOMENTE se MarketDataService.get_data para M5 retornar df com mesmo último candle timestamp e rows >= len necessário para swings (>=11). Deve comparar df_main e df_mtf candle-a-candle; se divergirem -> NOT_REUSED e fetch separado; registrar motivo.",
+      "forbidden": "Cache TTL puro sem checar candle"
+    }
+  },
+  "not_to_optimize": ["REQUIRES_REVIEW / UNSAFE sem prova", "OP02 M5 reuse sem candle check", "ATR sharing entre engines sem prova de equivalência de fórmula"],
+  "safe_to_optimize_now": [
+    "Eliminar 2ª detect_swings por TF (OP09 reuse em OP10) — maior ganho compute (~50% do compute)",
+    "Fetch paralelo controlado workers=2 (ganho fetch)",
+    "Eliminar M5 fetch duplicado quando M5 dfs idênticos (ganho 1 fetch/TF)"
+  ]
+}

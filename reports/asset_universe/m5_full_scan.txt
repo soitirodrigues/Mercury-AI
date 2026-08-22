@@ -1,0 +1,91 @@
+M5 FULL SCAN — MERCURY-AI V1
+Generated: 2026-09-02T00:27:51.240690+00:00
+Timeframe: M5
+HEZILEX EFFECTIVE: 68
+DISTINCT SUPPORTED: 62
+PASS ENTRIES: 63
+UNSUPPORTED: 5
+
+SUMMARY:
+ M5_SCANNED_DISTINCT: 62
+ M5_FAILED_DISTINCT: 0
+ M5_SCANNED_ENTRIES: 63
+ M5_FAILED_ENTRIES: 0
+ REAL_SIGNAL: 57
+ WAIT_LEGITIMATE: 0
+ DATA_UNAVAILABLE: 6
+ UNSUPPORTED: 5
+ SCAN_ERROR: 0
+ PROB_SUM_PASS: True
+ DECISION_CONSISTENCY_PASS: True
+ POST_RESOLVER_PASS: True
+
+PER-ASSET EVIDENCE:
+EUR/USD -> EURUSD=X | M5 | REAL_SIGNAL | SELL grade=D conf=0.6946883310344828 confl=100.0 buy=0.0 sell=44.65 wait=55.35 sum=100.0 trade_allowed=True audit=d85d58a28579b689b37b4e8d327f796ffd454c6fb1d7a84df654a48c7d85096a ts=2026-09-02T00:12:48.247130 resolver=SELL/6 consistency=True
+EUR/GBP -> EURGBP=X | M5 | REAL_SIGNAL | BUY grade=D conf=0.6890553 confl=100.0 buy=44.57 sell=0.0 wait=55.43 sum=100.0 trade_allowed=True audit=2e7679c48e13251e72e5aca20fd65844f30dc1832d1f7b4ad6db8e0cac94c646 ts=2026-09-02T00:13:07.397823 resolver=BUY/5 consistency=True
+AUD/JPY -> AUDJPY=X | M5 | REAL_SIGNAL | SELL grade=D conf=0.6874135483870968 confl=100.0 buy=0.0 sell=44.66 wait=55.34 sum=100.0 trade_allowed=True audit=a3fa385a74b1c46775841ceb0df5d6bba66deaccfe3563916d4659f6c484a303 ts=2026-09-02T00:13:31.849385 resolver=SELL/6 consistency=True
+EUR/JPY -> EURJPY=X | M5 | REAL_SIGNAL | BUY grade=C conf=0.6342569538461539 confl=100.0 buy=58.64 sell=0.0 wait=41.36 sum=100.0 trade_allowed=True audit=b85cd291ef0bbe8db4a7bf349b8a2d92ddda99c810498b8860c0cea837ca8648 ts=2026-09-02T00:13:52.831718 resolver=BUY/5 consistency=True
+GBP/USD -> GBPUSD=X | M5 | REAL_SIGNAL | SELL grade=D conf=0.6904358500000001 confl=100.0 buy=0.0 sell=44.46 wait=55.54 sum=100.0 trade_allowed=True audit=a47633c5b8327e21696e2fc55e23f30daef127067c237179babc7a80bcd55330 ts=2026-09-02T00:14:15.354297 resolver=SELL/6 consistency=True
+AUD/CAD -> AUDCAD=X | M5 | REAL_SIGNAL | SELL grade=D conf=0.6981709750000001 confl=100.0 buy=0.0 sell=44.77 wait=55.23 sum=100.0 trade_allowed=True audit=13b8dd3a66a6af9290cac15193a447922e6245ffbc02d1025e49db2a9b33fc49 ts=2026-09-02T00:14:38.407987 resolver=SELL/6 consistency=True
+USD/CAD -> USDCAD=X | M5 | DATA_UNAVAILABLE | WAIT grade=N/A conf=0.0 confl=None buy=0.0 sell=0.0 wait=100.0 sum=100.0 trade_allowed=True audit=DATA_QUALITY_FAIL ts=2026-09-02T00:14:38.871645 resolver=WAIT/7 consistency=True
+NZD/USD -> NZDUSD=X | M5 | REAL_SIGNAL | SELL grade=D conf=0.7011913777777778 confl=100.0 buy=0.0 sell=45.09 wait=54.91 sum=100.0 trade_allowed=True audit=2382e8927b62bab832ab4de13f1cd0eeaa470b66dc1ec4d5c2bd23b779943878 ts=2026-09-02T00:14:53.533621 resolver=SELL/6 consistency=True
+USD/JPY -> USDJPY=X | M5 | REAL_SIGNAL | BUY grade=B conf=0.7052801066666667 confl=100.0 buy=60.23 sell=0.0 wait=39.77 sum=100.0 trade_allowed=True audit=1ce63476ff1974869513c5107b2c49540bdd73dd9ad172c04eba2bd817487960 ts=2026-09-02T00:15:15.595197 resolver=BUY/5 consistency=True
+CAD/JPY -> CADJPY=X | M5 | REAL_SIGNAL | BUY grade=D conf=0.6876672000000003 confl=100.0 buy=44.42 sell=0.0 wait=55.58 sum=100.0 trade_allowed=True audit=5c964fb97e45324e7948354820f09219e4002e26cdffbd82de939d3ba61eb2d2 ts=2026-09-02T00:15:36.720397 resolver=BUY/5 consistency=True
+CHF/JPY -> CHFJPY=X | M5 | REAL_SIGNAL | SELL grade=D conf=0.6883984774193549 confl=100.0 buy=0.0 sell=44.24 wait=55.76 sum=100.0 trade_allowed=True audit=68d01535604b4e2bc54c4b2d343a5569bf2eec8881b29b529e528fb1816b7b1f ts=2026-09-02T00:16:00.540510 resolver=SELL/6 consistency=True
+AUD/CHF -> AUDCHF=X | M5 | REAL_SIGNAL | BUY grade=D conf=0.6977014705882354 confl=100.0 buy=44.72 sell=0.0 wait=55.28 sum=100.0 trade_allowed=True audit=596074f50dd0f40191b4a95e5f06124d16178e26335e77065dec66ff7299877a ts=2026-09-02T00:16:21.880181 resolver=BUY/5 consistency=True
+EUR/AUD -> EURAUD=X | M5 | REAL_SIGNAL | BUY grade=B conf=0.7012076129032259 confl=100.0 buy=60.55 sell=0.0 wait=39.45 sum=100.0 trade_allowed=True audit=fc47701b6bf01ace6e12aca18a75bad2ed82e7432ce554e56b55097e31722ee2 ts=2026-09-02T00:16:41.842434 resolver=BUY/5 consistency=True
+GBP/CHF -> GBPCHF=X | M5 | REAL_SIGNAL | BUY grade=D conf=0.6912661621621623 confl=100.0 buy=44.28 sell=0.0 wait=55.72 sum=100.0 trade_allowed=True audit=465c8fec440fa13eeea096d1387c51bf18dddbfdc4749984c38ac478aca2c75f ts=2026-09-02T00:17:02.111023 resolver=BUY/5 consistency=True
+GBP/AUD -> GBPAUD=X | M5 | REAL_SIGNAL | BUY grade=D conf=0.6929004965517241 confl=100.0 buy=44.99 sell=0.0 wait=55.01 sum=100.0 trade_allowed=True audit=62fb9917819ff557c8fcc890aefa17e2f4224571c57d780204acdf6b63ae7c1d ts=2026-09-02T00:17:23.163326 resolver=BUY/5 consistency=True
+GBP/JPY -> GBPJPY=X | M5 | REAL_SIGNAL | SELL grade=D conf=0.6835180000000001 confl=100.0 buy=0.0 sell=44.5 wait=55.5 sum=100.0 trade_allowed=True audit=dfa3f3bcd7511f41cee2a8fd4fb8c9b06483c53c9bf22e5b8f0f78932e35786f ts=2026-09-02T00:17:44.872071 resolver=SELL/6 consistency=True
+USD/CHF -> USDCHF=X | M5 | REAL_SIGNAL | BUY grade=D conf=0.6914051111111112 confl=100.0 buy=44.3 sell=0.0 wait=55.7 sum=100.0 trade_allowed=True audit=b3bab8b925e58c7e29ac6fafe67523cdd60ae4c78398983bffd232debfe2e949 ts=2026-09-02T00:18:05.343106 resolver=BUY/5 consistency=True
+NZD/JPY -> NZDJPY=X | M5 | REAL_SIGNAL | SELL grade=B conf=0.6957346482758622 confl=100.0 buy=0.0 sell=60.45 wait=39.55 sum=100.0 trade_allowed=True audit=70301abd1e031735a0c118ff43d2d401cfeea032facc4987fc4e98e89ee05317 ts=2026-09-02T00:18:27.374340 resolver=SELL/6 consistency=True
+EUR/CHF -> EURCHF=X | M5 | REAL_SIGNAL | BUY grade=D conf=0.6962185212121212 confl=100.0 buy=44.56 sell=0.0 wait=55.44 sum=100.0 trade_allowed=True audit=0880db57b3ededdc5ec0a95591a6190125aaa068975f06e516d8f7c81bde0fb5 ts=2026-09-02T00:18:47.099165 resolver=BUY/5 consistency=True
+CAD/CHF -> CADCHF=X | M5 | REAL_SIGNAL | BUY grade=D conf=0.6973963030303031 confl=100.0 buy=44.68 sell=0.0 wait=55.32 sum=100.0 trade_allowed=True audit=82410c9dc762d38944d4053c7c27eb16786efb1ec304b44dac67eef025995b59 ts=2026-09-02T00:19:08.417270 resolver=BUY/5 consistency=True
+EUR/CAD -> EURCAD=X | M5 | DATA_UNAVAILABLE | WAIT grade=N/A conf=0.0 confl=None buy=0.0 sell=0.0 wait=100.0 sum=100.0 trade_allowed=True audit=DATA_QUALITY_FAIL ts=2026-09-02T00:19:09.095812 resolver=WAIT/7 consistency=True
+BTC/USD -> BTC-USD | M5 | REAL_SIGNAL | BUY grade=B conf=0.7020792800000001 confl=100.0 buy=60.65 sell=0.0 wait=39.35 sum=100.0 trade_allowed=True audit=d0f0d42575ac6ea2922b96fec5eb7c9895aaf3d5ec3a181f7a38dcb2fdbf05b8 ts=2026-09-02T00:19:31.168887 resolver=BUY/5 consistency=True
+AUD/NZD -> AUDNZD=X | M5 | REAL_SIGNAL | BUY grade=B conf=0.7071132800000001 confl=100.0 buy=60.44 sell=0.0 wait=39.56 sum=100.0 trade_allowed=True audit=6fb614f0ade914b35e625314be8901d9f892a777f25bdc48e28d8a8d3b5dd044 ts=2026-09-02T00:19:51.284804 resolver=BUY/5 consistency=True
+AUD/USD -> AUDUSD=X | M5 | REAL_SIGNAL | SELL grade=B conf=0.6967712235294118 confl=100.0 buy=0.0 sell=60.3 wait=39.7 sum=100.0 trade_allowed=True audit=5cb9c1f697e5bb74bbb2e1c31f2d843c54a9ed51f9a9d3b8b993e6d6c6618f2d ts=2026-09-02T00:20:05.666654 resolver=SELL/6 consistency=True
+NZD/CHF -> NZDCHF=X | M5 | REAL_SIGNAL | BUY grade=D conf=0.6912478222222224 confl=100.0 buy=45.07 sell=0.0 wait=54.93 sum=100.0 trade_allowed=True audit=368253d6075f843673f1f9d14a284808d55f06f38168e764bfa2938262a3277d ts=2026-09-02T00:20:26.707659 resolver=BUY/5 consistency=True
+GBP/CAD -> GBPCAD=X | M5 | REAL_SIGNAL | SELL grade=D conf=0.6964119172413794 confl=100.0 buy=0.0 sell=44.58 wait=55.42 sum=100.0 trade_allowed=True audit=6e506b59c429ce06e998f99eec1fe007223287950c28cccf1404686258a2f369 ts=2026-09-02T00:20:48.287741 resolver=SELL/6 consistency=True
+GBP/NZD -> GBPNZD=X | M5 | REAL_SIGNAL | BUY grade=D conf=0.7024714424242424 confl=100.0 buy=44.97 sell=0.0 wait=55.03 sum=100.0 trade_allowed=True audit=94eb50141250daf4418c4b7b8950f45b9bbd3c0c84e36d44a9b33a3e27a95807 ts=2026-09-02T00:21:09.098881 resolver=BUY/5 consistency=True
+NZD/CAD -> NZDCAD=X | M5 | REAL_SIGNAL | SELL grade=D conf=0.6940501241379312 confl=100.0 buy=0.0 sell=44.58 wait=55.42 sum=100.0 trade_allowed=True audit=78fb3943a02396ffde29d05782438bce285e451a679d84e10404ed7722a3e8b7 ts=2026-09-02T00:21:29.158700 resolver=SELL/6 consistency=True
+BITCOIN -> BTC-USD | M5 | REAL_SIGNAL | BUY grade=B conf=0.7020792800000001 confl=100.0 buy=60.65 sell=0.0 wait=39.35 sum=100.0 trade_allowed=True audit=d0f0d42575ac6ea2922b96fec5eb7c9895aaf3d5ec3a181f7a38dcb2fdbf05b8 ts=2026-09-02T00:19:31.168887 resolver=BUY/5 consistency=True
+LITECOIN | M5 | UNSUPPORTED | reason=NO_SUPPORTED_PUBLIC_INSTRUMENT_NOT_IN_MERCURY_UNIVERSE | internal=LTC-USD
+BNB -> BNB-USD | M5 | REAL_SIGNAL | BUY grade=D conf=0.6781669837837838 confl=100.0 buy=44.19 sell=0.0 wait=55.81 sum=100.0 trade_allowed=True audit=6dc778caf3c72ae4dec11be7ae08963d53f635e697c935746ab9df7a22ebe100 ts=2026-09-02T00:21:51.642340 resolver=BUY/5 consistency=True
+XRP -> XRP-USD | M5 | REAL_SIGNAL | SELL grade=D conf=0.6881730424242424 confl=100.0 buy=0.0 sell=45.0 wait=55.0 sum=100.0 trade_allowed=True audit=6da57cb65cde4a9f9f6e4ddd285afcb10fad605bf572f0028281fd25c319e635 ts=2026-09-02T00:22:13.347714 resolver=SELL/6 consistency=True
+ETHEREUM -> ETH-USD | M5 | REAL_SIGNAL | BUY grade=D conf=0.6883687999999999 confl=100.0 buy=44.76 sell=0.0 wait=55.24 sum=100.0 trade_allowed=True audit=fc77e02a3aaa9c32b40dbf8b69d63136c86988bc54dba3b2a13758afa168bd5d ts=2026-09-02T00:22:34.006464 resolver=BUY/5 consistency=True
+SOLANA -> SOL-USD | M5 | REAL_SIGNAL | BUY grade=D conf=0.6886240827586207 confl=100.0 buy=44.79 sell=0.0 wait=55.21 sum=100.0 trade_allowed=True audit=e1ed5a585ef8cfd95b5a5a755f831936f07a0a9edc56a11fd188c2f96da3d115 ts=2026-09-02T00:22:55.612817 resolver=BUY/5 consistency=True
+AVAX -> AVAX-USD | M5 | REAL_SIGNAL | BUY grade=D conf=0.6899105939393941 confl=100.0 buy=44.66 sell=0.0 wait=55.34 sum=100.0 trade_allowed=True audit=a2e52bdbfba3d77e2dd9ee718a55abf4f90e135affa6d0cdac9702cd061dc6c5 ts=2026-09-02T00:23:15.793450 resolver=BUY/5 consistency=True
+DOGE -> DOGE-USD | M5 | REAL_SIGNAL | BUY grade=D conf=0.6900139555555556 confl=100.0 buy=44.94 sell=0.0 wait=55.06 sum=100.0 trade_allowed=True audit=7290ede6ffae8d76c5cfad30a22a63c80fa48a4eb476e7e0a8438f0a2169fc2a ts=2026-09-02T00:23:37.247892 resolver=BUY/5 consistency=True
+SUI -> SUI-USD | M5 | DATA_UNAVAILABLE | WAIT grade=N/A conf=0.0 confl=None buy=0.0 sell=0.0 wait=100.0 sum=100.0 trade_allowed=True audit=DATA_PROVIDER_UNAVAILABLE ts=2026-09-02T00:23:37.643082 resolver=WAIT/7 consistency=True
+STELLAR -> XLM-USD | M5 | REAL_SIGNAL | SELL grade=D conf=0.6258976 confl=100.0 buy=0.0 sell=43.54 wait=56.46 sum=100.0 trade_allowed=True audit=f6d2019683baaf50f6f961a259a9027930cfba75c23c878ed961b2a0b080f831 ts=2026-09-02T00:23:59.143320 resolver=SELL/6 consistency=True
+CARDANO | M5 | UNSUPPORTED | reason=NO_SUPPORTED_PUBLIC_INSTRUMENT_NOT_IN_MERCURY_UNIVERSE | internal=ADA-USD
+LINK | M5 | UNSUPPORTED | reason=NO_SUPPORTED_PUBLIC_INSTRUMENT_NOT_IN_MERCURY_UNIVERSE | internal=LINK-USD
+APPLE -> AAPL | M5 | REAL_SIGNAL | BUY grade=D conf=0.6879922260869565 confl=100.0 buy=44.65 sell=0.0 wait=55.35 sum=100.0 trade_allowed=True audit=ea2ef40dcca5e23ba18536768c2174d7b4eaf6be560f94242b8e9a33611147db ts=2026-09-02T00:24:10.068333 resolver=BUY/5 consistency=True
+NETFLIX -> NFLX | M5 | REAL_SIGNAL | SELL grade=D conf=0.6900784740740741 confl=100.0 buy=0.0 sell=44.88 wait=55.12 sum=100.0 trade_allowed=True audit=776d064dad7b920b54f90cb1db95e351df7302c5d6cc7acdaca03c7646157bd0 ts=2026-09-02T00:24:21.719152 resolver=SELL/6 consistency=True
+META -> META | M5 | REAL_SIGNAL | SELL grade=D conf=0.6935915666666668 confl=100.0 buy=0.0 sell=45.26 wait=54.74 sum=100.0 trade_allowed=True audit=4d96ef23cce7a73d0d737a15924de52ffac966195650d2ef8d8eb87dd0f23bfe ts=2026-09-02T00:24:31.055743 resolver=SELL/6 consistency=True
+TESLA -> TSLA | M5 | REAL_SIGNAL | SELL grade=D conf=0.6381289684210527 confl=100.0 buy=0.0 sell=44.19 wait=55.81 sum=100.0 trade_allowed=True audit=1e360aa557787b0dcf07d934359f37c3ae77880595f0e0e28033e1db391f9e03 ts=2026-09-02T00:24:41.384630 resolver=SELL/6 consistency=True
+MICROSOFT -> MSFT | M5 | REAL_SIGNAL | BUY grade=B conf=0.6935806999999999 confl=100.0 buy=60.2 sell=0.0 wait=39.8 sum=100.0 trade_allowed=True audit=a78302e7a7bc3af2071d5d15f3996189581199a487881544805c9ed8b287f7a4 ts=2026-09-02T00:24:51.368672 resolver=BUY/5 consistency=True
+MCDONALDS -> MCD | M5 | REAL_SIGNAL | SELL grade=D conf=0.6863106896551724 confl=100.0 buy=0.0 sell=44.47 wait=55.53 sum=100.0 trade_allowed=True audit=0fb328db8b3860d785a4c6abf504a4f33e0e8fb3baa56c6eeb1f84b8199a178f ts=2026-09-02T00:25:01.336478 resolver=SELL/6 consistency=True
+AMAZON -> AMZN | M5 | REAL_SIGNAL | BUY grade=C conf=0.6864284941176471 confl=100.0 buy=59.71 sell=0.0 wait=40.29 sum=100.0 trade_allowed=True audit=a14345d8ef5900e3b1456461f3386d536fbbf89754129e030dd150634186683c ts=2026-09-02T00:25:10.653149 resolver=BUY/5 consistency=True
+PAYPAL -> PYPL | M5 | REAL_SIGNAL | BUY grade=B conf=0.700495568 confl=100.0 buy=60.67 sell=0.0 wait=39.33 sum=100.0 trade_allowed=True audit=52375e09db01d8971c5118212270240851b2eedeb272291220dc29100642c1de ts=2026-09-02T00:25:19.718760 resolver=BUY/5 consistency=True
+STARBUCKS -> SBUX | M5 | REAL_SIGNAL | BUY grade=C conf=0.6917448258064518 confl=100.0 buy=59.99 sell=0.0 wait=40.01 sum=100.0 trade_allowed=True audit=0d145c44f97cf37d218a287fa53c2c886fe44eda5f90d489975cfb0319162bfa ts=2026-09-02T00:25:28.922774 resolver=BUY/5 consistency=True
+NVIDIA -> NVDA | M5 | REAL_SIGNAL | SELL grade=B conf=0.6990406782608697 confl=100.0 buy=0.0 sell=60.5 wait=39.5 sum=100.0 trade_allowed=True audit=f7ec0cecb60fa91137c70ae330641d0879a4f5eea7477918d52989efc8678ef8 ts=2026-09-02T00:25:39.322304 resolver=SELL/6 consistency=True
+DISNEY -> DIS | M5 | REAL_SIGNAL | SELL grade=D conf=0.6902732 confl=100.0 buy=0.0 sell=44.24 wait=55.76 sum=100.0 trade_allowed=True audit=0988e7b4fad959bbe13173850c500921d7bbda24a658e7b5196a67151e48a847 ts=2026-09-02T00:25:49.032580 resolver=SELL/6 consistency=True
+INTEL -> INTC | M5 | REAL_SIGNAL | BUY grade=B conf=0.7034426 confl=100.0 buy=60.35 sell=0.0 wait=39.65 sum=100.0 trade_allowed=True audit=42e9b1e49687ffb479630737551fa432706b861a94dc1e650e05a62aa510056d ts=2026-09-02T00:25:58.955504 resolver=BUY/5 consistency=True
+VISA -> V | M5 | REAL_SIGNAL | SELL grade=D conf=0.6923688148148147 confl=100.0 buy=0.0 sell=44.47 wait=55.53 sum=100.0 trade_allowed=True audit=0b851dbdc961d216a3778aa52e8ae6890abc2dafe755fef434847c8e0bef579e ts=2026-09-02T00:26:08.578373 resolver=SELL/6 consistency=True
+IBM -> IBM | M5 | REAL_SIGNAL | BUY grade=C conf=0.6878363034482758 confl=100.0 buy=59.87 sell=0.0 wait=40.13 sum=100.0 trade_allowed=True audit=9cec10fa3eece111b4b25dc1091d3252794499cf5dd9ff646c9788ae7464ee1f ts=2026-09-02T00:26:18.441315 resolver=BUY/5 consistency=True
+FORD -> F | M5 | REAL_SIGNAL | BUY grade=D conf=0.6901283272727273 confl=100.0 buy=44.88 sell=0.0 wait=55.12 sum=100.0 trade_allowed=True audit=29a8921398cbc71b3c344f609cabc3f442c0832bbe1714f1e5db11025a9cf281 ts=2026-09-02T00:26:26.976254 resolver=BUY/5 consistency=True
+COCA-COLA -> KO | M5 | REAL_SIGNAL | SELL grade=D conf=0.6816672000000001 confl=100.0 buy=0.0 sell=44.3 wait=55.7 sum=100.0 trade_allowed=True audit=625d505be25e3fa7629a6e71081087eab02f6c6a79d01759dba6f55621934383 ts=2026-09-02T00:26:36.522350 resolver=SELL/6 consistency=True
+NIKE -> NKE | M5 | REAL_SIGNAL | BUY grade=D conf=0.693998181818182 confl=100.0 buy=45.3 sell=0.0 wait=54.7 sum=100.0 trade_allowed=True audit=2daa4322ac89538cf8f329598bcd42e4f808dc9a16b89db3ef78baa662a7f790 ts=2026-09-02T00:26:46.324827 resolver=BUY/5 consistency=True
+MASTERCARD -> MA | M5 | REAL_SIGNAL | SELL grade=D conf=0.6895857600000003 confl=100.0 buy=0.0 sell=44.17 wait=55.83 sum=100.0 trade_allowed=True audit=249bd72671aeef493e65bb13ab3743c8e4960c3c1d31ca1af1e37107bdfa950f ts=2026-09-02T00:26:57.382249 resolver=SELL/6 consistency=True
+SPOTFY -> SPOT | M5 | REAL_SIGNAL | BUY grade=D conf=0.6870888903225807 confl=100.0 buy=44.56 sell=0.0 wait=55.44 sum=100.0 trade_allowed=True audit=517ffdb5076a57bf38773fbba2c6267e0487dccacc51568bc30d439a712fc42a ts=2026-09-02T00:27:07.677967 resolver=BUY/5 consistency=True
+SPACEX | M5 | UNSUPPORTED | reason=PRIVATE_COMPANY_NO_PUBLIC_TICKER | internal=None
+JPMORGAN -> JPM | M5 | REAL_SIGNAL | BUY grade=B conf=0.6994899666666667 confl=100.0 buy=60.55 sell=0.0 wait=39.45 sum=100.0 trade_allowed=True audit=4a31c9bca3e177dad5bed8dae33133d1848d2f3130ca941d608fbc5ef6d07901 ts=2026-09-02T00:27:20.445111 resolver=BUY/5 consistency=True
+BANK OF AMERICA -> BAC | M5 | REAL_SIGNAL | BUY grade=D conf=0.6881614896551725 confl=100.0 buy=44.67 sell=0.0 wait=55.33 sum=100.0 trade_allowed=True audit=f6a74f19c9c9e4f1ad02859b9857ee54f97675f4e700fdc15cb4d4e939670264 ts=2026-09-02T00:27:30.160231 resolver=BUY/5 consistency=True
+CITIGROUP -> C | M5 | REAL_SIGNAL | BUY grade=B conf=0.7092594 confl=100.0 buy=61.02 sell=0.0 wait=38.98 sum=100.0 trade_allowed=True audit=f91b11fdc4fab86a9b4ff38ca6f0d63cd29bb01603f4d6d7a67354b97809dd86 ts=2026-09-02T00:27:39.277481 resolver=BUY/5 consistency=True
+WELLS FARGO STANLEY -> WELLS FARGO -> WFC | M5 | REAL_SIGNAL | BUY grade=B conf=0.7035424111111113 confl=100.0 buy=60.03 sell=0.0 wait=39.97 sum=100.0 trade_allowed=True audit=cd62f7f1a554e3ff30c48e7d5c1158dfd6f00a94e4063744e74fd44a5c8aaf33 ts=2026-09-02T00:27:49.677655 resolver=BUY/5 consistency=True
+WELLS FARGO STANLEY -> MORGAN STANLEY | M5 | UNSUPPORTED | reason=SPLIT_WELLS_FARGO_STANLEY_MS_NOT_IN_UNIVERSE | internal=MS
+PETRÓLEO -> CL=F | M5 | DATA_UNAVAILABLE | WAIT grade=N/A conf=0.0 confl=None buy=0.0 sell=0.0 wait=100.0 sum=100.0 trade_allowed=True audit=DATA_QUALITY_FAIL ts=2026-09-02T00:27:50.327757 resolver=WAIT/7 consistency=True
+PRATA -> SI=F | M5 | DATA_UNAVAILABLE | WAIT grade=N/A conf=0.0 confl=None buy=0.0 sell=0.0 wait=100.0 sum=100.0 trade_allowed=True audit=DATA_QUALITY_FAIL ts=2026-09-02T00:27:50.765284 resolver=WAIT/7 consistency=True
+OURO -> GC=F | M5 | DATA_UNAVAILABLE | WAIT grade=N/A conf=0.0 confl=None buy=0.0 sell=0.0 wait=100.0 sum=100.0 trade_allowed=True audit=DATA_QUALITY_FAIL ts=2026-09-02T00:27:51.229955 resolver=WAIT/7 consistency=True

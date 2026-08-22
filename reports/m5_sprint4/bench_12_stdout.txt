@@ -1,0 +1,105 @@
+
+======================================================================
+BENCHMARK universe=12 workers=1 executor=thread @ 2026-09-02T21:51:53.653922+00:00
+======================================================================
+[1/12] EURUSD=X -> BUY status=REAL_SIGNAL fresh=True elapsed=8120ms worker=1
+[2/12] GBPUSD=X -> SELL status=REAL_SIGNAL fresh=True elapsed=17097ms worker=1
+[3/12] USDJPY=X -> SELL status=REAL_SIGNAL fresh=True elapsed=23419ms worker=1
+[4/12] USDCHF=X -> BUY status=REAL_SIGNAL fresh=True elapsed=29662ms worker=1
+[5/12] AUDUSD=X -> SELL status=REAL_SIGNAL fresh=True elapsed=33699ms worker=1
+[6/12] NZDUSD=X -> BUY status=REAL_SIGNAL fresh=True elapsed=37828ms worker=1
+Data quality issue for USDCAD=X: Temporal gaps detected (unexpected data loss) (Score: 0.4)
+[7/12] USDCAD=X -> WAIT status=DATA_UNAVAILABLE fresh=False elapsed=38350ms worker=1
+[8/12] EURGBP=X -> BUY status=REAL_SIGNAL fresh=True elapsed=43331ms worker=1
+[9/12] EURJPY=X -> SELL status=REAL_SIGNAL fresh=True elapsed=49095ms worker=1
+[10/12] EURCHF=X -> BUY status=REAL_SIGNAL fresh=True elapsed=53881ms worker=1
+[11/12] EURAUD=X -> SELL status=REAL_SIGNAL fresh=True elapsed=60746ms worker=1
+[12/12] EURNZD=X -> SELL status=REAL_SIGNAL fresh=True elapsed=69600ms worker=1
+  -> workers=1 wall=69.7s first=8119.6ms partial=8119.6ms complete=69649.2ms mem=82.9MB cpu=75.0% err=0
+
+======================================================================
+BENCHMARK universe=12 workers=2 executor=thread @ 2026-09-02T21:53:06.286240+00:00
+======================================================================
+[1/12] EURUSD=X -> BUY status=REAL_SIGNAL fresh=True elapsed=7485ms worker=2
+[2/12] GBPUSD=X -> SELL status=REAL_SIGNAL fresh=True elapsed=9681ms worker=2
+[3/12] USDJPY=X -> SELL status=REAL_SIGNAL fresh=True elapsed=15716ms worker=2
+[4/12] USDCHF=X -> BUY status=REAL_SIGNAL fresh=True elapsed=18154ms worker=2
+[5/12] AUDUSD=X -> SELL status=REAL_SIGNAL fresh=True elapsed=21633ms worker=2
+Data quality issue for USDCAD=X: Temporal gaps detected (unexpected data loss) (Score: 0.4)
+[6/12] USDCAD=X -> WAIT status=DATA_UNAVAILABLE fresh=False elapsed=22768ms worker=2
+[7/12] NZDUSD=X -> BUY status=REAL_SIGNAL fresh=True elapsed=23272ms worker=2
+[8/12] EURGBP=X -> BUY status=REAL_SIGNAL fresh=True elapsed=30504ms worker=2
+[9/12] EURJPY=X -> SELL status=REAL_SIGNAL fresh=True elapsed=32117ms worker=2
+[10/12] EURCHF=X -> BUY status=REAL_SIGNAL fresh=True elapsed=37513ms worker=2
+[11/12] EURAUD=X -> SELL status=REAL_SIGNAL fresh=True elapsed=40594ms worker=2
+[12/12] EURNZD=X -> SELL status=REAL_SIGNAL fresh=True elapsed=43986ms worker=2
+  -> workers=2 wall=44.0s first=7485.0ms partial=7485.0ms complete=43987.1ms mem=84.6MB cpu=50.0% err=0
+
+======================================================================
+BENCHMARK universe=12 workers=4 executor=thread @ 2026-09-02T21:53:50.483287+00:00
+======================================================================
+[1/12] EURUSD=X -> BUY status=REAL_SIGNAL fresh=True elapsed=18178ms worker=4
+[2/12] GBPUSD=X -> SELL status=REAL_SIGNAL fresh=True elapsed=18363ms worker=4
+[3/12] USDJPY=X -> SELL status=REAL_SIGNAL fresh=True elapsed=18684ms worker=4
+[4/12] USDCHF=X -> BUY status=REAL_SIGNAL fresh=True elapsed=19122ms worker=4
+Data quality issue for USDCAD=X: Temporal gaps detected (unexpected data loss) (Score: 0.4)
+[5/12] USDCAD=X -> WAIT status=DATA_UNAVAILABLE fresh=False elapsed=19564ms worker=4
+[6/12] AUDUSD=X -> SELL status=REAL_SIGNAL fresh=True elapsed=32796ms worker=4
+[7/12] EURGBP=X -> BUY status=REAL_SIGNAL fresh=True elapsed=33106ms worker=4
+[8/12] NZDUSD=X -> BUY status=REAL_SIGNAL fresh=True elapsed=33303ms worker=4
+[9/12] EURJPY=X -> SELL status=REAL_SIGNAL fresh=True elapsed=35357ms worker=4
+[10/12] EURCHF=X -> BUY status=REAL_SIGNAL fresh=True elapsed=45175ms worker=4
+[11/12] EURAUD=X -> SELL status=REAL_SIGNAL fresh=True elapsed=46495ms worker=4
+[12/12] EURNZD=X -> SELL status=REAL_SIGNAL fresh=True elapsed=46502ms worker=4
+  -> workers=4 wall=46.5s first=18177.8ms partial=18177.8ms complete=46502.5ms mem=91.1MB cpu=75.0% err=0
+
+======================================================================
+BENCHMARK universe=12 workers=8 executor=thread @ 2026-09-02T21:54:37.200355+00:00
+======================================================================
+Data quality issue for USDCAD=X: Temporal gaps detected (unexpected data loss) (Score: 0.4)
+[1/12] USDCAD=X -> WAIT status=DATA_UNAVAILABLE fresh=False elapsed=3544ms worker=8
+[2/12] EURUSD=X -> BUY status=REAL_SIGNAL fresh=True elapsed=14213ms worker=8
+[3/12] NZDUSD=X -> BUY status=REAL_SIGNAL fresh=True elapsed=24380ms worker=8
+[4/12] USDCHF=X -> BUY status=REAL_SIGNAL fresh=True elapsed=29247ms worker=8
+[5/12] AUDUSD=X -> SELL status=REAL_SIGNAL fresh=True elapsed=29805ms worker=8
+[6/12] USDJPY=X -> SELL status=REAL_SIGNAL fresh=True elapsed=31157ms worker=8
+[7/12] EURGBP=X -> BUY status=REAL_SIGNAL fresh=True elapsed=32184ms worker=8
+[8/12] GBPUSD=X -> SELL status=REAL_SIGNAL fresh=True elapsed=32923ms worker=8
+[9/12] EURJPY=X -> SELL status=REAL_SIGNAL fresh=True elapsed=36962ms worker=8
+[10/12] EURCHF=X -> BUY status=REAL_SIGNAL fresh=True elapsed=39581ms worker=8
+[11/12] EURAUD=X -> SELL status=REAL_SIGNAL fresh=True elapsed=41197ms worker=8
+[12/12] EURNZD=X -> SELL status=REAL_SIGNAL fresh=True elapsed=43021ms worker=8
+  -> workers=8 wall=43.0s first=3543.9ms partial=14213.5ms complete=43021.1ms mem=95.9MB cpu=0.0% err=0
+
+======================================================================
+BENCHMARK universe=12 workers=16 executor=thread @ 2026-09-02T21:55:20.423713+00:00
+======================================================================
+Data quality issue for USDCAD=X: Temporal gaps detected (unexpected data loss) (Score: 0.4)
+[1/12] USDCAD=X -> WAIT status=DATA_UNAVAILABLE fresh=False elapsed=2427ms worker=16
+[2/12] USDJPY=X -> SELL status=REAL_SIGNAL fresh=True elapsed=23665ms worker=16
+[3/12] NZDUSD=X -> BUY status=REAL_SIGNAL fresh=True elapsed=30859ms worker=16
+[4/12] EURUSD=X -> BUY status=REAL_SIGNAL fresh=True elapsed=32161ms worker=16
+[5/12] GBPUSD=X -> SELL status=REAL_SIGNAL fresh=True elapsed=37198ms worker=16
+[6/12] USDCHF=X -> BUY status=REAL_SIGNAL fresh=True elapsed=38656ms worker=16
+[7/12] AUDUSD=X -> SELL status=REAL_SIGNAL fresh=True elapsed=38886ms worker=16
+[8/12] EURJPY=X -> SELL status=REAL_SIGNAL fresh=True elapsed=39361ms worker=16
+[9/12] EURGBP=X -> BUY status=REAL_SIGNAL fresh=True elapsed=40074ms worker=16
+[10/12] EURCHF=X -> BUY status=REAL_SIGNAL fresh=True elapsed=40251ms worker=16
+[11/12] EURNZD=X -> SELL status=REAL_SIGNAL fresh=True elapsed=40444ms worker=16
+[12/12] EURAUD=X -> SELL status=REAL_SIGNAL fresh=True elapsed=40653ms worker=16
+  -> workers=16 wall=40.7s first=2426.5ms partial=23664.7ms complete=40660.4ms mem=93.8MB cpu=92.9% err=0
+
+WORKER BENCHMARK ù universe=12 executor=thread
+Generated: 2026-09-02T21:56:01.307684+00:00
+
+workers |  wall_s |  first_ms | partial_ms | complete_ms |   CPU% |  RAM MB | err
+-------------------------------------------------------------------------------------
+      1 |    69.7 |    8119.6 |     8119.6 |     69649.2 |   75.0 |    82.9 |   1
+      2 |    44.0 |    7485.0 |     7485.0 |     43987.1 |   50.0 |    84.6 |   1
+      4 |    46.5 |   18177.8 |    18177.8 |     46502.5 |   75.0 |    91.1 |   1
+      8 |    43.0 |    3543.9 |    14213.5 |     43021.1 |      - |    95.9 |   1
+     16 |    40.7 |    2426.5 |    23664.7 |     40660.4 |   92.9 |    93.8 |   1
+
+BEST_WORKER_COUNT = 2 (executor=thread) wall=43.99s
+
+Wrote reports\m5_sprint4\worker_benchmark_12assets.json and reports\m5_sprint4\worker_benchmark_12assets.txt

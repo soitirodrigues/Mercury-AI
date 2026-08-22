@@ -1,0 +1,12 @@
+Frozen equivalence universe=12 workers=4 runs=3
+BASELINE vs OPTIMIZED workers=4: mismatches=11
+  EURUSD=X: base {'decision': 'SELL', 'grade': 'D', 'confidence': 0.6759867310344829, 'confluence': 100.0, 'buy_probability': 0.0, 'sell_probability': 43.95, 'wait_probability': 56.05, 'trade_allowed': True, 'audit_id': 'bd3049817baf224cf4da3655520022d279085311abfde4dfca968b03bb097f1a', 'score': 62.87878372413794} vs opt {'decision': 'SELL', 'grade': 'D', 'confidence': 0.682857, 'confluence': 100.0, 'buy_probability': 0.0, 'sell_probability': 44.43, 'wait_probability': 55.57, 'trade_allowed': True, 'audit_id': '90112e3fbb5365b3bc4c26348224537161eed9ff2e255da03906239e29fe30ca', 'score': 63.310855}
+  GBPUSD=X: base {'decision': 'BUY', 'grade': 'D', 'confidence': 0.6898371034482759, 'confluence': 100.0, 'buy_probability': 44.66, 'sell_probability': 0.0, 'wait_probability': 55.34, 'trade_allowed': True, 'audit_id': 'd9fe82d18674e8786dcb946bc30b2dcf0a9ebc2c0bcdc030ed5c5bb0495e4e93', 'score': 63.53683241379311} vs opt {'decision': 'SELL', 'grade': 'D', 'confidence': 0.6874135483870968, 'confluence': 100.0, 'buy_probability': 0.0, 'sell_probability': 44.66, 'wait_probability': 55.34, 'trade_allowed': True, 'audit_id': '26877cd9e52107119c296162f03efd5eb5cb740e43d3fd78161439bd305ef575', 'score': 63.524461290322584}
+  USDJPY=X: base {'decision': 'BUY', 'grade': 'D', 'confidence': 0.6859955096774195, 'confluence': 100.0, 'buy_probability': 44.24, 'sell_probability': 0.0, 'wait_probability': 55.76, 'trade_allowed': True, 'audit_id': '0c4dda0282960feb26bb0ecfbfdf36b7fe0761c0c0197fcb04d6c1a4fd6d1adb', 'score': 63.17238425806452} vs opt {'decision': 'SELL', 'grade': 'D', 'confidence': 0.6913688, 'confluence': 100.0, 'buy_probability': 0.0, 'sell_probability': 44.82, 'wait_probability': 55.18, 'trade_allowed': True, 'audit_id': '2ac1d72202acb096dda12c5bbe20f8a1b09e05d87edddf61138c9f5db179dc78', 'score': 65.679532}
+  Run 1 sig 13ebe068e2cb719d
+  Run 2 sig 2345ab3dddc9eaa7
+  Run 3 sig bf233c152f2f0ae4
+
+EQUIVALENCE (frozen) = FAIL
+DETERMINISM (frozen) = FAIL
+Wrote reports\m5_sprint4\frozen_equivalence_report.json

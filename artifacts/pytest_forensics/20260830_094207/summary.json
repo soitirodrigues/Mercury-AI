@@ -1,0 +1,20 @@
+﻿{
+    "timestamp":  "2026-08-30 09:42:56",
+    "root":  "C:\\Projetos\\Mercury-AI",
+    "duration_seconds":  45.96,
+    "timeout_seconds":  45,
+    "timeout_triggered":  true,
+    "exit_code":  null,
+    "last_nodeid":  null,
+    "last_interesting_line":  null,
+    "reproduction":  "NOT REQUESTED",
+    "verdict":  "INCONCLUSIVE — PYTEST TIMEOUT / HANG NOT YET LOCALIZED",
+    "artifacts":  {
+                      "last_test":  "C:\\Projetos\\Mercury-AI\\artifacts\\pytest_forensics\\20260830_094207\\last_test.txt",
+                      "slow_tests":  "C:\\Projetos\\Mercury-AI\\artifacts\\pytest_forensics\\20260830_094207\\slow_tests.txt",
+                      "process":  "C:\\Projetos\\Mercury-AI\\artifacts\\pytest_forensics\\20260830_094207\\process_snapshot.txt",
+                      "metadata":  "C:\\Projetos\\Mercury-AI\\artifacts\\pytest_forensics\\20260830_094207\\metadata.txt",
+                      "report":  "C:\\Projetos\\Mercury-AI\\artifacts\\pytest_forensics\\20260830_094207\\FORENSIC_REPORT.txt",
+                      "main_log":  "C:\\Projetos\\Mercury-AI\\artifacts\\pytest_forensics\\20260830_094207\\pytest_output.log"
+                  }
+}

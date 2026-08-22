@@ -1,0 +1,148 @@
+ERROR:yfinance:HTTP Error 404: {"quoteSummary":{"result":null,"error":{"code":"Not Found","description":"Quote not found for symbol: THIS_SYMBOL_DOES_NOT_EXIST_XYZ"}}}
+ERROR:yfinance:$THIS_SYMBOL_DOES_NOT_EXIST_XYZ: possibly delisted; no price data found  (period=5d) (Yahoo error = "No data found, symbol may be delisted")
+ERROR:yfinance:
+1 Failed download:
+ERROR:yfinance:['THIS_SYMBOL_DOES_NOT_EXIST_XYZ']: possibly delisted; no price data found  (period=5d) (Yahoo error = "No data found, symbol may be delisted")
+
+======================================================================
+EARLY EMISSION universe=12 workers=4
+[1/12] GBPUSD=X -> SELL status=REAL_SIGNAL fresh=True elapsed=19556ms worker=4
+[2/12] EURUSD=X -> BUY status=REAL_SIGNAL fresh=True elapsed=19730ms worker=4
+[3/12] USDCHF=X -> BUY status=REAL_SIGNAL fresh=True elapsed=19828ms worker=4
+[4/12] USDJPY=X -> BUY status=REAL_SIGNAL fresh=True elapsed=19843ms worker=4
+Data quality issue for USDCAD=X: Temporal gaps detected (unexpected data loss) (Score: 0.4)
+[5/12] USDCAD=X -> WAIT status=DATA_UNAVAILABLE fresh=False elapsed=20821ms worker=4
+[6/12] AUDUSD=X -> SELL status=REAL_SIGNAL fresh=True elapsed=27139ms worker=4
+[7/12] NZDUSD=X -> SELL status=REAL_SIGNAL fresh=True elapsed=33274ms worker=4
+[8/12] EURGBP=X -> BUY status=REAL_SIGNAL fresh=True elapsed=35441ms worker=4
+[9/12] EURJPY=X -> BUY status=REAL_SIGNAL fresh=True elapsed=38475ms worker=4
+[10/12] EURCHF=X -> BUY status=REAL_SIGNAL fresh=True elapsed=42472ms worker=4
+[11/12] EURAUD=X -> SELL status=REAL_SIGNAL fresh=True elapsed=45392ms worker=4
+[12/12] EURNZD=X -> SELL status=REAL_SIGNAL fresh=True elapsed=47421ms worker=4
+  wall 47.4s first 19556ms partial 19827.9ms complete 47424ms
+  decisions 12 top3_events 12 monotonic True stale_as_fresh 0
+  EARLY_EMISSION = PASS
+  Wrote reports\m5_sprint4\early_emission_report_12w4.json
+
+======================================================================
+EQUIVALENCE universe=12 workers=[4, 8]
+Running BASELINE workers=1 ...
+[1/12] EURUSD=X -> BUY status=REAL_SIGNAL fresh=True elapsed=4609ms worker=1
+[2/12] GBPUSD=X -> SELL status=REAL_SIGNAL fresh=True elapsed=10836ms worker=1
+[3/12] USDJPY=X -> BUY status=REAL_SIGNAL fresh=True elapsed=17167ms worker=1
+[4/12] USDCHF=X -> BUY status=REAL_SIGNAL fresh=True elapsed=23810ms worker=1
+[5/12] AUDUSD=X -> SELL status=REAL_SIGNAL fresh=True elapsed=27975ms worker=1
+[6/12] NZDUSD=X -> SELL status=REAL_SIGNAL fresh=True elapsed=31787ms worker=1
+Data quality issue for USDCAD=X: Temporal gaps detected (unexpected data loss) (Score: 0.4)
+[7/12] USDCAD=X -> WAIT status=DATA_UNAVAILABLE fresh=False elapsed=32219ms worker=1
+[8/12] EURGBP=X -> BUY status=REAL_SIGNAL fresh=True elapsed=37512ms worker=1
+[9/12] EURJPY=X -> BUY status=REAL_SIGNAL fresh=True elapsed=42586ms worker=1
+[10/12] EURCHF=X -> BUY status=REAL_SIGNAL fresh=True elapsed=47353ms worker=1
+[11/12] EURAUD=X -> SELL status=REAL_SIGNAL fresh=True elapsed=54792ms worker=1
+[12/12] EURNZD=X -> SELL status=REAL_SIGNAL fresh=True elapsed=60058ms worker=1
+Running OPTIMIZED workers=4 ...
+[1/12] EURUSD=X -> BUY status=REAL_SIGNAL fresh=True elapsed=12873ms worker=4
+[2/12] USDCHF=X -> BUY status=REAL_SIGNAL fresh=True elapsed=16260ms worker=4
+[3/12] USDJPY=X -> BUY status=REAL_SIGNAL fresh=True elapsed=16777ms worker=4
+[4/12] GBPUSD=X -> SELL status=REAL_SIGNAL fresh=True elapsed=16795ms worker=4
+Data quality issue for USDCAD=X: Temporal gaps detected (unexpected data loss) (Score: 0.4)
+[5/12] USDCAD=X -> WAIT status=DATA_UNAVAILABLE fresh=False elapsed=17877ms worker=4
+[6/12] AUDUSD=X -> SELL status=REAL_SIGNAL fresh=True elapsed=23424ms worker=4
+[7/12] NZDUSD=X -> SELL status=REAL_SIGNAL fresh=True elapsed=24908ms worker=4
+[8/12] EURGBP=X -> BUY status=REAL_SIGNAL fresh=True elapsed=30683ms worker=4
+[9/12] EURJPY=X -> BUY status=REAL_SIGNAL fresh=True elapsed=34906ms worker=4
+[10/12] EURCHF=X -> BUY status=REAL_SIGNAL fresh=True elapsed=37901ms worker=4
+[11/12] EURAUD=X -> SELL status=REAL_SIGNAL fresh=True elapsed=38778ms worker=4
+[12/12] EURNZD=X -> SELL status=REAL_SIGNAL fresh=True elapsed=42664ms worker=4
+  workers=4 FAIL mismatches=8
+    GBPUSD=X: base {'status': 'REAL_SIGNAL', 'decision': 'SELL', 'audit_id': 'b462ba18463ad07469c18ee2cd4ebc23f619be6322f2145e0cb3cd5b916b50b0', 'trade_allowed': True, 'prob_sum_ok': True, 'fresh': True, 'buy_probability': 0.0, 'sell_probability': 44.45, 'wait_probability': 55.55} vs opt {'status': 'REAL_SIGNAL', 'decision': 'SELL', 'audit_id': '72ca0b0d047eba5d80655542a534666d8bab0bad9ddb03f589fe23193cadcf17', 'trade_allowed': True, 'prob_sum_ok': True, 'fresh': True, 'buy_probability': 0.0, 'sell_probability': 44.46, 'wait_probability': 55.54}
+    USDCHF=X: base {'status': 'REAL_SIGNAL', 'decision': 'BUY', 'audit_id': '89a97e5d27a2aa2b5fb41656d27636f3beaf25542b63a7840f49b98b015fe9e6', 'trade_allowed': True, 'prob_sum_ok': True, 'fresh': True, 'buy_probability': 44.54, 'sell_probability': 0.0, 'wait_probability': 55.46} vs opt {'status': 'REAL_SIGNAL', 'decision': 'BUY', 'audit_id': 'd0347205858ba1e5e2901f139da3ead4eaf0e8f660a52a4c1fc8c91bbf944067', 'trade_allowed': True, 'prob_sum_ok': True, 'fresh': True, 'buy_probability': 44.53, 'sell_probability': 0.0, 'wait_probability': 55.47}
+    AUDUSD=X: base {'status': 'REAL_SIGNAL', 'decision': 'SELL', 'audit_id': '4c74ca9d9e6fb546b52495b94c26c65a8be5aea4e6a0900fe877f86a7be6e7e5', 'trade_allowed': True, 'prob_sum_ok': True, 'fresh': True, 'buy_probability': 0.0, 'sell_probability': 44.06, 'wait_probability': 55.94} vs opt {'status': 'REAL_SIGNAL', 'decision': 'SELL', 'audit_id': '3299b2e053faa4a5091b3d6680706fd16b855713a673e13e0fba239a90d547f1', 'trade_allowed': True, 'prob_sum_ok': True, 'fresh': True, 'buy_probability': 0.0, 'sell_probability': 44.01, 'wait_probability': 55.99}
+Running OPTIMIZED workers=8 ...
+Data quality issue for USDCAD=X: Temporal gaps detected (unexpected data loss) (Score: 0.4)
+[1/12] USDCAD=X -> WAIT status=DATA_UNAVAILABLE fresh=False elapsed=2863ms worker=8
+[2/12] EURUSD=X -> BUY status=REAL_SIGNAL fresh=True elapsed=21378ms worker=8
+[3/12] USDCHF=X -> BUY status=REAL_SIGNAL fresh=True elapsed=30812ms worker=8
+[4/12] AUDUSD=X -> SELL status=REAL_SIGNAL fresh=True elapsed=30860ms worker=8
+[5/12] GBPUSD=X -> SELL status=REAL_SIGNAL fresh=True elapsed=31090ms worker=8
+[6/12] NZDUSD=X -> SELL status=REAL_SIGNAL fresh=True elapsed=31112ms worker=8
+[7/12] EURGBP=X -> BUY status=REAL_SIGNAL fresh=True elapsed=32016ms worker=8
+[8/12] USDJPY=X -> BUY status=REAL_SIGNAL fresh=True elapsed=32733ms worker=8
+[9/12] EURJPY=X -> BUY status=REAL_SIGNAL fresh=True elapsed=33482ms worker=8
+[10/12] EURCHF=X -> BUY status=REAL_SIGNAL fresh=True elapsed=38527ms worker=8
+[11/12] EURAUD=X -> SELL status=REAL_SIGNAL fresh=True elapsed=43611ms worker=8
+[12/12] EURNZD=X -> SELL status=REAL_SIGNAL fresh=True elapsed=44073ms worker=8
+  workers=8 FAIL mismatches=5
+    GBPUSD=X: base {'status': 'REAL_SIGNAL', 'decision': 'SELL', 'audit_id': 'b462ba18463ad07469c18ee2cd4ebc23f619be6322f2145e0cb3cd5b916b50b0', 'trade_allowed': True, 'prob_sum_ok': True, 'fresh': True, 'buy_probability': 0.0, 'sell_probability': 44.45, 'wait_probability': 55.55} vs opt {'status': 'REAL_SIGNAL', 'decision': 'SELL', 'audit_id': 'ed12534825ffd9060c51a913abe81b7a2e16393d46c78efd05d5528ec0084bf9', 'trade_allowed': True, 'prob_sum_ok': True, 'fresh': True, 'buy_probability': 0.0, 'sell_probability': 44.46, 'wait_probability': 55.54}
+    AUDUSD=X: base {'status': 'REAL_SIGNAL', 'decision': 'SELL', 'audit_id': '4c74ca9d9e6fb546b52495b94c26c65a8be5aea4e6a0900fe877f86a7be6e7e5', 'trade_allowed': True, 'prob_sum_ok': True, 'fresh': True, 'buy_probability': 0.0, 'sell_probability': 44.06, 'wait_probability': 55.94} vs opt {'status': 'REAL_SIGNAL', 'decision': 'SELL', 'audit_id': 'd1c49f745cd746be7742baf6fe154d61defc13bb696008127cbdb43650fbe5c9', 'trade_allowed': True, 'prob_sum_ok': True, 'fresh': True, 'buy_probability': 0.0, 'sell_probability': 44.01, 'wait_probability': 55.99}
+    NZDUSD=X: base {'status': 'REAL_SIGNAL', 'decision': 'SELL', 'audit_id': '9301c1ef64c4dc2a4a1f9e36907e9bbe0f621880e8c90b9cfed885304e661e04', 'trade_allowed': True, 'prob_sum_ok': True, 'fresh': True, 'buy_probability': 0.0, 'sell_probability': 59.09, 'wait_probability': 40.91} vs opt {'status': 'REAL_SIGNAL', 'decision': 'SELL', 'audit_id': '00ef3de690e243e65c0d5e3fc6d819aa28ff528116436bf1d930ecca3aac25ef', 'trade_allowed': True, 'prob_sum_ok': True, 'fresh': True, 'buy_probability': 0.0, 'sell_probability': 43.81, 'wait_probability': 56.19}
+EQUIVALENCE = FAIL
+Wrote reports\m5_sprint4\equivalence_report_12.json
+
+======================================================================
+DETERMINISM universe=12 workers=4 runs=3
+  Run 1/3 ...
+[1/12] EURUSD=X -> BUY status=REAL_SIGNAL fresh=True elapsed=13181ms worker=4
+[2/12] GBPUSD=X -> SELL status=REAL_SIGNAL fresh=True elapsed=16304ms worker=4
+[3/12] USDCHF=X -> BUY status=REAL_SIGNAL fresh=True elapsed=17081ms worker=4
+[4/12] USDJPY=X -> BUY status=REAL_SIGNAL fresh=True elapsed=17266ms worker=4
+Data quality issue for USDCAD=X: Temporal gaps detected (unexpected data loss) (Score: 0.4)
+[5/12] USDCAD=X -> WAIT status=DATA_UNAVAILABLE fresh=False elapsed=17780ms worker=4
+[6/12] AUDUSD=X -> SELL status=REAL_SIGNAL fresh=True elapsed=26164ms worker=4
+[7/12] NZDUSD=X -> BUY status=REAL_SIGNAL fresh=True elapsed=26247ms worker=4
+[8/12] EURGBP=X -> BUY status=REAL_SIGNAL fresh=True elapsed=31690ms worker=4
+[9/12] EURJPY=X -> BUY status=REAL_SIGNAL fresh=True elapsed=31894ms worker=4
+[10/12] EURAUD=X -> SELL status=REAL_SIGNAL fresh=True elapsed=38716ms worker=4
+[11/12] EURCHF=X -> BUY status=REAL_SIGNAL fresh=True elapsed=38860ms worker=4
+[12/12] EURNZD=X -> SELL status=REAL_SIGNAL fresh=True elapsed=41934ms worker=4
+  Run 2/3 ...
+[1/12] EURUSD=X -> BUY status=REAL_SIGNAL fresh=True elapsed=13763ms worker=4
+[2/12] USDJPY=X -> BUY status=REAL_SIGNAL fresh=True elapsed=15565ms worker=4
+[3/12] GBPUSD=X -> SELL status=REAL_SIGNAL fresh=True elapsed=16333ms worker=4
+[4/12] USDCHF=X -> BUY status=REAL_SIGNAL fresh=True elapsed=16844ms worker=4
+Data quality issue for USDCAD=X: Temporal gaps detected (unexpected data loss) (Score: 0.4)
+[5/12] USDCAD=X -> WAIT status=DATA_UNAVAILABLE fresh=False elapsed=17566ms worker=4
+[6/12] AUDUSD=X -> SELL status=REAL_SIGNAL fresh=True elapsed=26930ms worker=4
+[7/12] NZDUSD=X -> BUY status=REAL_SIGNAL fresh=True elapsed=29182ms worker=4
+[8/12] EURGBP=X -> BUY status=REAL_SIGNAL fresh=True elapsed=30814ms worker=4
+[9/12] EURJPY=X -> BUY status=REAL_SIGNAL fresh=True elapsed=32307ms worker=4
+[10/12] EURCHF=X -> BUY status=REAL_SIGNAL fresh=True elapsed=39547ms worker=4
+[11/12] EURAUD=X -> SELL status=REAL_SIGNAL fresh=True elapsed=41330ms worker=4
+[12/12] EURNZD=X -> SELL status=REAL_SIGNAL fresh=True elapsed=42187ms worker=4
+  Run 3/3 ...
+[1/12] EURUSD=X -> BUY status=REAL_SIGNAL fresh=True elapsed=14921ms worker=4
+[2/12] USDCHF=X -> BUY status=REAL_SIGNAL fresh=True elapsed=16631ms worker=4
+[3/12] GBPUSD=X -> SELL status=REAL_SIGNAL fresh=True elapsed=17534ms worker=4
+[4/12] USDJPY=X -> BUY status=REAL_SIGNAL fresh=True elapsed=17808ms worker=4
+Data quality issue for USDCAD=X: Temporal gaps detected (unexpected data loss) (Score: 0.4)
+[5/12] USDCAD=X -> WAIT status=DATA_UNAVAILABLE fresh=False elapsed=18874ms worker=4
+[6/12] AUDUSD=X -> SELL status=REAL_SIGNAL fresh=True elapsed=33259ms worker=4
+[7/12] NZDUSD=X -> BUY status=REAL_SIGNAL fresh=True elapsed=34186ms worker=4
+[8/12] EURJPY=X -> BUY status=REAL_SIGNAL fresh=True elapsed=36827ms worker=4
+[9/12] EURGBP=X -> BUY status=REAL_SIGNAL fresh=True elapsed=36929ms worker=4
+[10/12] EURCHF=X -> BUY status=REAL_SIGNAL fresh=True elapsed=49116ms worker=4
+[11/12] EURAUD=X -> SELL status=REAL_SIGNAL fresh=True elapsed=49434ms worker=4
+[12/12] EURNZD=X -> SELL status=REAL_SIGNAL fresh=True elapsed=49646ms worker=4
+  sigs ['13448bc8b4ab9b45d9edd47aa4b453d6ed4fea6eefd6918a2afa27292b5d3305', '13448bc8b4ab9b45d9edd47aa4b453d6ed4fea6eefd6918a2afa27292b5d3305', '13448bc8b4ab9b45d9edd47aa4b453d6ed4fea6eefd6918a2afa27292b5d3305']
+  top3_sigs ['db9ae511fd32f72e75025bf6a9b8b6eee760ebb619388e3ae2e6a68deaf76abd', 'e32c81a5a2c6028b20e3897b3e8a97ed4ba662ddbccfa4a81aaa228b29fd9cf0', '987f983e12cf3b4eae25773c9f2add5be32f621eac6b09fd6206e3fc719fe7ae']
+DETERMINISM = FAIL
+Wrote reports\m5_sprint4\determinism_report_12w4.json
+
+======================================================================
+FAILURE ISOLATION
+  symbols ['EURUSD=X', 'GBPUSD=X', 'USDJPY=X', 'USDCHF=X', 'THIS_SYMBOL_DOES_NOT_EXIST_XYZ']
+[1/5] EURUSD=X -> SELL status=REAL_SIGNAL fresh=True elapsed=17358ms worker=4
+[2/5] THIS_SYMBOL_DOES_NOT_EXIST_XYZ -> WAIT status=DATA_UNAVAILABLE fresh=False elapsed=20892ms worker=4
+[3/5] USDJPY=X -> BUY status=REAL_SIGNAL fresh=True elapsed=21172ms worker=4
+[4/5] USDCHF=X -> BUY status=REAL_SIGNAL fresh=True elapsed=21392ms worker=4
+[5/5] GBPUSD=X -> SELL status=REAL_SIGNAL fresh=True elapsed=21397ms worker=4
+  bad THIS_SYMBOL_DOES_NOT_EXIST_XYZ -> DATA_UNAVAILABLE err=False
+  good success 4/4 all_completed True
+FAILURE_ISOLATION = PASS
+Wrote reports\m5_sprint4\failure_isolation_report.json
+
+SUMMARY
+  EARLY_EMISSION = PASS
+  EQUIVALENCE = FAIL
+  DETERMINISM = FAIL
+  FAILURE_ISOLATION = PASS

@@ -1,7 +1,10 @@
+import pytest
+
 from mercury_ai.analysis.data_exporter import DataExporter
 from pathlib import Path
 import shutil
 
+@pytest.mark.slow
 def test_data_exporter():
     test_dir = Path("tests/exports")
     if test_dir.exists():

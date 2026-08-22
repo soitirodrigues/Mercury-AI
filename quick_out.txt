@@ -1,0 +1,87 @@
+INFO:mercury_ai.operations.m5_operational.watchdog:[Watchdog m5s64-live-202609050445-6472] stopped
+INFO:mercury_ai.operations.m5_operational.runner:[M5OperationalRunner m5s64-live-202609050445-6472] done status=COMPLETED wall=21.6s fresh=4 stale=0 timeout=0 stale_as_fresh=0 queue_max=4
+INFO:mercury_ai.operations.m5_operational.runner:[M5OperationalRunner] cycle m5s64-live-202609050450-744b start target=2026-09-05T04:50:00+00:00 executor=thread workers=2 universe=4 config={"process_workers": 2, "thread_workers": 2, "executor": "thread", "worker_timeout_s": 90.0, "cycle_timeout_s": 95.0, "max_concurrent_cycles": 1, "operational_universe": "ALL_SYMBOLS", "early_emission": true, "freshness_policy": "strict", "watchdog_interval_s": 5.0, "stall_threshold_s": 45.0, "bounded_queue_maxsize": 128, "max_retries_per_asset": 0, "recreate_worker_on_error": false, "shutdown_grace_s": 10.0, "use_operational_runner": true, "mode": "m5"}
+INFO:mercury_ai.operations.m5_operational.watchdog:[Watchdog m5s64-live-202609050450-744b] started interval=5.0s stall=45.0s
+INFO:mercury_ai.operations.m5_operational.watchdog:[Watchdog m5s64-live-202609050450-744b] stopped
+INFO:mercury_ai.operations.m5_operational.runner:[M5OperationalRunner m5s64-live-202609050450-744b] done status=COMPLETED wall=22.1s fresh=4 stale=0 timeout=0 stale_as_fresh=0 queue_max=4
+INFO:mercury_ai.operations.m5_operational.runner:[M5OperationalRunner] cycle cross-thread-ddb3 start target=2026-09-05T04:50:00+00:00 executor=thread workers=1 universe=4 config={"process_workers": 1, "thread_workers": 1, "executor": "thread", "worker_timeout_s": 30, "cycle_timeout_s": 60, "max_concurrent_cycles": 1, "operational_universe": "ALL_SYMBOLS", "early_emission": true, "freshness_policy": "strict", "watchdog_interval_s": 5.0, "stall_threshold_s": 45.0, "bounded_queue_maxsize": 128, "max_retries_per_asset": 0, "recreate_worker_on_error": false, "shutdown_grace_s": 10.0, "use_operational_runner": true, "mode": "m5"}
+INFO:mercury_ai.operations.m5_operational.watchdog:[Watchdog cross-thread-ddb3] started interval=5.0s stall=45.0s
+INFO:mercury_ai.operations.m5_operational.watchdog:[Watchdog cross-thread-ddb3] stopped
+INFO:mercury_ai.operations.m5_operational.runner:[M5OperationalRunner cross-thread-ddb3] done status=COMPLETED wall=28.5s fresh=4 stale=0 timeout=0 stale_as_fresh=0 queue_max=4
+INFO:mercury_ai.operations.m5_operational.runner:[M5OperationalRunner] cycle cross-thread-3f82 start target=2026-09-05T04:50:00+00:00 executor=thread workers=4 universe=4 config={"process_workers": 4, "thread_workers": 4, "executor": "thread", "worker_timeout_s": 30, "cycle_timeout_s": 60, "max_concurrent_cycles": 1, "operational_universe": "ALL_SYMBOLS", "early_emission": true, "freshness_policy": "strict", "watchdog_interval_s": 5.0, "stall_threshold_s": 45.0, "bounded_queue_maxsize": 128, "max_retries_per_asset": 0, "recreate_worker_on_error": false, "shutdown_grace_s": 10.0, "use_operational_runner": true, "mode": "m5"}
+INFO:mercury_ai.operations.m5_operational.watchdog:[Watchdog cross-thread-3f82] started interval=5.0s stall=45.0s
+INFO:mercury_ai.operations.m5_operational.watchdog:[Watchdog cross-thread-3f82] stopped
+INFO:mercury_ai.operations.m5_operational.runner:[M5OperationalRunner cross-thread-3f82] done status=COMPLETED wall=18.4s fresh=4 stale=0 timeout=0 stale_as_fresh=0 queue_max=4
+Sprint 6.4 Gate Runner ù universe=64 executor=process cycles=6 mode=live_clock quick=True
+
+[º19 live audit] universe=64 executor=process cycles=6 mode=live_clock quick=True
+  live audit session_id=m5s64-6f3e485f cycles 2/2 qual 2/2 stale 0 orphan 0
+
+[º7 deterministic replay gate] session_dir=C:\Projetos\Mercury-AI\reports\m5_sprint64\m5s64-6f3e485f replay 3 cycles
+  m5s64-live-202609050445-6472: REPLAY_MATCH checks={'target_candle': {'expected': '2026-09-05T04:45:00+00:00', 'replayed': '2026-09-05T04:45:00+00:00', 'match': True}, 'universe': {'expected': 4, 'replayed': 4, 'match': True}, 'freshness_state': {'fresh_assets': 4, 'expected_fresh': 4, 'match': True, 'stale_as_fresh_preserved': True}, 'ranking_signature': {'expected': 'cd061f86b1abafe4', 'replayed': 'cd061f86b1abafe4', 'match': True}, 'decision_signature': {'expected': '2f9c1e3e5a5c715b', 'replayed': '2f9c1e3e5a5c715b', 'match': True}, 'Top3': {'expected': [{'rank': 1, 'symbol': 'EURUSD=X', 'decision': 'BUY', 'grade': 'D', 'confidence': 0.7012622896551726, 'confluence': 100.0, 'score': 135.0579, 'audit_id': '3f56ad98471c9cf04946079b71d9ed4e30ab2a10e911b82a8853e1b8c29e167e'}, {'rank': 2, 'symbol': 'GBPUSD=X', 'decision': 'SELL', 'grade': 'D', 'confidence': 0.6882992333333334, 'confluence': 100.0, 'score': 134.653, 'audit_id': '9ee04bcbb7b008822f19f7e0adbb7a7735db959cc4d703fef931b8e5461ef1c6'}, {'rank': 3, 'symbol': 'USDJPY=X', 'decision': 'SELL', 'grade': 'D', 'confidence': 0.6846569538461539, 'confluence': 100.0, 'score': 134.4637, 'audit_id': 'e60fbbf43efaf72cdb00847efbd28028138eeaac6899c4e3cc8b790c74f03a60'}], 'replayed': [{'rank': 1, 'symbol': 'EURUSD=X', 'decision': 'BUY', 'grade': 'D', 'confidence': 0.7012622896551726, 'confluence': 100.0, 'score': 135.0579, 'audit_id': '3f56ad98471c9cf04946079b71d9ed4e30ab2a10e911b82a8853e1b8c29e167e'}, {'rank': 2, 'symbol': 'GBPUSD=X', 'decision': 'SELL', 'grade': 'D', 'confidence': 0.6882992333333334, 'confluence': 100.0, 'score': 134.653, 'audit_id': '9ee04bcbb7b008822f19f7e0adbb7a7735db959cc4d703fef931b8e5461ef1c6'}, {'rank': 3, 'symbol': 'USDJPY=X', 'decision': 'SELL', 'grade': 'D', 'confidence': 0.6846569538461539, 'confluence': 100.0, 'score': 134.4637, 'audit_id': 'e60fbbf43efaf72cdb00847efbd28028138eeaac6899c4e3cc8b790c74f03a60'}], 'match': True}, 'final_decision': {'expected': 'EURUSD=X', 'replayed': 'EURUSD=X', 'match': True}, 'decision_candle_per_asset': {'checked': True}, 'replay_stale_as_fresh_total': 0, 'replay_error_as_wait_total': 0}
+  m5s64-live-202609050450-744b: REPLAY_MATCH checks={'target_candle': {'expected': '2026-09-05T04:50:00+00:00', 'replayed': '2026-09-05T04:50:00+00:00', 'match': True}, 'universe': {'expected': 4, 'replayed': 4, 'match': True}, 'freshness_state': {'fresh_assets': 4, 'expected_fresh': 4, 'match': True, 'stale_as_fresh_preserved': True}, 'ranking_signature': {'expected': '726e29f6c60cdbf6', 'replayed': '726e29f6c60cdbf6', 'match': True}, 'decision_signature': {'expected': 'be4159f4e5619cb5', 'replayed': 'be4159f4e5619cb5', 'match': True}, 'Top3': {'expected': [{'rank': 1, 'symbol': 'EURUSD=X', 'decision': 'BUY', 'grade': 'D', 'confidence': 0.7012622896551726, 'confluence': 100.0, 'score': 135.0579, 'audit_id': '3ea3ee33a9e1a8d2d975b2b034d9557ef3e455abfbb7dd2a3c248bdb46531934'}, {'rank': 2, 'symbol': 'GBPUSD=X', 'decision': 'SELL', 'grade': 'D', 'confidence': 0.6882992333333334, 'confluence': 100.0, 'score': 134.653, 'audit_id': '7345fb156c1ac641c2ed723bcdfa8d92a060aa7b96318b582905f0eb9b4549de'}, {'rank': 3, 'symbol': 'USDJPY=X', 'decision': 'SELL', 'grade': 'D', 'confidence': 0.6846569538461539, 'confluence': 100.0, 'score': 134.4637, 'audit_id': '5c091a6a4dea1b6e923d8358cf765d48585f55979f38c91d0194d1e67342e60a'}], 'replayed': [{'rank': 1, 'symbol': 'EURUSD=X', 'decision': 'BUY', 'grade': 'D', 'confidence': 0.7012622896551726, 'confluence': 100.0, 'score': 135.0579, 'audit_id': '3ea3ee33a9e1a8d2d975b2b034d9557ef3e455abfbb7dd2a3c248bdb46531934'}, {'rank': 2, 'symbol': 'GBPUSD=X', 'decision': 'SELL', 'grade': 'D', 'confidence': 0.6882992333333334, 'confluence': 100.0, 'score': 134.653, 'audit_id': '7345fb156c1ac641c2ed723bcdfa8d92a060aa7b96318b582905f0eb9b4549de'}, {'rank': 3, 'symbol': 'USDJPY=X', 'decision': 'SELL', 'grade': 'D', 'confidence': 0.6846569538461539, 'confluence': 100.0, 'score': 134.4637, 'audit_id': '5c091a6a4dea1b6e923d8358cf765d48585f55979f38c91d0194d1e67342e60a'}], 'match': True}, 'final_decision': {'expected': 'EURUSD=X', 'replayed': 'EURUSD=X', 'match': True}, 'decision_candle_per_asset': {'checked': True}, 'replay_stale_as_fresh_total': 0, 'replay_error_as_wait_total': 0}
+
+[º8 tamper detection] session_dir=C:\Projetos\Mercury-AI\reports\m5_sprint64\m5s64-6f3e485f
+  tamper test cycle_audit/m5s64-live-202609050445-6472.json: {'error': 'artifact cycle_audit/m5s64-live-202609050445-6472.json not in manifest'}
+
+[º13 cross-executor audit] quick=True
+  seq sig 1a39fdf8f1e6287e final EURUSD=X
+  par sig 39a0cace348c6f01 final EURUSD=X
+  equivalence: FAIL  (wall_ms/worker_id excluded)
+
+[º14 crash during artifact write] C:\Projetos\Mercury-AI\reports\m5_sprint64\m5s64-6f3e485f
+
+========================================================================
+  ARCHITECTURE               PASS
+  BASELINE_INTEGRITY         PASS
+  AUDIT_IDENTITY             PASS
+  AUDIT_IMMUTABILITY         PASS
+  ARTIFACT_INTEGRITY         PASS
+  TAMPER_DETECTION           FAIL
+  EVENT_OBSERVABILITY        PASS
+  EVENT_ORDERING             PASS
+  EVENT_COMPLETENESS         PASS
+  DECISION_PROVENANCE        PASS
+  REPLAY_INTEGRITY           PASS
+  DETERMINISTIC_REPLAY       PASS
+  FAULT_REPLAY               PASS
+  FRESHNESS_REPLAY           PASS
+  CROSS_EXECUTOR_AUDIT       FAIL
+  ARTIFACT_WRITE_RECOVERY    PASS
+  AUDIT_CONTINUITY           PASS
+  QUEUE_OBSERVABILITY        PASS
+  LIVE_AUDIT                 PASS
+  PERFORMANCE                PASS
+  RESOURCE_SOAK              PASS
+  DETERMINISM                PASS
+  REGRESSION                 PASS
+  OPERATIONAL                PASS
+
+Cert conditions:
+  baseline_determinism                 PASS
+  regression                           PASS
+  artifact_integrity_pass              PASS
+  artifact_hash_mismatch_total==0      PASS
+  missing_artifact_total==0            PASS
+  corrupt_artifact_accepted==false     PASS
+  replay_divergence_total==0           PASS
+  deterministic_replay                 PASS
+  fault_replay_integrity               PASS
+  event_loss_total==0                  PASS
+  duplicate_event_total==0             PASS
+  event_order_violation_total==0       PASS
+  decision_without_provenance_total==0 PASS
+  replay_stale_as_fresh_total==0       PASS
+  replay_error_as_wait_total==0        PASS
+  orphan_workers==0                    PASS
+  no_duplicate_target_candle           PASS
+  tamper_detection                     FAIL
+  artifact_write_recovery              PASS
+  audit_continuity                     PASS
+  cross_executor_audit                 FAIL
+  live_audit                           PASS
+
+SPRINT 6.4 = NOT CERTIFIED
+========================================================================
+
+[artifacts] session_dir=reports\m5_sprint64\m5s64-6f3e485f canonical=reports\m5_sprint64\SENSEI_SPRINT64_REPORT.md

@@ -1,0 +1,119 @@
+{
+  "symbol": "EURUSD=X",
+  "m1_rows": 5911,
+  "stages": [
+    {
+      "name": "DataLoading",
+      "duration": 0.43,
+      "pct": 2.1
+    },
+    {
+      "name": "DataQuality",
+      "duration": 0.032,
+      "pct": 0.2
+    },
+    {
+      "name": "Indicators",
+      "duration": 0.031,
+      "pct": 0.1
+    },
+    {
+      "name": "StructureAnalysis",
+      "duration": 4.505,
+      "pct": 21.5
+    },
+    {
+      "name": "TrendAnalysis",
+      "duration": 0.0,
+      "pct": 0.0
+    },
+    {
+      "name": "MTFAnalysis",
+      "duration": 14.123,
+      "pct": 67.5
+    },
+    {
+      "name": "SmartMoneyAnalysis",
+      "duration": 0.084,
+      "pct": 0.4
+    },
+    {
+      "name": "SessionAnalysis",
+      "duration": 0.0,
+      "pct": 0.0
+    },
+    {
+      "name": "MarketStateAnalysis",
+      "duration": 0.0,
+      "pct": 0.0
+    },
+    {
+      "name": "VolumeAnalysis",
+      "duration": 0.007,
+      "pct": 0.0
+    },
+    {
+      "name": "RegimeAnalysis",
+      "duration": 0.0,
+      "pct": 0.0
+    },
+    {
+      "name": "LiquidityAnalysis",
+      "duration": 0.014,
+      "pct": 0.1
+    },
+    {
+      "name": "VolatilityAnalysis",
+      "duration": 0.036,
+      "pct": 0.2
+    },
+    {
+      "name": "ConditionAnalysis",
+      "duration": 0.0,
+      "pct": 0.0
+    },
+    {
+      "name": "CandlestickAnalysis",
+      "duration": 0.001,
+      "pct": 0.0
+    },
+    {
+      "name": "SRAnalysis",
+      "duration": 0.316,
+      "pct": 1.5
+    },
+    {
+      "name": "PriceActionAnalysis",
+      "duration": 0.0,
+      "pct": 0.0
+    },
+    {
+      "name": "RiskAnalysis",
+      "duration": 0.002,
+      "pct": 0.0
+    },
+    {
+      "name": "ContextAnalysis",
+      "duration": 0.0,
+      "pct": 0.0
+    },
+    {
+      "name": "TradeFilter",
+      "duration": 0.0,
+      "pct": 0.0
+    },
+    {
+      "name": "DecisionEngine",
+      "duration": 0.018,
+      "pct": 0.1
+    },
+    {
+      "name": "Persistence",
+      "duration": 0.099,
+      "pct": 0.5
+    }
+  ],
+  "bottleneck": "M1 detect_swings+MTF per earlier, now measured via stages",
+  "fetch_s": 0.595,
+  "total_s": 19.697
+}

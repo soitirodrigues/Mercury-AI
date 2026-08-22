@@ -1,0 +1,604 @@
+{
+  "measured_at": "2026-09-02T20:40:18.695705+00:00",
+  "universe": 64,
+  "total_wall_ms": 808967.6,
+  "total_wall_s": 809.0,
+  "first_decision_ms": 21329.7,
+  "partial_top3_ms": 57300.2,
+  "complete_top3_ms": 808967.6,
+  "mtf_total_ms": 514703.4,
+  "mtf_total_s": 514.7,
+  "mtf_avg_ms": 8042.2,
+  "fetch_total_ms": 33953.6,
+  "wall_avg_ms": 12638.9,
+  "wall_p95_ms": 25471.4,
+  "fresh": 57,
+  "unavailable": 7,
+  "per_asset": [
+    {
+      "symbol": "EURUSD=X",
+      "decision": "BUY",
+      "audit": "10f64a1decba",
+      "status": "FRESH",
+      "wall_ms": 21329.7,
+      "mtf_ms": 13263.7,
+      "fetch_ms": 3053.3
+    },
+    {
+      "symbol": "GBPUSD=X",
+      "decision": "BUY",
+      "audit": "18435359d754",
+      "status": "FRESH",
+      "wall_ms": 18806.8,
+      "mtf_ms": 10922.8,
+      "fetch_ms": 688.6
+    },
+    {
+      "symbol": "USDJPY=X",
+      "decision": "SELL",
+      "audit": "6c69ce88cf55",
+      "status": "FRESH",
+      "wall_ms": 17162.3,
+      "mtf_ms": 11803.0,
+      "fetch_ms": 511.4
+    },
+    {
+      "symbol": "USDCHF=X",
+      "decision": "BUY",
+      "audit": "67f09dd463b1",
+      "status": "FRESH",
+      "wall_ms": 17395.6,
+      "mtf_ms": 11957.2,
+      "fetch_ms": 521.4
+    },
+    {
+      "symbol": "AUDUSD=X",
+      "decision": "BUY",
+      "audit": "e4feead32269",
+      "status": "FRESH",
+      "wall_ms": 14883.2,
+      "mtf_ms": 7378.8,
+      "fetch_ms": 390.8
+    },
+    {
+      "symbol": "NZDUSD=X",
+      "decision": "BUY",
+      "audit": "f864cbb5517b",
+      "status": "FRESH",
+      "wall_ms": 12364.0,
+      "mtf_ms": 6884.4,
+      "fetch_ms": 499.7
+    },
+    {
+      "symbol": "USDCAD=X",
+      "decision": "WAIT",
+      "audit": "DATA_QUALITY",
+      "status": "DATA_UNAVAILABLE",
+      "wall_ms": 586.6,
+      "mtf_ms": 0,
+      "fetch_ms": 502.0
+    },
+    {
+      "symbol": "EURGBP=X",
+      "decision": "BUY",
+      "audit": "ec905bf62bfb",
+      "status": "FRESH",
+      "wall_ms": 15985.8,
+      "mtf_ms": 10733.3,
+      "fetch_ms": 471.9
+    },
+    {
+      "symbol": "EURJPY=X",
+      "decision": "SELL",
+      "audit": "cfe195508438",
+      "status": "FRESH",
+      "wall_ms": 18064.6,
+      "mtf_ms": 12503.3,
+      "fetch_ms": 370.2
+    },
+    {
+      "symbol": "EURCHF=X",
+      "decision": "BUY",
+      "audit": "4a1385b8c291",
+      "status": "FRESH",
+      "wall_ms": 15677.3,
+      "mtf_ms": 10503.5,
+      "fetch_ms": 557.3
+    },
+    {
+      "symbol": "EURAUD=X",
+      "decision": "SELL",
+      "audit": "c6ac7220a656",
+      "status": "FRESH",
+      "wall_ms": 15409.0,
+      "mtf_ms": 10112.6,
+      "fetch_ms": 539.3
+    },
+    {
+      "symbol": "EURNZD=X",
+      "decision": "SELL",
+      "audit": "533c5ae67c41",
+      "status": "FRESH",
+      "wall_ms": 16952.1,
+      "mtf_ms": 11420.0,
+      "fetch_ms": 527.7
+    },
+    {
+      "symbol": "EURCAD=X",
+      "decision": "WAIT",
+      "audit": "DATA_QUALITY",
+      "status": "DATA_UNAVAILABLE",
+      "wall_ms": 655.0,
+      "mtf_ms": 0,
+      "fetch_ms": 568.4
+    },
+    {
+      "symbol": "GBPJPY=X",
+      "decision": "SELL",
+      "audit": "0417f1b53922",
+      "status": "FRESH",
+      "wall_ms": 24214.1,
+      "mtf_ms": 15165.8,
+      "fetch_ms": 521.1
+    },
+    {
+      "symbol": "GBPCHF=X",
+      "decision": "SELL",
+      "audit": "3ede0a87cfa7",
+      "status": "FRESH",
+      "wall_ms": 17063.5,
+      "mtf_ms": 11168.3,
+      "fetch_ms": 575.8
+    },
+    {
+      "symbol": "GBPAUD=X",
+      "decision": "SELL",
+      "audit": "be1ae7e28116",
+      "status": "FRESH",
+      "wall_ms": 18055.4,
+      "mtf_ms": 11716.6,
+      "fetch_ms": 548.0
+    },
+    {
+      "symbol": "GBPNZD=X",
+      "decision": "BUY",
+      "audit": "b3d9608e1f8e",
+      "status": "FRESH",
+      "wall_ms": 17645.8,
+      "mtf_ms": 11351.0,
+      "fetch_ms": 548.2
+    },
+    {
+      "symbol": "GBPCAD=X",
+      "decision": "BUY",
+      "audit": "5f43b99903c8",
+      "status": "FRESH",
+      "wall_ms": 17317.3,
+      "mtf_ms": 11548.4,
+      "fetch_ms": 579.5
+    },
+    {
+      "symbol": "CHFJPY=X",
+      "decision": "SELL",
+      "audit": "5261d12bc17b",
+      "status": "FRESH",
+      "wall_ms": 17659.4,
+      "mtf_ms": 11655.7,
+      "fetch_ms": 511.2
+    },
+    {
+      "symbol": "AUDJPY=X",
+      "decision": "SELL",
+      "audit": "a613ee5269aa",
+      "status": "FRESH",
+      "wall_ms": 18208.2,
+      "mtf_ms": 12357.9,
+      "fetch_ms": 582.0
+    },
+    {
+      "symbol": "AUDCHF=X",
+      "decision": "BUY",
+      "audit": "c44f14f66a6d",
+      "status": "FRESH",
+      "wall_ms": 15015.9,
+      "mtf_ms": 9685.1,
+      "fetch_ms": 374.8
+    },
+    {
+      "symbol": "AUDNZD=X",
+      "decision": "BUY",
+      "audit": "b17eea52a0e1",
+      "status": "FRESH",
+      "wall_ms": 17036.7,
+      "mtf_ms": 11714.7,
+      "fetch_ms": 517.5
+    },
+    {
+      "symbol": "AUDCAD=X",
+      "decision": "BUY",
+      "audit": "78f16e34a662",
+      "status": "FRESH",
+      "wall_ms": 16815.4,
+      "mtf_ms": 11463.2,
+      "fetch_ms": 520.0
+    },
+    {
+      "symbol": "NZDJPY=X",
+      "decision": "SELL",
+      "audit": "8024cc31b594",
+      "status": "FRESH",
+      "wall_ms": 16883.4,
+      "mtf_ms": 11368.5,
+      "fetch_ms": 535.1
+    },
+    {
+      "symbol": "NZDCHF=X",
+      "decision": "BUY",
+      "audit": "98a9414349e7",
+      "status": "FRESH",
+      "wall_ms": 20333.5,
+      "mtf_ms": 12861.0,
+      "fetch_ms": 524.5
+    },
+    {
+      "symbol": "NZDCAD=X",
+      "decision": "BUY",
+      "audit": "08710b17bcd9",
+      "status": "FRESH",
+      "wall_ms": 17434.3,
+      "mtf_ms": 11670.6,
+      "fetch_ms": 506.9
+    },
+    {
+      "symbol": "CADJPY=X",
+      "decision": "SELL",
+      "audit": "5f24ed94ca8f",
+      "status": "FRESH",
+      "wall_ms": 17555.6,
+      "mtf_ms": 11852.3,
+      "fetch_ms": 539.4
+    },
+    {
+      "symbol": "CADCHF=X",
+      "decision": "BUY",
+      "audit": "f949a1942734",
+      "status": "FRESH",
+      "wall_ms": 14990.9,
+      "mtf_ms": 9675.5,
+      "fetch_ms": 504.3
+    },
+    {
+      "symbol": "BTC-USD",
+      "decision": "BUY",
+      "audit": "ade3bf87e8c0",
+      "status": "FRESH",
+      "wall_ms": 17990.5,
+      "mtf_ms": 11765.9,
+      "fetch_ms": 543.3
+    },
+    {
+      "symbol": "ETH-USD",
+      "decision": "SELL",
+      "audit": "5da3ce43d76d",
+      "status": "FRESH",
+      "wall_ms": 17838.5,
+      "mtf_ms": 11639.7,
+      "fetch_ms": 509.2
+    },
+    {
+      "symbol": "BNB-USD",
+      "decision": "BUY",
+      "audit": "8df3532ca101",
+      "status": "FRESH",
+      "wall_ms": 19602.0,
+      "mtf_ms": 13536.8,
+      "fetch_ms": 480.5
+    },
+    {
+      "symbol": "XRP-USD",
+      "decision": "BUY",
+      "audit": "b887f3572818",
+      "status": "FRESH",
+      "wall_ms": 30735.4,
+      "mtf_ms": 18479.4,
+      "fetch_ms": 600.4
+    },
+    {
+      "symbol": "POL-USD",
+      "decision": "WAIT",
+      "audit": "DATA_PROVIDE",
+      "status": "DATA_UNAVAILABLE",
+      "wall_ms": 397.0,
+      "mtf_ms": 0,
+      "fetch_ms": 322.2
+    },
+    {
+      "symbol": "SOL-USD",
+      "decision": "BUY",
+      "audit": "4a16f5b61f57",
+      "status": "FRESH",
+      "wall_ms": 27643.4,
+      "mtf_ms": 17666.6,
+      "fetch_ms": 427.8
+    },
+    {
+      "symbol": "DOGE-USD",
+      "decision": "BUY",
+      "audit": "4862520cff94",
+      "status": "FRESH",
+      "wall_ms": 29306.6,
+      "mtf_ms": 18491.0,
+      "fetch_ms": 862.3
+    },
+    {
+      "symbol": "AVAX-USD",
+      "decision": "BUY",
+      "audit": "7d8ea1d11e30",
+      "status": "FRESH",
+      "wall_ms": 25693.3,
+      "mtf_ms": 18801.7,
+      "fetch_ms": 528.8
+    },
+    {
+      "symbol": "SUI-USD",
+      "decision": "WAIT",
+      "audit": "DATA_PROVIDE",
+      "status": "DATA_UNAVAILABLE",
+      "wall_ms": 727.2,
+      "mtf_ms": 0,
+      "fetch_ms": 578.6
+    },
+    {
+      "symbol": "XLM-USD",
+      "decision": "BUY",
+      "audit": "e1b1af1c2121",
+      "status": "FRESH",
+      "wall_ms": 20570.9,
+      "mtf_ms": 12873.1,
+      "fetch_ms": 733.3
+    },
+    {
+      "symbol": "AAPL",
+      "decision": "SELL",
+      "audit": "50db33b63de8",
+      "status": "FRESH",
+      "wall_ms": 6675.4,
+      "mtf_ms": 3772.0,
+      "fetch_ms": 379.5
+    },
+    {
+      "symbol": "NFLX",
+      "decision": "BUY",
+      "audit": "450eac075266",
+      "status": "FRESH",
+      "wall_ms": 6137.5,
+      "mtf_ms": 3677.5,
+      "fetch_ms": 315.8
+    },
+    {
+      "symbol": "META",
+      "decision": "SELL",
+      "audit": "3f3c2230857e",
+      "status": "FRESH",
+      "wall_ms": 7113.8,
+      "mtf_ms": 4004.0,
+      "fetch_ms": 310.2
+    },
+    {
+      "symbol": "TSLA",
+      "decision": "BUY",
+      "audit": "7dbe0feeb044",
+      "status": "FRESH",
+      "wall_ms": 6336.4,
+      "mtf_ms": 3909.3,
+      "fetch_ms": 296.0
+    },
+    {
+      "symbol": "MSFT",
+      "decision": "SELL",
+      "audit": "4f83fcfd96c0",
+      "status": "FRESH",
+      "wall_ms": 7246.5,
+      "mtf_ms": 3997.8,
+      "fetch_ms": 307.8
+    },
+    {
+      "symbol": "MCD",
+      "decision": "BUY",
+      "audit": "75274930e87f",
+      "status": "FRESH",
+      "wall_ms": 6548.3,
+      "mtf_ms": 4038.4,
+      "fetch_ms": 312.1
+    },
+    {
+      "symbol": "AMZN",
+      "decision": "BUY",
+      "audit": "634dd121db9a",
+      "status": "FRESH",
+      "wall_ms": 6717.5,
+      "mtf_ms": 4018.6,
+      "fetch_ms": 344.7
+    },
+    {
+      "symbol": "PYPL",
+      "decision": "BUY",
+      "audit": "f2ec0663dc18",
+      "status": "FRESH",
+      "wall_ms": 7624.7,
+      "mtf_ms": 4354.8,
+      "fetch_ms": 594.3
+    },
+    {
+      "symbol": "SBUX",
+      "decision": "SELL",
+      "audit": "53f7a8fb978a",
+      "status": "FRESH",
+      "wall_ms": 7101.2,
+      "mtf_ms": 4298.0,
+      "fetch_ms": 585.5
+    },
+    {
+      "symbol": "NVDA",
+      "decision": "SELL",
+      "audit": "a4f383ad1865",
+      "status": "FRESH",
+      "wall_ms": 6824.2,
+      "mtf_ms": 4053.4,
+      "fetch_ms": 563.3
+    },
+    {
+      "symbol": "DIS",
+      "decision": "SELL",
+      "audit": "e4f486ce725a",
+      "status": "FRESH",
+      "wall_ms": 6949.4,
+      "mtf_ms": 4163.4,
+      "fetch_ms": 581.4
+    },
+    {
+      "symbol": "INTC",
+      "decision": "BUY",
+      "audit": "19a9c0e6199f",
+      "status": "FRESH",
+      "wall_ms": 6984.5,
+      "mtf_ms": 4184.9,
+      "fetch_ms": 546.8
+    },
+    {
+      "symbol": "V",
+      "decision": "SELL",
+      "audit": "a2e821d86f5f",
+      "status": "FRESH",
+      "wall_ms": 7586.9,
+      "mtf_ms": 4511.0,
+      "fetch_ms": 547.9
+    },
+    {
+      "symbol": "IBM",
+      "decision": "BUY",
+      "audit": "50f8fdaf75c4",
+      "status": "FRESH",
+      "wall_ms": 7210.2,
+      "mtf_ms": 4444.4,
+      "fetch_ms": 516.9
+    },
+    {
+      "symbol": "F",
+      "decision": "BUY",
+      "audit": "8dce3403a71e",
+      "status": "FRESH",
+      "wall_ms": 6916.0,
+      "mtf_ms": 4099.6,
+      "fetch_ms": 586.6
+    },
+    {
+      "symbol": "KO",
+      "decision": "SELL",
+      "audit": "76c7c333dda0",
+      "status": "FRESH",
+      "wall_ms": 6755.0,
+      "mtf_ms": 4201.4,
+      "fetch_ms": 315.0
+    },
+    {
+      "symbol": "NKE",
+      "decision": "SELL",
+      "audit": "adeb505871ca",
+      "status": "FRESH",
+      "wall_ms": 9343.9,
+      "mtf_ms": 6208.5,
+      "fetch_ms": 336.4
+    },
+    {
+      "symbol": "MA",
+      "decision": "SELL",
+      "audit": "e1b494365728",
+      "status": "FRESH",
+      "wall_ms": 8401.7,
+      "mtf_ms": 5340.3,
+      "fetch_ms": 307.6
+    },
+    {
+      "symbol": "SPOT",
+      "decision": "SELL",
+      "audit": "9afac6820d4d",
+      "status": "FRESH",
+      "wall_ms": 8608.7,
+      "mtf_ms": 5274.8,
+      "fetch_ms": 333.1
+    },
+    {
+      "symbol": "JPM",
+      "decision": "BUY",
+      "audit": "9d6987f62b64",
+      "status": "FRESH",
+      "wall_ms": 7417.0,
+      "mtf_ms": 4356.0,
+      "fetch_ms": 330.0
+    },
+    {
+      "symbol": "BAC",
+      "decision": "BUY",
+      "audit": "7d1701caf882",
+      "status": "FRESH",
+      "wall_ms": 7126.2,
+      "mtf_ms": 4020.3,
+      "fetch_ms": 458.6
+    },
+    {
+      "symbol": "C",
+      "decision": "BUY",
+      "audit": "b0589d887758",
+      "status": "FRESH",
+      "wall_ms": 6699.5,
+      "mtf_ms": 4074.0,
+      "fetch_ms": 321.7
+    },
+    {
+      "symbol": "WFC",
+      "decision": "BUY",
+      "audit": "3a490c0d38aa",
+      "status": "FRESH",
+      "wall_ms": 6510.8,
+      "mtf_ms": 3709.5,
+      "fetch_ms": 350.8
+    },
+    {
+      "symbol": "CL=F",
+      "decision": "WAIT",
+      "audit": "DATA_QUALITY",
+      "status": "DATA_UNAVAILABLE",
+      "wall_ms": 909.2,
+      "mtf_ms": 0,
+      "fetch_ms": 799.7
+    },
+    {
+      "symbol": "SI=F",
+      "decision": "WAIT",
+      "audit": "DATA_QUALITY",
+      "status": "DATA_UNAVAILABLE",
+      "wall_ms": 673.9,
+      "mtf_ms": 0,
+      "fetch_ms": 572.2
+    },
+    {
+      "symbol": "GC=F",
+      "decision": "WAIT",
+      "audit": "DATA_QUALITY",
+      "status": "DATA_UNAVAILABLE",
+      "wall_ms": 465.2,
+      "mtf_ms": 0,
+      "fetch_ms": 363.4
+    }
+  ],
+  "sprint2_baseline": {
+    "complete_ms": 285000,
+    "first_ms": 21900,
+    "partial_ms": 70200
+  },
+  "improvement": {
+    "complete_pct": -183.8
+  },
+  "next_candle_ready": false
+}

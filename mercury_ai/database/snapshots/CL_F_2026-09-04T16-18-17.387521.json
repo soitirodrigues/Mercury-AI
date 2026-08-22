@@ -1,0 +1,59 @@
+{
+    "timestamp": "2026-09-04T16:18:17.387521",
+    "asset": "CL=F",
+    "timeframe": "M5",
+    "context": null,
+    "evidence_bundle": null,
+    "decision_result": {
+        "decision": "WAIT",
+        "grade": "N/A",
+        "confidence": 0.0,
+        "clarity": 0.0,
+        "risk_score": 0.0,
+        "score": 0.0,
+        "quality": 0.0,
+        "expected_strength": 0.0,
+        "buy_probability": 0.0,
+        "sell_probability": 0.0,
+        "wait_probability": 100.0,
+        "expected_risk": 0.0,
+        "expected_reward": 0.0,
+        "expected_drawdown": 0.0,
+        "audit_id": "DATA_QUALITY_FAIL",
+        "version_metadata": {
+            "engine_version": "1.0.0",
+            "pipeline_version": "1.0.0",
+            "context_version": "1.0.0",
+            "weights_version": "1.0.0"
+        },
+        "explanation": "Pipeline cannot proceed with invalid or insufficient data.",
+        "mtf_consensus": null,
+        "market_regime": null,
+        "trade_allowed": true,
+        "trade_block_reasons": [],
+        "trade_quality_score": 0.0,
+        "trade_quality_level": "N/A",
+        "trace": null,
+        "warnings": [],
+        "weaknesses": [],
+        "blockers": [],
+        "summary": "Data quality issue: Temporal gaps detected (unexpected data loss)",
+        "technical_reason": "",
+        "institutional_alignment": false,
+        "evidence_ranking": null,
+        "explainability": null
+    },
+    "version_metadata": {
+        "engine_version": "1.0.0",
+        "pipeline_version": "1.0.0",
+        "context_version": "1.0.0",
+        "weights_version": "1.0.0"
+    },
+    "audit_events": [
+        "Data quality issue detected"
+    ],
+    "session_id": "59293d33-a829-431b-a3ed-b3d34b8f57ca",
+    "replay_id": "66604b7b05d67190e54ed8abd54503807ad75a6f4caeb914b74e0bdcb283978d",
+    "evidence_ranking": null,
+    "version": "0.1"
+}

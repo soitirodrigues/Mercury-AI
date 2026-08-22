@@ -1,0 +1,37 @@
+TOP 3 M5 SIGNALS — MERCURY-AI V1
+Generated: 2026-09-04T06:01:21.922078+00:00
+Formula: ranking_score = confluence_weighted (0-100) + confidence_100*0.30 + grade_bonus(A+25/A20/B15/C10/D5) + dominant_prob*0.20 ; tie-breaker: internal_symbol ASC, audit_id ASC. Eligibility: status==REAL_SIGNAL AND decision in (BUY,SELL) AND trade_allowed==true AND prob_sum_ok==true AND confidence not None AND confluence not None
+Eligible REAL_SIGNAL: 57 / 68
+
+1. CITIGROUP (C)
+   decision=BUY
+   grade=B
+   confidence=0.7092594 (100=70.93)
+   confluence=100.0
+   probability dominant=61.02 (buy=61.02 sell=0.0 wait=38.98)
+   score=148.4818
+   audit_id=f91b11fdc4fab86a9b4ff38ca6f0d63cd29bb01603f4d6d7a67354b97809dd86
+   timestamp=2026-09-02T00:27:39.277481
+   source=C
+
+2. AUD/NZD (AUDNZD=X)
+   decision=BUY
+   grade=B
+   confidence=0.7071132800000001 (100=70.71)
+   confluence=100.0
+   probability dominant=60.44 (buy=60.44 sell=0.0 wait=39.56)
+   score=148.3014
+   audit_id=6fb614f0ade914b35e625314be8901d9f892a777f25bdc48e28d8a8d3b5dd044
+   timestamp=2026-09-02T00:19:51.284804
+   source=AUDNZD=X
+
+3. USD/JPY (USDJPY=X)
+   decision=BUY
+   grade=B
+   confidence=0.7052801066666667 (100=70.53)
+   confluence=100.0
+   probability dominant=60.23 (buy=60.23 sell=0.0 wait=39.77)
+   score=148.2044
+   audit_id=1ce63476ff1974869513c5107b2c49540bdd73dd9ad172c04eba2bd817487960
+   timestamp=2026-09-02T00:15:15.595197
+   source=USDJPY=X

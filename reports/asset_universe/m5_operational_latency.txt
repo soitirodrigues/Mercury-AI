@@ -1,0 +1,111 @@
+M5 OPERATIONAL LATENCY — MERCURY-AI V1 — SPRINT M5
+Generated: 2026-09-02T06:16:00.340289+00:00
+Source profiler run: 2026-09-02T04:43:40.986447+00:00
+Path: MarketDataService(provider=YahooAdapter) -> AnalysisPipeline.analyze() -> DecisionResult -> ranking -> Top-3
+======================================================================
+
+UNIVERSE_SIZE: 64
+ASSETS_MEASURED: 64
+TOTAL_SCAN_SECONDS: 1026.14
+FETCH_SECONDS: 26.79
+ANALYSIS_SECONDS: 972.6
+RANKING_SECONDS: 0.0
+TOP3_READY_SECONDS: 1.03
+TOTAL_SCAN_WALL_MS: 1026136.67
+
+MEAN: 15.61 s (15613.22 ms)
+MEDIAN: 18.7 s (18701.64 ms)
+P95: 24.04 s (24042.18 ms)
+MAX: 24.73 s (24732.45 ms)
+
+FETCH  mean=418.62 median=295.3 p95=492.23 max=5809.23
+ANALYSIS mean=15196.9 median=15594.76 p95=23775.66 max=24347.08
+TOTAL  mean=15613.22 median=18701.64 p95=24042.18 max=24732.45
+
+SLOWEST_ASSETS (by total):
+  NZDCAD=X      24732.5 ms status=REAL_SIGNAL
+  XRP-USD       24602.9 ms status=REAL_SIGNAL
+  GBPNZD=X      24317.1 ms status=REAL_SIGNAL
+  DOGE-USD      24095.5 ms status=REAL_SIGNAL
+  USDJPY=X      23740.2 ms status=REAL_SIGNAL
+SLOWEST_FETCH:
+  EURUSD=X       5809.2 ms status=REAL_SIGNAL
+  SBUX            548.2 ms status=REAL_SIGNAL
+  EURCAD=X        534.8 ms status=DATA_UNAVAILABLE
+  AUDNZD=X        495.9 ms status=REAL_SIGNAL
+  XLM-USD         471.2 ms status=REAL_SIGNAL
+SLOWEST_ANALYSIS:
+  NZDCAD=X      24347.1 ms status=REAL_SIGNAL
+  XRP-USD       24197.6 ms status=REAL_SIGNAL
+  GBPNZD=X      23908.2 ms status=REAL_SIGNAL
+  DOGE-USD      23832.3 ms status=REAL_SIGNAL
+  ETH-USD       23454.6 ms status=REAL_SIGNAL
+
+STATUS_BREAKDOWN:
+  REAL_SIGNAL: 57  avg_total=17477.09 ms p95=24139.8 ms
+  DATA_UNAVAILABLE: 7  avg_total=436.07 ms p95=609.55 ms
+  Observação: DATA_UNAVAILABLE (7) = 2 delisted (POL-USD/SUI-USD) + 2 gaps forex (USDCAD=X/EURCAD=X) + 3 commodities gaps (CL=F/SI=F/GC=F) — corretamente excluídos, não contam como REAL_SIGNAL.
+
+NEXT_CANDLE_TIMESTAMP: 2026-09-02T04:45:00+00:00
+SECONDS_UNTIL_NEXT_CANDLE: 79.02
+SCAN_DURATION_SECONDS: 1026.14
+NEXT_CANDLE_MARGIN_SECONDS: -947.12
+NEXT_CANDLE_READINESS: FAIL  (PASS se margem>=30s, WARNING se 0<=margem<30s, FAIL se <0; sem threshold operacional definido no código — margem bruta reportada)
+
+BOTTLENECK: ANALYSIS
+  shares ms: {'FETCH': 26791.47, 'ANALYSIS': 972601.86, 'RANKING': 0.9}  fetch_share=2.61%
+  deep dive: MTF avg 14.45s (78.0%) + Structure 2.33s (12.6%) = 90.6% do tempo por ativo
+  MTF fetch vs compute: MTF.analyze ~5.9s wall (EURUSD=X) sendo ~1.59s fetch (5 downloads yfinance) + ~4.3s compute (indicators+multiple engines). Em escala, 14.45s/18.54s = 78% é MTFAnalysis (5 timeframes sequenciais).
+PARALLELIZATION_CANDIDATE: YES
+CACHE_CANDIDATE: NO
+
+PARALLELIZATION (experimento controlado 12 ativos, 4 workers, per-thread pipeline):
+  seq=237.33s par=183.67s speedup=1.29x
+  projected 64 seq=1026s par4=794.02s margin_for_M5=-494.02s
+  decision_integrity: mismatches=11 (data drift entre janelas, não race)
+  determinism: FAIL (mesma causa: market drift)
+  thread_safety: DeterministicClock thread-local SAFE; SnapshotLogger lock SAFE; PipelineProfiler tracemalloc global RACE; per-thread pipeline mitigates last_snapshot race; yfin...
+  conclusão: paralelização isolada NÃO alcança M5 (794s > 300s); precisa combinar com otimização de MTF.
+
+CACHE / INCREMENTAL:
+  what_can_be_cached: M5 5d window (main) e MTF 1mo windows (M1/M5/M15/H1/H4). Sobreposição: M5 é baixado 2x (main 5d + MTF 1mo). Dentro de um scan, cada ativo baixa 1 (main) + 5 (MTF) = 6 downloads yfinance sequenciais.
+  ttl_considered: Yahoo TTL implícito ~60s (não documentado no Mercury). Polling de 5m candle: última vela muda a cada 300s, mas dados podem chegar com lag.
+  does_cache_alter_decision: SIM se última vela for stale: decisão baseada em close anterior muda confluence/confidence/grade. Cache só é seguro se garantir que last candle timestamp == decision candle.
+  is_last_candle_always_fresh: NÃO com cache cego. É necessário verificar timestamp do último candle (df.index[-1]) antes de reutilizar; se != vela atual, invalidar.
+  stale_risk: ALTO se cache > TTL ou se reutilizar 1mo/5d inteiro sem fetch incremental. Mercado FOREX/crypto move a cada candle; sinal stale = decisão em candle fechado antigo, inválido para next-candle trading.
+  verdict: CACHE_CANDIDATE=NO para este sprint (bottleneck é compute 78% MTF, não fetch 2.6%). Cache incremental (apenas última vela) reduziria fetch de 26.79s para ~5s, insuficiente para levar 1026s para <300s. Otimização de MTF compute é prioridade.
+
+TOP3 (ranking determinístico, 57 eligible):
+  1. C            BUY  score=148.4818 audit=1851432fcd04a924...
+  2. EURGBP=X     BUY  score=148.4121 audit=5ed48a4b6e306c8a...
+  3. BTC-USD      BUY  score=148.2527 audit=d04cf7fe8a82799b...
+
+REGRESSION GATES:
+  top3_scanner: PASS (57 eligible, determinístico)
+  top3_determinism: PASS (hash idêntico run1==run2)
+  decision_integrity: PASS (scanner sequencial, sem paralelização em produção)
+  resolver_integrity: PRESERVADO (não tocado)
+  data_quality_preserved: YES (7 DATA_UNAVAILABLE corretamente excluídos, não mascarados)
+
+CONSTRAINTS (sprint de medição):
+  DecisionResolverEngine: NÃO alterado
+  ranking_formula: NÃO alterada
+  regras_de_decisao: NÃO alteradas
+  DecisionResult: NÃO alterado
+  DataQualityEngine: NÃO alterada (validações preservadas)
+  DATA_UNAVAILABLE: NÃO mascarado
+  segunda lógica de scanner/ranking: NÃO criada
+
+======================================================================
+VERDICT FINAL
+M5_OPERATIONAL_LATENCY = FAIL
+NEXT_CANDLE_READY = FAIL
+BOTTLENECK = ANALYSIS — MTFAnalysis 78% (14.45s/18.54s por ativo; 5 timeframes sequenciais com 5 downloads + 4 motores por TF)
+CURRENT_SCAN_TIME = 1026.14 seconds (wall 1026.14s para 64 ativos)
+CURRENT_MARGIN = -947.12 seconds (negativo: scan só fica pronto 947s DEPOIS da próxima vela)
+RECOMMENDED_NEXT_STEP = E) combinação das anteriores: (B) paralelização controlada per-asset + (C) cache/incremental APENAS para fetch + otimização de MTF compute (paralelizar timeframes internos ou reduzir TFs redundantes) + (D) scanner contínuo/event-driven (rolling window, não batch de 64). Justificativa: fetch 2.6% não salva; compute MTF 78% é o alvo; paralelização 1.29x não alcança M5; combinação é necessária.
+
+Respostas objetivas:
+  Quanto tempo o Mercury leva do início do scan até o Top-3 pronto? 1026.14 segundos (~17.1 minutos) para universo de 64 ativos (64 → 57 REAL_SIGNAL).
+  Quantos segundos antes/depois da próxima vela M5 esse Top-3 fica disponível? -947.12 segundos (NEGATIVO = depois; Top-3 só fica pronto 947s após o início da próxima vela M5).
+  Margem operacional: nenhuma definida no código; usando referência 30s, classificação é FAIL (valor bruto reportado, decisão como recomendação).

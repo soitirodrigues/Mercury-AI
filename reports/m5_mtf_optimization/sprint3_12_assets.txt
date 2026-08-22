@@ -1,0 +1,7 @@
+Sprint3 12 assets — 2026-09-02T20:22:23.820355+00:00
+Symbols: EURUSD=X, GBPUSD=X, USDJPY=X, USDCHF=X, AUDUSD=X, NZDUSD=X, USDCAD=X, EURGBP=X, EURJPY=X, EURCHF=X, EURAUD=X, EURNZD=X
+Total wall: 219.2s (baseline 285s) -> 23.1% faster
+First decision: 24527ms (baseline 21900) -> -12.0%
+Partial Top3: 71271ms (baseline 70200) -> -1.5%
+MTF avg: 0ms p50=0 p95=0 total=0.0s
+Wall avg per asset: 18255ms p95=24883

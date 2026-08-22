@@ -1,0 +1,61 @@
+﻿MERCURY-AI V1 — PYTEST FORENSIC DIAGNOSTIC
+
+TIMESTAMP: 2026-08-30 08:21:57
+ROOT: C:\Projetos\Mercury-AI
+COMPUTER: HOME
+USER: jujuf
+
+=== POWERSHELL ===
+
+Name                           Value                                           
+----                           -----                                           
+PSVersion                      5.1.26100.9168                                  
+PSEdition                      Desktop                                         
+PSCompatibleVersions           {1.0, 2.0, 3.0, 4.0...}                         
+BuildVersion                   10.0.26100.9168                                 
+CLRVersion                     4.0.30319.42000                                 
+WSManStackVersion              3.0                                             
+PSRemotingProtocolVersion      2.3                                             
+SerializationVersion           1.1.0.1                                         
+
+
+
+=== PYTHON ===
+Python 3.11.9
+
+=== PYTEST ===
+pytest 9.1.1
+
+=== GIT STATUS ===
+ M S32-E3-FORENSIC/bridge_target.json
+ M S32-E3-FORENSIC/evidence_test.jsonl
+ M conftest.py
+ M mercury_ai/analysis/smart_money/tests/test_liquidity_stress.py
+ M mercury_ai/database/snapshots/BTC-USD_2025-01-01T09-30-00.json
+ M mercury_ai/providers/tests/test_market_provider.py
+ M pid_test_target.json
+ M tests/test_confidence_calibration_auditor.py
+ M tests/test_data_exporter.py
+ M tests/test_demo_operations.py
+ M tests/test_demo_page.py
+ M tests/test_engine_performance_auditor.py
+ M tests/test_institutional_backtest.py
+ M tests/test_institutional_report_generator.py
+ M tests/test_job_manager.py
+ M tests/test_operational_history.py
+ M tests/test_performance_analytics.py
+ M tests/test_performance_center.py
+ M tests/test_performance_statistics.py
+?? artifacts/
+?? collect_out.txt
+?? diagnose_pytest_hang.ps1
+?? faulthandler_collect.py
+?? faulthandler_collect.txt
+?? mercury_ai/database/snapshots/GC_F_2025-01-01T09-30-00.json
+?? mercury_v1_closure_gate.py
+?? mercury_v1_closure_report.json
+?? pytest.ini
+?? scripts/v1_final_operational_proof.py
+?? temp_s32_g_1_status.json
+?? tests/v1_closure/
+

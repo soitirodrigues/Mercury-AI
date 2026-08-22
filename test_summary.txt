@@ -1,0 +1,30 @@
+﻿﻿============================= test session starts =============================
+platform win32 -- Python 3.11.9, pytest-9.1.1, pluggy-1.6.0 -- C:\Users\jujuf\AppData\Local\Programs\Python\Python311\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Projetos\Mercury-AI
+plugins: anyio-4.14.2, cov-7.1.0
+collecting ... collected 21 items
+
+mercury_ai/analysis/tests/test_decision_resolver_engine.py::TestDecisionResolverEngine::test_buy_grade_a_returns_buy PASSED [  4%]
+mercury_ai/analysis/tests/test_decision_resolver_engine.py::TestDecisionResolverEngine::test_sell_grade_a_returns_sell PASSED [  9%]
+mercury_ai/analysis/tests/test_decision_resolver_engine.py::TestDecisionResolverEngine::test_buy_grade_d_returns_buy PASSED [ 14%]
+mercury_ai/analysis/tests/test_decision_resolver_engine.py::TestDecisionResolverEngine::test_sell_grade_d_returns_sell PASSED [ 19%]
+mercury_ai/analysis/tests/test_decision_resolver_engine.py::TestDecisionResolverEngine::test_buy_grade_c_returns_buy PASSED [ 23%]
+mercury_ai/analysis/tests/test_decision_resolver_engine.py::TestDecisionResolverEngine::test_sell_grade_c_returns_sell PASSED [ 28%]
+mercury_ai/analysis/tests/test_decision_resolver_engine.py::TestDecisionResolverEngine::test_neutral_returns_wait PASSED [ 33%]
+mercury_ai/analysis/tests/test_decision_resolver_engine.py::TestDecisionResolverEngine::test_invalid_buy_returns_wait PASSED [ 38%]
+mercury_ai/analysis/tests/test_decision_resolver_engine.py::TestDecisionResolverEngine::test_invalid_sell_returns_wait PASSED [ 42%]
+mercury_ai/analysis/tests/test_decision_resolver_engine.py::TestDecisionResolverEngine::test_buy_low_confluence_returns_wait PASSED [ 47%]
+mercury_ai/analysis/tests/test_decision_resolver_engine.py::TestDecisionResolverEngine::test_sell_low_confluence_returns_wait PASSED [ 52%]
+mercury_ai/analysis/tests/test_decision_resolver_engine.py::TestDecisionResolverEngine::test_buy_conflict_grade_c_returns_wait PASSED [ 57%]
+mercury_ai/analysis/tests/test_decision_resolver_engine.py::TestDecisionResolverEngine::test_sell_conflict_grade_c_returns_wait PASSED [ 61%]
+mercury_ai/analysis/tests/test_decision_resolver_engine.py::TestDecisionResolverEngine::test_buy_conflict_grade_d_returns_wait PASSED [ 66%]
+mercury_ai/analysis/tests/test_decision_resolver_engine.py::TestDecisionResolverEngine::test_sell_conflict_grade_d_returns_wait PASSED [ 71%]
+mercury_ai/analysis/tests/test_decision_resolver_engine.py::TestDecisionResolverEngine::test_regime_threshold_adaptation PASSED [ 76%]
+mercury_ai/analysis/tests/test_decision_resolver_engine.py::TestDecisionResolverEngine::test_rule_order_priority PASSED [ 80%]
+mercury_ai/brain/tests/test_mercury_decision_engine.py::test_decision_engine_buy_scenario PASSED [ 85%]
+mercury_ai/brain/tests/test_mercury_decision_engine.py::test_decision_engine_sell_scenario PASSED [ 90%]
+mercury_ai/brain/tests/test_mercury_decision_engine.py::test_decision_engine_wait_scenario PASSED [ 95%]
+mercury_ai/brain/tests/test_mercury_decision_engine.py::test_decision_engine_low_quality_scenario PASSED [100%]
+
+============================= 21 passed in 2.08s ==============================

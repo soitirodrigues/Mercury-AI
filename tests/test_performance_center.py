@@ -1,5 +1,8 @@
+import pytest
+
 from mercury_ai.analysis.performance_center import PerformanceCenter
 
+@pytest.mark.slow
 def test_performance_center():
     center = PerformanceCenter()
     report = center.get_report()

@@ -1,0 +1,241 @@
+{
+  "generated_at": "2026-09-02T20:17:59.927093+00:00",
+  "method": "fixture sintética determinística, baseline=sequential no-reuse vs optimized=parallel reuse",
+  "symbols": [
+    "BTC-USD",
+    "ETH-USD",
+    "EURUSD=X",
+    "USDJPY=X",
+    "AUDNZD=X"
+  ],
+  "results": [
+    {
+      "symbol": "BTC-USD",
+      "evid_count_base": 102,
+      "evid_count_opt": 102,
+      "consensus_base": {
+        "global_bias": "BEARISH",
+        "local_bias": "BEARISH",
+        "alignment_score": 25.0,
+        "conflict_score": 25.0,
+        "trend_alignment": 60.0,
+        "liquidity_alignment": 0.0,
+        "structure_alignment": 60.0,
+        "volatility_alignment": 0.0,
+        "conflict_detected": true,
+        "timeframe_status": {
+          "M1": "processed",
+          "M5": "processed",
+          "M15": "processed",
+          "H1": "processed",
+          "H4": "processed"
+        }
+      },
+      "consensus_opt": {
+        "global_bias": "BEARISH",
+        "local_bias": "BEARISH",
+        "alignment_score": 25.0,
+        "conflict_score": 25.0,
+        "trend_alignment": 60.0,
+        "liquidity_alignment": 0.0,
+        "structure_alignment": 60.0,
+        "volatility_alignment": 0.0,
+        "conflict_detected": true,
+        "timeframe_status": {
+          "M1": "processed",
+          "M5": "processed",
+          "M15": "processed",
+          "H1": "processed",
+          "H4": "processed"
+        }
+      },
+      "evid_match": true,
+      "consensus_match": true,
+      "passed": true,
+      "diffs": []
+    },
+    {
+      "symbol": "ETH-USD",
+      "evid_count_base": 103,
+      "evid_count_opt": 103,
+      "consensus_base": {
+        "global_bias": "BULLISH",
+        "local_bias": "NEUTRAL",
+        "alignment_score": 35.0,
+        "conflict_score": 15.0,
+        "trend_alignment": 60.0,
+        "liquidity_alignment": 20.0,
+        "structure_alignment": 80.0,
+        "volatility_alignment": 0.0,
+        "conflict_detected": true,
+        "timeframe_status": {
+          "M1": "processed",
+          "M5": "processed",
+          "M15": "processed",
+          "H1": "processed",
+          "H4": "processed"
+        }
+      },
+      "consensus_opt": {
+        "global_bias": "BULLISH",
+        "local_bias": "NEUTRAL",
+        "alignment_score": 35.0,
+        "conflict_score": 15.0,
+        "trend_alignment": 60.0,
+        "liquidity_alignment": 20.0,
+        "structure_alignment": 80.0,
+        "volatility_alignment": 0.0,
+        "conflict_detected": true,
+        "timeframe_status": {
+          "M1": "processed",
+          "M5": "processed",
+          "M15": "processed",
+          "H1": "processed",
+          "H4": "processed"
+        }
+      },
+      "evid_match": true,
+      "consensus_match": true,
+      "passed": true,
+      "diffs": []
+    },
+    {
+      "symbol": "EURUSD=X",
+      "evid_count_base": 104,
+      "evid_count_opt": 104,
+      "consensus_base": {
+        "global_bias": "BEARISH",
+        "local_bias": "BULLISH",
+        "alignment_score": 25.0,
+        "conflict_score": 25.0,
+        "trend_alignment": 40.0,
+        "liquidity_alignment": 20.0,
+        "structure_alignment": 60.0,
+        "volatility_alignment": 0.0,
+        "conflict_detected": true,
+        "timeframe_status": {
+          "M1": "processed",
+          "M5": "processed",
+          "M15": "processed",
+          "H1": "processed",
+          "H4": "processed"
+        }
+      },
+      "consensus_opt": {
+        "global_bias": "BEARISH",
+        "local_bias": "BULLISH",
+        "alignment_score": 25.0,
+        "conflict_score": 25.0,
+        "trend_alignment": 40.0,
+        "liquidity_alignment": 20.0,
+        "structure_alignment": 60.0,
+        "volatility_alignment": 0.0,
+        "conflict_detected": true,
+        "timeframe_status": {
+          "M1": "processed",
+          "M5": "processed",
+          "M15": "processed",
+          "H1": "processed",
+          "H4": "processed"
+        }
+      },
+      "evid_match": true,
+      "consensus_match": true,
+      "passed": true,
+      "diffs": []
+    },
+    {
+      "symbol": "USDJPY=X",
+      "evid_count_base": 104,
+      "evid_count_opt": 104,
+      "consensus_base": {
+        "global_bias": "BULLISH",
+        "local_bias": "NEUTRAL",
+        "alignment_score": 35.0,
+        "conflict_score": 15.0,
+        "trend_alignment": 60.0,
+        "liquidity_alignment": 20.0,
+        "structure_alignment": 80.0,
+        "volatility_alignment": 0.0,
+        "conflict_detected": true,
+        "timeframe_status": {
+          "M1": "processed",
+          "M5": "processed",
+          "M15": "processed",
+          "H1": "processed",
+          "H4": "processed"
+        }
+      },
+      "consensus_opt": {
+        "global_bias": "BULLISH",
+        "local_bias": "NEUTRAL",
+        "alignment_score": 35.0,
+        "conflict_score": 15.0,
+        "trend_alignment": 60.0,
+        "liquidity_alignment": 20.0,
+        "structure_alignment": 80.0,
+        "volatility_alignment": 0.0,
+        "conflict_detected": true,
+        "timeframe_status": {
+          "M1": "processed",
+          "M5": "processed",
+          "M15": "processed",
+          "H1": "processed",
+          "H4": "processed"
+        }
+      },
+      "evid_match": true,
+      "consensus_match": true,
+      "passed": true,
+      "diffs": []
+    },
+    {
+      "symbol": "AUDNZD=X",
+      "evid_count_base": 100,
+      "evid_count_opt": 100,
+      "consensus_base": {
+        "global_bias": "BEARISH",
+        "local_bias": "BULLISH",
+        "alignment_score": 25.0,
+        "conflict_score": 25.0,
+        "trend_alignment": 40.0,
+        "liquidity_alignment": 40.0,
+        "structure_alignment": 60.0,
+        "volatility_alignment": 0.0,
+        "conflict_detected": true,
+        "timeframe_status": {
+          "M1": "processed",
+          "M5": "processed",
+          "M15": "processed",
+          "H1": "processed",
+          "H4": "processed"
+        }
+      },
+      "consensus_opt": {
+        "global_bias": "BEARISH",
+        "local_bias": "BULLISH",
+        "alignment_score": 25.0,
+        "conflict_score": 25.0,
+        "trend_alignment": 40.0,
+        "liquidity_alignment": 40.0,
+        "structure_alignment": 60.0,
+        "volatility_alignment": 0.0,
+        "conflict_detected": true,
+        "timeframe_status": {
+          "M1": "processed",
+          "M5": "processed",
+          "M15": "processed",
+          "H1": "processed",
+          "H4": "processed"
+        }
+      },
+      "evid_match": true,
+      "consensus_match": true,
+      "passed": true,
+      "diffs": []
+    }
+  ],
+  "direct_evaluate_with_swings": "PASS",
+  "overall": "PASS",
+  "note": "Audit_id ignorado (não existe em MTF). Comparação é semântica: evidences (engine/timeframe/direction/strength/confidence/weight) + consensus (bias/alignment/status)."
+}

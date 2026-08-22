@@ -1,0 +1,214 @@
+{
+  "root": "C:\\Projetos\\Mercury-AI",
+  "verdict": "INCONCLUSIVE",
+  "exit_code": 2,
+  "summary": {
+    "pass": 12,
+    "fail": 0,
+    "warn": 1,
+    "inconclusive": 1
+  },
+  "checks": [
+    {
+      "name": "production-files-present",
+      "status": "PASS",
+      "message": "5 production files found.",
+      "details": {
+        "files": [
+          "mercury_ai/analysis/decision_resolver_engine.py",
+          "mercury_ai/brain/probability_engine.py",
+          "mercury_ai/models/decision_result.py",
+          "mercury_ai/core/analysis_pipeline.py",
+          "mercury_ai/analysis/institutional_score_engine.py"
+        ]
+      }
+    },
+    {
+      "name": "resolver-ast",
+      "status": "PASS",
+      "message": "DecisionResolverEngine.resolve() structure verified.",
+      "details": {
+        "args": [
+          "self",
+          "dominant_direction",
+          "is_valid",
+          "opportunity_grade",
+          "conflicting_signals",
+          "confluence_score",
+          "market_regime"
+        ]
+      }
+    },
+    {
+      "name": "post-resolver-static-override",
+      "status": "WARN",
+      "message": "Potential patterns found; manual review may be required. This is not proof of an override.",
+      "details": {
+        "files": [
+          "mercury_ai\\analysis\\decision_explainability.py",
+          "mercury_ai\\analysis\\decision_result_builder.py",
+          "mercury_ai\\analysis\\integrity_checker.py",
+          "mercury_ai\\analysis\\operational_history.py",
+          "mercury_ai\\analysis\\performance_center.py",
+          "mercury_ai\\analysis\\post_decision_evaluation_engine.py",
+          "mercury_ai\\analysis\\statistical_auditor.py",
+          "mercury_ai\\analysis\\tests\\test_decision_resolver_engine.py",
+          "mercury_ai\\brain\\institutional_brain.py",
+          "mercury_ai\\brain\\mercury_decision_engine.py",
+          "mercury_ai\\brain\\scanner.py",
+          "mercury_ai\\brain\\tests\\test_mercury_decision_engine.py",
+          "mercury_ai\\core\\analysis_pipeline.py",
+          "mercury_ai\\models\\decision_result.py"
+        ]
+      }
+    },
+    {
+      "name": "resolver-import",
+      "status": "PASS",
+      "message": "Imported mercury_ai.analysis.decision_resolver_engine.DecisionResolverEngine",
+      "details": {}
+    },
+    {
+      "name": "matrix-A",
+      "status": "PASS",
+      "message": "BUY + Grade D + valid + no conflicts",
+      "details": {
+        "expected": "BUY",
+        "actual": "BUY",
+        "input": {
+          "dominant_direction": "BUY",
+          "opportunity_grade": "D",
+          "is_valid": true,
+          "confluence_score": 80.0,
+          "conflicting_signals": false
+        }
+      }
+    },
+    {
+      "name": "matrix-B",
+      "status": "PASS",
+      "message": "SELL + Grade D + valid + no conflicts",
+      "details": {
+        "expected": "SELL",
+        "actual": "SELL",
+        "input": {
+          "dominant_direction": "SELL",
+          "opportunity_grade": "D",
+          "is_valid": true,
+          "confluence_score": 80.0,
+          "conflicting_signals": false
+        }
+      }
+    },
+    {
+      "name": "matrix-C",
+      "status": "PASS",
+      "message": "BUY + Grade C + conflicts",
+      "details": {
+        "expected": "WAIT",
+        "actual": "WAIT",
+        "input": {
+          "dominant_direction": "BUY",
+          "opportunity_grade": "C",
+          "is_valid": true,
+          "confluence_score": 80.0,
+          "conflicting_signals": true
+        }
+      }
+    },
+    {
+      "name": "matrix-D",
+      "status": "PASS",
+      "message": "SELL + Grade C + conflicts",
+      "details": {
+        "expected": "WAIT",
+        "actual": "WAIT",
+        "input": {
+          "dominant_direction": "SELL",
+          "opportunity_grade": "C",
+          "is_valid": true,
+          "confluence_score": 80.0,
+          "conflicting_signals": true
+        }
+      }
+    },
+    {
+      "name": "matrix-E",
+      "status": "PASS",
+      "message": "BUY + invalid",
+      "details": {
+        "expected": "WAIT",
+        "actual": "WAIT",
+        "input": {
+          "dominant_direction": "BUY",
+          "opportunity_grade": "A",
+          "is_valid": false,
+          "confluence_score": 80.0,
+          "conflicting_signals": false
+        }
+      }
+    },
+    {
+      "name": "matrix-F",
+      "status": "PASS",
+      "message": "NEUTRAL + valid",
+      "details": {
+        "expected": "WAIT",
+        "actual": "WAIT",
+        "input": {
+          "dominant_direction": "NEUTRAL",
+          "opportunity_grade": "A",
+          "is_valid": true,
+          "confluence_score": 80.0,
+          "conflicting_signals": false
+        }
+      }
+    },
+    {
+      "name": "matrix-G",
+      "status": "PASS",
+      "message": "BUY + confluence below threshold",
+      "details": {
+        "expected": "WAIT",
+        "actual": "WAIT",
+        "input": {
+          "dominant_direction": "BUY",
+          "opportunity_grade": "A",
+          "is_valid": true,
+          "confluence_score": 10.0,
+          "conflicting_signals": false
+        }
+      }
+    },
+    {
+      "name": "matrix-H",
+      "status": "PASS",
+      "message": "SELL + confluence below threshold",
+      "details": {
+        "expected": "WAIT",
+        "actual": "WAIT",
+        "input": {
+          "dominant_direction": "SELL",
+          "opportunity_grade": "A",
+          "is_valid": true,
+          "confluence_score": 10.0,
+          "conflicting_signals": false
+        }
+      }
+    },
+    {
+      "name": "resolver-matrix",
+      "status": "PASS",
+      "message": "8/8 cases passed.",
+      "details": {}
+    },
+    {
+      "name": "pytest",
+      "status": "INCONCLUSIVE",
+      "message": "Pytest exceeded 21600 seconds (6h).",
+      "details": {}
+    }
+  ],
+  "pytest_returncode": null,
+  "pytest_output": null
+}

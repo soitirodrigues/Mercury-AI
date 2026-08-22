@@ -1,0 +1,241 @@
+{
+  "session_id": "m5s64-a18bb15b",
+  "replay_total": 2,
+  "replay_pass": 2,
+  "replay_fail": 0,
+  "replay_divergence_total": 0,
+  "replay_results": [
+    {
+      "cycle_id": "m5s64-live-202609050500-b92e",
+      "status": "REPLAY_MATCH",
+      "checks": {
+        "target_candle": {
+          "expected": "2026-09-05T05:00:00+00:00",
+          "replayed": "2026-09-05T05:00:00+00:00",
+          "match": true
+        },
+        "universe": {
+          "expected": 4,
+          "replayed": 4,
+          "match": true
+        },
+        "freshness_state": {
+          "fresh_assets": 4,
+          "expected_fresh": 4,
+          "match": true,
+          "stale_as_fresh_preserved": true
+        },
+        "ranking_signature": {
+          "expected": "7341def64ad5b476",
+          "replayed": "7341def64ad5b476",
+          "match": true
+        },
+        "decision_signature": {
+          "expected": "47c70c2d6b323a34",
+          "replayed": "47c70c2d6b323a34",
+          "match": true
+        },
+        "Top3": {
+          "expected": [
+            {
+              "rank": 1,
+              "symbol": "EURUSD=X",
+              "decision": "BUY",
+              "grade": "D",
+              "confidence": 0.7012622896551726,
+              "confluence": 100.0,
+              "score": 135.0579,
+              "audit_id": "b090dbc29eece66de51bb5c8d3c542aa0609ad566d3bb1abb7cc06efff434854"
+            },
+            {
+              "rank": 2,
+              "symbol": "GBPUSD=X",
+              "decision": "SELL",
+              "grade": "D",
+              "confidence": 0.6882992333333334,
+              "confluence": 100.0,
+              "score": 134.653,
+              "audit_id": "d7607cff7614ff8bcf8befd1fc5407d2099cc12702d85b6611f91dfc830fee0c"
+            },
+            {
+              "rank": 3,
+              "symbol": "USDJPY=X",
+              "decision": "SELL",
+              "grade": "D",
+              "confidence": 0.6846569538461539,
+              "confluence": 100.0,
+              "score": 134.4637,
+              "audit_id": "d8558ffd5b3eb0c00ae391af608f2caabbd01a15209c94f9920a163c071e9151"
+            }
+          ],
+          "replayed": [
+            {
+              "rank": 1,
+              "symbol": "EURUSD=X",
+              "decision": "BUY",
+              "grade": "D",
+              "confidence": 0.7012622896551726,
+              "confluence": 100.0,
+              "score": 135.0579,
+              "audit_id": "b090dbc29eece66de51bb5c8d3c542aa0609ad566d3bb1abb7cc06efff434854"
+            },
+            {
+              "rank": 2,
+              "symbol": "GBPUSD=X",
+              "decision": "SELL",
+              "grade": "D",
+              "confidence": 0.6882992333333334,
+              "confluence": 100.0,
+              "score": 134.653,
+              "audit_id": "d7607cff7614ff8bcf8befd1fc5407d2099cc12702d85b6611f91dfc830fee0c"
+            },
+            {
+              "rank": 3,
+              "symbol": "USDJPY=X",
+              "decision": "SELL",
+              "grade": "D",
+              "confidence": 0.6846569538461539,
+              "confluence": 100.0,
+              "score": 134.4637,
+              "audit_id": "d8558ffd5b3eb0c00ae391af608f2caabbd01a15209c94f9920a163c071e9151"
+            }
+          ],
+          "match": true
+        },
+        "final_decision": {
+          "expected": "EURUSD=X",
+          "replayed": "EURUSD=X",
+          "match": true
+        },
+        "decision_candle_per_asset": {
+          "checked": true
+        },
+        "replay_stale_as_fresh_total": 0,
+        "replay_error_as_wait_total": 0
+      },
+      "blocked": false,
+      "reason": null
+    },
+    {
+      "cycle_id": "m5s64-live-202609050505-7242",
+      "status": "REPLAY_MATCH",
+      "checks": {
+        "target_candle": {
+          "expected": "2026-09-05T05:05:00+00:00",
+          "replayed": "2026-09-05T05:05:00+00:00",
+          "match": true
+        },
+        "universe": {
+          "expected": 4,
+          "replayed": 4,
+          "match": true
+        },
+        "freshness_state": {
+          "fresh_assets": 4,
+          "expected_fresh": 4,
+          "match": true,
+          "stale_as_fresh_preserved": true
+        },
+        "ranking_signature": {
+          "expected": "a9cd36802fc41751",
+          "replayed": "a9cd36802fc41751",
+          "match": true
+        },
+        "decision_signature": {
+          "expected": "658c1a6cf0b4aadc",
+          "replayed": "658c1a6cf0b4aadc",
+          "match": true
+        },
+        "Top3": {
+          "expected": [
+            {
+              "rank": 1,
+              "symbol": "EURUSD=X",
+              "decision": "BUY",
+              "grade": "D",
+              "confidence": 0.7012622896551726,
+              "confluence": 100.0,
+              "score": 135.0579,
+              "audit_id": "b861137677756c405cd5cf48e02ad54bd7b644745442ba65cbd931018447db21"
+            },
+            {
+              "rank": 2,
+              "symbol": "GBPUSD=X",
+              "decision": "SELL",
+              "grade": "D",
+              "confidence": 0.6882992333333334,
+              "confluence": 100.0,
+              "score": 134.653,
+              "audit_id": "be92d0c2eeeb3a55bc2f2dffd85060b5c1d2d7c3e0e0ebce791ccd8393087f23"
+            },
+            {
+              "rank": 3,
+              "symbol": "USDJPY=X",
+              "decision": "SELL",
+              "grade": "D",
+              "confidence": 0.6846569538461539,
+              "confluence": 100.0,
+              "score": 134.4637,
+              "audit_id": "0b88d6af52ac07f8df66d5a796e412b50ed4091560295d42ea904ca8f20daf81"
+            }
+          ],
+          "replayed": [
+            {
+              "rank": 1,
+              "symbol": "EURUSD=X",
+              "decision": "BUY",
+              "grade": "D",
+              "confidence": 0.7012622896551726,
+              "confluence": 100.0,
+              "score": 135.0579,
+              "audit_id": "b861137677756c405cd5cf48e02ad54bd7b644745442ba65cbd931018447db21"
+            },
+            {
+              "rank": 2,
+              "symbol": "GBPUSD=X",
+              "decision": "SELL",
+              "grade": "D",
+              "confidence": 0.6882992333333334,
+              "confluence": 100.0,
+              "score": 134.653,
+              "audit_id": "be92d0c2eeeb3a55bc2f2dffd85060b5c1d2d7c3e0e0ebce791ccd8393087f23"
+            },
+            {
+              "rank": 3,
+              "symbol": "USDJPY=X",
+              "decision": "SELL",
+              "grade": "D",
+              "confidence": 0.6846569538461539,
+              "confluence": 100.0,
+              "score": 134.4637,
+              "audit_id": "0b88d6af52ac07f8df66d5a796e412b50ed4091560295d42ea904ca8f20daf81"
+            }
+          ],
+          "match": true
+        },
+        "final_decision": {
+          "expected": "EURUSD=X",
+          "replayed": "EURUSD=X",
+          "match": true
+        },
+        "decision_candle_per_asset": {
+          "checked": true
+        },
+        "replay_stale_as_fresh_total": 0,
+        "replay_error_as_wait_total": 0
+      },
+      "blocked": false,
+      "reason": null
+    }
+  ],
+  "tamper": {
+    "tamper_detected": true,
+    "integrity_failure_type": "hash_mismatch",
+    "affected_artifact": "cycle_audit/m5s64-live-202609050500-b92e.json",
+    "expected_hash": "6489a9dd62b33bcff5a26bbab773b68d63d29bfa5bbd3605c2383f7273a296d8",
+    "actual_hash": "7462005dfbe5f848b12d6b797992289d8610dc0fc90e2f7576e4d2d51f91883d",
+    "restored_hash": "6489a9dd62b33bcff5a26bbab773b68d63d29bfa5bbd3605c2383f7273a296d8",
+    "replay_blocked": true
+  },
+  "replay_stale_as_fresh_total": 0
+}

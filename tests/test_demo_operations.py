@@ -1,5 +1,8 @@
+import pytest
+
 from mercury_ai.operations.demo_manager import DemoOperationsManager
 
+@pytest.mark.slow
 def test_demo_simulation():
     manager = DemoOperationsManager()
     results = manager.run_simulation()

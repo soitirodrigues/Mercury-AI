@@ -1,0 +1,18 @@
+{
+  "SOURCE_OF_TRUTH": "mercury_ai/config/universe.py :: OPERATIONAL_UNIVERSE",
+  "config_file": "mercury_ai/config/universe.py",
+  "config_path": "C:\\Projetos\\Mercury-AI\\mercury_ai\\config\\universe.py",
+  "registry_module": "mercury_ai.config.universe",
+  "asset_count": 64,
+  "breakdown": {
+    "FOREX": 28,
+    "CRYPTO": 10,
+    "STOCK": 23,
+    "COMMODITY": 3
+  },
+  "broker_config": "C:\\Projetos\\Mercury-AI\\data\\brokers\\XP.json",
+  "asset_registry": "C:\\Projetos\\Mercury-AI\\data\\asset_registry.json",
+  "broker_count_current": 62,
+  "registry_count_current": 62,
+  "secondary_source_warning": "data/brokers/XP.json and data/asset_registry.json are SECONDARY - they must be synced from universe.py (only 3 assets currently -> GAP)."
+}

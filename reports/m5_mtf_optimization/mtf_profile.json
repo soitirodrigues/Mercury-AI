@@ -1,0 +1,879 @@
+{
+  "generated_at": "2026-09-02T20:00:14.861790+00:00",
+  "targets": [
+    "BTC-USD",
+    "ETH-USD",
+    "EURUSD=X",
+    "USDJPY=X",
+    "AUDNZD=X"
+  ],
+  "per_asset": [
+    {
+      "symbol": "BTC-USD",
+      "timeframes": {
+        "M1": {
+          "interval": "1m",
+          "fetch_ms": 1767.3266000347212,
+          "prep_ms": 0.0011998927220702171,
+          "indicator_ms": 139.83700005337596,
+          "trend_ms": 0.07080007344484329,
+          "structure_swings_ms": 4953.1474999384955,
+          "structure_evaluate_ms": 3979.4691000133753,
+          "liquidity_ms": 55.700300028547645,
+          "volatility_ms": 116.63569998927414,
+          "tagging_ms": 13.049099943600595,
+          "total_tf_ms": 11025.6575999083,
+          "rows": 6955,
+          "status": "processed",
+          "dataframe_hash": "len6955_close77255.7812"
+        },
+        "M5": {
+          "interval": "5m",
+          "fetch_ms": 531.7478999495506,
+          "prep_ms": 0.000300002284348011,
+          "indicator_ms": 12.158099911175668,
+          "trend_ms": 0.11750007979571819,
+          "structure_swings_ms": 671.3867000071332,
+          "structure_evaluate_ms": 650.932400021702,
+          "liquidity_ms": 10.252799955196679,
+          "volatility_ms": 11.536200065165758,
+          "tagging_ms": 4.67289995867759,
+          "total_tf_ms": 1893.148300005123,
+          "rows": 1392,
+          "status": "processed",
+          "dataframe_hash": "len1392_close77264.1562"
+        },
+        "M15": {
+          "interval": "15m",
+          "fetch_ms": 308.0710000358522,
+          "prep_ms": 0.000300002284348011,
+          "indicator_ms": 8.438999997451901,
+          "trend_ms": 0.2927000168710947,
+          "structure_swings_ms": 204.9530999502167,
+          "structure_evaluate_ms": 223.56099996250123,
+          "liquidity_ms": 4.27010003477335,
+          "volatility_ms": 7.585100014694035,
+          "tagging_ms": 1.1119999689981341,
+          "total_tf_ms": 758.5133999818936,
+          "rows": 464,
+          "status": "processed",
+          "dataframe_hash": "len464_close77264.1562"
+        },
+        "H1": {
+          "interval": "1h",
+          "fetch_ms": 279.60340003483,
+          "prep_ms": 0.000200001522898674,
+          "indicator_ms": 4.060799954459071,
+          "trend_ms": 0.03730005118995905,
+          "structure_swings_ms": 47.991300001740456,
+          "structure_evaluate_ms": 48.699599923565984,
+          "liquidity_ms": 1.4465999556705356,
+          "volatility_ms": 6.836900021880865,
+          "tagging_ms": 0.7531000301241875,
+          "total_tf_ms": 389.540100004524,
+          "rows": 116,
+          "status": "processed",
+          "dataframe_hash": "len116_close77264.1562"
+        },
+        "H4": {
+          "interval": "4h",
+          "fetch_ms": 557.654400006868,
+          "prep_ms": 0.000500003807246685,
+          "indicator_ms": 5.450299941003323,
+          "trend_ms": 0.03260001540184021,
+          "structure_swings_ms": 13.416300062090158,
+          "structure_evaluate_ms": 14.46189999114722,
+          "liquidity_ms": 0.029700109735131264,
+          "volatility_ms": 3.135700011625886,
+          "tagging_ms": 0.10720000136643648,
+          "total_tf_ms": 594.4091000128537,
+          "rows": 29,
+          "status": "processed",
+          "dataframe_hash": "len29_close77264.1562"
+        }
+      },
+      "total_wall_ms": 23979.59,
+      "total_cpu_ms": 14609.38,
+      "fetch_total_ms": 3444.4,
+      "compute_total_ms": 11216.87,
+      "dataframes_created": 220,
+      "df_rows": {
+        "M1": 6955,
+        "M5": 1392,
+        "M15": 464,
+        "H1": 116,
+        "H4": 29
+      },
+      "errors": [],
+      "real_mtf_wall_ms": 9318.18,
+      "real_evidences": 887,
+      "real_consensus": {
+        "global_bias": "BULLISH",
+        "alignment": 40.0,
+        "timeframe_status": {
+          "M1": "processed",
+          "M5": "processed",
+          "M15": "processed",
+          "H1": "processed",
+          "H4": "processed"
+        }
+      }
+    },
+    {
+      "symbol": "ETH-USD",
+      "timeframes": {
+        "M1": {
+          "interval": "1m",
+          "fetch_ms": 624.7961999615654,
+          "prep_ms": 0.000600004568696022,
+          "indicator_ms": 15.49909997265786,
+          "trend_ms": 0.04640000406652689,
+          "structure_swings_ms": 3282.073999987915,
+          "structure_evaluate_ms": 3186.6720999823883,
+          "liquidity_ms": 44.666499947197735,
+          "volatility_ms": 48.31340000964701,
+          "tagging_ms": 7.088199956342578,
+          "total_tf_ms": 7209.331899997778,
+          "rows": 6955,
+          "status": "processed",
+          "dataframe_hash": "len6955_close2390.3201"
+        },
+        "M5": {
+          "interval": "5m",
+          "fetch_ms": 450.18100005108863,
+          "prep_ms": 0.000200001522898674,
+          "indicator_ms": 5.588599946349859,
+          "trend_ms": 0.0610999995842576,
+          "structure_swings_ms": 577.089500031434,
+          "structure_evaluate_ms": 614.3273999914527,
+          "liquidity_ms": 7.856299984268844,
+          "volatility_ms": 14.769700006581843,
+          "tagging_ms": 1.7331000417470932,
+          "total_tf_ms": 1671.7401000205427,
+          "rows": 1392,
+          "status": "processed",
+          "dataframe_hash": "len1392_close2390.2100"
+        },
+        "M15": {
+          "interval": "15m",
+          "fetch_ms": 290.1437000837177,
+          "prep_ms": 0.000600004568696022,
+          "indicator_ms": 5.4151000222191215,
+          "trend_ms": 0.04630000330507755,
+          "structure_swings_ms": 200.96759998705238,
+          "structure_evaluate_ms": 226.74720000941306,
+          "liquidity_ms": 2.6648000348359346,
+          "volatility_ms": 5.782100022770464,
+          "tagging_ms": 0.5768999690189958,
+          "total_tf_ms": 732.5232999864966,
+          "rows": 464,
+          "status": "processed",
+          "dataframe_hash": "len464_close2390.3201"
+        },
+        "H1": {
+          "interval": "1h",
+          "fetch_ms": 314.02789999265224,
+          "prep_ms": 0.000600004568696022,
+          "indicator_ms": 13.869500020518899,
+          "trend_ms": 0.11939997784793377,
+          "structure_swings_ms": 78.86849995702505,
+          "structure_evaluate_ms": 57.82069999258965,
+          "liquidity_ms": 0.3896000562235713,
+          "volatility_ms": 8.87019990477711,
+          "tagging_ms": 0.41850004345178604,
+          "total_tf_ms": 474.6226000133902,
+          "rows": 116,
+          "status": "processed",
+          "dataframe_hash": "len116_close2390.3201"
+        },
+        "H4": {
+          "interval": "4h",
+          "fetch_ms": 319.9153000023216,
+          "prep_ms": 0.000200001522898674,
+          "indicator_ms": 13.552200049161911,
+          "trend_ms": 0.06250001024454832,
+          "structure_swings_ms": 20.44900006148964,
+          "structure_evaluate_ms": 17.680399934761226,
+          "liquidity_ms": 0.040899962186813354,
+          "volatility_ms": 3.6062999861314893,
+          "tagging_ms": 0.12370001059025526,
+          "total_tf_ms": 375.5292999558151,
+          "rows": 29,
+          "status": "processed",
+          "dataframe_hash": "len29_close2390.3201"
+        }
+      },
+      "total_wall_ms": 20348.21,
+      "total_cpu_ms": 13328.12,
+      "fetch_total_ms": 1999.06,
+      "compute_total_ms": 8464.68,
+      "dataframes_created": 220,
+      "df_rows": {
+        "M1": 6955,
+        "M5": 1392,
+        "M15": 464,
+        "H1": 116,
+        "H4": 29
+      },
+      "errors": [],
+      "real_mtf_wall_ms": 9884.3,
+      "real_evidences": 870,
+      "real_consensus": {
+        "global_bias": "BULLISH",
+        "alignment": 30.0,
+        "timeframe_status": {
+          "M1": "processed",
+          "M5": "processed",
+          "M15": "processed",
+          "H1": "processed",
+          "H4": "processed"
+        }
+      }
+    },
+    {
+      "symbol": "EURUSD=X",
+      "timeframes": {
+        "M1": {
+          "interval": "1m",
+          "fetch_ms": 8362.631700001657,
+          "prep_ms": 0.000600004568696022,
+          "indicator_ms": 17.71420007571578,
+          "trend_ms": 0.05080003757029772,
+          "structure_swings_ms": 2284.654699964449,
+          "structure_evaluate_ms": 2024.034500005655,
+          "liquidity_ms": 5.3310999646782875,
+          "volatility_ms": 51.50090006645769,
+          "tagging_ms": 1.6271999338641763,
+          "total_tf_ms": 12747.757500037551,
+          "rows": 6924,
+          "status": "processed",
+          "dataframe_hash": "len6924_close1.1590"
+        },
+        "M5": {
+          "interval": "5m",
+          "fetch_ms": 312.41639994550496,
+          "prep_ms": 0.000700005330145359,
+          "indicator_ms": 13.719200040213764,
+          "trend_ms": 0.041499966755509377,
+          "structure_swings_ms": 438.7887999182567,
+          "structure_evaluate_ms": 403.4336000913754,
+          "liquidity_ms": 1.6545000253245234,
+          "volatility_ms": 14.82360006775707,
+          "tagging_ms": 0.9464999893680215,
+          "total_tf_ms": 1186.1549000022933,
+          "rows": 1386,
+          "status": "processed",
+          "dataframe_hash": "len1386_close1.1590"
+        },
+        "M15": {
+          "interval": "15m",
+          "fetch_ms": 304.8741000238806,
+          "prep_ms": 0.000500003807246685,
+          "indicator_ms": 10.703500011004508,
+          "trend_ms": 0.04739989526569843,
+          "structure_swings_ms": 178.9563000202179,
+          "structure_evaluate_ms": 152.03330002259463,
+          "liquidity_ms": 1.0097000049427152,
+          "volatility_ms": 10.975399985909462,
+          "tagging_ms": 0.2541999565437436,
+          "total_tf_ms": 659.0781999984756,
+          "rows": 462,
+          "status": "processed",
+          "dataframe_hash": "len462_close1.1590"
+        },
+        "H1": {
+          "interval": "1h",
+          "fetch_ms": 264.702899963595,
+          "prep_ms": 0.000400003045797348,
+          "indicator_ms": 5.893200053833425,
+          "trend_ms": 0.044899992644786835,
+          "structure_swings_ms": 52.353300037793815,
+          "structure_evaluate_ms": 62.20949999988079,
+          "liquidity_ms": 0.7082000374794006,
+          "volatility_ms": 3.177699982188642,
+          "tagging_ms": 0.2546999603509903,
+          "total_tf_ms": 389.49879992287606,
+          "rows": 116,
+          "status": "processed",
+          "dataframe_hash": "len116_close1.1590"
+        },
+        "H4": {
+          "interval": "4h",
+          "fetch_ms": 292.0392999658361,
+          "prep_ms": 0.000400003045797348,
+          "indicator_ms": 9.728299919515848,
+          "trend_ms": 0.06790005136281252,
+          "structure_swings_ms": 24.344999925233424,
+          "structure_evaluate_ms": 17.151399981230497,
+          "liquidity_ms": 0.026499968953430653,
+          "volatility_ms": 2.5793000822886825,
+          "tagging_ms": 0.10079995263367891,
+          "total_tf_ms": 346.55899996869266,
+          "rows": 30,
+          "status": "processed",
+          "dataframe_hash": "len30_close1.1590"
+        }
+      },
+      "total_wall_ms": 22452.07,
+      "total_cpu_ms": 11140.62,
+      "fetch_total_ms": 9536.66,
+      "compute_total_ms": 5792.38,
+      "dataframes_created": 220,
+      "df_rows": {
+        "M1": 6924,
+        "M5": 1386,
+        "M15": 462,
+        "H1": 116,
+        "H4": 30
+      },
+      "errors": [],
+      "real_mtf_wall_ms": 7122.97,
+      "real_evidences": 267,
+      "real_consensus": {
+        "global_bias": "BULLISH",
+        "alignment": 30.0,
+        "timeframe_status": {
+          "M1": "processed",
+          "M5": "processed",
+          "M15": "processed",
+          "H1": "processed",
+          "H4": "processed"
+        }
+      }
+    },
+    {
+      "symbol": "USDJPY=X",
+      "timeframes": {
+        "M1": {
+          "interval": "1m",
+          "fetch_ms": 508.5223000496626,
+          "prep_ms": 0.000300002284348011,
+          "indicator_ms": 13.778300024569035,
+          "trend_ms": 0.039800070226192474,
+          "structure_swings_ms": 2693.832799908705,
+          "structure_evaluate_ms": 2362.7218999899924,
+          "liquidity_ms": 43.87469997163862,
+          "volatility_ms": 45.946700032800436,
+          "tagging_ms": 7.94579996727407,
+          "total_tf_ms": 5676.773900049739,
+          "rows": 6897,
+          "status": "processed",
+          "dataframe_hash": "len6897_close158.7600"
+        },
+        "M5": {
+          "interval": "5m",
+          "fetch_ms": 417.43719996884465,
+          "prep_ms": 0.000300002284348011,
+          "indicator_ms": 4.045299952849746,
+          "trend_ms": 0.031100003980100155,
+          "structure_swings_ms": 463.39159994386137,
+          "structure_evaluate_ms": 490.16579997260123,
+          "liquidity_ms": 6.627500057220459,
+          "volatility_ms": 13.428299920633435,
+          "tagging_ms": 2.1164000499993563,
+          "total_tf_ms": 1397.358600050211,
+          "rows": 1380,
+          "status": "processed",
+          "dataframe_hash": "len1380_close158.7600"
+        },
+        "M15": {
+          "interval": "15m",
+          "fetch_ms": 272.3048999905586,
+          "prep_ms": 0.0004998873919248581,
+          "indicator_ms": 9.217700106091797,
+          "trend_ms": 0.05550007335841656,
+          "structure_swings_ms": 172.45429998729378,
+          "structure_evaluate_ms": 165.16149998642504,
+          "liquidity_ms": 2.2101999493315816,
+          "volatility_ms": 6.384200067259371,
+          "tagging_ms": 1.842500059865415,
+          "total_tf_ms": 629.8526000464335,
+          "rows": 460,
+          "status": "processed",
+          "dataframe_hash": "len460_close158.7640"
+        },
+        "H1": {
+          "interval": "1h",
+          "fetch_ms": 261.7932000430301,
+          "prep_ms": 0.000300002284348011,
+          "indicator_ms": 4.761800053529441,
+          "trend_ms": 0.05010003224015236,
+          "structure_swings_ms": 42.2313999151811,
+          "structure_evaluate_ms": 36.10980010125786,
+          "liquidity_ms": 0.7530000293627381,
+          "volatility_ms": 5.5417000548914075,
+          "tagging_ms": 0.28849998489022255,
+          "total_tf_ms": 351.6285000368953,
+          "rows": 115,
+          "status": "processed",
+          "dataframe_hash": "len115_close158.7640"
+        },
+        "H4": {
+          "interval": "4h",
+          "fetch_ms": 243.82440000772476,
+          "prep_ms": 0.000200001522898674,
+          "indicator_ms": 7.232800009660423,
+          "trend_ms": 0.04850002005696297,
+          "structure_swings_ms": 11.531000025570393,
+          "structure_evaluate_ms": 12.854999979026616,
+          "liquidity_ms": 0.2623000182211399,
+          "volatility_ms": 3.028900013305247,
+          "tagging_ms": 0.11009990703314543,
+          "total_tf_ms": 279.0133999660611,
+          "rows": 30,
+          "status": "processed",
+          "dataframe_hash": "len30_close158.7600"
+        }
+      },
+      "total_wall_ms": 16797.52,
+      "total_cpu_ms": 13125.0,
+      "fetch_total_ms": 1703.88,
+      "compute_total_ms": 6630.75,
+      "dataframes_created": 220,
+      "df_rows": {
+        "M1": 6897,
+        "M5": 1380,
+        "M15": 460,
+        "H1": 115,
+        "H4": 30
+      },
+      "errors": [],
+      "real_mtf_wall_ms": 8462.75,
+      "real_evidences": 692,
+      "real_consensus": {
+        "global_bias": "BEARISH",
+        "alignment": 30.0,
+        "timeframe_status": {
+          "M1": "processed",
+          "M5": "processed",
+          "M15": "processed",
+          "H1": "processed",
+          "H4": "processed"
+        }
+      }
+    },
+    {
+      "symbol": "AUDNZD=X",
+      "timeframes": {
+        "M1": {
+          "interval": "1m",
+          "fetch_ms": 548.3137000119314,
+          "prep_ms": 0.000300002284348011,
+          "indicator_ms": 17.468299949541688,
+          "trend_ms": 0.06340001709759235,
+          "structure_swings_ms": 2417.0655999332666,
+          "structure_evaluate_ms": 2445.151000050828,
+          "liquidity_ms": 46.90580000169575,
+          "volatility_ms": 53.30370005685836,
+          "tagging_ms": 6.760100019164383,
+          "total_tf_ms": 5535.174900083803,
+          "rows": 6906,
+          "status": "processed",
+          "dataframe_hash": "len6906_close1.2252"
+        },
+        "M5": {
+          "interval": "5m",
+          "fetch_ms": 359.6148999640718,
+          "prep_ms": 0.000300002284348011,
+          "indicator_ms": 14.065600000321865,
+          "trend_ms": 0.05650008097290993,
+          "structure_swings_ms": 591.8547000037506,
+          "structure_evaluate_ms": 477.4299000855535,
+          "liquidity_ms": 4.372399998828769,
+          "volatility_ms": 14.149599941447377,
+          "tagging_ms": 1.7000000225380063,
+          "total_tf_ms": 1463.404000038281,
+          "rows": 1387,
+          "status": "processed",
+          "dataframe_hash": "len1387_close1.2252"
+        },
+        "M15": {
+          "interval": "15m",
+          "fetch_ms": 301.7198999878019,
+          "prep_ms": 0.000700005330145359,
+          "indicator_ms": 13.992399908602238,
+          "trend_ms": 0.056699966080486774,
+          "structure_swings_ms": 181.65489996317774,
+          "structure_evaluate_ms": 165.03140004351735,
+          "liquidity_ms": 1.6114999307319522,
+          "volatility_ms": 5.1463000709190965,
+          "tagging_ms": 0.6623999215662479,
+          "total_tf_ms": 670.0984999770299,
+          "rows": 463,
+          "status": "processed",
+          "dataframe_hash": "len463_close1.2252"
+        },
+        "H1": {
+          "interval": "1h",
+          "fetch_ms": 289.02679996099323,
+          "prep_ms": 0.000500003807246685,
+          "indicator_ms": 8.980899932794273,
+          "trend_ms": 0.06610003765672445,
+          "structure_swings_ms": 57.83999990671873,
+          "structure_evaluate_ms": 43.38420007843524,
+          "liquidity_ms": 0.6436000112444162,
+          "volatility_ms": 7.8307000221684575,
+          "tagging_ms": 0.3350999904796481,
+          "total_tf_ms": 408.3546999609098,
+          "rows": 117,
+          "status": "processed",
+          "dataframe_hash": "len117_close1.2252"
+        },
+        "H4": {
+          "interval": "4h",
+          "fetch_ms": 252.60380003601313,
+          "prep_ms": 0.000600004568696022,
+          "indicator_ms": 4.932399955578148,
+          "trend_ms": 0.03330002073198557,
+          "structure_swings_ms": 12.32850004453212,
+          "structure_evaluate_ms": 14.5893000299111,
+          "liquidity_ms": 0.07970002479851246,
+          "volatility_ms": 2.6645000325515866,
+          "tagging_ms": 0.1444999361410737,
+          "total_tf_ms": 287.50350000336766,
+          "rows": 30,
+          "status": "processed",
+          "dataframe_hash": "len30_close1.2253"
+        }
+      },
+      "total_wall_ms": 16669.32,
+      "total_cpu_ms": 11796.88,
+      "fetch_total_ms": 1751.28,
+      "compute_total_ms": 6613.26,
+      "dataframes_created": 220,
+      "df_rows": {
+        "M1": 6906,
+        "M5": 1387,
+        "M15": 463,
+        "H1": 117,
+        "H4": 30
+      },
+      "errors": [],
+      "real_mtf_wall_ms": 8304.71,
+      "real_evidences": 600,
+      "real_consensus": {
+        "global_bias": "BULLISH",
+        "alignment": 30.0,
+        "timeframe_status": {
+          "M1": "processed",
+          "M5": "processed",
+          "M15": "processed",
+          "H1": "processed",
+          "H4": "processed"
+        }
+      }
+    }
+  ],
+  "aggregate": {
+    "total_wall_avg_ms": 20049.34,
+    "total_wall_p50_ms": 20348.21,
+    "total_wall_p95_ms": 23979.59,
+    "fetch_avg_ms": 3687.06,
+    "compute_avg_ms": 7743.59,
+    "df_created_total": 1100,
+    "df_sizes_sample": [
+      5,
+      5,
+      6956,
+      6955,
+      6955,
+      6955,
+      6955,
+      6955,
+      6955,
+      6955,
+      6955,
+      6955,
+      6955,
+      6955,
+      6955,
+      6955,
+      6955,
+      6955,
+      6955,
+      6955
+    ],
+    "stage_totals_ms": {
+      "M1_fetch": 11811.59,
+      "M1_indicator": 204.3,
+      "M1_swings": 15630.77,
+      "M1_structure": 13998.05,
+      "M1_liquidity": 196.48,
+      "M1_volatility": 315.7,
+      "M5_fetch": 2071.4,
+      "M5_indicator": 49.58,
+      "M5_swings": 2742.51,
+      "M5_structure": 2636.29,
+      "M5_liquidity": 30.76,
+      "M5_volatility": 68.71,
+      "M15_fetch": 1477.11,
+      "M15_indicator": 47.77,
+      "M15_swings": 938.99,
+      "M15_structure": 932.53,
+      "M15_liquidity": 11.77,
+      "M15_volatility": 35.87,
+      "H1_fetch": 1409.15,
+      "H1_indicator": 37.57,
+      "H1_swings": 279.28,
+      "H1_structure": 248.22,
+      "H1_liquidity": 3.94,
+      "H1_volatility": 32.26,
+      "H4_fetch": 1666.04,
+      "H4_indicator": 40.9,
+      "H4_swings": 82.07,
+      "H4_structure": 76.74,
+      "H4_liquidity": 0.44,
+      "H4_volatility": 15.01
+    },
+    "bottleneck_ranking": [
+      {
+        "stage": "M1_swings",
+        "total_ms": 15630.77,
+        "share_pct": 27.38
+      },
+      {
+        "stage": "M1_structure",
+        "total_ms": 13998.05,
+        "share_pct": 24.52
+      },
+      {
+        "stage": "M1_fetch",
+        "total_ms": 11811.59,
+        "share_pct": 20.69
+      },
+      {
+        "stage": "M5_swings",
+        "total_ms": 2742.51,
+        "share_pct": 4.8
+      },
+      {
+        "stage": "M5_structure",
+        "total_ms": 2636.29,
+        "share_pct": 4.62
+      },
+      {
+        "stage": "M5_fetch",
+        "total_ms": 2071.4,
+        "share_pct": 3.63
+      },
+      {
+        "stage": "H4_fetch",
+        "total_ms": 1666.04,
+        "share_pct": 2.92
+      },
+      {
+        "stage": "M15_fetch",
+        "total_ms": 1477.11,
+        "share_pct": 2.59
+      },
+      {
+        "stage": "H1_fetch",
+        "total_ms": 1409.15,
+        "share_pct": 2.47
+      },
+      {
+        "stage": "M15_swings",
+        "total_ms": 938.99,
+        "share_pct": 1.64
+      },
+      {
+        "stage": "M15_structure",
+        "total_ms": 932.53,
+        "share_pct": 1.63
+      },
+      {
+        "stage": "M1_volatility",
+        "total_ms": 315.7,
+        "share_pct": 0.55
+      },
+      {
+        "stage": "H1_swings",
+        "total_ms": 279.28,
+        "share_pct": 0.49
+      },
+      {
+        "stage": "H1_structure",
+        "total_ms": 248.22,
+        "share_pct": 0.43
+      },
+      {
+        "stage": "M1_indicator",
+        "total_ms": 204.3,
+        "share_pct": 0.36
+      },
+      {
+        "stage": "M1_liquidity",
+        "total_ms": 196.48,
+        "share_pct": 0.34
+      },
+      {
+        "stage": "H4_swings",
+        "total_ms": 82.07,
+        "share_pct": 0.14
+      },
+      {
+        "stage": "H4_structure",
+        "total_ms": 76.74,
+        "share_pct": 0.13
+      },
+      {
+        "stage": "M5_volatility",
+        "total_ms": 68.71,
+        "share_pct": 0.12
+      },
+      {
+        "stage": "M5_indicator",
+        "total_ms": 49.58,
+        "share_pct": 0.09
+      },
+      {
+        "stage": "M15_indicator",
+        "total_ms": 47.77,
+        "share_pct": 0.08
+      },
+      {
+        "stage": "H4_indicator",
+        "total_ms": 40.9,
+        "share_pct": 0.07
+      },
+      {
+        "stage": "H1_indicator",
+        "total_ms": 37.57,
+        "share_pct": 0.07
+      },
+      {
+        "stage": "M15_volatility",
+        "total_ms": 35.87,
+        "share_pct": 0.06
+      },
+      {
+        "stage": "H1_volatility",
+        "total_ms": 32.26,
+        "share_pct": 0.06
+      },
+      {
+        "stage": "M5_liquidity",
+        "total_ms": 30.76,
+        "share_pct": 0.05
+      },
+      {
+        "stage": "H4_volatility",
+        "total_ms": 15.01,
+        "share_pct": 0.03
+      },
+      {
+        "stage": "M15_liquidity",
+        "total_ms": 11.77,
+        "share_pct": 0.02
+      },
+      {
+        "stage": "H1_liquidity",
+        "total_ms": 3.94,
+        "share_pct": 0.01
+      },
+      {
+        "stage": "H4_liquidity",
+        "total_ms": 0.44,
+        "share_pct": 0.0
+      }
+    ],
+    "repeated_inputs": {},
+    "indicator_hashes": {
+      "len6955_close77255.7812": 1,
+      "len1392_close77264.1562": 1,
+      "len464_close77264.1562": 1,
+      "len116_close77264.1562": 1,
+      "len29_close77264.1562": 1,
+      "len6955_close2390.3201": 1,
+      "len1392_close2390.2100": 1,
+      "len464_close2390.3201": 1,
+      "len116_close2390.3201": 1,
+      "len29_close2390.3201": 1,
+      "len6924_close1.1590": 1,
+      "len1386_close1.1590": 1,
+      "len462_close1.1590": 1,
+      "len116_close1.1590": 1,
+      "len30_close1.1590": 1,
+      "len6897_close158.7600": 1,
+      "len1380_close158.7600": 1,
+      "len460_close158.7640": 1,
+      "len115_close158.7640": 1,
+      "len30_close158.7600": 1,
+      "len6906_close1.2252": 1,
+      "len1387_close1.2252": 1,
+      "len463_close1.2252": 1,
+      "len117_close1.2252": 1,
+      "len30_close1.2253": 1
+    },
+    "fetch_times_by_tf": {
+      "M1": [
+        1767.33,
+        624.8,
+        8362.63,
+        508.52,
+        548.31
+      ],
+      "M5": [
+        531.75,
+        450.18,
+        312.42,
+        417.44,
+        359.61
+      ],
+      "M15": [
+        308.07,
+        290.14,
+        304.87,
+        272.3,
+        301.72
+      ],
+      "H1": [
+        279.6,
+        314.03,
+        264.7,
+        261.79,
+        289.03
+      ],
+      "H4": [
+        557.65,
+        319.92,
+        292.04,
+        243.82,
+        252.6
+      ]
+    },
+    "engine_times": {
+      "indicator_ms": {
+        "avg": 15.2,
+        "p95": 17.71
+      },
+      "trend_ms": {
+        "avg": 0.07,
+        "p95": 0.12
+      },
+      "structure_swings_ms": {
+        "avg": 786.95,
+        "p95": 3282.07
+      },
+      "structure_evaluate_ms": {
+        "avg": 715.67,
+        "p95": 3186.67
+      },
+      "liquidity_ms": {
+        "avg": 9.74,
+        "p95": 46.91
+      },
+      "volatility_ms": {
+        "avg": 18.7,
+        "p95": 53.3
+      }
+    }
+  },
+  "observations": {
+    "sequential_downloads": "MTFEngine.analyze loops 5 TFs sequentially -> 5 * yfinance downloads serialized",
+    "double_swings": "Per TF, detect_swings called twice (once explicit, once inside structure.evaluate) -> ~2x swing cost",
+    "df_copies": "pd.DataFrame.copy called 1100 times across 5 assets (avg 220.0/asset)",
+    "atr_recalc": "ATR recalc in SwingEngine.calculate_atr + IndicatorEngine.calculate + VolatilityEngine -> same series recomputed 3x per TF",
+    "m5_overlap": "Main pipeline fetches M5 5d; MTF re-fetches M5 1mo but provider ignores period -> same data fetched twice (cache miss due to different period key)"
+  }
+}

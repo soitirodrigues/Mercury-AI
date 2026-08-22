@@ -1,0 +1,8 @@
+﻿Nenhuma seção completa de --durations encontrada.
+
+Possíveis motivos:
+
+1. pytest foi interrompido antes de terminar.
+2. ocorreu timeout.
+3. a execução travou antes do resumo final.
+4. pytest não alcançou a fase de reporting.

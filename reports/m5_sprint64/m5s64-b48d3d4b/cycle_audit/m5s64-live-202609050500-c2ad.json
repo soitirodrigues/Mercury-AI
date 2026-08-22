@@ -1,0 +1,144 @@
+{
+  "session_id": "m5s64-b48d3d4b",
+  "cycle_id": "m5s64-live-202609050500-c2ad",
+  "clock_start": "2026-09-05T05:00:00.067791+00:00",
+  "target_candle": "2026-09-05T05:00:00+00:00",
+  "target_close": "2026-09-05T05:00:00+00:00",
+  "next_start": "2026-09-05T05:05:00+00:00",
+  "decision_ready": "2026-09-05T05:00:09.164177+00:00",
+  "emission_time": "2026-09-05T05:00:22.033523+00:00",
+  "executor": "thread",
+  "worker_count": 2,
+  "universe_size": 4,
+  "assets_expected": 4,
+  "assets_completed": 4,
+  "queue_depth": 4,
+  "queue_max_depth": 4,
+  "queue_maxsize": 128,
+  "fresh_assets": 4,
+  "stale_assets": 0,
+  "error_assets": 0,
+  "timeout_assets": 0,
+  "data_unavailable_assets": 0,
+  "ranking_signature": "2e5f8be940aed9f8",
+  "decision_signature": "f65b5e1de3d03983",
+  "final_decision": "EURUSD=X",
+  "top3": [
+    {
+      "rank": 1,
+      "symbol": "EURUSD=X",
+      "decision": "BUY",
+      "grade": "D",
+      "confidence": 0.7012622896551726,
+      "confluence": 100.0,
+      "score": 135.0579,
+      "audit_id": "5622ce204bb41a19c381bade4cd774ddd608eb90faa61cab846a23e9947356e5"
+    },
+    {
+      "rank": 2,
+      "symbol": "GBPUSD=X",
+      "decision": "SELL",
+      "grade": "D",
+      "confidence": 0.6882992333333334,
+      "confluence": 100.0,
+      "score": 134.653,
+      "audit_id": "b8beb1088db326a1ff1eddfa11dfa53491d68c4891905c02238fe518bda06522"
+    },
+    {
+      "rank": 3,
+      "symbol": "USDJPY=X",
+      "decision": "SELL",
+      "grade": "D",
+      "confidence": 0.6846569538461539,
+      "confluence": 100.0,
+      "score": 134.4637,
+      "audit_id": "7c728c2ec4d06133c4ba37977a62ae58a2f1d0584a8c20190d58b03afc5e3e2d"
+    }
+  ],
+  "cycle_result": "QUALIFYING_PASS",
+  "per_asset": [
+    {
+      "symbol": "EURUSD=X",
+      "status": "REAL_SIGNAL",
+      "fresh": true,
+      "fresh_status": "FRESH",
+      "data_timestamp": "2026-09-05T05:00:09.024577",
+      "decision_candle": "2026-09-05T05:00:09.024577",
+      "analysis_status": "REAL_SIGNAL",
+      "ranking_eligible": null,
+      "wall_ms": 9030.5,
+      "error": null,
+      "timeout": false,
+      "worker_id": null
+    },
+    {
+      "symbol": "GBPUSD=X",
+      "status": "REAL_SIGNAL",
+      "fresh": true,
+      "fresh_status": "FRESH",
+      "data_timestamp": "2026-09-05T05:00:10.391179",
+      "decision_candle": "2026-09-05T05:00:10.391179",
+      "analysis_status": "REAL_SIGNAL",
+      "ranking_eligible": null,
+      "wall_ms": 10554.9,
+      "error": null,
+      "timeout": false,
+      "worker_id": null
+    },
+    {
+      "symbol": "USDJPY=X",
+      "status": "REAL_SIGNAL",
+      "fresh": true,
+      "fresh_status": "FRESH",
+      "data_timestamp": "2026-09-05T05:00:16.706955",
+      "decision_candle": "2026-09-05T05:00:16.706955",
+      "analysis_status": "REAL_SIGNAL",
+      "ranking_eligible": null,
+      "wall_ms": 7803.5,
+      "error": null,
+      "timeout": false,
+      "worker_id": null
+    },
+    {
+      "symbol": "USDCHF=X",
+      "status": "REAL_SIGNAL",
+      "fresh": true,
+      "fresh_status": "FRESH",
+      "data_timestamp": "2026-09-05T05:00:21.948336",
+      "decision_candle": "2026-09-05T05:00:21.948336",
+      "analysis_status": "REAL_SIGNAL",
+      "ranking_eligible": null,
+      "wall_ms": 11345.0,
+      "error": null,
+      "timeout": false,
+      "worker_id": null
+    }
+  ],
+  "ranking_state": [
+    {
+      "rank": 1,
+      "symbol": "EURUSD=X",
+      "decision": "BUY",
+      "score": 135.0579
+    },
+    {
+      "rank": 2,
+      "symbol": "GBPUSD=X",
+      "decision": "SELL",
+      "score": 134.653
+    },
+    {
+      "rank": 3,
+      "symbol": "USDJPY=X",
+      "decision": "SELL",
+      "score": 134.4637
+    },
+    {
+      "rank": 4,
+      "symbol": "USDCHF=X",
+      "decision": "SELL",
+      "score": 134.3877
+    }
+  ],
+  "created_at": "2026-09-05T05:00:22.149087+00:00"
+}

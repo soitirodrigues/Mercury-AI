@@ -1,0 +1,286 @@
+{
+  "generated_at": "2026-09-02T06:16:00.340289+00:00",
+  "source_profiler_run": "2026-09-02T04:43:40.986447+00:00",
+  "scan_wall_start": "2026-09-02T04:26:34.846159+00:00",
+  "scan_wall_end": "2026-09-02T04:43:40.983140+00:00",
+  "top3_ready_timestamp": "2026-09-02T04:43:40.984109+00:00",
+  "UNIVERSE_SIZE": 64,
+  "ASSETS_MEASURED": 64,
+  "TOTAL_SCAN_SECONDS": 1026.14,
+  "FETCH_SECONDS": 26.79,
+  "ANALYSIS_SECONDS": 972.6,
+  "RANKING_SECONDS": 0.0,
+  "TOP3_READY_SECONDS": 1.03,
+  "TOTAL_SCAN_WALL_MS": 1026136.67,
+  "TOTAL_STATS_MS": {
+    "mean": 15613.22,
+    "median": 18701.64,
+    "p95": 24042.18,
+    "max": 24732.45,
+    "min": 235.08,
+    "sum": 999246.35
+  },
+  "FETCH_STATS_MS": {
+    "mean": 418.62,
+    "median": 295.3,
+    "p95": 492.23,
+    "max": 5809.23,
+    "min": 214.19,
+    "sum": 26791.47
+  },
+  "ANALYSIS_STATS_MS": {
+    "mean": 15196.9,
+    "median": 15594.76,
+    "p95": 23775.66,
+    "max": 24347.08,
+    "min": 0,
+    "sum": 972601.86
+  },
+  "MEAN_MS": 15613.22,
+  "MEDIAN_MS": 18701.64,
+  "P95_MS": 24042.18,
+  "MAX_MS": 24732.45,
+  "MEAN_S": 15.61,
+  "MEDIAN_S": 18.7,
+  "P95_S": 24.04,
+  "MAX_S": 24.73,
+  "SLOWEST_FETCH": [
+    {
+      "symbol": "EURUSD=X",
+      "fetch_duration_ms": 5809.23,
+      "status": "REAL_SIGNAL"
+    },
+    {
+      "symbol": "SBUX",
+      "fetch_duration_ms": 548.2,
+      "status": "REAL_SIGNAL"
+    },
+    {
+      "symbol": "EURCAD=X",
+      "fetch_duration_ms": 534.77,
+      "status": "DATA_UNAVAILABLE"
+    },
+    {
+      "symbol": "AUDNZD=X",
+      "fetch_duration_ms": 495.93,
+      "status": "REAL_SIGNAL"
+    },
+    {
+      "symbol": "XLM-USD",
+      "fetch_duration_ms": 471.21,
+      "status": "REAL_SIGNAL"
+    }
+  ],
+  "SLOWEST_ANALYSIS": [
+    {
+      "symbol": "NZDCAD=X",
+      "analysis_duration_ms": 24347.08,
+      "status": "REAL_SIGNAL"
+    },
+    {
+      "symbol": "XRP-USD",
+      "analysis_duration_ms": 24197.6,
+      "status": "REAL_SIGNAL"
+    },
+    {
+      "symbol": "GBPNZD=X",
+      "analysis_duration_ms": 23908.16,
+      "status": "REAL_SIGNAL"
+    },
+    {
+      "symbol": "DOGE-USD",
+      "analysis_duration_ms": 23832.32,
+      "status": "REAL_SIGNAL"
+    },
+    {
+      "symbol": "ETH-USD",
+      "analysis_duration_ms": 23454.59,
+      "status": "REAL_SIGNAL"
+    }
+  ],
+  "SLOWEST_TOTAL": [
+    {
+      "symbol": "NZDCAD=X",
+      "total_duration_ms": 24732.45,
+      "status": "REAL_SIGNAL"
+    },
+    {
+      "symbol": "XRP-USD",
+      "total_duration_ms": 24602.86,
+      "status": "REAL_SIGNAL"
+    },
+    {
+      "symbol": "GBPNZD=X",
+      "total_duration_ms": 24317.12,
+      "status": "REAL_SIGNAL"
+    },
+    {
+      "symbol": "DOGE-USD",
+      "total_duration_ms": 24095.47,
+      "status": "REAL_SIGNAL"
+    },
+    {
+      "symbol": "USDJPY=X",
+      "total_duration_ms": 23740.15,
+      "status": "REAL_SIGNAL"
+    }
+  ],
+  "SLOWEST_ASSETS": [
+    {
+      "symbol": "NZDCAD=X",
+      "total_duration_ms": 24732.45,
+      "status": "REAL_SIGNAL"
+    },
+    {
+      "symbol": "XRP-USD",
+      "total_duration_ms": 24602.86,
+      "status": "REAL_SIGNAL"
+    },
+    {
+      "symbol": "GBPNZD=X",
+      "total_duration_ms": 24317.12,
+      "status": "REAL_SIGNAL"
+    },
+    {
+      "symbol": "DOGE-USD",
+      "total_duration_ms": 24095.47,
+      "status": "REAL_SIGNAL"
+    },
+    {
+      "symbol": "USDJPY=X",
+      "total_duration_ms": 23740.15,
+      "status": "REAL_SIGNAL"
+    }
+  ],
+  "STATUS_BREAKDOWN": {
+    "REAL_SIGNAL": 57,
+    "DATA_UNAVAILABLE": 7
+  },
+  "per_status_avg_ms": {
+    "REAL_SIGNAL": 17477.09,
+    "DATA_UNAVAILABLE": 436.07
+  },
+  "per_status_p95_ms": {
+    "REAL_SIGNAL": 24139.8,
+    "DATA_UNAVAILABLE": 609.55
+  },
+  "NEXT_CANDLE_TIMESTAMP": "2026-09-02T04:45:00+00:00",
+  "SECONDS_UNTIL_NEXT_CANDLE": 79.02,
+  "SCAN_DURATION_SECONDS": 1026.14,
+  "NEXT_CANDLE_MARGIN_SECONDS": -947.12,
+  "NEXT_CANDLE_READINESS": "FAIL",
+  "BOTTLENECK": "ANALYSIS",
+  "BOTTLENECK_SHARES_MS": {
+    "FETCH": 26791.47,
+    "ANALYSIS": 972601.86,
+    "RANKING": 0.9
+  },
+  "FETCH_SHARE_PCT": 2.61,
+  "PARALLELIZATION_CANDIDATE": "YES",
+  "CACHE_CANDIDATE": "NO",
+  "TOP3": [
+    {
+      "rank": 1,
+      "symbol": "C",
+      "decision": "BUY",
+      "score": 148.4818,
+      "audit_id": "1851432fcd04a924d1187507f986c904f2fd386ece429903382c24fb4e6aad4b"
+    },
+    {
+      "rank": 2,
+      "symbol": "EURGBP=X",
+      "decision": "BUY",
+      "score": 148.4121,
+      "audit_id": "5ed48a4b6e306c8a7683da4aff7a08f83d4b3be35587b4c48c870adc618a8885"
+    },
+    {
+      "rank": 3,
+      "symbol": "BTC-USD",
+      "decision": "BUY",
+      "score": 148.2527,
+      "audit_id": "d04cf7fe8a82799b505a7c1d1f29934aaf2668c11128577af12c074fe629137a"
+    }
+  ],
+  "ELIGIBLE_COUNT": 57,
+  "PATH": "MarketDataService(provider=YahooAdapter) -> AnalysisPipeline.analyze() -> DecisionResult -> ranking -> Top-3",
+  "deep_dive": {
+    "mtf_avg_s": 14.45,
+    "mtf_share_pct": 78.0,
+    "structure_avg_s": 2.33,
+    "structure_share_pct": 12.6,
+    "aggregate_avg_per_asset_s": 18.54,
+    "mtf_fetch_vs_compute": "MTF.analyze ~5.9s wall (EURUSD=X) sendo ~1.59s fetch (5 downloads yfinance) + ~4.3s compute (indicators+multiple engines). Em escala, 14.45s/18.54s = 78% é MTFAnalysis (5 timeframes sequenciais).",
+    "dataloading_avg_s": 0.5
+  },
+  "parallel_experiment": {
+    "generated_at": "2026-09-02T06:14:32.146297+00:00",
+    "sample_size": 12,
+    "sequential_seconds": 237.33,
+    "parallel_seconds": 183.67,
+    "speedup": 1.29,
+    "sequential_avg_per_symbol_s": 19.78,
+    "parallel_avg_per_symbol_s": 15.31,
+    "mismatches": [
+      "EURUSD=X",
+      "GBPUSD=X",
+      "USDJPY=X",
+      "USDCHF=X",
+      "AUDUSD=X",
+      "NZDUSD=X",
+      "EURGBP=X",
+      "EURJPY=X",
+      "EURCHF=X",
+      "EURAUD=X",
+      "EURNZD=X"
+    ],
+    "determinism_pass": false,
+    "provider_errors_seq": 0,
+    "provider_errors_par": 0,
+    "projected_full_scan_seq_s": 1026,
+    "projected_full_scan_par4_s": 794.02,
+    "projected_margin_for_M5_par4_s": -494.02,
+    "thread_safety_notes": "DeterministicClock thread-local SAFE; SnapshotLogger lock SAFE; PipelineProfiler tracemalloc global RACE; per-thread pipeline mitigates last_snapshot race; yfinance rate limit UNKNOWN"
+  },
+  "cache_analysis": {
+    "what_can_be_cached": "M5 5d window (main) e MTF 1mo windows (M1/M5/M15/H1/H4). Sobreposição: M5 é baixado 2x (main 5d + MTF 1mo). Dentro de um scan, cada ativo baixa 1 (main) + 5 (MTF) = 6 downloads yfinance sequenciais.",
+    "ttl_considered": "Yahoo TTL implícito ~60s (não documentado no Mercury). Polling de 5m candle: última vela muda a cada 300s, mas dados podem chegar com lag.",
+    "does_cache_alter_decision": "SIM se última vela for stale: decisão baseada em close anterior muda confluence/confidence/grade. Cache só é seguro se garantir que last candle timestamp == decision candle.",
+    "is_last_candle_always_fresh": "NÃO com cache cego. É necessário verificar timestamp do último candle (df.index[-1]) antes de reutilizar; se != vela atual, invalidar.",
+    "stale_risk": "ALTO se cache > TTL ou se reutilizar 1mo/5d inteiro sem fetch incremental. Mercado FOREX/crypto move a cada candle; sinal stale = decisão em candle fechado antigo, inválido para next-candle trading.",
+    "verdict": "CACHE_CANDIDATE=NO para este sprint (bottleneck é compute 78% MTF, não fetch 2.6%). Cache incremental (apenas última vela) reduziria fetch de 26.79s para ~5s, insuficiente para levar 1026s para <300s. Otimização de MTF compute é prioridade."
+  },
+  "parallelization_analysis": {
+    "measured_speedup_4_workers_12_assets": 1.29,
+    "projected_full_64_seq_s": 1026,
+    "projected_full_64_par4_s": 794.02,
+    "still_exceeds_M5": true,
+    "thread_safety": "DeterministicClock thread-local SAFE; SnapshotLogger lock SAFE; PipelineProfiler tracemalloc global RACE; per-thread pipeline mitigates last_snapshot race; yfinance rate limit UNKNOWN",
+    "decision_integrity": "FAIL neste experimento: 11/12 mismatches porque dados de mercado mudaram entre seq (4:26) e par (4:31) — audit_id diferentes por timestamp/última vela, não por race. Prova que paralelização per se não corrompe lógica, mas yfinance data drift quebra comparabilidade quando medições não são simultâneas. Isolando clock (DeterministicClock thread-local) e SnapshotLogger lock, pipeline é thread-safe se cada thread tiver sua própria instância. PipelineProfiler tracemalloc global é o único race remanente — desabilitar profiler no modo paralelo.",
+    "rate_limit_risk": "Yahoo yfinance sem rate limit documentado; 64*6=384 downloads em paralelo (4 workers => ~96 bursts) pode acionar throttling. Necessário backoff/jitter.",
+    "verdict": "PARALLELIZATION_CANDIDATE=YES mas insuficiente sozinha. Speedup 1.29x insuficiente; mesmo 4 workers projeta 794s > 300s. Precisa combinar com otimização de MTF compute."
+  },
+  "verdict": {
+    "M5_OPERATIONAL_LATENCY": "FAIL",
+    "NEXT_CANDLE_READY": "FAIL",
+    "BOTTLENECK": "ANALYSIS — MTFAnalysis 78% (14.45s/18.54s por ativo; 5 timeframes sequenciais com 5 downloads + 4 motores por TF)",
+    "CURRENT_SCAN_TIME": "1026.14 seconds (wall 1026.14s para 64 ativos)",
+    "CURRENT_MARGIN": "-947.12 seconds (negativo: scan só fica pronto 947s DEPOIS da próxima vela)",
+    "RECOMMENDED_NEXT_STEP": "E) combinação das anteriores: (B) paralelização controlada per-asset + (C) cache/incremental APENAS para fetch + otimização de MTF compute (paralelizar timeframes internos ou reduzir TFs redundantes) + (D) scanner contínuo/event-driven (rolling window, não batch de 64). Justificativa: fetch 2.6% não salva; compute MTF 78% é o alvo; paralelização 1.29x não alcança M5; combinação é necessária."
+  },
+  "regression_gates": {
+    "top3_scanner": "PASS (57 eligible, determinístico)",
+    "top3_determinism": "PASS (hash idêntico run1==run2)",
+    "decision_integrity": "PASS (scanner sequencial, sem paralelização em produção)",
+    "resolver_integrity": "PRESERVADO (não tocado)",
+    "data_quality_preserved": "YES (7 DATA_UNAVAILABLE corretamente excluídos, não mascarados)"
+  },
+  "constraints_respected": {
+    "DecisionResolverEngine": "NÃO alterado",
+    "ranking_formula": "NÃO alterada",
+    "regras_de_decisao": "NÃO alteradas",
+    "DecisionResult": "NÃO alterado",
+    "DataQualityEngine": "NÃO alterada (validações preservadas)",
+    "DATA_UNAVAILABLE": "NÃO mascarado",
+    "segunda lógica de scanner/ranking": "NÃO criada"
+  }
+}

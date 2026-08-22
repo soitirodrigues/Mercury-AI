@@ -1,0 +1,91 @@
+================================================================================
+SENSEI SPRINT 3 — MTF PROFILE (FORENSIC)
+Generated: 2026-09-02T20:00:14.861790+00:00
+Targets: BTC-USD, ETH-USD, EURUSD=X, USDJPY=X, AUDNZD=X
+================================================================================
+
+TOTAL WALL AVG per asset (MTF only, instrumented): 20049.3 ms  p50=20348.2 p95=23979.6
+FETCH avg: 3687.1 ms   COMPUTE avg: 7743.6 ms
+DataFrames created total: 1100 (avg 220.0/asset)
+
+BOTTLENECK RANKING (accumulated ms across 5 assets):
+   1. M1_swings             15630.8 ms   27.4%
+   2. M1_structure          13998.0 ms   24.5%
+   3. M1_fetch              11811.6 ms   20.7%
+   4. M5_swings              2742.5 ms    4.8%
+   5. M5_structure           2636.3 ms    4.6%
+   6. M5_fetch               2071.4 ms    3.6%
+   7. H4_fetch               1666.0 ms    2.9%
+   8. M15_fetch              1477.1 ms    2.6%
+   9. H1_fetch               1409.2 ms    2.5%
+  10. M15_swings              939.0 ms    1.6%
+  11. M15_structure           932.5 ms    1.6%
+  12. M1_volatility           315.7 ms    0.6%
+  13. H1_swings               279.3 ms    0.5%
+  14. H1_structure            248.2 ms    0.4%
+  15. M1_indicator            204.3 ms    0.4%
+  16. M1_liquidity            196.5 ms    0.3%
+  17. H4_swings                82.1 ms    0.1%
+  18. H4_structure             76.7 ms    0.1%
+  19. M5_volatility            68.7 ms    0.1%
+  20. M5_indicator             49.6 ms    0.1%
+  21. M15_indicator            47.8 ms    0.1%
+  22. H4_indicator             40.9 ms    0.1%
+  23. H1_indicator             37.6 ms    0.1%
+  24. M15_volatility           35.9 ms    0.1%
+  25. H1_volatility            32.3 ms    0.1%
+  26. M5_liquidity             30.8 ms    0.1%
+  27. H4_volatility            15.0 ms    0.0%
+  28. M15_liquidity            11.8 ms    0.0%
+  29. H1_liquidity              3.9 ms    0.0%
+  30. H4_liquidity              0.4 ms    0.0%
+
+PER-ASSET BREAKDOWN:
+  BTC-USD      wall=23979.6ms fetch=3444.4 compute=11216.9 df=220 real_mtf=9318.18ms rows={'M1': 6955, 'M5': 1392, 'M15': 464, 'H1': 116, 'H4': 29}
+    M1 (1m ) fetch=1767.3 ind=139.8 sw=4953.1 eval=3979.5 liq= 55.7 vol=116.6 tot=11025.7 [processed] rows=6955
+    M5 (5m ) fetch= 531.7 ind= 12.2 sw=671.4 eval=650.9 liq= 10.3 vol= 11.5 tot=1893.1 [processed] rows=1392
+    M15 (15m) fetch= 308.1 ind=  8.4 sw=205.0 eval=223.6 liq=  4.3 vol=  7.6 tot= 758.5 [processed] rows=464
+    H1 (1h ) fetch= 279.6 ind=  4.1 sw= 48.0 eval= 48.7 liq=  1.4 vol=  6.8 tot= 389.5 [processed] rows=116
+    H4 (4h ) fetch= 557.7 ind=  5.5 sw= 13.4 eval= 14.5 liq=  0.0 vol=  3.1 tot= 594.4 [processed] rows=29
+  ETH-USD      wall=20348.2ms fetch=1999.1 compute=8464.7 df=220 real_mtf=9884.3ms rows={'M1': 6955, 'M5': 1392, 'M15': 464, 'H1': 116, 'H4': 29}
+    M1 (1m ) fetch= 624.8 ind= 15.5 sw=3282.1 eval=3186.7 liq= 44.7 vol= 48.3 tot=7209.3 [processed] rows=6955
+    M5 (5m ) fetch= 450.2 ind=  5.6 sw=577.1 eval=614.3 liq=  7.9 vol= 14.8 tot=1671.7 [processed] rows=1392
+    M15 (15m) fetch= 290.1 ind=  5.4 sw=201.0 eval=226.7 liq=  2.7 vol=  5.8 tot= 732.5 [processed] rows=464
+    H1 (1h ) fetch= 314.0 ind= 13.9 sw= 78.9 eval= 57.8 liq=  0.4 vol=  8.9 tot= 474.6 [processed] rows=116
+    H4 (4h ) fetch= 319.9 ind= 13.6 sw= 20.4 eval= 17.7 liq=  0.0 vol=  3.6 tot= 375.5 [processed] rows=29
+  EURUSD=X     wall=22452.1ms fetch=9536.7 compute=5792.4 df=220 real_mtf=7122.97ms rows={'M1': 6924, 'M5': 1386, 'M15': 462, 'H1': 116, 'H4': 30}
+    M1 (1m ) fetch=8362.6 ind= 17.7 sw=2284.7 eval=2024.0 liq=  5.3 vol= 51.5 tot=12747.8 [processed] rows=6924
+    M5 (5m ) fetch= 312.4 ind= 13.7 sw=438.8 eval=403.4 liq=  1.7 vol= 14.8 tot=1186.2 [processed] rows=1386
+    M15 (15m) fetch= 304.9 ind= 10.7 sw=179.0 eval=152.0 liq=  1.0 vol= 11.0 tot= 659.1 [processed] rows=462
+    H1 (1h ) fetch= 264.7 ind=  5.9 sw= 52.4 eval= 62.2 liq=  0.7 vol=  3.2 tot= 389.5 [processed] rows=116
+    H4 (4h ) fetch= 292.0 ind=  9.7 sw= 24.3 eval= 17.2 liq=  0.0 vol=  2.6 tot= 346.6 [processed] rows=30
+  USDJPY=X     wall=16797.5ms fetch=1703.9 compute=6630.8 df=220 real_mtf=8462.75ms rows={'M1': 6897, 'M5': 1380, 'M15': 460, 'H1': 115, 'H4': 30}
+    M1 (1m ) fetch= 508.5 ind= 13.8 sw=2693.8 eval=2362.7 liq= 43.9 vol= 45.9 tot=5676.8 [processed] rows=6897
+    M5 (5m ) fetch= 417.4 ind=  4.0 sw=463.4 eval=490.2 liq=  6.6 vol= 13.4 tot=1397.4 [processed] rows=1380
+    M15 (15m) fetch= 272.3 ind=  9.2 sw=172.5 eval=165.2 liq=  2.2 vol=  6.4 tot= 629.9 [processed] rows=460
+    H1 (1h ) fetch= 261.8 ind=  4.8 sw= 42.2 eval= 36.1 liq=  0.8 vol=  5.5 tot= 351.6 [processed] rows=115
+    H4 (4h ) fetch= 243.8 ind=  7.2 sw= 11.5 eval= 12.9 liq=  0.3 vol=  3.0 tot= 279.0 [processed] rows=30
+  AUDNZD=X     wall=16669.3ms fetch=1751.3 compute=6613.3 df=220 real_mtf=8304.71ms rows={'M1': 6906, 'M5': 1387, 'M15': 463, 'H1': 117, 'H4': 30}
+    M1 (1m ) fetch= 548.3 ind= 17.5 sw=2417.1 eval=2445.2 liq= 46.9 vol= 53.3 tot=5535.2 [processed] rows=6906
+    M5 (5m ) fetch= 359.6 ind= 14.1 sw=591.9 eval=477.4 liq=  4.4 vol= 14.1 tot=1463.4 [processed] rows=1387
+    M15 (15m) fetch= 301.7 ind= 14.0 sw=181.7 eval=165.0 liq=  1.6 vol=  5.1 tot= 670.1 [processed] rows=463
+    H1 (1h ) fetch= 289.0 ind=  9.0 sw= 57.8 eval= 43.4 liq=  0.6 vol=  7.8 tot= 408.4 [processed] rows=117
+    H4 (4h ) fetch= 252.6 ind=  4.9 sw= 12.3 eval= 14.6 liq=  0.1 vol=  2.7 tot= 287.5 [processed] rows=30
+
+OBSERVATIONS:
+  - sequential_downloads: MTFEngine.analyze loops 5 TFs sequentially -> 5 * yfinance downloads serialized
+  - double_swings: Per TF, detect_swings called twice (once explicit, once inside structure.evaluate) -> ~2x swing cost
+  - df_copies: pd.DataFrame.copy called 1100 times across 5 assets (avg 220.0/asset)
+  - atr_recalc: ATR recalc in SwingEngine.calculate_atr + IndicatorEngine.calculate + VolatilityEngine -> same series recomputed 3x per TF
+  - m5_overlap: Main pipeline fetches M5 5d; MTF re-fetches M5 1mo but provider ignores period -> same data fetched twice (cache miss due to different period key)
+
+REPEATED INPUTS (same df hash):
+  (none — each TF hash differs as expected)
+
+ENGINE TIME avgs (ms):
+  indicator_ms              avg= 15.20 p95= 17.71
+  trend_ms                  avg=  0.07 p95=  0.12
+  structure_swings_ms       avg=786.95 p95=3282.07
+  structure_evaluate_ms     avg=715.67 p95=3186.67
+  liquidity_ms              avg=  9.74 p95= 46.91
+  volatility_ms             avg= 18.70 p95= 53.30

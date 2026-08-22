@@ -94,6 +94,11 @@ class DecisionSnapshotLogger:
             if snapshot.replay_id and snapshot.replay_id != replay_id:
                 raise ValueError("Snapshot.replay_id is inconsistent with snapshot content.")
             data["replay_id"] = replay_id
+            # S7.1: invalida lru_cache após save para não servir dado obsoleto (RISK-007)
+            try:
+                self.load_snapshot.cache_clear()  # type: ignore[attr-defined]
+            except Exception:
+                pass
             data = json.dumps(data, indent=4, default=str)
             fd, tmp_path = tempfile.mkstemp(
                 suffix=".tmp", prefix=".snap_", dir=str(self.base_path)

@@ -23,4 +23,6 @@ class DecisionSnapshot:
     session_id: str
     replay_id: str = ""
     evidence_ranking: Optional[EvidenceRankingResult] = None
+    dataset_hash: str = ""
+    config_hash: str = ""
     version: str = field(default_factory=lambda: settings.VERSION)

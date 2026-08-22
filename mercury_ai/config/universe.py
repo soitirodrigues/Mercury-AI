@@ -4,14 +4,12 @@ MERCURY AI V1 — UNIVERSO OPERACIONAL OFICIAL
 Fonte única da verdade para todos os ativos operados pelo Mercury AI.
 
 Operadora: Hezilex
-Mercados: FOREX (27 pares) + CRIPTO (10 ativos) + STOCKS (23 ações) + COMMODITIES (3 commodities)
-Total: 63 ativos
+Mercados: FOREX (27 pares) + CRIPTO (12 ativos)
+Total: 39 ativos
 
 Símbolos no formato Yahoo Finance:
   - FOREX: {PAR}=X   (ex: EURUSD=X)
   - CRIPTO: {TICKER}-USD (ex: BTC-USD)
-  - STOCKS: {TICKER} (ex: AAPL)
-  - COMMODITIES: {TICKER} (ex: GC=F)
 
 Regras de Governança (17 regras — ver docstring completo em OPERATIONAL_GUIDE.md):
   1. Nenhum ativo fora desta lista pode ser analisado pelo Scanner.
@@ -22,6 +20,11 @@ Regras de Governança (17 regras — ver docstring completo em OPERATIONAL_GUIDE
 ATENÇÃO: Este arquivo é a FONTE ÚNICA DA VERDADE.
 NÃO duplique listas de ativos em outros módulos.
 Todos os consumidores devem importar deste módulo.
+
+S7.X-F1 (2026-09-08): Universo redefinido para 27 FOREX + 12 CRYPTO = 39.
+  - STOCKS e COMMODITIES esvaziados (compatibilidade: dicts vazios, não entram em OPERATIONAL_UNIVERSE).
+  - Removidos: GBPJPY=X, AUDCAD=X (fora do universo oficial) e POL-USD (delisted, fora).
+  - Adicionados: USDAUD=X (Yahoo nativo, sem alias/inversao), LTC-USD, XPL-USD, LINK-USD (Yahoo comprovado).
 """
 
 from dataclasses import dataclass, field
@@ -46,11 +49,10 @@ class UniverseAsset:
 
 
 # ============================================================
-# UNIVERSO OFICIAL — 27 FOREX + 10 CRIPTO = 37 ATIVOS
+# UNIVERSO OFICIAL — 27 FOREX + 12 CRIPTO = 39 ATIVOS
 # ============================================================
 
 FOREX_UNIVERSE: Dict[str, UniverseAsset] = {
-    # MAJORS (7 pares)
     "EURUSD=X": UniverseAsset(
         symbol="EURUSD=X", display_name="EUR/USD", market="FOREX",
         provider_symbol="EURUSD=X", volatility="medium", precision=5, priority=1,
@@ -86,8 +88,6 @@ FOREX_UNIVERSE: Dict[str, UniverseAsset] = {
         provider_symbol="USDCAD=X", volatility="medium", precision=5, priority=1,
         notes="Major — Dólar / Dólar Canadense"
     ),
-
-    # CROSSES (20 pares)
     "EURGBP=X": UniverseAsset(
         symbol="EURGBP=X", display_name="EUR/GBP", market="FOREX",
         provider_symbol="EURGBP=X", volatility="medium", precision=5, priority=2,
@@ -117,11 +117,6 @@ FOREX_UNIVERSE: Dict[str, UniverseAsset] = {
         symbol="EURCAD=X", display_name="EUR/CAD", market="FOREX",
         provider_symbol="EURCAD=X", volatility="medium", precision=5, priority=2,
         notes="Cross — Euro / Dólar Canadense"
-    ),
-    "GBPJPY=X": UniverseAsset(
-        symbol="GBPJPY=X", display_name="GBP/JPY", market="FOREX",
-        provider_symbol="GBPJPY=X", volatility="high", precision=3, priority=2,
-        notes="Cross — Libra / Iene"
     ),
     "GBPCHF=X": UniverseAsset(
         symbol="GBPCHF=X", display_name="GBP/CHF", market="FOREX",
@@ -163,11 +158,6 @@ FOREX_UNIVERSE: Dict[str, UniverseAsset] = {
         provider_symbol="AUDNZD=X", volatility="medium", precision=5, priority=2,
         notes="Cross — Dólar Australiano / Dólar Neozelandês"
     ),
-    "AUDCAD=X": UniverseAsset(
-        symbol="AUDCAD=X", display_name="AUD/CAD", market="FOREX",
-        provider_symbol="AUDCAD=X", volatility="medium", precision=5, priority=2,
-        notes="Cross — Dólar Australiano / Dólar Canadense"
-    ),
     "NZDJPY=X": UniverseAsset(
         symbol="NZDJPY=X", display_name="NZD/JPY", market="FOREX",
         provider_symbol="NZDJPY=X", volatility="medium", precision=3, priority=2,
@@ -193,6 +183,11 @@ FOREX_UNIVERSE: Dict[str, UniverseAsset] = {
         provider_symbol="CADCHF=X", volatility="medium", precision=5, priority=2,
         notes="Cross — Dólar Canadense / Franco Suíço"
     ),
+    "USDAUD=X": UniverseAsset(
+        symbol="USDAUD=X", display_name="USD/AUD", market="FOREX",
+        provider_symbol="USDAUD=X", volatility="medium", precision=5, priority=2,
+        notes="Cross — Dólar / Dólar Australiano (Yahoo nativo USDAUD=X, sem inversao)"
+    ),
 }
 
 CRYPTO_UNIVERSE: Dict[str, UniverseAsset] = {
@@ -216,10 +211,10 @@ CRYPTO_UNIVERSE: Dict[str, UniverseAsset] = {
         provider_symbol="XRP-USD", volatility="high", precision=4, priority=2,
         notes="Ripple"
     ),
-    "POL-USD": UniverseAsset(
-        symbol="POL-USD", display_name="POL/USD", market="CRYPTO",
-        provider_symbol="POL-USD", volatility="high", precision=4, priority=3,
-        notes="Polygon (ex-MATIC)"
+    "LTC-USD": UniverseAsset(
+        symbol="LTC-USD", display_name="LTC/USD", market="CRYPTO",
+        provider_symbol="LTC-USD", volatility="high", precision=2, priority=2,
+        notes="Litecoin — Yahoo suporte comprovado"
     ),
     "SOL-USD": UniverseAsset(
         symbol="SOL-USD", display_name="SOL/USD", market="CRYPTO",
@@ -246,151 +241,26 @@ CRYPTO_UNIVERSE: Dict[str, UniverseAsset] = {
         provider_symbol="XLM-USD", volatility="high", precision=4, priority=3,
         notes="Stellar"
     ),
-}
-
-# ============================================================
-# STOCK UNIVERSE — 23 AÇÕES (B3/NYSE via Yahoo Finance)
-# ============================================================
-
-STOCK_UNIVERSE: Dict[str, UniverseAsset] = {
-    "AAPL": UniverseAsset(
-        symbol="AAPL", display_name="AAPL", market="STOCK",
-        provider_symbol="AAPL", volatility="medium", precision=2, priority=1,
-        notes="Apple Inc. — Tecnologia"
+    "XPL-USD": UniverseAsset(
+        symbol="XPL-USD", display_name="XPL/USD", market="CRYPTO",
+        provider_symbol="XPL-USD", volatility="high", precision=4, priority=3,
+        notes="Plasma (XPL) — Yahoo suporte comprovado"
     ),
-    "NFLX": UniverseAsset(
-        symbol="NFLX", display_name="NFLX", market="STOCK",
-        provider_symbol="NFLX", volatility="high", precision=2, priority=1,
-        notes="Netflix Inc. — Streaming"
-    ),
-    "META": UniverseAsset(
-        symbol="META", display_name="META", market="STOCK",
-        provider_symbol="META", volatility="high", precision=2, priority=1,
-        notes="Meta Platforms Inc. — Redes Sociais"
-    ),
-    "TSLA": UniverseAsset(
-        symbol="TSLA", display_name="TSLA", market="STOCK",
-        provider_symbol="TSLA", volatility="high", precision=2, priority=1,
-        notes="Tesla Inc. — Veículos Elétricos"
-    ),
-    "MSFT": UniverseAsset(
-        symbol="MSFT", display_name="MSFT", market="STOCK",
-        provider_symbol="MSFT", volatility="medium", precision=2, priority=1,
-        notes="Microsoft Corp. — Tecnologia"
-    ),
-    "MCD": UniverseAsset(
-        symbol="MCD", display_name="MCD", market="STOCK",
-        provider_symbol="MCD", volatility="low", precision=2, priority=2,
-        notes="McDonald's Corp. — Alimentação"
-    ),
-    "AMZN": UniverseAsset(
-        symbol="AMZN", display_name="AMZN", market="STOCK",
-        provider_symbol="AMZN", volatility="medium", precision=2, priority=1,
-        notes="Amazon.com Inc. — E-commerce/Cloud"
-    ),
-    "PYPL": UniverseAsset(
-        symbol="PYPL", display_name="PYPL", market="STOCK",
-        provider_symbol="PYPL", volatility="medium", precision=2, priority=2,
-        notes="PayPal Holdings Inc. — Fintech"
-    ),
-    "SBUX": UniverseAsset(
-        symbol="SBUX", display_name="SBUX", market="STOCK",
-        provider_symbol="SBUX", volatility="medium", precision=2, priority=2,
-        notes="Starbucks Corp. — Alimentação"
-    ),
-    "NVDA": UniverseAsset(
-        symbol="NVDA", display_name="NVDA", market="STOCK",
-        provider_symbol="NVDA", volatility="high", precision=2, priority=1,
-        notes="NVIDIA Corp. — Semicondutores/IA"
-    ),
-    "DIS": UniverseAsset(
-        symbol="DIS", display_name="DIS", market="STOCK",
-        provider_symbol="DIS", volatility="medium", precision=2, priority=2,
-        notes="The Walt Disney Co. — Entretenimento"
-    ),
-    "INTC": UniverseAsset(
-        symbol="INTC", display_name="INTC", market="STOCK",
-        provider_symbol="INTC", volatility="medium", precision=2, priority=2,
-        notes="Intel Corp. — Semicondutores"
-    ),
-    "V": UniverseAsset(
-        symbol="V", display_name="V", market="STOCK",
-        provider_symbol="V", volatility="low", precision=2, priority=1,
-        notes="Visa Inc. — Serviços Financeiros"
-    ),
-    "IBM": UniverseAsset(
-        symbol="IBM", display_name="IBM", market="STOCK",
-        provider_symbol="IBM", volatility="low", precision=2, priority=2,
-        notes="IBM Corp. — Tecnologia/Cloud"
-    ),
-    "F": UniverseAsset(
-        symbol="F", display_name="F", market="STOCK",
-        provider_symbol="F", volatility="medium", precision=2, priority=3,
-        notes="Ford Motor Co. — Automotivo"
-    ),
-    "KO": UniverseAsset(
-        symbol="KO", display_name="KO", market="STOCK",
-        provider_symbol="KO", volatility="low", precision=2, priority=2,
-        notes="The Coca-Cola Co. — Bebidas"
-    ),
-    "NKE": UniverseAsset(
-        symbol="NKE", display_name="NKE", market="STOCK",
-        provider_symbol="NKE", volatility="medium", precision=2, priority=2,
-        notes="Nike Inc. — Vestuário/Calçados"
-    ),
-    "MA": UniverseAsset(
-        symbol="MA", display_name="MA", market="STOCK",
-        provider_symbol="MA", volatility="low", precision=2, priority=1,
-        notes="Mastercard Inc. — Serviços Financeiros"
-    ),
-    "SPOT": UniverseAsset(
-        symbol="SPOT", display_name="SPOT", market="STOCK",
-        provider_symbol="SPOT", volatility="high", precision=2, priority=2,
-        notes="Spotify Technology SA — Streaming de Música"
-    ),
-    "JPM": UniverseAsset(
-        symbol="JPM", display_name="JPM", market="STOCK",
-        provider_symbol="JPM", volatility="medium", precision=2, priority=1,
-        notes="JPMorgan Chase & Co. — Banco"
-    ),
-    "BAC": UniverseAsset(
-        symbol="BAC", display_name="BAC", market="STOCK",
-        provider_symbol="BAC", volatility="medium", precision=2, priority=2,
-        notes="Bank of America Corp. — Banco"
-    ),
-    "C": UniverseAsset(
-        symbol="C", display_name="C", market="STOCK",
-        provider_symbol="C", volatility="medium", precision=2, priority=2,
-        notes="Citigroup Inc. — Banco"
-    ),
-    "WFC": UniverseAsset(
-        symbol="WFC", display_name="WFC", market="STOCK",
-        provider_symbol="WFC", volatility="medium", precision=2, priority=2,
-        notes="Wells Fargo & Co. — Banco"
+    "LINK-USD": UniverseAsset(
+        symbol="LINK-USD", display_name="LINK/USD", market="CRYPTO",
+        provider_symbol="LINK-USD", volatility="high", precision=2, priority=2,
+        notes="Chainlink — Yahoo suporte comprovado"
     ),
 }
 
 # ============================================================
-# COMMODITY UNIVERSE — 3 COMMODITIES (via Yahoo Finance)
+# STOCK / COMMODITY — MANTIDOS VAZIOS (compatibilidade)
+# S7.X-F1: nao operacionais. Nao incluir em OPERATIONAL_UNIVERSE.
 # ============================================================
 
-COMMODITY_UNIVERSE: Dict[str, UniverseAsset] = {
-    "CL=F": UniverseAsset(
-        symbol="CL=F", display_name="WTI Crude Oil", market="COMMODITY",
-        provider_symbol="CL=F", volatility="high", precision=2, priority=1,
-        notes="Petróleo Bruto WTI — Energia"
-    ),
-    "SI=F": UniverseAsset(
-        symbol="SI=F", display_name="Silver", market="COMMODITY",
-        provider_symbol="SI=F", volatility="medium", precision=3, priority=2,
-        notes="Prata — Metal Precioso"
-    ),
-    "GC=F": UniverseAsset(
-        symbol="GC=F", display_name="Gold", market="COMMODITY",
-        provider_symbol="GC=F", volatility="medium", precision=2, priority=1,
-        notes="Ouro — Metal Precioso (Ativo de Refúgio)"
-    ),
-}
+STOCK_UNIVERSE: Dict[str, UniverseAsset] = {}
+
+COMMODITY_UNIVERSE: Dict[str, UniverseAsset] = {}
 
 # ============================================================
 # UNIVERSO COMPLETO (fonte única da verdade)
@@ -399,8 +269,6 @@ COMMODITY_UNIVERSE: Dict[str, UniverseAsset] = {
 OPERATIONAL_UNIVERSE: Dict[str, UniverseAsset] = {
     **FOREX_UNIVERSE,
     **CRYPTO_UNIVERSE,
-    **STOCK_UNIVERSE,
-    **COMMODITY_UNIVERSE,
 }
 
 # ============================================================

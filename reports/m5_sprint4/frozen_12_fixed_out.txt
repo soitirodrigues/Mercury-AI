@@ -1,0 +1,12 @@
+Frozen equivalence universe=12 workers=4 runs=3
+BASELINE vs OPTIMIZED workers=4: mismatches=10
+  EURUSD=X: base {'decision': 'SELL', 'grade': 'D', 'confidence': 0.6814944, 'confluence': 100.0, 'buy_probability': 0.0, 'sell_probability': 44.02, 'wait_probability': 55.98, 'trade_allowed': True, 'audit_id': 'cf219a87bf1090e2a807289fa3c8b980414d1c125a85ca482cec8b814d763248', 'score': 62.965416} vs opt {'decision': 'BUY', 'grade': 'D', 'confidence': 0.6247078, 'confluence': 100.0, 'buy_probability': 43.41, 'sell_probability': 0.0, 'wait_probability': 56.59, 'trade_allowed': True, 'audit_id': 'e671742dcaf91b2dfeb9d7165c0d48eabb2259ea5e131994ace1a6f893d78007', 'score': 62.15861700000001}
+  GBPUSD=X: base {'decision': 'SELL', 'grade': 'D', 'confidence': 0.628999776, 'confluence': 100.0, 'buy_probability': 0.0, 'sell_probability': 43.35, 'wait_probability': 56.65, 'trade_allowed': True, 'audit_id': '34f781f81a1ed7b11b3184769744dcb408b865c4213cfbe9d05dd58f217d7c73', 'score': 62.13093664} vs opt {'decision': 'BUY', 'grade': 'B', 'confidence': 0.6923418580645162, 'confluence': 100.0, 'buy_probability': 60.06, 'sell_probability': 0.0, 'wait_probability': 39.94, 'trade_allowed': True, 'audit_id': '4f2eea2a3b6eb0dd723c71a23ef6dde6b0c44be2504136b6aac9f3a11d890af2', 'score': 72.9188375483871}
+  USDJPY=X: base {'decision': 'BUY', 'grade': 'D', 'confidence': 0.6859955096774195, 'confluence': 100.0, 'buy_probability': 44.24, 'sell_probability': 0.0, 'wait_probability': 55.76, 'trade_allowed': True, 'audit_id': 'bcd0ddc3c00d387c3cf4c4658eda6ffeac790477ba251f4299424676310d3068', 'score': 63.17238425806452} vs opt {'decision': 'BUY', 'grade': 'D', 'confidence': 0.6834519, 'confluence': 100.0, 'buy_probability': 44.49, 'sell_probability': 0.0, 'wait_probability': 55.51, 'trade_allowed': True, 'audit_id': '1377968f62db8bda2df507bb1ba612eee1bc9db2be2ebf141efb87d4964bd393', 'score': 63.3655285}
+  Run 1 sig 90319254bc110d0f
+  Run 2 sig 5dd983b719c7d906
+  Run 3 sig 1137f840dd7b6bf7
+
+EQUIVALENCE (frozen) = FAIL
+DETERMINISM (frozen) = FAIL
+Wrote reports\m5_sprint4\frozen_equivalence_report.json

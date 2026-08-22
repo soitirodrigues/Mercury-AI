@@ -1,0 +1,51 @@
+GATE FINAL — MERCURY-AI V1 ASSET UNIVERSE + M5 + TOP3
+Generated: 2026-09-02T00:51:06.083207+00:00
+
+HEZILEX_ASSETS_DISCOVERED: 68
+MAPPED: 68
+UNSUPPORTED: 5
+MAPPING_ERRORS: 0
+CONFIGURED_SUPPORTED: 63
+M5_SCANNED_DISTINCT: 62
+M5_FAILED_DISTINCT: 0
+M5_SCANNED_ENTRIES: 63
+M5_FAILED_ENTRIES: 0
+REAL_SIGNAL: 57
+DATA_UNAVAILABLE: 6
+UNSUPPORTED_SCAN: 5
+SCAN_ERROR: 0
+DECISION_RESULT_INTEGRITY: True
+PROBABILITY_SUM: True
+RESOLVER_INTEGRITY: True
+POST_RESOLVER_INTEGRITY: True
+TOP3_GENERATED: True
+TOP3_DETERMINISTIC: True
+TOP3_TRACEABILITY: True
+NO_DECISION_FABRICATION: True
+
+GATE_PASS: True
+VERDICT: ASSET_UNIVERSE_READY
+
+UNSUPPORTED (5):
+ - LITECOIN -> LTC-USD : NO_SUPPORTED_PUBLIC_INSTRUMENT_NOT_IN_MERCURY_UNIVERSE
+ - CARDANO -> ADA-USD : NO_SUPPORTED_PUBLIC_INSTRUMENT_NOT_IN_MERCURY_UNIVERSE
+ - LINK -> LINK-USD : NO_SUPPORTED_PUBLIC_INSTRUMENT_NOT_IN_MERCURY_UNIVERSE
+ - SPACEX -> None : PRIVATE_COMPANY_NO_PUBLIC_TICKER
+ - WELLS FARGO STANLEY -> MORGAN STANLEY -> MS : SPLIT_WELLS_FARGO_STANLEY_MS_NOT_IN_UNIVERSE
+
+DATA_UNAVAILABLE (6):
+ - USD/CAD (USDCAD=X) audit=DATA_QUALITY_FAIL decision=WAIT
+ - EUR/CAD (EURCAD=X) audit=DATA_QUALITY_FAIL decision=WAIT
+ - SUI (SUI-USD) audit=DATA_PROVIDER_UNAVAILABLE decision=WAIT
+ - PETRÓLEO (CL=F) audit=DATA_QUALITY_FAIL decision=WAIT
+ - PRATA (SI=F) audit=DATA_QUALITY_FAIL decision=WAIT
+ - OURO (GC=F) audit=DATA_QUALITY_FAIL decision=WAIT
+
+TOP-3:
+ 1. CITIGROUP C BUY grade=B score=148.4818 audit=f91b11fdc4fa
+ 2. AUD/NZD AUDNZD=X BUY grade=B score=148.3014 audit=6fb614f0ade9
+ 3. USD/JPY USDJPY=X BUY grade=B score=148.2044 audit=1ce63476ff19
+
+NOTE: 5 UNSUPPORTED are proven incompatible: LITECOIN/CARDANO/LINK not in universe, SPACEX private, MS (Morgan Stanley) not in 23-stock universe. Not a FAIL per section 5.
+NOTE: 2 missing from Hezilex vs universe: EURNZD=X (Hezilex lists 28 forex raw, but mapping yields 28 forex positions including BTC/USD; one missing forex is EUR/NZD expected but not in Hezilex raw list? Actually Hezilex lists 28 forex including BTC/USD; universe has 28 forex incl EURNZD, so Hezilex lacks EURNZD) and POL-USD (Polygon ex-MATIC). Hezilex lists 12 crypto raw but only 63 supported; universe has 10 crypto, Hezilex has 3 extra unsupported crypto -> net distinct supported 62 vs universe 64 (EURNZD+POL missing). This is mapping gap, not scanner gap.
+NOTE: 6 DATA_UNAVAILABLE among supported: SUI-USD delisted (true provider unavailable), USDCAD/X EURCAD/X CL=F SI=F GC=F rejected by DataQualityEngine temporal gap (unexpected 65min gap not crossing UTC day). Data WAS returned by Yahoo; pipeline produced DATA_QUALITY_FAIL. Distinguished from REAL_SIGNAL per section 8 (not fabricated). Scanner_executed true, M5_FAILED 0. For gate this is not SCAN_ERROR, but indicates DataQuality threshold overly strict for instruments with market close gaps (commodities 18:00-04:00, forex 22:00+ weekend). Future fix: relax DataQuality gap crossover check for non-crypto instruments.

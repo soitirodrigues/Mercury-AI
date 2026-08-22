@@ -60,6 +60,89 @@ class MarketStructureIntelligenceEngine:
     #  API pública                                                        #
     # ------------------------------------------------------------------ #
 
+    def evaluate_with_swings(
+        self,
+        df: pd.DataFrame,
+        swings: List[Swing],
+        swing_evidences: List[Evidence],
+        avg_volume: pd.Series | None = None,
+        avg_body: pd.Series | None = None,
+    ) -> Tuple[MarketStructureProfile, List[Evidence]]:
+        """Avalia estrutura REUTILIZANDO swings já computados (SAFE_REUSE).
+
+        Semântica idêntica a evaluate() quando swings/swing_evidences são
+        exatamente os retornados por SwingEngine.detect_swings(df) sobre o
+        mesmo df. Elimina a 2ª chamada de detect_swings por TF no MTFEngine.
+        Não muta swings nem df.
+        """
+        if df is None or df.empty:
+            return MarketStructureProfile(), []
+        if not isinstance(df, pd.DataFrame):
+            raise TypeError(f"df deve ser um pandas.DataFrame, recebeu {type(df).__name__}")
+        required_cols = {"open", "high", "low", "close", "volume"}
+        df_cols_lower = {str(c).strip().lower() for c in df.columns}
+        missing = required_cols - df_cols_lower
+        if missing:
+            raise ValueError(f"DataFrame não contém colunas obrigatórias: {sorted(missing)}")
+        # Cópia normalizada para etapas seguintes (BOS/CHoCH etc)
+        df_norm = df.copy()
+        df_norm.columns = [str(c).strip().lower() for c in df_norm.columns]
+        df_norm = df_norm.loc[:, ~df_norm.columns.duplicated()]
+        if len(df_norm) < 3:
+            return MarketStructureProfile(), list(swing_evidences) if swing_evidences else []
+        # Reuso: sequência e resto idênticos a evaluate() a partir de swings
+        if len(swings) < 2:
+            return MarketStructureProfile(), list(swing_evidences)
+        evidences: List[Evidence] = list(swing_evidences)
+        sequence_result = self.swing_engine.analyze_sequence(swings)
+        (
+            bos, choch, mss, break_price, break_strength, break_timestamp, structure_evidences,
+        ) = self._detect_structure_breaks(swings, df_norm)
+        evidences.extend(structure_evidences)
+        impulses, corrections = self._split_impulses_corrections(swings)
+        avg_impulse = sum(impulses) / len(impulses) if impulses else 0.0
+        avg_correction = sum(corrections) / len(corrections) if corrections else 0.0
+        last_candle = df_norm.iloc[-1]
+        body = abs(float(last_candle["close"]) - float(last_candle["open"]))
+        if avg_volume is not None:
+            avg_vol = float(avg_volume.iloc[-1])
+        else:
+            avg_vol = float(df_norm["volume"].rolling(self._ROLLING_WINDOW).mean().iloc[-1])
+        if avg_body is not None:
+            avg_bdy = float(avg_body.iloc[-1])
+        else:
+            avg_bdy = float((df_norm["close"] - df_norm["open"]).abs().rolling(self._ROLLING_WINDOW).mean().iloc[-1])
+        displacement = body > (avg_bdy * self._DISPLACEMENT_BODY_MULT) and float(last_candle["volume"]) > (avg_vol * self._DISPLACEMENT_VOL_MULT)
+        direction = "NEUTRAL"
+        if displacement:
+            direction = "BULLISH" if float(last_candle["close"]) > float(last_candle["open"]) else "BEARISH"
+            body_ratio = body / avg_bdy if avg_bdy > 0 else 0.0
+            vol_ratio = float(last_candle["volume"]) / avg_vol if avg_vol > 0 else 0.0
+            disp_strength = self._clamp(50.0 + (body_ratio - self._DISPLACEMENT_BODY_MULT) * 15.0, 50.0, 95.0)
+            disp_confidence = self._clamp(70.0 + min(vol_ratio, 3.0) * 8.0, 70.0, 95.0)
+            evidences.append(Evidence.create(engine_name="StructureEngine", evidence_name=f"{direction} Displacement", direction=direction, strength=disp_strength, confidence=disp_confidence, description=f"Displacement {direction} detectado — body {body_ratio:.2f}× avg, volume {vol_ratio:.2f}× avg", weight=self._DISPLACEMENT_WEIGHT_BASE, metadata={"body_ratio": body_ratio, "volume_ratio": vol_ratio, "body": body, "avg_body": avg_bdy}))
+        equilibrium = premium = discount = ote = 0.0
+        if sequence_result.current_swing is not None and sequence_result.previous_swing is not None:
+            high = max(sequence_result.current_swing.price, sequence_result.previous_swing.price)
+            low = min(sequence_result.current_swing.price, sequence_result.previous_swing.price)
+            rng = high - low
+            if rng > 0:
+                equilibrium = low + (rng * 0.5)
+                premium = high - (rng * 0.21)
+                discount = low + (rng * 0.21)
+                ote = low + (rng * 0.705)
+                ote_direction = "BEARISH" if sequence_result.current_swing.type == "HIGH" else ("BULLISH" if sequence_result.current_swing.type == "LOW" else "NEUTRAL")
+                ote_strength = self._clamp(60.0 + sequence_result.sequence_confidence * 0.35, 60.0, 95.0)
+                ote_confidence = self._clamp(70.0 + sequence_result.sequence_quality * 0.25, 70.0, 95.0)
+                evidences.append(Evidence.create(engine_name="StructureEngine", evidence_name="OTE", direction=ote_direction, strength=ote_strength, confidence=ote_confidence, description=f"OTE em {ote:.5f} | Equilibrium {equilibrium:.5f} | Premium {premium:.5f} | Discount {discount:.5f}", weight=self._OTE_WEIGHT_BASE, metadata={"ote": ote, "equilibrium": equilibrium, "premium": premium, "discount": discount, "range": rng}))
+        hh = sum(1 for s in swings if s.classification == "HH")
+        hl = sum(1 for s in swings if s.classification == "HL")
+        lh = sum(1 for s in swings if s.classification == "LH")
+        ll = sum(1 for s in swings if s.classification == "LL")
+        displacement_strength = float(body / avg_bdy) if avg_bdy > 0 else 0.0
+        profile = MarketStructureProfile(classification=sequence_result.trend_direction, trend_strength=sequence_result.sequence_confidence, hh_count=hh, hl_count=hl, lh_count=lh, ll_count=ll, confidence_score=sequence_result.sequence_confidence, current_swing=sequence_result.current_swing, previous_swing=sequence_result.previous_swing, current_sequence=sequence_result.sequence, bos=bos, choch=choch, mss=mss, break_strength=break_strength, break_price=break_price, break_timestamp=break_timestamp, impulse_strength=float(avg_impulse), correction_strength=float(avg_correction), displacement=displacement, displacement_strength=displacement_strength, displacement_direction=direction, premium_zone=float(premium), discount_zone=float(discount), equilibrium=float(equilibrium), ote=float(ote))
+        return profile, evidences
+
     def evaluate(
         self,
         df: pd.DataFrame,

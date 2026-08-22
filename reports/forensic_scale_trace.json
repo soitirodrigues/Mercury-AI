@@ -1,0 +1,207 @@
+{
+  "contracts": {
+    "confluence_score": {
+      "declared": "0-100 (docs: confluence_score = max(bullish,bearish)/total_weight*100, clamp 0-100)",
+      "producer": "ConfluenceScoreEngine.calculate + ConfluenceEngine.analyze.weighted_score (clamp 5-100)",
+      "file": "mercury_ai/analysis/confluence_score_engine.py:85 + confluence_engine.py:119-165",
+      "normalization": "total_weight=100 or active_weights_sum (scale_factor), clamp_score 5-100",
+      "actual": "0-100 verified (live weighted 100.0)",
+      "consumers": [
+        "ProbabilityEngine.analyze(confluence_score 0-100)",
+        "DecisionResolverEngine(confluence_score < threshold 40)",
+        "InstitutionalScoreEngine(confluence*0.25)",
+        "DecisionResultBuilder(score=institutional_score NOT confluence)"
+      ],
+      "final": "ConfluenceEngine.weighted_score 0-100; DecisionResult.score is institutional_score (misalias risk)"
+    },
+    "confidence_score": {
+      "declared": "0-100 (ConfidenceEngine: 100*(0.25 quality +0.45 consensus+0.30 market), clamp 0-100)",
+      "producer": "ConfidenceEngine.calculate -> final_score 0-100, calibrate clamp 0-100",
+      "file": "mercury_ai/analysis/confidence_engine.py:98-121, builder.py:148",
+      "normalization": "ConfidenceResult stores 0-100; DecisionResultBuilder stores confidence/100 => 0-1 (compat UI *100)",
+      "actual": "Engine 0-100; DecisionResult.confidence 0-1 (68.24 stored as 0.682)",
+      "consumers": [
+        "ProbabilityEngine expects 0-100 (receives final_confidence 68)",
+        "InstitutionalScoreEngine expects 0-100 (receives 68)",
+        "UI expects 0-1 *100"
+      ],
+      "final": "Snapshot confidence 0.682 is 0-1; report shows 0.682 (raw stored) without *100"
+    },
+    "probability_institutional_strength": {
+      "declared": "0-100 (ProbabilityEngine: confluence*0.5 + confidence*0.35 + evidence_bonus*0.15 then * (1-risk*0.5) clamp 0-100)",
+      "producer": "ProbabilityEngine.analyze",
+      "file": "mercury_ai/brain/probability_engine.py:90-108",
+      "normalization": "clamp 0-100, wait = max(5,100-strength) cap 60",
+      "actual": "BTC snapshot: raw 76.88 -> after risk 44.38 (D); live BTC today: raw ~?? -> 60.88 (B)",
+      "consumers": [
+        "ProbabilityResult.opportunity_grade thresholds 80/70/60/50",
+        "wait_probability, buy/sell split"
+      ],
+      "final": "Used for grade. Snapshot grade D matches 44.38 <50. NOT 854."
+    },
+    "total_weight_expected_strength": {
+      "declared": "UNCAPPED sum(weights) per evidence (no normalization), scale 0.. ~2000, NOT 0-100",
+      "producer": "EvidenceRankingEngine.rank: total_weight = sum(e.weight for e in ranked)",
+      "file": "mercury_ai/analysis/evidence_ranking_engine.py:29, builder.py:145 expected_strength=total_weight",
+      "normalization": "none",
+      "actual": "BTC 854.24, ETH 739.37, today's BTC 613.51",
+      "consumers": [
+        "DecisionResult.expected_strength (display only), NOT used for grade"
+      ],
+      "final": "Report mislabels expected_strength as institutional_strength. Grade does NOT use it."
+    },
+    "institutional_score": {
+      "declared": "0-100 (InstitutionalScoreEngine: prob*0.35+confl*0.25+conf*0.15+trade*0.10+resolved*0.05+(100-risk)*0.10 * conflict 0-1 clamp 0-100)",
+      "producer": "InstitutionalScoreEngine.calculate",
+      "file": "mercury_ai/analysis/institutional_score_engine.py:44-68",
+      "normalization": "clamp 0-100",
+      "actual": "BTC snapshot stored as DecisionResult.score 65.27 (but recomputed live gives 55.27 with prob 44.39? see note - live today 73.61)",
+      "consumers": [
+        "DecisionResult.score (audit), explainability.institutional_score"
+      ],
+      "final": "Stored correctly but report's confluence 65.27 equals this institutional_score, not confluence weighted 100"
+    },
+    "trade_filter_quality": {
+      "declared": "0-100 (100 - penalty, penalty sum regime+evidence+ATR, threshold allowed penalty>=50 blocked)",
+      "producer": "InstitutionalTradeFilterEngine.evaluate",
+      "file": "mercury_ai/analysis/institutional_trade_filter_engine.py:67-140",
+      "normalization": "quality 0-100, level A+>=90 A>=80 B>=70 C>=60 D<60",
+      "actual": "Live BTC today quality 80 allowed True (penalty 20?) but snapshot DecisionResult.trade_quality_score defaults 0.0 (builder bug) -> report 0.0 allowed True",
+      "consumers": [
+        "DecisionResult.quality (builder maps) but trade_quality_score/trade_allowed defaults remain 0/True"
+      ],
+      "final": "Bug: builder does NOT set DecisionResult.trade_quality_score/trade_allowed/trade_quality_level"
+    },
+    "probabilities": {
+      "declared": "0-100 each, sum \u2248100 (wait = max(5,100-strength) cap 60, remaining split to buy/sell by dominant_direction)",
+      "producer": "ProbabilityEngine",
+      "file": "mercury_ai/brain/probability_engine.py:114-145",
+      "normalization": "round 2 decimals",
+      "actual": "BTC snapshot 0+44.39+55.61=100.0 PASS; live BUY 60.88+0+39.12=100.0 PASS; SELL cases similar",
+      "consumers": [
+        "DecisionResult buy/sell/wait"
+      ],
+      "final": "100.0 within tolerance"
+    },
+    "opportunity_grade": {
+      "declared": "A+ >=80, A >=70, B >=60, C >=50, D <50 on institutional_strength 0-100",
+      "producer": "ProbabilityEngine grade block",
+      "file": "mercury_ai/brain/probability_engine.py:157-168",
+      "normalization": "thresholds hard-coded",
+      "actual": "BTC strength 44.38 -> D correct; live strength 60.88 -> B correct",
+      "consumers": [
+        "DecisionResolverEngine rule 4 (conflict and grade C/D -> WAIT)",
+        "explainability"
+      ],
+      "final": "Consistent with strength, NOT with total_weight 854"
+    }
+  },
+  "traces": {
+    "BTC": {
+      "snapshot_path": "C:\\Projetos\\Mercury-AI\\mercury_ai\\database\\snapshots\\BTC-USD_2026-08-31T22-41-14.758600.json",
+      "decision": "SELL",
+      "grade": "D",
+      "confidence_stored_0_1": 0.6824769250000001,
+      "confidence_implied_0_100": 68.24769250000001,
+      "score_institutional": 65.275341375,
+      "expected_strength_total_weight": 854.2472329102645,
+      "total_weight_check": 854.2472329102645,
+      "buy": 0.0,
+      "sell": 44.39,
+      "wait": 55.61,
+      "sum_prob": 100.0,
+      "trade_allowed": true,
+      "trade_quality_score": 0.0,
+      "quality_alias": 100.0,
+      "clarity": 100.0,
+      "audit_id": "56b46e47f4e2ac9ec976a1ca9519ba42318545876168e768d27892e3e07a6394",
+      "explainability_chain": [
+        "1.Validation: is_valid=True",
+        "2.Quality: avg=59.11",
+        "3.Conflict: score=1.00",
+        "4.Ranking: 32 evidencias",
+        "5.Memory: consistency=0.50",
+        "6.Confidence: final=68.25",
+        "7.Confluence: direction=SELL, weighted=100.00",
+        "8.Probability: grade=D, buy=0.00, sell=44.39",
+        "9.Resolver: rule=6, decision=SELL"
+      ],
+      "explainability_score": 65.275341375,
+      "ctx_risk": 84.53625,
+      "evidence_count": 32
+    },
+    "ETH": {
+      "snapshot_path": "C:\\Projetos\\Mercury-AI\\mercury_ai\\database\\snapshots\\ETH-USD_2026-08-24T14-29-17.286918.json",
+      "decision": "BUY",
+      "grade": "D",
+      "confidence_stored_0_1": 0.6936386181818183,
+      "confidence_implied_0_100": 69.36386181818183,
+      "score_institutional": 65.24457927272728,
+      "expected_strength_total_weight": 721.8205468927667,
+      "total_weight_check": 721.8205468927667,
+      "buy": 44.28,
+      "sell": 0.0,
+      "wait": 55.72,
+      "sum_prob": 100.0,
+      "trade_allowed": true,
+      "trade_quality_score": 0.0,
+      "quality_alias": 100.0,
+      "clarity": 100.0,
+      "audit_id": "fb31babc0d67d5ae8d72d8a9438c8425121cd8c5c8b945c8bb80538f6646fe9b",
+      "explainability_chain": [
+        "1.Validation: is_valid=True",
+        "2.Quality: avg=57.65",
+        "3.Conflict: score=1.00",
+        "4.Ranking: 33 evidencias",
+        "5.Memory: consistency=0.50",
+        "6.Confidence: final=69.36",
+        "7.Confluence: direction=BUY, weighted=100.00",
+        "8.Probability: grade=D, buy=44.28, sell=0.00",
+        "9.Resolver: rule=5, decision=BUY"
+      ],
+      "explainability_score": 65.24457927272728,
+      "ctx_risk": 85.40727272727271,
+      "evidence_count": 33
+    },
+    "LIVE_BTC-USD": {
+      "decision": "BUY",
+      "grade": "D",
+      "confidence_stored_0_1": 0.6290704000000001,
+      "confidence_implied_0_100": 62.907040000000016,
+      "score_institutional": 64.566556,
+      "expected_strength_total_weight": 553.5149858445765,
+      "buy": 43.87,
+      "sell": 0.0,
+      "wait": 56.13,
+      "sum_prob": 100.0,
+      "trade_allowed": true,
+      "trade_quality_score": 0.0,
+      "quality_alias": 100.0,
+      "clarity": 100.0,
+      "audit_id": "6cc63f85ed14f4717343146dc5bda7d91228a99bddd70e35b6e8dcea5a5f80a1",
+      "confluence_weighted_live": 100.0,
+      "confidence_final_live": 62.91,
+      "grade_source_strength_recomputed": null
+    },
+    "LIVE_ETH-USD": {
+      "decision": "SELL",
+      "grade": "D",
+      "confidence_stored_0_1": 0.6831346482758621,
+      "confidence_implied_0_100": 68.31346482758622,
+      "score_institutional": 63.55288179310345,
+      "expected_strength_total_weight": 699.379613480828,
+      "buy": 0.0,
+      "sell": 44.72,
+      "wait": 55.28,
+      "sum_prob": 100.0,
+      "trade_allowed": true,
+      "trade_quality_score": 0.0,
+      "quality_alias": 80.0,
+      "clarity": 100.0,
+      "audit_id": "ef37cd8df498e28719c3206357cf882d042119b1d33beddb3baae37d2b573094",
+      "confluence_weighted_live": 100.0,
+      "confidence_final_live": 68.31,
+      "grade_source_strength_recomputed": null
+    }
+  }
+}

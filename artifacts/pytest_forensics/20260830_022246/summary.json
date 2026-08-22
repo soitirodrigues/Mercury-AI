@@ -1,0 +1,20 @@
+﻿{
+    "timestamp":  "2026-08-30 04:27:20",
+    "root":  "C:\\Projetos\\Mercury-AI",
+    "duration_seconds":  7471.45,
+    "timeout_seconds":  1800,
+    "timeout_triggered":  false,
+    "exit_code":  -1,
+    "last_nodeid":  null,
+    "last_interesting_line":  null,
+    "reproduction":  "NOT REQUESTED",
+    "verdict":  "FAIL — PYTEST REPORTED FAILURES",
+    "artifacts":  {
+                      "last_test":  "C:\\Projetos\\Mercury-AI\\artifacts\\pytest_forensics\\20260830_022246\\last_test.txt",
+                      "slow_tests":  "C:\\Projetos\\Mercury-AI\\artifacts\\pytest_forensics\\20260830_022246\\slow_tests.txt",
+                      "process":  "C:\\Projetos\\Mercury-AI\\artifacts\\pytest_forensics\\20260830_022246\\process_snapshot.txt",
+                      "metadata":  "C:\\Projetos\\Mercury-AI\\artifacts\\pytest_forensics\\20260830_022246\\metadata.txt",
+                      "report":  "C:\\Projetos\\Mercury-AI\\artifacts\\pytest_forensics\\20260830_022246\\FORENSIC_REPORT.txt",
+                      "main_log":  "C:\\Projetos\\Mercury-AI\\artifacts\\pytest_forensics\\20260830_022246\\pytest_output.log"
+                  }
+}

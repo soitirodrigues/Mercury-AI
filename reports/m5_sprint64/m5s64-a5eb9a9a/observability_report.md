@@ -1,0 +1,14 @@
+# Observability Report — m5s64-a5eb9a9a
+
+- session_id: m5s64-a5eb9a9a
+- event_total: 818
+- event_loss_total: 0
+- duplicate_event_total: 0
+- event_order_violation_total: 0
+- ordering: {'event_order_violation_total': 0, 'violations': [], 'duplicate_event_total': 0, 'duplicate_logical_total': 0, 'missing_terminal_total': 0, 'event_loss_total': 0, 'event_total': 818}
+- orphan_workers: 0
+- queue_max: 64
+- audit_write_latency_p50: 22.614599962253124
+- audit_write_latency_p95: 28.915674949530512
+- replay_duration_p50: 1.9576000049710274
+- replay_duration_p95: 21.06604008004069

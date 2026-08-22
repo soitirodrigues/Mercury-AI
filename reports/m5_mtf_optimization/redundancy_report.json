@@ -1,0 +1,136 @@
+{
+  "generated_at": "2026-09-02T20:05:00Z",
+  "method": "Instrumentação forense + inspeção de código + profiling 5 ativos reais",
+  "redundancies": [
+    {
+      "id": "R01_DOUBLE_SWING_DETECTION",
+      "location": "MTFEngine.analyze loop por TF linhas ~67-68 original",
+      "description": "Por TF, detect_swings é chamado DUAS vezes: 1x explícito (swings, _ = structure.swing_engine.detect_swings(df)) e 1x dentro de structure.evaluate(df) (que internamente chama detect_swings novamente). São idênticos sobre o mesmo df.",
+      "before": {
+        "calls_per_TF": 2,
+        "calls_per_asset": 10,
+        "calls_per_5_assets": 50,
+        "time_ms_per_asset_avg": 7869.5,
+        "share_of_compute_pct": 51.9,
+        "evidence": "mtf_profile.json: M1_swings 3126ms + M1_structure(p contém 2ª detecção) 2799ms; estrutura evaluate inclui 2ª detecção. Instrumentação contou 2x por TF."
+      },
+      "after_expected": {
+        "calls_per_TF": 1,
+        "calls_per_asset": 5,
+        "calls_per_5_assets": 25,
+        "time_saved_ms_per_asset_avg": 3900,
+        "compute_reduction_pct": 50,
+        "total_wall_reduction_pct": 19.5,
+        "method": "Reuso: passar swings já computados para evaluate_with_swings(df, swings, swing_evidences). Zero mudança semântica (mesmo df -> mesmos swings)."
+      },
+      "classification": "SAFE_REUSE",
+      "risk": "NULO — swings são determinísticos puros sobre df. Prova: SwingEngine sem estado mutável; mesmo pivot_window/atr_period.",
+      "mimics": "AnalysisPipeline.analyze também duplica structure.evaluate + detect_swings fora do MTF (main structure) — mas não otimizar fora do escopo MTF neste Sprint."
+    },
+    {
+      "id": "R02_SEQUENTIAL_FETCH_5_TF",
+      "location": "MTFEngine.analyze for tf in [M1,M5,M15,H1,H4]: market_service.get_data()",
+      "description": "5 downloads yfinance serializados. Cada fetch é 1 RTT HTTP + parsing. Total fetch ~3.7s avg por asset (p95 fetch 9.5s no EURUSD). Sem dependência entre TFs.",
+      "before": {
+        "fetches_per_asset": 5,
+        "serialized": true,
+        "fetch_avg_ms": 3687,
+        "fetch_p95_ms": 9536,
+        "wall_share_pct": 18.4,
+        "evidence": "mtf_profile.json fetch_total per asset. fetch_times_by_tf mostra cada TF isolado."
+      },
+      "after_expected": {
+        "fetches_per_asset": 5,
+        "parallel_workers": 2,
+        "fetch_avg_ms_expected": 2100,
+        "saved_ms_per_asset_avg": 1500,
+        "wall_reduction_pct": 7.5,
+        "method": "ThreadPoolExecutor max_workers=2 para fetches. Não compartilhar DataFrame mutável. Cada thread chama MarketDataService.get_data independente. Timeout 15s por fetch."
+      },
+      "classification": "SAFE_PARALLEL",
+      "risk": "BAIXO — Mercado yfinance e MercuryDataProvider são stateless para get_data (exceto cache dict no YahooFinanceProvider não usado aqui). Usar MercuryDataProvider (cacheless) elimina race. Workers=2 evita limite de concorrência e exaustão de sockets.",
+      "m5_reuse_interaction": "Se M5 reuse ativo, fetches caem para 4, economia extra 20% de fetch."
+    },
+    {
+      "id": "R03_M5_DUPLICATE_FETCH",
+      "location": "AnalysisPipeline.analyze: MarketDataService.get_data(5m,5d)  +  MTFEngine.fetch M5 1mo (mesmo 5m)",
+      "description": "Pipeline principal busca M5 5d; MTF re-busca M5 1mo. MercuryDataProvider/YahooAdapter ignoram period e ambos retornam 5d (hardcoded period='5d' no YahooAdapter). Resultado: M5 é baixado DUAS vezes com conteúdo idêntico para mesmo símbolo no mesmo ciclo.",
+      "before": {
+        "m5_fetches_per_asset": 2,
+        "rows_main": 1380,
+        "rows_mtf": 1392,
+        "delta_rows": "~12 (ruído de limite de janela/cache)",
+        "time_per_m5_fetch_ms_avg": 414,
+        "hash_match_rate_observed": 0.0,
+        "reason_for_mismatch": "Periodo diferente gera cache key diferente no YahooFinanceProvider (não no Adapter). Com MercuryDataProvider, dados idênticos mas cache miss por periodo diferente -> 2ª chamada vai à rede."
+      },
+      "after_expected": {
+        "m5_fetches_per_asset": 1,
+        "saved_ms_per_asset_avg": 414,
+        "wall_reduction_pct": 2.0,
+        "method": "MTFEngine.analyze(symbol, main_m5_df= df) — se condições REUSE satisfeitas, copy main df em vez de re-download. Condições: same symbol, interval 5m, rows>=20, last candle timestamp idêntico, mesma normalização, sem gap. Caso NOT_REUSED, log motivo e fetch separado; nunca assumir."
+      },
+      "classification": "SAFE_REUSE (condicional)",
+      "risk": "MÉDIO se TTL puro; seguro com candle-timestamp check. Proibição: não tratar STALE como FRESH.",
+      "reuse_check": "Comparar df_main['close'].iloc[-1] e index[-1] com df_fresh se suspeito stale; validar len e colunas."
+    },
+    {
+      "id": "R04_DF_COPY_FANOUT",
+      "location": "Pd.DataFrame.copy() em IndicatorEngine, VolatilityEngine, SwingEngine, StructureEngine",
+      "description": "1100 DataFrame.copy() observados em 5 assets (220/asset, 44/TF). Cada engine copia defensivamente df inteiro mesmo quando só lê. M1 df tem 6955 rows ×5 cols ~35k floats; 44 copies = 1.5M floats copiados/asset.",
+      "before": {
+        "copies_per_asset": 220,
+        "copies_per_TF": 44,
+        "dominant_caller": "IndicatorEngine.calculate df.copy() + SwingEngine.calculate_atr df.copy() + VolatilityEngine df.copy()+reset_index",
+        "time_contribution_ms_per_asset": "~40 (estimado 2% do wall) — não dominante mas soma com GC pressure"
+      },
+      "after_expected": {
+        "copies_per_asset": 110,
+        "saved_ms_per_asset_avg": 20,
+        "method": "Não otimizar agressivamente neste Sprint (classificado SAFE_REUSE mas exige garantir imutabilidade). Deixar como REQUIRES_REVIEW. Ganho pequeno vs risco de mutação oculta.",
+        "verdict": "NÃO OTIMIZAR neste Sprint — ganho <1% e risco de mutação."
+      },
+      "classification": "REQUIRES_REVIEW",
+      "action": "DEFER"
+    },
+    {
+      "id": "R05_ATR_TRIPLE_CALC",
+      "location": "IndicatorEngine ATR rolling14 + SwingEngine ATR ewm(alpha=1/14) + VolatilityEngine ATR ta.volatility",
+      "description": "ATR calculado 3x por TF com fórmulas DIFERENTES (rolling mean vs ewm vs Wilder). Não são idênticos matematicamente; reusar seria aproximação proibida.",
+      "before": {
+        "atr_calcs_per_TF": 3,
+        "time_per_TF_ms": 25
+      },
+      "after_expected": {
+        "atr_calcs_per_TF": 3,
+        "saved_ms": 0,
+        "method": "NÃO OTIMIZAR — proibido substituir cálculo por aproximação. Classificação UNSAFE para reuso sem prova de equivalência matemática."
+      },
+      "classification": "UNSAFE",
+      "action": "NÃO OTIMIZAR"
+    },
+    {
+      "id": "R06_YFINANCE_INTERVAL_MAPPING",
+      "location": "YFINANCE_INTERVALS[TF] + DataNormalizer normalize por TF",
+      "description": "Cada TF faz DataNormalizer.normalize (lowercase+dup). Já é barato e idempotente. Sem redundância relevante.",
+      "before": { "calls_per_asset": 5, "time_ms": 5 },
+      "after_expected": { "calls_per_asset": 5, "saved_ms": 0 },
+      "classification": "SAFE_REUSE",
+      "action": "NÃO OTIMIZAR (ganho desprezível)"
+    }
+  ],
+  "total_expected_saving": {
+    "before_wall_ms_per_asset": 8500,
+    "after_wall_ms_per_asset_expected": 3100,
+    "saving_ms_per_asset": 5400,
+    "saving_pct": 63.5,
+    "breakdown": {
+      "double_swing_elimination": 3900,
+      "parallel_fetch_workers2": 1500,
+      "m5_reuse": 414,
+      "total_if_all": 5814
+    },
+    "conservative_estimate_with_workers2": 4500,
+    "note": "Projeção baseada em profiling isolado; validação real requerida em Fase 7/9. Não declarar PASS por projeção."
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "generated_at": "2026-09-03T03:40:31+00:00",
+  "note": "Thread vs Process medido no worker_benchmark_64assets.json. Process 4 é o melhor geral mas threads são produção-safe sem pickling. Relatório de §10.",
+  "thread_64": {
+    "1": {"wall_s": 236.85, "ram_mb": 87.5, "errors": 0},
+    "2": {"wall_s": 179.28, "ram_mb": 94.1, "errors": 0},
+    "4": {"wall_s": 173.27, "ram_mb": 101.1, "errors": 0},
+    "8": {"wall_s": 162.0, "ram_mb": 99.9, "errors": 0},
+    "16": {"wall_s": 174.64, "ram_mb": 108.8, "errors": 0}
+  },
+  "process_64": {
+    "4": {"wall_s": 105.47, "ram_mb": 16.8, "errors": 0, "note": "Faster due to true parallelism (GIL bypass) but requires serialization; pipeline é CPU-bound em MTF/Structure, então Process vence wall mas tem overhead de spawn e não é recomendado como default production até hardening (yfinance pickling, file handles)."}
+  },
+  "process_12": {},
+  "comparison": {
+    "wall_winner": "process_4 (105.47s vs best thread 162.0s — 35% faster)",
+    "memory_winner": "process_4 (16.8MB vs 99.9MB — isolation per process liberates heap)",
+    "stability_winner": "thread_8 (no pickling, deterministic with shared fixture, no serialization failures)",
+    "equivalence_winner": "both PASS with isolated InstitutionalMemory",
+    "recommendation": "Produção default = Thread 8 (162s, 99.9MB, 100% determinístico, sem riscos de serialization). Process 4 é otimização validada para oferta opcional quando wall < 120s for mandatório, desde que hardening de pickling seja auditado."
+  },
+  "verdict": "PASS — ambos executores validados; Thread 8 é referência canônica; Process 4 é otimização confirmada"
+}

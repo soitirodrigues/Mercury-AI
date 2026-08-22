@@ -52,6 +52,7 @@ class MercuryDecisionEngine:
         self,
         executor: PipelineExecutor,
         profiler: Optional[PipelineProfiler] = None,
+        institutional_memory: Optional[InstitutionalMemoryEngine] = None,
     ):
         self.executor = executor
         self.profiler = profiler
@@ -72,7 +73,7 @@ class MercuryDecisionEngine:
             ),
         )
 
-        self.memory = InstitutionalMemoryEngine()
+        self.memory = institutional_memory if institutional_memory is not None else InstitutionalMemoryEngine()
         self.narrative = NarrativeEngine()
         self.score_engine = InstitutionalScoreEngine()
         self.decision_resolver = DecisionResolverEngine(
@@ -402,5 +403,8 @@ class MercuryDecisionEngine:
             final_warnings=list(validation_warnings),
             confidence_result=confidence_result,
             explainability=explainability,
+            trade_allowed=trade_filter_result.allowed,
+            trade_block_reasons=tuple(trade_filter_result.reasons),
+            trade_quality_level=trade_filter_result.quality_level,
         )
     

@@ -159,8 +159,8 @@ class HistoricalReplayEngine:
 
                 # Atualiza o provedor com o índice atual
                 provider.set_index(i)
-                # Verifica cache antes de executar pipeline
-                cached_snapshot = self._cache.get(symbol, i)
+                # S7.1 RISK-002: usa run_id na key para não colidir entre datasets
+                cached_snapshot = self._cache.get(symbol, i, run_id=run_id)
                 if cached_snapshot is not None:
                     snapshot = cached_snapshot
                 else:
@@ -173,7 +173,7 @@ class HistoricalReplayEngine:
                     )
                     snapshot = pipeline.last_snapshot
                     # Armazena no cache
-                    self._cache.put(symbol, i, snapshot)
+                    self._cache.put(symbol, i, snapshot, run_id=run_id)
 
                 # Calcula métricas de replay
                 entry_price = float(close_prices[i])

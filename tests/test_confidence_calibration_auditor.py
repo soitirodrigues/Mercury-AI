@@ -1,5 +1,8 @@
+import pytest
+
 from mercury_ai.analysis.confidence_calibration_auditor import ConfidenceCalibrationAuditor
 
+@pytest.mark.slow
 def test_confidence_calibration_auditor():
     auditor = ConfidenceCalibrationAuditor()
     results = auditor.audit()

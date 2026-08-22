@@ -1,0 +1,308 @@
+
+=== GATE top3_scanner: C:\Projetos\Mercury-AI\.venv\Scripts\python.exe scripts/top3_scanner.py ===
+TOP 3 M5 SIGNALS ù MERCURY-AI V1
+Generated: 2026-09-03T03:07:35.375436+00:00
+Formula: ranking_score = confluence_weighted (0-100) + confidence_100*0.30 + grade_bonus(A+25/A20/B15/C10/D5) + dominant_prob*0.20 ; tie-breaker: internal_symbol ASC, audit_id ASC. Eligibility: status==REAL_SIGNAL AND decision in (BUY,SELL) AND trade_allowed==true AND prob_sum_ok==true AND confidence not None AND confluence not None
+Eligible REAL_SIGNAL: 57 / 68
+
+1. CITIGROUP (C)
+   decision=BUY
+   grade=B
+   confidence=0.7092594 (100=70.93)
+   confluence=100.0
+   probability dominant=61.02 (buy=61.02 sell=0.0 wait=38.98)
+   score=148.4818
+   audit_id=f91b11fdc4fab86a9b4ff38ca6f0d63cd29bb01603f4d6d7a67354b97809dd86
+   timestamp=2026-09-02T00:27:39.277481
+   source=C
+
+2. AUD/NZD (AUDNZD=X)
+   decision=BUY
+   grade=B
+   confidence=0.7071132800000001 (100=70.71)
+   confluence=100.0
+   probability dominant=60.44 (buy=60.44 sell=0.0 wait=39.56)
+   score=148.3014
+   audit_id=6fb614f0ade914b35e625314be8901d9f892a777f25bdc48e28d8a8d3b5dd044
+   timestamp=2026-09-02T00:19:51.284804
+   source=AUDNZD=X
+
+3. USD/JPY (USDJPY=X)
+   decision=BUY
+   grade=B
+   confidence=0.7052801066666667 (100=70.53)
+   confluence=100.0
+   probability dominant=60.23 (buy=60.23 sell=0.0 wait=39.77)
+   score=148.2044
+   audit_id=1ce63476ff1974869513c5107b2c49540bdd73dd9ad172c04eba2bd817487960
+   timestamp=2026-09-02T00:15:15.595197
+   source=USDJPY=X
+
+
+Wrote C:\Projetos\Mercury-AI\reports\asset_universe\top3_scanner.json and C:\Projetos\Mercury-AI\reports\asset_universe\top3_scanner.txt
+
+GATE top3_scanner: PASS (exit 0)
+
+=== GATE top3_determinism: C:\Projetos\Mercury-AI\.venv\Scripts\python.exe scripts/top3_determinism_test.py ===
+TOP 3 M5 SIGNALS ù MERCURY-AI V1
+Generated: 2026-09-03T03:07:36.116445+00:00
+Formula: ranking_score = confluence_weighted (0-100) + confidence_100*0.30 + grade_bonus(A+25/A20/B15/C10/D5) + dominant_prob*0.20 ; tie-breaker: internal_symbol ASC, audit_id ASC. Eligibility: status==REAL_SIGNAL AND decision in (BUY,SELL) AND trade_allowed==true AND prob_sum_ok==true AND confidence not None AND confluence not None
+Eligible REAL_SIGNAL: 57 / 68
+
+1. CITIGROUP (C)
+   decision=BUY
+   grade=B
+   confidence=0.7092594 (100=70.93)
+   confluence=100.0
+   probability dominant=61.02 (buy=61.02 sell=0.0 wait=38.98)
+   score=148.4818
+   audit_id=f91b11fdc4fab86a9b4ff38ca6f0d63cd29bb01603f4d6d7a67354b97809dd86
+   timestamp=2026-09-02T00:27:39.277481
+   source=C
+
+2. AUD/NZD (AUDNZD=X)
+   decision=BUY
+   grade=B
+   confidence=0.7071132800000001 (100=70.71)
+   confluence=100.0
+   probability dominant=60.44 (buy=60.44 sell=0.0 wait=39.56)
+   score=148.3014
+   audit_id=6fb614f0ade914b35e625314be8901d9f892a777f25bdc48e28d8a8d3b5dd044
+   timestamp=2026-09-02T00:19:51.284804
+   source=AUDNZD=X
+
+3. USD/JPY (USDJPY=X)
+   decision=BUY
+   grade=B
+   confidence=0.7052801066666667 (100=70.53)
+   confluence=100.0
+   probability dominant=60.23 (buy=60.23 sell=0.0 wait=39.77)
+   score=148.2044
+   audit_id=1ce63476ff1974869513c5107b2c49540bdd73dd9ad172c04eba2bd817487960
+   timestamp=2026-09-02T00:15:15.595197
+   source=USDJPY=X
+
+
+Wrote C:\Projetos\Mercury-AI\reports\asset_universe\top3_scanner.json and C:\Projetos\Mercury-AI\reports\asset_universe\top3_scanner.txt
+TOP 3 M5 SIGNALS ù MERCURY-AI V1
+Generated: 2026-09-03T03:07:36.533379+00:00
+Formula: ranking_score = confluence_weighted (0-100) + confidence_100*0.30 + grade_bonus(A+25/A20/B15/C10/D5) + dominant_prob*0.20 ; tie-breaker: internal_symbol ASC, audit_id ASC. Eligibility: status==REAL_SIGNAL AND decision in (BUY,SELL) AND trade_allowed==true AND prob_sum_ok==true AND confidence not None AND confluence not None
+Eligible REAL_SIGNAL: 57 / 68
+
+1. CITIGROUP (C)
+   decision=BUY
+   grade=B
+   confidence=0.7092594 (100=70.93)
+   confluence=100.0
+   probability dominant=61.02 (buy=61.02 sell=0.0 wait=38.98)
+   score=148.4818
+   audit_id=f91b11fdc4fab86a9b4ff38ca6f0d63cd29bb01603f4d6d7a67354b97809dd86
+   timestamp=2026-09-02T00:27:39.277481
+   source=C
+
+2. AUD/NZD (AUDNZD=X)
+   decision=BUY
+   grade=B
+   confidence=0.7071132800000001 (100=70.71)
+   confluence=100.0
+   probability dominant=60.44 (buy=60.44 sell=0.0 wait=39.56)
+   score=148.3014
+   audit_id=6fb614f0ade914b35e625314be8901d9f892a777f25bdc48e28d8a8d3b5dd044
+   timestamp=2026-09-02T00:19:51.284804
+   source=AUDNZD=X
+
+3. USD/JPY (USDJPY=X)
+   decision=BUY
+   grade=B
+   confidence=0.7052801066666667 (100=70.53)
+   confluence=100.0
+   probability dominant=60.23 (buy=60.23 sell=0.0 wait=39.77)
+   score=148.2044
+   audit_id=1ce63476ff1974869513c5107b2c49540bdd73dd9ad172c04eba2bd817487960
+   timestamp=2026-09-02T00:15:15.595197
+   source=USDJPY=X
+
+
+Wrote C:\Projetos\Mercury-AI\reports\asset_universe\top3_scanner.json and C:\Projetos\Mercury-AI\reports\asset_universe\top3_scanner.txt
+RUN1 hash f556e5271eb78c59a1c9cea32e37c687e8f01eec8694466a78985ea1b5611f8f
+RUN2 hash f556e5271eb78c59a1c9cea32e37c687e8f01eec8694466a78985ea1b5611f8f
+TOP_3_DETERMINISM = PASS
+RUN 1 TOP3 == RUN 2 TOP3: True
+
+GATE top3_determinism: PASS (exit 0)
+
+=== GATE pytest_m5_incremental: C:\Projetos\Mercury-AI\.venv\Scripts\python.exe -m pytest tests/test_m5_incremental.py -q ===
+............................                                             [100%]
+28 passed in 21.29s
+
+GATE pytest_m5_incremental: PASS (exit 0)
+
+=== GATE pytest_m5_ranking: C:\Projetos\Mercury-AI\.venv\Scripts\python.exe -m pytest -q -k ranking or Ranking ===
+-basic", "cycle": 1' for object of type 'str'
+------------------------------- Captured stdout -------------------------------
+Initial: {
+  "initial": "data",
+  "cycle": 1
+}
+______________________ ERROR collecting test_f_debug.py _______________________
+ImportError while importing test module 'C:\Projetos\Mercury-AI\test_f_debug.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+C:\Users\jujuf\AppData\Local\Programs\Python\Python311\Lib\importlib\__init__.py:126: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+test_f_debug.py:4: in <module>
+    from s32_e3_forensic_execution import run_f_cycle, TARGET_PATH, LiveEvidenceLogger
+E   ModuleNotFoundError: No module named 's32_e3_forensic_execution'
+______________________ ERROR collecting test_fixtures.py ______________________
+test_fixtures.py:65: in <module>
+    market_context = MarketContext(
+E   TypeError: MarketContext.__init__() got an unexpected keyword argument 'structure'
+_______________________ ERROR collecting test_gate3.py ________________________
+test_gate3.py:75: in <module>
+    print(f'Grade: {result.grade}')
+                    ^^^^^^^^^^^^
+E   AttributeError: 'AnalysisResult' object has no attribute 'grade'
+------------------------------- Captured stdout -------------------------------
+
+=== RESULT ===
+Decision: DecisionResult(decision='WAIT', grade='N/A', confidence=0.0, clarity=0.0, risk_score=0.0, score=0.0, quality=0.0, expected_strength=0.0, buy_probability=0.0, sell_probability=0.0, wait_probability=100.0, expected_risk=0.0, expected_reward=0.0, expected_drawdown=0.0, audit_id='DATA_PROVIDER_UNAVAILABLE', version_metadata=VersionMetadata(engine_version='1.0.0', pipeline_version='1.0.0', context_version='1.0.0', weights_version='1.0.0'), explanation='Data provider returned no data; cannot analyze.', mtf_consensus=None, market_regime=None, trade_allowed=True, trade_block_reasons=(), trade_quality_score=0.0, trade_quality_level='N/A', trace=None, warnings=(), weaknesses=(), blockers=(), summary='No data returned by provider for BTC-USD', technical_reason='', institutional_alignment=False, evidence_ranking=None, explainability=None)
+_____________________ ERROR collecting test_gate3_buy.py ______________________
+test_gate3_buy.py:68: in <module>
+    print(f"Explanation: {result.decision.explanation[:100]}...")
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   TypeError: 'TradingExplanation' object is not subscriptable
+------------------------------- Captured stdout -------------------------------
+=== Testing pipeline execution ===
+Decision: SELL
+Grade: D
+Audit ID: 48fc1b271e98047592983b9156d2b6615aefc0d6e5da53be6745cd259bde7fc5
+_______________________ ERROR collecting test_s28_07.py _______________________
+test_s28_07.py:53: in <module>
+    with open(saved_file_a, 'r') as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^
+E   FileNotFoundError: [Errno 2] No such file or directory: 'data/replay_results_test\\audit_001.json'
+------------------------------- Captured stdout -------------------------------
+=== S28-07: RESTART/RECOVERY E2E TEST ===
+
+1. Test Save and Verify Data Integrity:
+   Saved A - audit_id: audit_001
+=========================== short test summary info ===========================
+ERROR test_assert_pid.py
+ERROR test_child_debug2.py - NameError: name 'test_data' is not defined
+ERROR test_debug.py
+ERROR test_direct.py - ValueError: Invalid format specifier ' "G-basic", "cyc...
+ERROR test_f_debug.py
+ERROR test_fixtures.py - TypeError: MarketContext.__init__() got an unexpecte...
+ERROR test_gate3.py - AttributeError: 'AnalysisResult' object has no attribut...
+ERROR test_gate3_buy.py - TypeError: 'TradingExplanation' object is not subsc...
+ERROR test_s28_07.py - FileNotFoundError: [Errno 2] No such file or directory...
+!!!!!!!!!!!!!!!!!!! Interrupted: 9 errors during collection !!!!!!!!!!!!!!!!!!!
+491 deselected, 9 errors in 32.52s
+
+GATE pytest_m5_ranking: FAIL (exit 2)
+
+GATE FRESHNESS_GATE: PASS stale_as_fresh=0
+
+=== GATE pytest_decision: C:\Projetos\Mercury-AI\.venv\Scripts\python.exe -m pytest -q -k decision ===
+-basic", "cycle": 1' for object of type 'str'
+------------------------------- Captured stdout -------------------------------
+Initial: {
+  "initial": "data",
+  "cycle": 1
+}
+______________________ ERROR collecting test_f_debug.py _______________________
+ImportError while importing test module 'C:\Projetos\Mercury-AI\test_f_debug.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+C:\Users\jujuf\AppData\Local\Programs\Python\Python311\Lib\importlib\__init__.py:126: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+test_f_debug.py:4: in <module>
+    from s32_e3_forensic_execution import run_f_cycle, TARGET_PATH, LiveEvidenceLogger
+E   ModuleNotFoundError: No module named 's32_e3_forensic_execution'
+______________________ ERROR collecting test_fixtures.py ______________________
+test_fixtures.py:65: in <module>
+    market_context = MarketContext(
+E   TypeError: MarketContext.__init__() got an unexpected keyword argument 'structure'
+_______________________ ERROR collecting test_gate3.py ________________________
+test_gate3.py:75: in <module>
+    print(f'Grade: {result.grade}')
+                    ^^^^^^^^^^^^
+E   AttributeError: 'AnalysisResult' object has no attribute 'grade'
+------------------------------- Captured stdout -------------------------------
+
+=== RESULT ===
+Decision: DecisionResult(decision='WAIT', grade='N/A', confidence=0.0, clarity=0.0, risk_score=0.0, score=0.0, quality=0.0, expected_strength=0.0, buy_probability=0.0, sell_probability=0.0, wait_probability=100.0, expected_risk=0.0, expected_reward=0.0, expected_drawdown=0.0, audit_id='DATA_PROVIDER_UNAVAILABLE', version_metadata=VersionMetadata(engine_version='1.0.0', pipeline_version='1.0.0', context_version='1.0.0', weights_version='1.0.0'), explanation='Data provider returned no data; cannot analyze.', mtf_consensus=None, market_regime=None, trade_allowed=True, trade_block_reasons=(), trade_quality_score=0.0, trade_quality_level='N/A', trace=None, warnings=(), weaknesses=(), blockers=(), summary='No data returned by provider for BTC-USD', technical_reason='', institutional_alignment=False, evidence_ranking=None, explainability=None)
+_____________________ ERROR collecting test_gate3_buy.py ______________________
+test_gate3_buy.py:68: in <module>
+    print(f"Explanation: {result.decision.explanation[:100]}...")
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   TypeError: 'TradingExplanation' object is not subscriptable
+------------------------------- Captured stdout -------------------------------
+=== Testing pipeline execution ===
+Decision: SELL
+Grade: D
+Audit ID: 48fc1b271e98047592983b9156d2b6615aefc0d6e5da53be6745cd259bde7fc5
+_______________________ ERROR collecting test_s28_07.py _______________________
+test_s28_07.py:53: in <module>
+    with open(saved_file_a, 'r') as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^
+E   FileNotFoundError: [Errno 2] No such file or directory: 'data/replay_results_test\\audit_001.json'
+------------------------------- Captured stdout -------------------------------
+=== S28-07: RESTART/RECOVERY E2E TEST ===
+
+1. Test Save and Verify Data Integrity:
+   Saved A - audit_id: audit_001
+=========================== short test summary info ===========================
+ERROR test_assert_pid.py
+ERROR test_child_debug2.py - NameError: name 'test_data' is not defined
+ERROR test_debug.py
+ERROR test_direct.py - ValueError: Invalid format specifier ' "G-basic", "cyc...
+ERROR test_f_debug.py
+ERROR test_fixtures.py - TypeError: MarketContext.__init__() got an unexpecte...
+ERROR test_gate3.py - AttributeError: 'AnalysisResult' object has no attribut...
+ERROR test_gate3_buy.py - TypeError: 'TradingExplanation' object is not subsc...
+ERROR test_s28_07.py - FileNotFoundError: [Errno 2] No such file or directory...
+!!!!!!!!!!!!!!!!!!! Interrupted: 9 errors during collection !!!!!!!!!!!!!!!!!!!
+467 deselected, 9 errors in 38.65s
+
+GATE pytest_decision: FAIL (exit 2)
+
+Wrote C:\Projetos\Mercury-AI\reports\m5_sprint4\regression_gates.json
+{
+  "generated_at": "2026-09-03T03:09:33.937903+00:00",
+  "gates": [
+    {
+      "gate": "top3_scanner",
+      "pass": true,
+      "exit": 0
+    },
+    {
+      "gate": "top3_determinism",
+      "pass": true,
+      "exit": 0
+    },
+    {
+      "gate": "pytest_m5_incremental",
+      "pass": true,
+      "exit": 0
+    },
+    {
+      "gate": "pytest_m5_ranking",
+      "pass": false,
+      "exit": 2
+    },
+    {
+      "gate": "FRESHNESS_GATE",
+      "pass": true,
+      "exit": 0
+    },
+    {
+      "gate": "pytest_decision",
+      "pass": false,
+      "exit": 2
+    }
+  ],
+  "overall": "FAIL"
+}

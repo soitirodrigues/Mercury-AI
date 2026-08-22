@@ -47,6 +47,9 @@ class DecisionResultBuilder:
         final_warnings: List[str],
         confidence_result: ConfidenceResult,
         explainability: Optional[DecisionExplainability] = None,
+        trade_allowed: bool = True,
+        trade_block_reasons: Tuple[str, ...] = (),
+        trade_quality_level: str = "N/A",
     ) -> DecisionResult:
 
         # =====================================================
@@ -137,6 +140,7 @@ class DecisionResultBuilder:
             # DESIGN NOTE: confidence é armazenado em escala 0-1 (não 0-100) por
             # compatibilidade histórica com todos os consumidores UI que usam
             # o padrão decision.confidence*100 para exibição.
+            # Contrato declarado: DecisionResult.confidence 0-1; engine confidence 0-100.
             confidence=calibrated_confidence / 100.0,
             clarity=confluence_result.agreement_percentage,
             risk_score=risk_score,
@@ -160,4 +164,8 @@ class DecisionResultBuilder:
             institutional_alignment=confidence_result.is_high,
             evidence_ranking=ranked_result,
             explainability=explainability,
+            trade_allowed=trade_allowed,
+            trade_block_reasons=trade_block_reasons,
+            trade_quality_score=trade_quality_score,
+            trade_quality_level=trade_quality_level,
         )

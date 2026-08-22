@@ -1,0 +1,6 @@
+mercury_ai/providers/tests/test_market_provider.py::test_registers_six_adapters
+mercury_ai/providers/tests/test_market_provider.py::test_only_yahoo_is_implemented
+mercury_ai/providers/tests/test_market_provider.py::test_get_data_returns_dataframe
+mercury_ai/providers/tests/test_market_provider.py::test_get_data_no_healthy_provider_raises
+
+4 tests collected in 1.92s

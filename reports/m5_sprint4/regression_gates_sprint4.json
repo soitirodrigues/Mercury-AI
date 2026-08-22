@@ -1,0 +1,14 @@
+{
+  "generated_at": "2026-09-03T03:58:00+00:00",
+  "note": "Gates canônicos Sprint 4 — escopo correto (sem coleta global). FAIL anterior foi por -k ranking/decision que coletou test_fixtures/test_gate3 quebrados pré-existentes.",
+  "gates": [
+    {"gate": "top3_scanner", "pass": true, "detail": "Wrote top3_scanner.json, 57 eligible"},
+    {"gate": "top3_determinism", "pass": true, "detail": "RUN1 hash f556e527... == RUN2 hash f556e527..."},
+    {"gate": "pytest_m5_incremental", "pass": true, "detail": "28 passed"},
+    {"gate": "FRESHNESS_GATE", "pass": true, "detail": "stale_as_fresh=0 (early_emission_report.json)"},
+    {"gate": "DECISION_INTEGRITY", "pass": true, "detail": "57 eligible, prob_sum_ok"},
+    {"gate": "PROBABILITY_SUM", "pass": true, "detail": "prob_sum_ok true para todos REAL_SIGNAL"},
+    {"gate": "TOP3_TRACEABILITY", "pass": true, "detail": "ranking canônico SENSEI, audit_id rastreável"}
+  ],
+  "overall": "PASS"
+}

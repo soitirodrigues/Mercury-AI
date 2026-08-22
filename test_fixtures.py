@@ -1,135 +1,86 @@
-import json
-from pathlib import Path
+from mercury_ai.models.market_context import MarketContext
+from mercury_ai.models.market_evidence_bundle import MarketEvidenceBundle
+from mercury_ai.models.trade_filter_result import TradeFilterResult
+from mercury_ai.models.evidence import Evidence
+from mercury_ai.models.market_data import MarketData
+from mercury_ai.models.market_regime import MarketRegime
+from mercury_ai.models.market_regime_enum import MarketRegimeEnum
+from mercury_ai.models.market_state_enum import MarketStateEnum
 
-class TestFixtures:
-    @staticmethod
-    def load_fixture(fixture_name: str):
-        """Load test fixture data from JSON files"""
-        fixtures_dir = Path(__file__).parent / 'fixtures'
-        if not fixtures_dir.exists():
-            raise FileNotFoundError(f"Fixtures directory not found at {fixtures_dir}")
+# Create minimal evidence using the factory method
+evidence1 = Evidence.create(
+    engine_name="Trend",
+    evidence_name="trend_engine",
+    direction="BULLISH",
+    strength=80,
+    confidence=0.8,
+    description="Trend analysis bullish",
+    weight=0.5
+)
 
-        fixture_path = fixtures_dir / f"{fixture_name}.json"
-        if not fixture_path.exists():
-            raise FileNotFoundError(f"Fixture {fixture_name} not found")
+evidence2 = Evidence.create(
+    engine_name="StructureEngine",
+    evidence_name="structure_engine",
+    direction="BULLISH",
+    strength=70,
+    confidence=0.7,
+    description="Structure analysis bullish",
+    weight=0.5
+)
 
-        with open(fixture_path, 'r') as f:
-            return json.load(f)
+# Create evidence bundle
+evidence_bundle = MarketEvidenceBundle(
+    evidences=(evidence1, evidence2),
+    timestamp="2024-01-01T00:00:00Z",
+    asset="BTC-USD",
+    timeframe="1h"
+)
 
-    @staticmethod
-    def create_sample_decision_scenario():
-        """Create a basic decision scenario fixture"""
-        return {
-            "context": {
-                "risk_score": 0.75,
-                "customer_profile": {
-                    "age": 35,
-                    "income": 85000,
-                    "credit_history": ["good", "late_payment_2023"]
-                },
-                "transaction": {
-                    "amount": 5000,
-                    "type": "purchase",
-                    "merchant": "Example Merchant"
-                }
-            },
-            "expected": {
-                "decision": "approve",
-                "grade": "A2"
-            }
-        }
+# Create market data (note: no 'open' field in MarketData)
+market_data = MarketData(
+    symbol="BTC-USD",
+    timeframe="1h",
+    close=105.0,
+    ema9=104.0,
+    ema21=103.0,
+    ema50=101.0,
+    rsi=65.0,
+    atr=0.0015,
+    adx=25.0,
+    macd=2.0,
+    macd_signal=1.5,
+    bollinger_upper=108.0,
+    bollinger_lower=102.0,
+    volume=1000.0
+)
 
-    @staticmethod
-    def create_edge_case_scenario():
-        """Create a complex edge case fixture"""
-        return {
-            "context": {
-                "risk_score": 0.45,
-                "customer_profile": {
-                    "age": 25,
-                    "income": 45000,
-                    "credit_history": ["good", "late_payment_2022", "dispute_2023"]
-                },
-                "transaction": {
-                    "amount": 12000,
-                    "type": "cash_advance",
-                    "merchant": "HighRiskMerchant"
-                }
-            },
-            "expected": {
-                "decision": "reject",
-                "grade": "D4"
-            }
-        }
+# Create market regime with correct parameters (using available enum)
+market_regime = MarketRegime(
+    regime=MarketRegimeEnum.CONSOLIDATION,
+    confidence=0.8,
+    supporting_evidences=(evidence1,)
+)
 
-    @staticmethod
-    def create_invalid_input():
-        """Create a malformed input for error testing"""
-        return {
-            "context": "invalid_json",
-            "transaction": 123,
-            "customer_profile": True
-        }
+# Create market context
+market_context = MarketContext(
+    market=market_data,
+    trend=[],
+    mtf_consensus=None,
+    structure=[],
+    risk_assessment=None,
+    market_regime=market_regime,
+    market_state=MarketStateEnum.OPEN,
+    concentration=0.5
+)
 
-    @staticmethod
-    def create_high_risk_scenario():
-        """
-        Create a high-risk transaction scenario with multiple risk factors
-        """
-        return {
-            "context": {
-                "risk_score": 0.92,
-                "customer_profile": {
-                    "age": 22,
-                    "income": 30000,
-                    "credit_history": ["late_payment_2023", "dispute_2023", "charge_off_2022"]
-                },
-                "transaction": {
-                    "amount": 25000,
-                    "type": "cash_advance",
-                    "merchant": "VeryHighRiskMerchant"
-                }
-            },
-            "expected": {
-                "decision": "reject",
-                "grade": "F7"
-            }
-        }
+# Create trade filter result (allowed=True means no blockage)
+trade_filter_result = TradeFilterResult(
+    allowed=True,
+    reasons=(),
+    quality_score=80.0,
+    quality_level="B"
+)
 
-    @staticmethod
-    def create_missing_data_scenario():
-        """
-        Create a scenario with missing required fields
-        """
-        return {
-            "context": {},
-            "transaction": {
-                "amount": 500,
-                "type": "purchase"
-            }
-        }
-
-    @staticmethod
-    def create_extreme_value_scenario():
-        """
-        Create a scenario with extreme values for stress testing
-        """
-        return {
-            "context": {
-                "risk_score": 1.0,
-                "customer_profile": {
-                    "age": 100,
-                    "income": 1000000,
-                    "credit_history": ["good"] * 20  # Long credit history
-                },
-                "transaction": {
-                    "amount": 1000000,
-                    "type": "purchase",
-                    "merchant": "ExtremelyLargeTransactionMerchant"
-                }
-            },
-            "expected": {
-                "decision": "manual_review",
-                "grade": "N/A"
-            }
-        }
+print("Fixtures created successfully!")
+print(f"Evidence bundle has {len(evidence_bundle.evidences)} evidences")
+print(f"Trade filter allowed: {trade_filter_result.allowed}")

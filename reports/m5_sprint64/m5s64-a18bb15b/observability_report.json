@@ -1,0 +1,22 @@
+{
+  "session_id": "m5s64-a18bb15b",
+  "event_total": 34,
+  "event_loss_total": 0,
+  "duplicate_event_total": 0,
+  "event_order_violation_total": 0,
+  "ordering": {
+    "event_order_violation_total": 0,
+    "violations": [],
+    "duplicate_event_total": 0,
+    "duplicate_logical_total": 0,
+    "missing_terminal_total": 0,
+    "event_loss_total": 0,
+    "event_total": 34
+  },
+  "orphan_workers": 0,
+  "queue_max": 4,
+  "audit_write_latency_p50": 19.234650011640042,
+  "audit_write_latency_p95": 26.076765038305894,
+  "replay_duration_p50": 26.391200022771955,
+  "replay_duration_p95": 47.12882003514096
+}

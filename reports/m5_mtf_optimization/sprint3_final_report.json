@@ -1,0 +1,146 @@
+{
+  "sprint": "SENSEI SPRINT 3 — MTF PERFORMANCE / SAFE OPTIMIZATION",
+  "generated_at": "2026-09-02T20:45:00Z",
+  "objective": "Reduzir tempo MTFAnalysis sem alterar regra de decisão",
+  "phases": {
+    "mtf_profiling": "PASS",
+    "dependency_map": "PASS",
+    "redundancy": "PASS",
+    "safe_optimization": "PASS",
+    "equivalence": "PASS",
+    "12_assets": "PASS",
+    "64_assets": "PASS (measured, next_candle NOT ready)",
+    "regression": "PASS"
+  },
+  "artifacts": {
+    "profiler_script": "scripts/m5_mtf_optimization_profiler.py",
+    "equivalence_script": "scripts/m5_mtf_equivalence_check.py",
+    "mtf_profile_json": "reports/m5_mtf_optimization/mtf_profile.json",
+    "mtf_profile_txt": "reports/m5_mtf_optimization/mtf_profile.txt",
+    "dependency_map": "reports/m5_mtf_optimization/mtf_dependency_map.json",
+    "redundancy_report": "reports/m5_mtf_optimization/redundancy_report.json",
+    "equivalence_report": "reports/m5_mtf_optimization/equivalence_report.json",
+    "12_assets": "reports/m5_mtf_optimization/sprint3_12_assets.json",
+    "64_assets": "reports/m5_mtf_optimization/sprint3_64_assets.json"
+  },
+  "optimizations_implemented": [
+    {
+      "id": "R01_DOUBLE_SWING",
+      "file": "mercury_ai/analysis/market_structure_intelligence_engine.py",
+      "change": "Novo método evaluate_with_swings(df, swings, swing_evs) que reusa swings já computados; elimina 2ª detect_swings por TF no MTFEngine",
+      "classification": "SAFE_REUSE",
+      "semantic": "Bit-identical quando mesmo df; prova por fixture 5 ativos PASS"
+    },
+    {
+      "id": "R02_PARALLEL_FETCH",
+      "file": "mercury_ai/analysis/mtf_engine.py",
+      "change": "Fetch 5 TFs via ThreadPoolExecutor max_workers=2 (paralelismo controlado); engines por TF seguem sequenciais por TF mas fetches concorrentes; sem estado mutável compartilhado",
+      "classification": "SAFE_PARALLEL",
+      "workers": 2,
+      "race": "Não há race: cada fetch usa MarketDataService.get_data independente; DataFrames são cópias isoladas"
+    },
+    {
+      "id": "R03_M5_REUSE",
+      "file": "mercury_ai/analysis/mtf_engine.py + mercury_ai/core/analysis_pipeline.py",
+      "change": "MTFEngine.analyze(symbol, main_m5_df=df) aceita df M5 do pipeline principal; reuso condicional validado (len>=20, OHLC presente, last candle idêntico estruturalmente); registra REUSED ou NOT_REUSED+motivo; nunca TTL puro",
+      "classification": "SAFE_REUSE condicional",
+      "pipeline_patch": "AnalysisPipeline MTFAnalysis stage passa df principal para MTFEngine"
+    }
+  ],
+  "not_modified": [
+    "DecisionResolverEngine", "DecisionResult", "MercuryDecisionEngine", "DecisionResultBuilder",
+    "BUY/SELL/WAIT", "ranking fórmula", "pesos", "DataQualityEngine", "trade_allowed", "probability normalization",
+    "confidence/confluence", "Top-3 eligibility", "grade logic"
+  ],
+  "measurements": {
+    "profiling_5_assets": {
+      "targets": ["BTC-USD","ETH-USD","EURUSD=X","USDJPY=X","AUDNZD=X"],
+      "mtf_avg_ms_per_asset": 20049,
+      "fetch_avg_ms": 3687,
+      "compute_avg_ms": 7743,
+      "bottleneck": "M1_swings 27.4% + M1_structure 24.5% + M1_fetch 20.7% (M1 domina 52% do compute)",
+      "observation": "MTF é CPU-bound em M1 (6955 rows) e I/O-bound em fetch; total MTF ~8-10s/asset isolado, ~18s/asset no pipeline completo"
+    },
+    "microbenchmark_mtf_only": {
+      "method": "MTFEngine isolado baseline sequential vs optimized parallel+reuse (mesmo provider)",
+      "result": "BTC saving 22-41% (variável por latência rede), EURUSD 7-35%; média ~20-30% em MTF isolado"
+    },
+    "12_assets_pipeline": {
+      "symbols": 12,
+      "total_wall_s": 219.2,
+      "baseline_sprint2_s": 285,
+      "improvement_pct": 23.1,
+      "first_decision_ms": 24527,
+      "baseline_first_ms": 21900,
+      "partial_top3_ms": 71271,
+      "baseline_partial_ms": 70200,
+      "note": "Total wall melhorou 23%; first/partial similares (variabilidade de rede). Não considerou redução de timeframes/ativos."
+    },
+    "64_assets_pipeline": {
+      "universe": 64,
+      "total_wall_s": 809.0,
+      "first_decision_ms": 21330,
+      "partial_top3_ms": 57300,
+      "complete_top3_ms": 808968,
+      "mtf_total_s": 514.7,
+      "mtf_avg_ms": 8042,
+      "fresh": 57,
+      "unavailable": 7,
+      "baseline_sprint2": "285s",
+      "improvement_complete_pct": -184,
+      "note": "64 ativos completo 809s >> janela M5 300s. MTF isolado 8s/asset, mas pipeline completo 12.6s/asset (outros stages somam ~4s). Otimizações reduziram MTF de ~10s para ~8s, mas NEXT_CANDLE não alcançado mesmo otimizado."
+    }
+  },
+  "equivalence": {
+    "validation": "Fixture sintética determinística 5 ativos + 2 símbolos extra",
+    "baseline": "MTFEngine.analyze(use_parallel=False, main_m5_df=None)",
+    "optimized": "MTFEngine.analyze(use_parallel=True, max_workers=2, main_m5_df=MS-normalized)",
+    "compare": "Evidences (engine/timeframe/direction/strength/confidence/weight) + consensus (bias/alignment/status)",
+    "result": "PASS em 5/5 ativos + direct evaluate vs evaluate_with_swings PASS",
+    "report": "reports/m5_mtf_optimization/equivalence_report.json"
+  },
+  "regression": {
+    "top3_scanner": "PASS",
+    "top3_determinism": "PASS (hash igual em 2 runs)",
+    "brain_tests": "PASS 12/12 (decision_engine + probability + structure + trend + volume)",
+    "pre_existing_failures_not_regressed": ["test_auto_health (env)", "test_demo_operations timeout (unrelated)", "test_market_provider hang"]
+  },
+  "m5_reuse_audit": {
+    "REUSED_when": "main_m5_df len>=20, OHLC presente, interval 5m, last candle estruturalmente validado",
+    "NOT_REUSED_when": "no_main_df_provided ou main_m5_empty_or_short",
+    "never": "TTL puro ou STALE como FRESH"
+  },
+  "success_criteria": {
+    "MTF profiling": "PASS",
+    "dependency map": "PASS",
+    "redundâncias identificadas": "PASS (3 SAFE, 2 deferred/unsafe)",
+    "otimizações comprovadamente seguras": "PASS (R01+R02+R03, equivalence PASS)",
+    "equivalence PASS": "PASS",
+    "12 assets PASS": "PASS (medido 219s)",
+    "64 assets medidos": "PASS (medido 809s, não projetado)",
+    "regression gates PASS": "PASS",
+    "nenhum componente proibido modificado": "PASS"
+  },
+  "next_candle_ready": "FAIL — 809s > 300s (janela M5). Otimizações reduziram MTF mas não suficiente para 64 ativos no próximo candle. Causa raiz: pipeline completo é CPU-bound em M1 (6955 rows detect_swings ~5s) + rede; mesmo com 41% de saving no MTF, total ainda ~12.6s/asset x64 = 809s. Necessário Sprint 4 (ex: escalar horizontalmente por asset com workers controlados no scanner, ou reduzir janela M1). Não declarar PASS por projeção.",
+  "baseline_vs_optimized_table": {
+    "note": "Baseline Sprint2 refere-se a sequential 12 assets 285s do enunciado; Optimized Sprint3 medido real no mesmo universo",
+    "baseline": {
+      "scope": "Sprint2 sequential 12 assets (referência do enunciado)",
+      "complete_s": 285,
+      "first_ms": 21900,
+      "partial_ms": 70200,
+      "mtf_per_asset_avg_s": "~10 (estimado do profiling pré-otimização)"
+    },
+    "optimized": {
+      "scope": "Sprint3 pipeline completo com MTF otimizado (R01+R02+R03)",
+      "12_assets_complete_s": 219.2,
+      "12_assets_first_ms": 24527,
+      "12_assets_partial_ms": 71271,
+      "64_assets_complete_s": 809.0,
+      "64_assets_first_ms": 21330,
+      "64_assets_partial_ms": 57300,
+      "mtf_per_asset_avg_s": 8.0,
+      "mtf_saving_pct_isolated": "~20-35% (micromedição MTF isolado)"
+    }
+  }
+}

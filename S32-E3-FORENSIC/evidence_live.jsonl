@@ -1,5 +1,5 @@
-{"cycle": 1, "event": "READY", "pid": 14372, "source": "child", "timestamp": 85256.843}
-{"cycle": 1, "event": "GO_RECEIVED", "pid": 14372, "source": "child", "timestamp": 85256.843}
-{"cycle": 1, "event": "BEFORE_REPLACE", "pid": 14372, "source": "child", "timestamp": 85256.843}
-{"cycle": 1, "event": "REPLACE_DONE", "pid": 14372, "source": "child", "timestamp": 85256.859}
-{"cycle": 1, "event": "KILL_COMMAND", "pid": 14372, "source": "child", "timestamp": 85256.859}
+{"cycle": 1, "event": "READY", "pid": 5496, "source": "child", "timestamp": 8213.89}
+{"cycle": 1, "event": "GO_RECEIVED", "pid": 5496, "source": "child", "timestamp": 8213.89}
+{"cycle": 1, "event": "BEFORE_REPLACE", "pid": 5496, "source": "child", "timestamp": 8213.89}
+{"cycle": 1, "event": "REPLACE_DONE", "pid": 5496, "source": "child", "timestamp": 8213.89}
+{"cycle": 1, "event": "KILL_COMMAND", "pid": 5496, "source": "child", "timestamp": 8213.89}

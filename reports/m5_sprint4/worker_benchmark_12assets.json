@@ -1,0 +1,332 @@
+{
+  "generated_at": "2026-09-02T21:56:01.307684+00:00",
+  "universe": 12,
+  "executor": "thread",
+  "worker_counts": [
+    1,
+    2,
+    4,
+    8,
+    16
+  ],
+  "results": {
+    "1": {
+      "workers": 1,
+      "executor": "thread",
+      "wall_ms": 69649.2,
+      "wall_s": 69.65,
+      "first_decision_ms": 8119.6,
+      "time_to_5_ms": 33699.4,
+      "time_to_10_ms": 53881.0,
+      "partial_top3_ms": 8119.6,
+      "complete_top3_ms": 69649.2,
+      "throughput_assets_per_sec": 0.172,
+      "fresh": 11,
+      "stale": 0,
+      "unavailable": 1,
+      "errors": 0,
+      "peak_memory_mb": 82.9,
+      "memory_delta_mb": 1.5,
+      "cpu_percent": 75.0,
+      "top3": [
+        {
+          "rank": 1,
+          "symbol": "NZDUSD=X",
+          "decision": "BUY",
+          "grade": "B",
+          "confidence": 0.7004806000000001,
+          "confluence": 100.0,
+          "score": 148.1604,
+          "audit_id": "c28552875cd3232729635a7c959254c5d6e6b677fb4d1bcc164372a03075d7d1"
+        },
+        {
+          "rank": 2,
+          "symbol": "EURCHF=X",
+          "decision": "BUY",
+          "grade": "D",
+          "confidence": 0.6916470352941179,
+          "confluence": 100.0,
+          "score": 134.6674,
+          "audit_id": "a93f93cfb35a450559ad6b5248ae68babb798308d9b39898776287abfd55dd9b"
+        },
+        {
+          "rank": 3,
+          "symbol": "EURAUD=X",
+          "decision": "SELL",
+          "grade": "D",
+          "confidence": 0.6901349333333334,
+          "confluence": 100.0,
+          "score": 134.642,
+          "audit_id": "fcbd7aa3fe09d998411b9d668ec76c93475674dde1b032092005e4746d237240"
+        }
+      ],
+      "top3_status": "TOP3_COMPLETE"
+    },
+    "2": {
+      "workers": 2,
+      "executor": "thread",
+      "wall_ms": 43987.1,
+      "wall_s": 43.99,
+      "first_decision_ms": 7485.0,
+      "time_to_5_ms": 21632.9,
+      "time_to_10_ms": 37513.1,
+      "partial_top3_ms": 7485.0,
+      "complete_top3_ms": 43987.1,
+      "throughput_assets_per_sec": 0.273,
+      "fresh": 11,
+      "stale": 0,
+      "unavailable": 1,
+      "errors": 0,
+      "peak_memory_mb": 84.6,
+      "memory_delta_mb": 1.5,
+      "cpu_percent": 50.0,
+      "top3": [
+        {
+          "rank": 1,
+          "symbol": "NZDUSD=X",
+          "decision": "BUY",
+          "grade": "B",
+          "confidence": 0.7004806000000001,
+          "confluence": 100.0,
+          "score": 148.1604,
+          "audit_id": "17fa5c1deb93ca3250715bab3b0ea70bbf8f966180efdeac364d1e0d5c865757"
+        },
+        {
+          "rank": 2,
+          "symbol": "EURCHF=X",
+          "decision": "BUY",
+          "grade": "D",
+          "confidence": 0.6955586000000001,
+          "confluence": 100.0,
+          "score": 134.8688,
+          "audit_id": "0da95c81b8aeddb310693a107fbef1aa82321b0b492e1789b186a260728b5fc6"
+        },
+        {
+          "rank": 3,
+          "symbol": "EURGBP=X",
+          "decision": "BUY",
+          "grade": "D",
+          "confidence": 0.6938014451612905,
+          "confluence": 100.0,
+          "score": 134.672,
+          "audit_id": "39b1bea7cdba7d9af68b76c9f33f6f4ac945a6c7ae993efcc3362db9c27ea506"
+        }
+      ],
+      "top3_status": "TOP3_COMPLETE"
+    },
+    "4": {
+      "workers": 4,
+      "executor": "thread",
+      "wall_ms": 46502.5,
+      "wall_s": 46.5,
+      "first_decision_ms": 18177.8,
+      "time_to_5_ms": 19564.2,
+      "time_to_10_ms": 45174.6,
+      "partial_top3_ms": 18177.8,
+      "complete_top3_ms": 46502.5,
+      "throughput_assets_per_sec": 0.258,
+      "fresh": 11,
+      "stale": 0,
+      "unavailable": 1,
+      "errors": 0,
+      "peak_memory_mb": 91.1,
+      "memory_delta_mb": 6.3,
+      "cpu_percent": 75.0,
+      "top3": [
+        {
+          "rank": 1,
+          "symbol": "NZDUSD=X",
+          "decision": "BUY",
+          "grade": "B",
+          "confidence": 0.7004806000000001,
+          "confluence": 100.0,
+          "score": 148.1604,
+          "audit_id": "874ec87b276b07d14ffa491599bc1098f33f53e255d623da337cb8ad537e1376"
+        },
+        {
+          "rank": 2,
+          "symbol": "EURCHF=X",
+          "decision": "BUY",
+          "grade": "D",
+          "confidence": 0.6920553000000002,
+          "confluence": 100.0,
+          "score": 134.6877,
+          "audit_id": "769e9f0928657c5ff5889b58dd096bc770c42384dd726b0f0475c54e30b4d0ec"
+        },
+        {
+          "rank": 3,
+          "symbol": "EURGBP=X",
+          "decision": "BUY",
+          "grade": "D",
+          "confidence": 0.6938014451612905,
+          "confluence": 100.0,
+          "score": 134.672,
+          "audit_id": "b8bb7f669e4159f827a7735ac070278b72866f138a4d4c3515c27f36b8752992"
+        }
+      ],
+      "top3_status": "TOP3_COMPLETE"
+    },
+    "8": {
+      "workers": 8,
+      "executor": "thread",
+      "wall_ms": 43021.1,
+      "wall_s": 43.02,
+      "first_decision_ms": 3543.9,
+      "time_to_5_ms": 29804.8,
+      "time_to_10_ms": 39581.4,
+      "partial_top3_ms": 14213.5,
+      "complete_top3_ms": 43021.1,
+      "throughput_assets_per_sec": 0.279,
+      "fresh": 11,
+      "stale": 0,
+      "unavailable": 1,
+      "errors": 0,
+      "peak_memory_mb": 95.9,
+      "memory_delta_mb": 4.8,
+      "cpu_percent": 0.0,
+      "top3": [
+        {
+          "rank": 1,
+          "symbol": "NZDUSD=X",
+          "decision": "BUY",
+          "grade": "B",
+          "confidence": 0.7004806000000001,
+          "confluence": 100.0,
+          "score": 148.1604,
+          "audit_id": "ada8e19e90d40ba5720133a693d07e91afd209eea7d2ba193e3f82daab439dc0"
+        },
+        {
+          "rank": 2,
+          "symbol": "GBPUSD=X",
+          "decision": "SELL",
+          "grade": "D",
+          "confidence": 0.6927737103448277,
+          "confluence": 100.0,
+          "score": 134.6732,
+          "audit_id": "ed7ec32fd17e173b60a0673b957dbf126727c9a4393c35f3531c3ac77be6ba43"
+        },
+        {
+          "rank": 3,
+          "symbol": "EURGBP=X",
+          "decision": "BUY",
+          "grade": "D",
+          "confidence": 0.6938014451612905,
+          "confluence": 100.0,
+          "score": 134.672,
+          "audit_id": "f00b776c06781349fea1364404a698e76ca4259d021eea50e83da1f3c3fa66c5"
+        }
+      ],
+      "top3_status": "TOP3_COMPLETE"
+    },
+    "16": {
+      "workers": 16,
+      "executor": "thread",
+      "wall_ms": 40660.4,
+      "wall_s": 40.66,
+      "first_decision_ms": 2426.5,
+      "time_to_5_ms": 37198.1,
+      "time_to_10_ms": 40250.5,
+      "partial_top3_ms": 23664.7,
+      "complete_top3_ms": 40660.4,
+      "throughput_assets_per_sec": 0.295,
+      "fresh": 11,
+      "stale": 0,
+      "unavailable": 1,
+      "errors": 0,
+      "peak_memory_mb": 93.8,
+      "memory_delta_mb": 2.8,
+      "cpu_percent": 92.9,
+      "top3": [
+        {
+          "rank": 1,
+          "symbol": "NZDUSD=X",
+          "decision": "BUY",
+          "grade": "B",
+          "confidence": 0.7011416,
+          "confluence": 100.0,
+          "score": 148.1962,
+          "audit_id": "81c31d2c0b25be7f31ac4fdb8b0c8de0e08459ab57cf9d51732bd25da6558105"
+        },
+        {
+          "rank": 2,
+          "symbol": "EURCHF=X",
+          "decision": "BUY",
+          "grade": "D",
+          "confidence": 0.6955586000000001,
+          "confluence": 100.0,
+          "score": 134.8688,
+          "audit_id": "e6d77db1af6bebb7d5228b27b3acef482ecf01011448f23d51c91edf1e72810a"
+        },
+        {
+          "rank": 3,
+          "symbol": "EURGBP=X",
+          "decision": "BUY",
+          "grade": "D",
+          "confidence": 0.6921355034482759,
+          "confluence": 100.0,
+          "score": 134.6401,
+          "audit_id": "1b3dbb3d4043e992a6df4f046cc8ba126ae3d1a00b38a8e7a30d9bbba3c56c33"
+        }
+      ],
+      "top3_status": "TOP3_COMPLETE"
+    }
+  },
+  "table": [
+    {
+      "workers": 1,
+      "wall_s": 69.65,
+      "first_ms": 8119.6,
+      "partial_ms": 8119.6,
+      "complete_ms": 69649.2,
+      "cpu": 75.0,
+      "ram_mb": 82.9,
+      "errors": 1
+    },
+    {
+      "workers": 2,
+      "wall_s": 43.99,
+      "first_ms": 7485.0,
+      "partial_ms": 7485.0,
+      "complete_ms": 43987.1,
+      "cpu": 50.0,
+      "ram_mb": 84.6,
+      "errors": 1
+    },
+    {
+      "workers": 4,
+      "wall_s": 46.5,
+      "first_ms": 18177.8,
+      "partial_ms": 18177.8,
+      "complete_ms": 46502.5,
+      "cpu": 75.0,
+      "ram_mb": 91.1,
+      "errors": 1
+    },
+    {
+      "workers": 8,
+      "wall_s": 43.02,
+      "first_ms": 3543.9,
+      "partial_ms": 14213.5,
+      "complete_ms": 43021.1,
+      "cpu": 0.0,
+      "ram_mb": 95.9,
+      "errors": 1
+    },
+    {
+      "workers": 16,
+      "wall_s": 40.66,
+      "first_ms": 2426.5,
+      "partial_ms": 23664.7,
+      "complete_ms": 40660.4,
+      "cpu": 92.9,
+      "ram_mb": 93.8,
+      "errors": 1
+    }
+  ],
+  "best": {
+    "workers": 2,
+    "executor": "thread",
+    "wall_s": 43.99,
+    "score": 0.09507415911544015
+  }
+}

@@ -1,0 +1,37 @@
+# Audit Integrity Report — m5s64-a5eb9a9a
+
+- session_id: m5s64-a5eb9a9a
+- artifact_integrity_pass: True
+- artifact_hash_mismatch_total: 0
+- missing_artifact_total: 0
+- unexpected_artifact_total: 0
+- audit_records_created: 6
+- audit_records_missing: 0
+- no_duplicate_target_candle: True
+- corrupt_artifact_accepted: False
+
+## Gates
+- ARCHITECTURE: PASS
+- BASELINE_INTEGRITY: PASS
+- AUDIT_IDENTITY: PASS
+- AUDIT_IMMUTABILITY: PASS
+- ARTIFACT_INTEGRITY: PASS
+- TAMPER_DETECTION: PASS
+- EVENT_OBSERVABILITY: PASS
+- EVENT_ORDERING: PASS
+- EVENT_COMPLETENESS: PASS
+- DECISION_PROVENANCE: PASS
+- REPLAY_INTEGRITY: PASS
+- DETERMINISTIC_REPLAY: PASS
+- FAULT_REPLAY: PASS
+- FRESHNESS_REPLAY: PASS
+- CROSS_EXECUTOR_AUDIT: PASS
+- ARTIFACT_WRITE_RECOVERY: PASS
+- AUDIT_CONTINUITY: PASS
+- QUEUE_OBSERVABILITY: PASS
+- LIVE_AUDIT: PASS
+- PERFORMANCE: PASS
+- RESOURCE_SOAK: PASS
+- DETERMINISM: PASS
+- REGRESSION: PASS
+- OPERATIONAL: PASS

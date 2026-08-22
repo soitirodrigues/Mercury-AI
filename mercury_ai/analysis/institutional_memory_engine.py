@@ -3,6 +3,8 @@ import os
 import hashlib
 import threading
 import logging
+import tempfile
+import time
 from mercury_ai.models.decision_snapshot import DecisionSnapshot
 
 logger = logging.getLogger(__name__)
@@ -18,7 +20,21 @@ class InstitutionalMemoryEngine:
             return cls._instance
 
     def __init__(self, memory_path: str = "data/institutional_memory.json"):
-        # Use a lock to ensure initialization happens only once
+        # Modo isolado Sprint4 (FROZEN_EQUIVALENCE_ISOLATED): cada pipeline pode pedir
+        # memória isolada via memory_path distinto. Nesse modo NÃO usar singleton:
+        # cria instância própria sem polluir _instance global.
+        isolated = os.environ.get("FROZEN_EQUIVALENCE_ISOLATED") == "1"
+        if isolated and memory_path != "data/institutional_memory.json":
+            # Bypass singleton — instância isolada por pipeline
+            self.memory_path = memory_path
+            self._memory_cache = []
+            self._dirty = False
+            self._initialized = True
+            if not os.path.exists(self.memory_path):
+                self._initialize_memory()
+            self._load_into_cache()
+            return
+        # Caminho normal: singleton
         with self._lock:
             if hasattr(self, '_initialized'):
                 return
@@ -47,30 +63,80 @@ class InstitutionalMemoryEngine:
             json.dump([], f)
 
     def flush(self):
-        """Persiste o cache em RAM para o disco de forma atômica."""
+        """Persiste o cache em RAM para o disco de forma atômica.
+
+        Sprint 5 — hardening cross-process:
+          - filelock (se instalado) para serializar escritores concorrentes
+            (ProcessPool). Sem filelock, cai no fallback atômico por processo.
+          - Operação ainda protegida por _lock (thread-safe intra-processo).
+        """
         with self._lock:
             if not self._dirty:
                 return
-            
-            temp_path = f"{self.memory_path}.tmp"
+
+            # Tenta adquirir lock inter-processo (filelock) se disponível.
+            _flock = None
             try:
-                with open(temp_path, 'w') as f:
-                    json.dump(self._memory_cache, f, indent=4)
-                
-                max_retries = 5
-                for i in range(max_retries):
+                import filelock  # optional dep
+                lock_path = f"{self.memory_path}.lock"
+                _flock = filelock.FileLock(lock_path, timeout=5)
+                _flock.acquire()
+            except ImportError:
+                _flock = None
+            except Exception:
+                _flock = None
+
+            try:
+                # Reconcilia: re-ler disco antes de escrever para não sobrescrever
+                # decisões gravadas por outro processo entre o load inicial e o flush.
+                try:
+                    with open(self.memory_path, 'r') as _f:
+                        _disk = json.load(_f)
+                    # Merge por audit_id: preserva entradas de disco não presentes no cache
+                    _existing_ids = {e.get('audit_id') for e in self._memory_cache if isinstance(e, dict) and 'audit_id' in e}
+                    for _entry in _disk:
+                        if isinstance(_entry, dict) and _entry.get('audit_id') not in _existing_ids:
+                            self._memory_cache.append(_entry)
+                    _existing_ids = None
+                except Exception:
+                    pass
+
+                temp_path = f"{self.memory_path}.tmp"
+                # mkstemp atômico no mesmo diretório
+                fd, tmp = tempfile.mkstemp(suffix=".tmp", prefix=".mem_", dir=os.path.dirname(self.memory_path) or ".")
+                try:
+                    with os.fdopen(fd, 'w', encoding="utf-8") as f:
+                        json.dump(self._memory_cache, f, indent=4)
+                        f.flush()
+                        try:
+                            os.fsync(f.fileno())
+                        except Exception:
+                            pass
+                    max_retries = 5
+                    for i in range(max_retries):
+                        try:
+                            os.replace(tmp, self.memory_path)
+                            self._dirty = False
+                            return
+                        except OSError as e:
+                            if i == max_retries - 1:
+                                raise e
+                            time.sleep(0.05 * (2 ** i))
+                except Exception:
                     try:
-                        os.replace(temp_path, self.memory_path)
-                        self._dirty = False
-                        return
-                    except OSError as e:
-                        if i == max_retries - 1:
-                            raise e
-                        import time
-                        time.sleep(0.05 * (2 ** i)) # Backoff exponencial: 0.05, 0.1, 0.2...
+                        os.unlink(tmp)
+                    except Exception:
+                        pass
+                    raise
             except (OSError, json.JSONDecodeError, TypeError, ValueError) as e:
                 logger.error(f"Critical failure flushing institutional memory: {e}", exc_info=True)
                 raise e
+            finally:
+                if _flock is not None:
+                    try:
+                        _flock.release()
+                    except Exception:
+                        pass
 
     def _load_memory(self) -> list:
         """Mantido para compatibilidade, mas agora retorna o cache."""

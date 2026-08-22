@@ -1,0 +1,86 @@
+HEZILEX ASSETS DISCOVERED: 68
+
+SUPPORTED: 63
+UNSUPPORTED: 5
+MAPPING ERRORS: 0
+
+CONFIGURED: 63
+NOT CONFIGURED: 5
+
+EXCEPTIONS (UNSUPPORTED):
+ - LITECOIN | CRYPTO | internal=LTC-USD | reason=NO_SUPPORTED_PUBLIC_INSTRUMENT_NOT_IN_MERCURY_UNIVERSE
+ - CARDANO | CRYPTO | internal=ADA-USD | reason=NO_SUPPORTED_PUBLIC_INSTRUMENT_NOT_IN_MERCURY_UNIVERSE
+ - LINK | CRYPTO | internal=LINK-USD | reason=NO_SUPPORTED_PUBLIC_INSTRUMENT_NOT_IN_MERCURY_UNIVERSE
+ - SPACEX | STOCK | internal=None | reason=PRIVATE_COMPANY_NO_PUBLIC_TICKER
+ - WELLS FARGO STANLEY -> MORGAN STANLEY | STOCK | internal=MS | reason=SPLIT_WELLS_FARGO_STANLEY_MS_NOT_IN_UNIVERSE
+
+SUPPORTED (PASS):
+ - EUR/USD -> EURUSD=X (FOREX) provider=EURUSD=X
+ - EUR/GBP -> EURGBP=X (FOREX) provider=EURGBP=X
+ - AUD/JPY -> AUDJPY=X (FOREX) provider=AUDJPY=X
+ - EUR/JPY -> EURJPY=X (FOREX) provider=EURJPY=X
+ - GBP/USD -> GBPUSD=X (FOREX) provider=GBPUSD=X
+ - AUD/CAD -> AUDCAD=X (FOREX) provider=AUDCAD=X
+ - USD/CAD -> USDCAD=X (FOREX) provider=USDCAD=X
+ - NZD/USD -> NZDUSD=X (FOREX) provider=NZDUSD=X
+ - USD/JPY -> USDJPY=X (FOREX) provider=USDJPY=X
+ - CAD/JPY -> CADJPY=X (FOREX) provider=CADJPY=X
+ - CHF/JPY -> CHFJPY=X (FOREX) provider=CHFJPY=X
+ - AUD/CHF -> AUDCHF=X (FOREX) provider=AUDCHF=X
+ - EUR/AUD -> EURAUD=X (FOREX) provider=EURAUD=X
+ - GBP/CHF -> GBPCHF=X (FOREX) provider=GBPCHF=X
+ - GBP/AUD -> GBPAUD=X (FOREX) provider=GBPAUD=X
+ - GBP/JPY -> GBPJPY=X (FOREX) provider=GBPJPY=X
+ - USD/CHF -> USDCHF=X (FOREX) provider=USDCHF=X
+ - NZD/JPY -> NZDJPY=X (FOREX) provider=NZDJPY=X
+ - EUR/CHF -> EURCHF=X (FOREX) provider=EURCHF=X
+ - CAD/CHF -> CADCHF=X (FOREX) provider=CADCHF=X
+ - EUR/CAD -> EURCAD=X (FOREX) provider=EURCAD=X
+ - BTC/USD -> BTC-USD (FOREX) provider=BTC-USD
+ - AUD/NZD -> AUDNZD=X (FOREX) provider=AUDNZD=X
+ - AUD/USD -> AUDUSD=X (FOREX) provider=AUDUSD=X
+ - NZD/CHF -> NZDCHF=X (FOREX) provider=NZDCHF=X
+ - GBP/CAD -> GBPCAD=X (FOREX) provider=GBPCAD=X
+ - GBP/NZD -> GBPNZD=X (FOREX) provider=GBPNZD=X
+ - NZD/CAD -> NZDCAD=X (FOREX) provider=NZDCAD=X
+ - BITCOIN -> BTC-USD (CRYPTO) provider=BTC-USD
+ - BNB -> BNB-USD (CRYPTO) provider=BNB-USD
+ - XRP -> XRP-USD (CRYPTO) provider=XRP-USD
+ - ETHEREUM -> ETH-USD (CRYPTO) provider=ETH-USD
+ - SOLANA -> SOL-USD (CRYPTO) provider=SOL-USD
+ - AVAX -> AVAX-USD (CRYPTO) provider=AVAX-USD
+ - DOGE -> DOGE-USD (CRYPTO) provider=DOGE-USD
+ - SUI -> SUI-USD (CRYPTO) provider=SUI-USD
+ - STELLAR -> XLM-USD (CRYPTO) provider=XLM-USD
+ - APPLE -> AAPL (STOCK) provider=AAPL
+ - NETFLIX -> NFLX (STOCK) provider=NFLX
+ - META -> META (STOCK) provider=META
+ - TESLA -> TSLA (STOCK) provider=TSLA
+ - MICROSOFT -> MSFT (STOCK) provider=MSFT
+ - MCDONALDS -> MCD (STOCK) provider=MCD
+ - AMAZON -> AMZN (STOCK) provider=AMZN
+ - PAYPAL -> PYPL (STOCK) provider=PYPL
+ - STARBUCKS -> SBUX (STOCK) provider=SBUX
+ - NVIDIA -> NVDA (STOCK) provider=NVDA
+ - DISNEY -> DIS (STOCK) provider=DIS
+ - INTEL -> INTC (STOCK) provider=INTC
+ - VISA -> V (STOCK) provider=V
+ - IBM -> IBM (STOCK) provider=IBM
+ - FORD -> F (STOCK) provider=F
+ - COCA-COLA -> KO (STOCK) provider=KO
+ - NIKE -> NKE (STOCK) provider=NKE
+ - MASTERCARD -> MA (STOCK) provider=MA
+ - SPOTFY -> SPOT (STOCK) provider=SPOT
+ - JPMORGAN -> JPM (STOCK) provider=JPM
+ - BANK OF AMERICA -> BAC (STOCK) provider=BAC
+ - CITIGROUP -> C (STOCK) provider=C
+ - WELLS FARGO STANLEY -> WELLS FARGO -> WFC (STOCK) provider=WFC
+ - PETRÓLEO -> CL=F (COMMODITY) provider=CL=F
+ - PRATA -> SI=F (COMMODITY) provider=SI=F
+ - OURO -> GC=F (COMMODITY) provider=GC=F
+
+NOTE: NOT CONFIGURED >0 corresponds to UNSUPPORTED assets proven incompatible with provider/universe (not FAIL).
+
+SOURCE_OF_TRUTH: mercury_ai/config/universe.py :: OPERATIONAL_UNIVERSE count=64
+broker_config: C:\Projetos\Mercury-AI\data\brokers\XP.json (current 62 assets)
+asset_registry: C:\Projetos\Mercury-AI\data\asset_registry.json (current 62 assets)

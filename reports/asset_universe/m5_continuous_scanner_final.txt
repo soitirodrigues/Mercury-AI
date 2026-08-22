@@ -1,0 +1,123 @@
+M5 CONTINUOUS SCANNER — SPRINT 2 — RELATÓRIO FINAL
+Generated: 2026-09-02T15:22:46+00:00 (enriched)
+Universe: 12 / 64  Cycles: 2/2  Workers: 1 seq (comparado com 2 workers = 82s)  No-wait: True
+Overall duration: 581.92s (wall 2 ciclos)
+
+========================================================================
+UNIVERSE_SIZE: 12 (experimento controlado) — projeção linear para 64 abaixo
+CYCLES_TESTED: 2
+TIME_TO_FIRST_DECISION: 21.917s (cycle2) / 27.854s (cycle1) — 12 assets seq
+TIME_TO_PARTIAL_TOP3: 70.267s (cycle2) / 84.987s (cycle1) — primeiro Top-3 com 3 elegiveis
+TIME_TO_COMPLETE_TOP3: 296.234s (cycle2) / 285.182s (cycle1) — todos 12 processados
+FRESH_RESULTS: 24  STALE_RESULTS: 0  DATA_UNAVAILABLE: 0  PROVIDER_ERRORS: 0
+CACHE_HIT: 24  CACHE_MISS: 12  CACHE_STALE: 12  CACHE_REFRESH: 24
+SEQUENTIAL_TIME (12 seq): 285.182s
+CONTROLLED_PARALLEL_TIME (12 par2): 81.968s  speedup 3.48x (mas batch par não incremental)
+MTF_REUSABLE_COMPONENTS (SAFE_INCREMENTAL 4): MTFConsensus aggregation, Prefix engine_name, DataNormalizer, Ranking
+MTF_FULL_RECALC_COMPONENTS (REQUIRES_FULL_RECALC 7): fetch 1mo por TF, IndicatorEngine EMA/RSI/ATR/MACD/Bollinger, Structure swing/profile, DataQuality validate, StructureAnalysis M5 5d, Confluence/Confidence/Probability, DecisionResolver
+MTF_UNKNOWN_COMPONENTS (UNKNOWN 3): TrendAnalyzer por TF, LiquidityEngine por TF, VolatilityEngine por TF
+TOP3_PARTIAL: EURGBP=X BUY 148.22 / USDCHF=X BUY 148.01 / USDJPY=X SELL 147.89 (cycle2)
+TOP3_COMPLETE: idem — TOP3_COMPLETE (todos P1 processados)
+========================================================================
+
+CYCLE 1: candle 2026-09-02T15:10:00 duration 285.182s queue P1=0 P2=12 P3=0
+  fresh=12 stale=0 unavailable=0 errors=0 — todos stale inicial (sem estado previo) -> P2
+  time_to_first=27.854s (AUDUSD=X)  partial=84.987s  complete=285.182s  status=TOP3_COMPLETE
+  Top1 EURAUD=X SELL 142.80  Top2 EURGBP=X BUY 140.91  Top3 EURCHF=X BUY 140.84
+
+CYCLE 2: candle 2026-09-02T15:15:00 duration 296.234s queue P1=12 P2=0 P3=0
+  fresh=12 stale=0 unavailable=0 — TODOS just closed (14:55->15:00) detectado como P1
+  time_to_first=21.917s (AUDUSD=X)  partial=70.267s  complete=296.234s  status=TOP3_COMPLETE
+  Top1 EURGBP=X BUY 148.22  Top2 USDCHF=X BUY 148.01  Top3 USDJPY=X SELL 147.89
+  Prova: nova vela M5 dispara atualização incremental (P1=12) — criterio 1 PASS
+
+COMPARATIVO BATCH vs CONTINUO:
+  CURRENT BATCH 64 seq: 1026.14s wall, time_to_first N/A (só entrega após 64)
+  CONTINUOUS 12 seq: 285s wall, first 22s, partial 70s, complete 285s
+  CONTINUOUS 12 par2: 82s wall (batch paralelo, sem emissão incremental)
+  PROJECAO 64 continuo seq linear: 285/12*64 = 1521s (não medido — MTF 78% domina)
+  PROJECAO 64 continuo par2 linear: 82/12*64 = 437s (ainda >300s para 64 dentro da janela M5)
+  NOTA: Projecao linear é estimativa, não medição. Conclusão: só paralelização não basta.
+
+EXPERIMENTO PARALELO CONTROLADO (12 assets, max_workers=2, par batch):
+  Sequencial 285s vs Paralelo 82s = speedup 3.48x
+  MAS time_to_first degradou de 22s (seq incremental) para 82s (par batch) porque batch paralelo
+  só emite ranking ao final. Para manter benefício, paralelização precisa ser por rolling queue
+  com emissão incremental (cada worker atualiza Top-3 parcial ao terminar).
+
+REGRESSION GATES (todos sobre mesma lógica oficial, sem tocar DecisionResolver):
+  top3_scanner: PASS (57 eligible / 68 records, formula intacta)
+  top3_determinism: PASS (hash f556e527 run1==run2)
+  DECISION_INTEGRITY: PASS (0 inconsistências REAL_SIGNAL)
+  PROBABILITY_SUM: PASS (0 fails, sum 100 ±0.5)
+  RESOLVER_INTEGRITY: PASS
+  POST_RESOLVER_INTEGRITY: PASS (5 fails são DATA_UNAVAILABLE esperados)
+  TOP3_TRACEABILITY: PASS (audit_id 64hex presente)
+  NO_DECISION_FABRICATION: PASS (0 DATA_UNAVAILABLE mascarado como REAL_SIGNAL)
+  FRESHNESS_GATE: PASS (STALE nunca convertido em REAL_SIGNAL)
+
+CRITERIOS DE ENCERRAMENTO (7):
+  1 nova vela dispara incremental: PASS (cycle2 P1=12 just closed)
+  2 decisoes antigas nao apresentadas como novas: PASS (freshness STALE explicito, audit_id diferente)
+  3 nao espera 64 para primeiro resultado: PASS (first 22s, partial 70s vs 285s complete)
+  4 Top-3 mesma logica oficial: PASS (mercury_ai.operations.ranking FORMULA unica)
+  5 DecisionResolver intocado: PASS (git diff 0 alteracao)
+  6 rastreaveis: PASS (audit_id, decision_candle, data_latest, timestamp, snapshot_file)
+  7 medicao REAL: PASS (perf_counter wall por ciclo, nao estimado)
+
+========================================================================
+VERDICT
+========================================================================
+CONTINUOUS_SCANNER = PASS
+  2 ciclos completos, 24 decisoes, 0 erros, queue P1 detectou nova vela M5 (12/12 just closed),
+  freshness FRESH/STALE/DATA_UNAVAILABLE explicito, Top-3 PARTIAL em ~70s e COMPLETE em ~285s
+  sem esperar batch, audit rastreavel.
+
+FRESHNESS_CONTROL = PASS
+  decision_candle == latest_available => FRESH; < latest => STALE (nunca convertido em REAL_SIGNAL);
+  DataQuality UNavailable preservado; nova vela dispara P1.
+
+INCREMENTAL_MODEL = PARTIAL
+  temporal/freshness/queue/cache/ranking sao SAFE; MTF compute e Trend/Liquidity/Volatility
+  sao REQUIRES_FULL_RECALC ou UNKNOWN — nao otimizar silenciosamente; modelo incremental de
+  orquestracao é SAFE, compute incremental NAO provado.
+
+MTF_INCREMENTAL = NOT_PROVEN
+  7 REQUIRES_FULL_RECALC (fetch + IndicatorEngine + Structure), 3 UNKNOWN, 4 SAFE.
+  MTF 78% do wall nao foi reduzido neste sprint.
+
+CACHE = PARTIAL
+  SAFE (validado por candle, nao TTL cego; HIT so se cached==required, STALE se < required);
+  medicao HIT 24 MISS 12 STALE 12 REFRESH 24 — correto mas fetch 2.6% do wall,
+  economiza ~21s em 1026s, insuficiente.
+
+PARALLELIZATION = NEEDS_MORE_TEST
+  12 assets seq 285s vs par2 82s (3.48x) mas batch par degradou time_to_first;
+  DeterministicClock SAFE (thread-local), SnapshotLogger SAFE (lock), tracemalloc mitigado
+  (profiler off em paralelo), yfinance rate limit UNKNOWN; precisa emissao incremental
+  por worker + backoff/jitter + teste 64.
+
+TIME_TO_FIRST_DECISION = 21.9s (seq 12, cycle2) — baseline batch 64: N/A (só após 64)
+TIME_TO_PARTIAL_TOP3 = 70.2s (seq 12, cycle2) — 3 elegiveis
+TIME_TO_COMPLETE_TOP3 = 296.2s (seq 12, cycle2) — 12 completo; 64 projetado ~1521s seq / 437s par2
+
+RECOMMENDED_NEXT_STEP: E) combinacao
+  A) otimizar MTF (78% bottleneck) — paralelizar timeframes internos ou reduzir TFs redundantes, ou cache de indicadores por TF com validacao de janela
+  B) ampliar paralelizacao controlada com emissao incremental (max_workers 2->4 com backoff/jitter)
+  C) manter cache incremental validado (já PARTIAL, mas não resolve wall)
+  D) avançar para scanner continuo permanente (rolling queue já provado)
+  Prioridade imediata: MTF compute — unico caminho para levar 64 de 1026s para <300s.
+
+NAO declarar "operacional para proxima vela" apenas porque first ficou rapido.
+Medicao completa mostra que 64 ainda excede janela M5 mesmo com par2 (proj 437s > 300s).
+Precisa medir 64 real antes de declarar operacional.
+
+ARTEFATOS:
+  reports/asset_universe/m5_continuous_scanner.json (report enriquecido + verdict)
+  reports/asset_universe/m5_continuous_scanner.txt (report ciclos)
+  reports/asset_universe/m5_continuous_scanner_final.txt (este arquivo)
+  reports/asset_universe/m5_continuous_scanner_discover.txt (DISCOVER)
+  mercury_ai/operations/m5_incremental/* (temporal, asset_state, freshness, rolling_queue, cache_tracker, mtf_classification)
+  mercury_ai/operations/ranking.py (formula canonica unica)
+  scripts/m5_continuous_scanner.py (scanner continuo com --cycles/--universe/--workers)
+  tests/test_m5_incremental.py (28 passed)

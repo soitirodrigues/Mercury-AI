@@ -1,0 +1,218 @@
+
+### mercury_ai/utils/deterministic_clock.py ###
+L  1: import threading
+L  6: class DeterministicClock:
+L  9: Cada thread possui seu pr¾prio estado de tempo via threading.local(),
+L 10: garantindo isolamento completo entre threads concurrentes.
+L 13: _local = threading.local()
+L 23: """Define o _current_time especÝfico desta thread via threading.local().
+L 25: O threading.local() garante que cada thread tenha sua pr¾pria instÔncia
+L 26: de _current_time, evitando contaminaþÒo entre threads concurrentes.
+L 37: das demais threads, atÚ que seja chamado reset() ou restore().
+L 51: return datetime.now(timezone.utc).replace(tzinfo=None)
+L 54: def reset(cls) -> None:
+L 58: variable. Each thread must call reset() independently to avoid
+L 82: cls.reset()
+
+### mercury_ai/analysis/historical_replay_engine.py ###
+L 16: import hashlib
+L 21: from mercury_ai.utils.deterministic_clock import DeterministicClock
+L 23: from mercury_ai.data.market_data import MarketDataService
+L 36: h = hashlib.sha256()
+L 71: return dict(self._replay_stats)
+L 96: t_start = time_module.perf_counter()
+L112: timestamps = full_df.index
+L120: market_service=MarketDataService(providers=[provider]),
+L145: clock_state = DeterministicClock.snapshot()
+L157: current_time = pd.to_datetime(timestamps[i]).to_pydatetime()
+L158: DeterministicClock.set_time(current_time)
+L197: DeterministicClock.restore(clock_state)
+L199: wall_time = time_module.perf_counter() - t_start
+
+### mercury_ai/analysis/replay_batch_processor.py ###
+L  5: ThreadPoolExecutor, com coleta de mÚtricas agregadas e relat¾rio consolidado.
+L 15: import threading
+L 18: from concurrent.futures import ThreadPoolExecutor, as_completed, TimeoutError
+L 27: from mercury_ai.analysis.institutional_memory_engine import InstitutionalMemoryEngine
+L110: start_time = time.perf_counter()
+L112: with ThreadPoolExecutor(max_workers=self.max_workers) as executor:
+L120: for future in as_completed(futures):
+L134: total_wall_time = time.perf_counter() - start_time
+L147: InstitutionalMemoryEngine().flush()
+L175: t0 = time_module.perf_counter()
+L179: wall_time = time_module.perf_counter() - t0
+L190: wall_time=time_module.perf_counter() - t0,
+L191: cache_stats=dict(cache.stats),
+L195: wall_time = time_module.perf_counter() - t0
+L206: cache_stats=dict(cache.stats),
+L214: total_requests = total_hits + total_misses
+L218: "aggregate_hit_rate": total_hits / total_requests if total_requests > 0 else 0.0,
+
+### mercury_ai/core/analysis_pipeline.py ###
+L  2: import uuid
+L  6: from mercury_ai.utils.deterministic_clock import DeterministicClock
+L  7: from mercury_ai.data.market_data import MarketDataService
+L 22: from mercury_ai.analysis.institutional_memory_engine import InstitutionalMemoryEngine
+L 27: from mercury_ai.utils.atomic_io import atomic_json_write
+L 62: def __init__(self, market_service: MarketDataService, providers: List[MarketDataProvider], institutional_memory_path: str = None):
+L 85: from mercury_ai.analysis.institutional_memory_engine import InstitutionalMemoryEngine as _IME
+L 92: if not _os.path.exists(institutional_memory_path):
+L101: from mercury_ai.analysis.institutional_memory_engine import InstitutionalMemoryEngine as _IME2
+L110: import threading as _th
+L111: _isolated2._lock = _th.Lock()
+L118: self.memory = InstitutionalMemoryEngine()
+L123: self.session_id = str(uuid.uuid4())
+L159: self.memory = InstitutionalMemoryEngine()
+L167: execution_time = (DeterministicClock.utcnow() - start_time).total_seconds()
+L171: "DataLoading": {"creator": "MarketDataService"},
+L200: start_time=start_time.isoformat(),
+L201: end_time=DeterministicClock.utcnow().isoformat(),
+L214: start = DeterministicClock.utcnow()
+L231: start = DeterministicClock.utcnow()
+L257: timestamp=DeterministicClock.utcnow().isoformat(), asset=symbol, timeframe=DEFAULT_TIMEFRAME,
+L291: timestamp=DeterministicClock.utcnow().isoformat(), asset=symbol, timeframe=DEFAULT_TIMEFRAME,
+L309: start = DeterministicClock.utcnow()
+L318: start = DeterministicClock.utcnow()
+L325: start = DeterministicClock.utcnow()
+L330: start = DeterministicClock.utcnow()
+L335: start = DeterministicClock.utcnow()
+L341: start = DeterministicClock.utcnow()
+L346: start = DeterministicClock.utcnow()
+L351: start = DeterministicClock.utcnow()
+L356: start = DeterministicClock.utcnow()
+L361: start = DeterministicClock.utcnow()
+L367: start = DeterministicClock.utcnow()
+L372: start = DeterministicClock.utcnow()
+L377: start = DeterministicClock.utcnow()
+L382: start = DeterministicClock.utcnow()
+L387: start = DeterministicClock.utcnow()
+L419: start = DeterministicClock.utcnow()
+L435: start = DeterministicClock.utcnow()
+L455: start = DeterministicClock.utcnow()
+L460: start = DeterministicClock.utcnow()
+L465: start = DeterministicClock.utcnow()
+L472: start = DeterministicClock.utcnow()
+L475: timestamp=DeterministicClock.utcnow().isoformat(),
+L524: atomic_json_write(f"runtime_report_{symbol}_{DeterministicClock.utcnow().strftime('%Y%m%d%H%M%S')}.json", self.runtime_report.to_dict(), indent=4)
+L543: timestamp=DeterministicClock.utcnow().isoformat(), asset=symbol, timeframe=DEFAULT_TIMEFRAME,
+L565: timestamp=DeterministicClock.utcnow().isoformat(),
+L583: timestamp=DeterministicClock.utcnow().isoformat(), asset=symbol, timeframe=DEFAULT_TIMEFRAME,
+L626: timestamp=DeterministicClock.utcnow().isoformat(), asset=symbol, timeframe=DEFAULT_TIMEFRAME,
+
+### mercury_ai/providers/yahoo_finance_provider.py ###
+L  7: import yfinance as yf
+L 30: self.expires_at = time.monotonic() + ttl_seconds
+L 33: return time.monotonic() < self.expires_at
+L103: ticker = yf.Ticker(symbol)
+L114: time.sleep(wait)
+
+### mercury_ai/providers/historical_replay_provider.py ###
+L 28: if not os.path.exists(filepath):
+L 31: return pd.read_csv(filepath)
+
+### mercury_ai/data/data_quality_engine.py ###
+L 17: return False, 0.0, "Invalid timestamps (NaT) detected"
+L 25: return False, 0.2, "Duplicate timestamps"
+
+### mercury_ai/data/data_normalizer.py ###
+
+### mercury_ai/data/market_data.py ###
+L 10: class MarketDataService:
+
+### mercury_ai/data/mercury_data_provider.py ###
+L 82: __slots__ = ("data", "timestamp")
+L 83: def __init__(self, data: pd.DataFrame, timestamp: float):
+L 85: self.timestamp = timestamp
+L112: now = time.monotonic()
+L114: if cached is not None and (now - cached.timestamp) < self._cache_ttl:
+L122: start_time = time.time()
+L124: if time.time() - start_time > timeout:
+L127: self._candles_cache[cache_key] = _CacheEntry(data=data, timestamp=now)
+L134: time.sleep(2 ** attempt)
+L175: symbols = set()
+
+### mercury_ai/data/indicator_engine.py ###
+
+### mercury_ai/analysis/replay_cache.py ###
+L 14: import threading
+L 15: from collections import OrderedDict
+L 31: self._cache: OrderedDict[Tuple[str, int], Any] = OrderedDict()
+L 32: self._lock = threading.Lock()
+
+### mercury_ai/analysis/benchmark_framework.py ###
+L 11: - ExecuþÒo paralela com ThreadPoolExecutor
+L 22: from concurrent.futures import ThreadPoolExecutor, as_completed
+L 30: from mercury_ai.utils.deterministic_clock import DeterministicClock
+L 33: from mercury_ai.data.market_data import MarketDataService
+L123: market_service=MarketDataService(providers=[provider]),
+L142: start_time = time.perf_counter()
+L153: except Exception as exc:  # noqa: BLE001 - MarketDataService.get_data
+L161: end_time = time.perf_counter()
+L182: timestamp=DeterministicClock.utcnow().isoformat(),
+L198: OUTCOME_CANDLE  = primeira vela com timestamp ESTRITAMENTE ap¾s T0 (T1)
+L354: rng = np.random.RandomState(42)
+L382: 1. Executa pipeline em paralelo (ThreadPoolExecutor)
+L391: wall_start = time.perf_counter()
+L400: with ThreadPoolExecutor(max_workers=self.max_workers) as executor:
+L402: for future in as_completed(futures):
+L463: wall_end = time.perf_counter()
+L500: start_time = time.perf_counter()
+L515: end_time = time.perf_counter()
+L523: timestamp=DeterministicClock.utcnow().isoformat(),
+
+### mercury_ai/analysis/institutional_memory_engine.py ###
+L  3: import hashlib
+L  4: import threading
+L 12: class InstitutionalMemoryEngine:
+L 13: _instance = None
+L 14: _lock = threading.Lock()
+L 18: if cls._instance is None:
+L 19: cls._instance = super(InstitutionalMemoryEngine, cls).__new__(cls)
+L 20: return cls._instance
+L 33: if not os.path.exists(self.memory_path):
+L 44: if not os.path.exists(self.memory_path):
+L 52: with open(self.memory_path, 'r') as f:
+L 53: self._memory_cache = json.load(f)
+L 62: with open(self.memory_path, 'w') as f:
+L 63: json.dump([], f)
+L 70: (ProcessPool). Sem filelock, cai no fallback at¶mico por processo.
+L 93: with open(self.memory_path, 'r') as _f:
+L 94: _disk = json.load(_f)
+L108: with os.fdopen(fd, 'w', encoding="utf-8") as f:
+L109: json.dump(self._memory_cache, f, indent=4)
+L124: time.sleep(0.05 * (2 ** i))
+L155: return hashlib.sha256(f"{asset}_{'_'.join(setup)}".encode()).hexdigest()
+L205: 'timestamp': snapshot.timestamp
+
+### mercury_ai/database/replay_storage.py ###
+L  7: import threading
+L 10: from mercury_ai.utils.atomic_io import atomic_json_write
+L 23: - Substitui ':' por '-' (timestamps ISO).
+L 49: - C2: threading.Lock protege operaþ§es de save (thread-safe).
+L 56: self._lock = threading.Lock()
+L 60: with open(filepath, "r", encoding="utf-8") as f:
+L 61: existing = json.load(f)
+L 83: "timestamp": snapshot.timestamp,
+L 92: if os.path.exists(filepath):
+L 95: "ReplayStorage.save: replay result for replay_id=%s run_id=%s already exists and is identical; skipping write.",
+L103: atomic_json_write(
+
+### mercury_ai/database/snapshot_logger.py ###
+L  1: import hashlib
+L  6: import threading
+L 23: - Substitui ':' por '-' para timestamps.
+L 25: '+01:00' em timestamps timezone-aware).
+L 50: f"{snapshot.timestamp}|"
+L 54: return hashlib.sha256(replay_input.encode()).hexdigest()
+L 64: return hashlib.sha256(raw.encode()).hexdigest()
+L 67: safe_timestamp = _safe_component(snapshot.timestamp)
+L 68: return f"{safe_asset}_{safe_timestamp}.json"
+L 80: self.base_path = Path(base_path)
+L 82: self._lock = threading.Lock()
+L 86: safe_timestamp = _sanitize_filename_component(str(snapshot.timestamp))
+L 87: filename = f"{safe_asset}_{safe_timestamp}.json"
+L 92: data = asdict(snapshot)
+L 97: data = json.dumps(data, indent=4, default=str)
+L102: with os.fdopen(fd, "w", encoding="utf-8") as f:
+L121: with open(snapshot_path, "r", encoding="utf-8") as f:
+L122: return json.load(f)

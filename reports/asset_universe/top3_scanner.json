@@ -1,0 +1,418 @@
+{
+  "generated_at": "2026-09-04T06:01:21.922078+00:00",
+  "formula": "ranking_score = confluence_weighted (0-100) + confidence_100*0.30 + grade_bonus(A+25/A20/B15/C10/D5) + dominant_prob*0.20 ; tie-breaker: internal_symbol ASC, audit_id ASC. Eligibility: status==REAL_SIGNAL AND decision in (BUY,SELL) AND trade_allowed==true AND prob_sum_ok==true AND confidence not None AND confluence not None",
+  "eligibility_count": 57,
+  "total_records": 68,
+  "top3": [
+    {
+      "rank": 1,
+      "hezilex_input": "CITIGROUP",
+      "internal_symbol": "C",
+      "asset_class": "STOCK",
+      "provider_symbol": "C",
+      "decision": "BUY",
+      "grade": "B",
+      "confidence": 0.7092594,
+      "confidence_100": 70.92594,
+      "confluence": 100.0,
+      "buy_probability": 61.02,
+      "sell_probability": 0.0,
+      "wait_probability": 38.98,
+      "dominant_probability": 61.02,
+      "score": 148.481782,
+      "audit_id": "f91b11fdc4fab86a9b4ff38ca6f0d63cd29bb01603f4d6d7a67354b97809dd86",
+      "execution_timestamp": "2026-09-02T00:27:39.277481",
+      "trade_allowed": true,
+      "trade_quality": 80.0,
+      "source_record": "C"
+    },
+    {
+      "rank": 2,
+      "hezilex_input": "AUD/NZD",
+      "internal_symbol": "AUDNZD=X",
+      "asset_class": "FOREX",
+      "provider_symbol": "AUDNZD=X",
+      "decision": "BUY",
+      "grade": "B",
+      "confidence": 0.7071132800000001,
+      "confidence_100": 70.71132800000001,
+      "confluence": 100.0,
+      "buy_probability": 60.44,
+      "sell_probability": 0.0,
+      "wait_probability": 39.56,
+      "dominant_probability": 60.44,
+      "score": 148.3013984,
+      "audit_id": "6fb614f0ade914b35e625314be8901d9f892a777f25bdc48e28d8a8d3b5dd044",
+      "execution_timestamp": "2026-09-02T00:19:51.284804",
+      "trade_allowed": true,
+      "trade_quality": 80.0,
+      "source_record": "AUDNZD=X"
+    },
+    {
+      "rank": 3,
+      "hezilex_input": "USD/JPY",
+      "internal_symbol": "USDJPY=X",
+      "asset_class": "FOREX",
+      "provider_symbol": "USDJPY=X",
+      "decision": "BUY",
+      "grade": "B",
+      "confidence": 0.7052801066666667,
+      "confidence_100": 70.52801066666667,
+      "confluence": 100.0,
+      "buy_probability": 60.23,
+      "sell_probability": 0.0,
+      "wait_probability": 39.77,
+      "dominant_probability": 60.23,
+      "score": 148.2044032,
+      "audit_id": "1ce63476ff1974869513c5107b2c49540bdd73dd9ad172c04eba2bd817487960",
+      "execution_timestamp": "2026-09-02T00:15:15.595197",
+      "trade_allowed": true,
+      "trade_quality": 80.0,
+      "source_record": "USDJPY=X"
+    }
+  ],
+  "all_ranked": [
+    {
+      "rank": 1,
+      "symbol": "C",
+      "decision": "BUY",
+      "score": 148.481782
+    },
+    {
+      "rank": 2,
+      "symbol": "AUDNZD=X",
+      "decision": "BUY",
+      "score": 148.3013984
+    },
+    {
+      "rank": 3,
+      "symbol": "USDJPY=X",
+      "decision": "BUY",
+      "score": 148.2044032
+    },
+    {
+      "rank": 4,
+      "symbol": "BTC-USD",
+      "decision": "BUY",
+      "score": 148.1923784
+    },
+    {
+      "rank": 5,
+      "symbol": "BTC-USD",
+      "decision": "BUY",
+      "score": 148.1923784
+    },
+    {
+      "rank": 6,
+      "symbol": "INTC",
+      "decision": "BUY",
+      "score": 148.17327799999998
+    },
+    {
+      "rank": 7,
+      "symbol": "PYPL",
+      "decision": "BUY",
+      "score": 148.14886704000003
+    },
+    {
+      "rank": 8,
+      "symbol": "EURAUD=X",
+      "decision": "BUY",
+      "score": 148.14622838709676
+    },
+    {
+      "rank": 9,
+      "symbol": "WFC",
+      "decision": "BUY",
+      "score": 148.11227233333332
+    },
+    {
+      "rank": 10,
+      "symbol": "JPM",
+      "decision": "BUY",
+      "score": 148.094699
+    },
+    {
+      "rank": 11,
+      "symbol": "NVDA",
+      "decision": "SELL",
+      "score": 148.07122034782608
+    },
+    {
+      "rank": 12,
+      "symbol": "AUDUSD=X",
+      "decision": "SELL",
+      "score": 147.96313670588236
+    },
+    {
+      "rank": 13,
+      "symbol": "NZDJPY=X",
+      "decision": "SELL",
+      "score": 147.96203944827587
+    },
+    {
+      "rank": 14,
+      "symbol": "MSFT",
+      "decision": "BUY",
+      "score": 147.847421
+    },
+    {
+      "rank": 15,
+      "symbol": "SBUX",
+      "decision": "BUY",
+      "score": 142.75034477419354
+    },
+    {
+      "rank": 16,
+      "symbol": "IBM",
+      "decision": "BUY",
+      "score": 142.60908910344827
+    },
+    {
+      "rank": 17,
+      "symbol": "AMZN",
+      "decision": "BUY",
+      "score": 142.53485482352943
+    },
+    {
+      "rank": 18,
+      "symbol": "EURJPY=X",
+      "decision": "BUY",
+      "score": 140.7557086153846
+    },
+    {
+      "rank": 19,
+      "symbol": "GBPNZD=X",
+      "decision": "BUY",
+      "score": 135.06814327272727
+    },
+    {
+      "rank": 20,
+      "symbol": "NZDUSD=X",
+      "decision": "SELL",
+      "score": 135.05374133333333
+    },
+    {
+      "rank": 21,
+      "symbol": "AUDCAD=X",
+      "decision": "SELL",
+      "score": 134.89912925000002
+    },
+    {
+      "rank": 22,
+      "symbol": "NKE",
+      "decision": "BUY",
+      "score": 134.87994545454546
+    },
+    {
+      "rank": 23,
+      "symbol": "AUDCHF=X",
+      "decision": "BUY",
+      "score": 134.87504411764706
+    },
+    {
+      "rank": 24,
+      "symbol": "META",
+      "decision": "SELL",
+      "score": 134.859747
+    },
+    {
+      "rank": 25,
+      "symbol": "CADCHF=X",
+      "decision": "BUY",
+      "score": 134.85788909090908
+    },
+    {
+      "rank": 26,
+      "symbol": "GBPCAD=X",
+      "decision": "SELL",
+      "score": 134.80835751724138
+    },
+    {
+      "rank": 27,
+      "symbol": "EURCHF=X",
+      "decision": "BUY",
+      "score": 134.79855563636363
+    },
+    {
+      "rank": 28,
+      "symbol": "GBPAUD=X",
+      "decision": "BUY",
+      "score": 134.78501489655173
+    },
+    {
+      "rank": 29,
+      "symbol": "EURUSD=X",
+      "decision": "SELL",
+      "score": 134.77064993103448
+    },
+    {
+      "rank": 30,
+      "symbol": "NZDCHF=X",
+      "decision": "BUY",
+      "score": 134.75143466666668
+    },
+    {
+      "rank": 31,
+      "symbol": "NZDCAD=X",
+      "decision": "SELL",
+      "score": 134.73750372413792
+    },
+    {
+      "rank": 32,
+      "symbol": "DOGE-USD",
+      "decision": "BUY",
+      "score": 134.68841866666668
+    },
+    {
+      "rank": 33,
+      "symbol": "F",
+      "decision": "BUY",
+      "score": 134.67984981818182
+    },
+    {
+      "rank": 34,
+      "symbol": "NFLX",
+      "decision": "SELL",
+      "score": 134.67835422222223
+    },
+    {
+      "rank": 35,
+      "symbol": "V",
+      "decision": "SELL",
+      "score": 134.66506444444445
+    },
+    {
+      "rank": 36,
+      "symbol": "XRP-USD",
+      "decision": "SELL",
+      "score": 134.6451912727273
+    },
+    {
+      "rank": 37,
+      "symbol": "AVAX-USD",
+      "decision": "BUY",
+      "score": 134.62931781818182
+    },
+    {
+      "rank": 38,
+      "symbol": "SOL-USD",
+      "decision": "BUY",
+      "score": 134.61672248275863
+    },
+    {
+      "rank": 39,
+      "symbol": "GBPUSD=X",
+      "decision": "SELL",
+      "score": 134.6050755
+    },
+    {
+      "rank": 40,
+      "symbol": "ETH-USD",
+      "decision": "BUY",
+      "score": 134.603064
+    },
+    {
+      "rank": 41,
+      "symbol": "USDCHF=X",
+      "decision": "BUY",
+      "score": 134.60215333333332
+    },
+    {
+      "rank": 42,
+      "symbol": "GBPCHF=X",
+      "decision": "BUY",
+      "score": 134.59398486486486
+    },
+    {
+      "rank": 43,
+      "symbol": "EURGBP=X",
+      "decision": "BUY",
+      "score": 134.585659
+    },
+    {
+      "rank": 44,
+      "symbol": "BAC",
+      "decision": "BUY",
+      "score": 134.57884468965517
+    },
+    {
+      "rank": 45,
+      "symbol": "AAPL",
+      "decision": "BUY",
+      "score": 134.5697667826087
+    },
+    {
+      "rank": 46,
+      "symbol": "DIS",
+      "decision": "SELL",
+      "score": 134.556196
+    },
+    {
+      "rank": 47,
+      "symbol": "AUDJPY=X",
+      "decision": "SELL",
+      "score": 134.5544064516129
+    },
+    {
+      "rank": 48,
+      "symbol": "SPOT",
+      "decision": "BUY",
+      "score": 134.52466670967743
+    },
+    {
+      "rank": 49,
+      "symbol": "MA",
+      "decision": "SELL",
+      "score": 134.5215728
+    },
+    {
+      "rank": 50,
+      "symbol": "CADJPY=X",
+      "decision": "BUY",
+      "score": 134.51401600000003
+    },
+    {
+      "rank": 51,
+      "symbol": "CHFJPY=X",
+      "decision": "SELL",
+      "score": 134.49995432258066
+    },
+    {
+      "rank": 52,
+      "symbol": "MCD",
+      "decision": "SELL",
+      "score": 134.48332068965516
+    },
+    {
+      "rank": 53,
+      "symbol": "GBPJPY=X",
+      "decision": "SELL",
+      "score": 134.40554
+    },
+    {
+      "rank": 54,
+      "symbol": "KO",
+      "decision": "SELL",
+      "score": 134.31001600000002
+    },
+    {
+      "rank": 55,
+      "symbol": "BNB-USD",
+      "decision": "BUY",
+      "score": 134.18300951351353
+    },
+    {
+      "rank": 56,
+      "symbol": "TSLA",
+      "decision": "SELL",
+      "score": 132.9818690526316
+    },
+    {
+      "rank": 57,
+      "symbol": "XLM-USD",
+      "decision": "SELL",
+      "score": 132.484928
+    }
+  ]
+}

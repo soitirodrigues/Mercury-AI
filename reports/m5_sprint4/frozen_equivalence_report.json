@@ -1,0 +1,101 @@
+{
+  "generated_at": "2026-09-03T03:56:26.678921+00:00",
+  "fixture": "SharedFrozenProvider RandomState deterministic, pre-built 64*5 keys",
+  "isolation": "AnalysisPipeline(institutional_memory_path=tmp) per worker",
+  "universe_12": {
+    "equivalence_passed": true,
+    "determinism_passed": true,
+    "sigs": [
+      "270585ee59215b1d73e4c6fe3de0f547c04579b76213656bf3cc558c637fac3b",
+      "270585ee59215b1d73e4c6fe3de0f547c04579b76213656bf3cc558c637fac3b",
+      "270585ee59215b1d73e4c6fe3de0f547c04579b76213656bf3cc558c637fac3b"
+    ],
+    "results": {
+      "1": {
+        "workers": 1,
+        "mismatches": [],
+        "mismatch_count": 0,
+        "passed": true,
+        "fp": "270585ee59215b1d73e4c6fe3de0f547c04579b76213656bf3cc558c637fac3b"
+      },
+      "2": {
+        "workers": 2,
+        "mismatches": [],
+        "mismatch_count": 0,
+        "passed": true,
+        "fp": "270585ee59215b1d73e4c6fe3de0f547c04579b76213656bf3cc558c637fac3b"
+      },
+      "4": {
+        "workers": 4,
+        "mismatches": [],
+        "mismatch_count": 0,
+        "passed": true,
+        "fp": "270585ee59215b1d73e4c6fe3de0f547c04579b76213656bf3cc558c637fac3b"
+      },
+      "8": {
+        "workers": 8,
+        "mismatches": [],
+        "mismatch_count": 0,
+        "passed": true,
+        "fp": "270585ee59215b1d73e4c6fe3de0f547c04579b76213656bf3cc558c637fac3b"
+      },
+      "16": {
+        "workers": 16,
+        "mismatches": [],
+        "mismatch_count": 0,
+        "passed": true,
+        "fp": "270585ee59215b1d73e4c6fe3de0f547c04579b76213656bf3cc558c637fac3b"
+      }
+    }
+  },
+  "universe_64": {
+    "equivalence_passed": true,
+    "determinism_passed": true,
+    "sigs": [
+      "419a2eb0edf9474d4d3dfc37d2199e6cc80660ae4e3a72992ca424ced0a429d7",
+      "419a2eb0edf9474d4d3dfc37d2199e6cc80660ae4e3a72992ca424ced0a429d7",
+      "419a2eb0edf9474d4d3dfc37d2199e6cc80660ae4e3a72992ca424ced0a429d7"
+    ],
+    "results": {
+      "1": {
+        "workers": 1,
+        "mismatches": [],
+        "mismatch_count": 0,
+        "passed": true,
+        "fp": "419a2eb0edf9474d4d3dfc37d2199e6cc80660ae4e3a72992ca424ced0a429d7"
+      },
+      "2": {
+        "workers": 2,
+        "mismatches": [],
+        "mismatch_count": 0,
+        "passed": true,
+        "fp": "419a2eb0edf9474d4d3dfc37d2199e6cc80660ae4e3a72992ca424ced0a429d7"
+      },
+      "4": {
+        "workers": 4,
+        "mismatches": [],
+        "mismatch_count": 0,
+        "passed": true,
+        "fp": "419a2eb0edf9474d4d3dfc37d2199e6cc80660ae4e3a72992ca424ced0a429d7"
+      },
+      "8": {
+        "workers": 8,
+        "mismatches": [],
+        "mismatch_count": 0,
+        "passed": true,
+        "fp": "419a2eb0edf9474d4d3dfc37d2199e6cc80660ae4e3a72992ca424ced0a429d7"
+      },
+      "16": {
+        "workers": 16,
+        "mismatches": [],
+        "mismatch_count": 0,
+        "passed": true,
+        "fp": "419a2eb0edf9474d4d3dfc37d2199e6cc80660ae4e3a72992ca424ced0a429d7"
+      }
+    }
+  },
+  "overall": {
+    "EQUIVALENCE": "PASS",
+    "DETERMINISM": "PASS"
+  }
+}

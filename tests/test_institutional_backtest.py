@@ -191,6 +191,7 @@ class TestIntegrationReplayToPerformance:
 class TestIntegrationBatchToUniverse:
     """Integração: ReplayBatchProcessor → UniversePerformance."""
 
+    @pytest.mark.slow
     def test_batch_produces_universe_performance(self):
         """Batch com 3 símbolos deve produzir UniversePerformance."""
         processor = ReplayBatchProcessor(max_workers=2)

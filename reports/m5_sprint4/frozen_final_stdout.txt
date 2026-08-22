@@ -1,0 +1,34 @@
+
+======================================================================
+FROZEN FINAL universe=12 symbols=['EURUSD=X', 'GBPUSD=X', 'USDJPY=X']... workers=[1, 2, 4, 8, 16]
+  baseline isolated-sequential fp=270585ee59215b1d
+  workers=1 mism=0 PASS fp=270585ee59215b1d
+  workers=2 mism=0 PASS fp=270585ee59215b1d
+  workers=4 mism=0 PASS fp=270585ee59215b1d
+  workers=8 mism=0 PASS fp=270585ee59215b1d
+  workers=16 mism=0 PASS fp=270585ee59215b1d
+
+  DETERMINISM 3 runs workers=1
+    run 1 270585ee59215b1d
+    run 2 270585ee59215b1d
+    run 3 270585ee59215b1d
+  DETERMINISM PASS sig 270585ee59215b1d
+
+======================================================================
+FROZEN FINAL universe=64 symbols=['EURUSD=X', 'GBPUSD=X', 'USDJPY=X']... workers=[1, 2, 4, 8, 16]
+  baseline isolated-sequential fp=419a2eb0edf9474d
+  workers=1 mism=0 PASS fp=419a2eb0edf9474d
+  workers=2 mism=0 PASS fp=419a2eb0edf9474d
+  workers=4 mism=0 PASS fp=419a2eb0edf9474d
+  workers=8 mism=0 PASS fp=419a2eb0edf9474d
+  workers=16 mism=0 PASS fp=419a2eb0edf9474d
+
+  DETERMINISM 3 runs workers=1
+    run 1 419a2eb0edf9474d
+    run 2 419a2eb0edf9474d
+    run 3 419a2eb0edf9474d
+  DETERMINISM PASS sig 419a2eb0edf9474d
+
+======================================================================
+OVERALL EQUIVALENCE=PASS DETERMINISM=PASS
+Wrote reports\m5_sprint4\frozen_equivalence_report.json

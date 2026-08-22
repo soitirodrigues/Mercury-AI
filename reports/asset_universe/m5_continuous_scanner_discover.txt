@@ -1,0 +1,179 @@
+M5 CONTINUOUS SCANNER — SPRINT 2 DISCOVER REPORT
+Generated: 2026-09-02
+Sprint: SENSEI SPRINT 2 — M5 CONTINUOUS / INCREMENTAL OPERATIONAL SCANNER
+
+========================================================================
+CURRENT_FLOW — Arquitetura Batch Atual
+========================================================================
+
+1) Entrada / Descoberta de Universo
+   - config/universe.py  (ALL_SYMBOLS = 64 = 27 FOREX + 10 CRYPTO + 23 STOCK + 4 COMMODITY*) 
+   - scripts/m5_full_scan.py  carrega reports/asset_universe/hezilex_asset_mapping.json (68 entradas hezilex)
+     deduplica por internal_symbol -> 64 distinct PASS; unsupported ficam sem scan.
+   - Alternativa canônica em produção: MercuryScanner / config/universe importa ALL_SYMBOLS direto.
+   * contagem operacional medida = 64 (30 FOREX cruza+majors + 10 CRYPTO + resto STOCKS/COMM).
+
+2) Camada de Dados — onde os dados são carregados
+   a) Main M5  (caminho quente, por ativo, sequencial):
+      MarketDataService.get_data(symbol, interval="5m", period="5d")
+        -> MercuryDataProvider.best_provider(symbol)  [YahooAdapter p=1 é sempre o vencedor]
+        -> YahooAdapter.get_data(symbol, interval="5m") -> yf.download(period="5d", interval="5m")
+        -> DataNormalizer.normalize(df)  duplica colunas open..low..close..volume + Open..Close
+      Observabilidade: PipelineProfiler stage "DataLoading" (~0.4-0.5s avg, 2.6% do wall)
+
+   b) MTF (gargalo, dentro de MTFEngine.analyze):
+      Para cada TF em [M1, M5, M15, H1, H4]:
+        YFINANCE_INTERVALS[TF] -> MarketDataService.get_data(symbol, interval=interval, period="1mo")
+          -> mesmo YahooAdapter -> yf.download(period="1mo", interval=TF_interval)  // 5 downloads sequenciais
+        IndicatorEngine.calculate(df) -> MarketData(symbol, timeframe=TF, ema9/21/50, rsi, atr, adx, macd, boll...)
+        TrendAnalyzer.analyze(market) / LiquidityEngine / VolatilityEngine / MarketStructureIntelligenceEngine
+        Prefixo engine_name = "TF - name" e agendamento em engine_results[engine][TF]=direction
+      Ao final MTFConsensus é montado (bias, alignment_score, conflict_score, timeframe_status)
+      Observabilidade: timeframe_status = processed | rejected(<20 rows) | absent(empty) | error
+                       timeframe_errors dict quando erro.
+
+3) Onde M5 é carregado vs onde MTF é carregado
+   - M5 principal:  AnalysisPipeline.analyze()  linha ~DataLoading  (5d window)
+   - MTF:            MTFEngine.analyze()        (1mo window, 5 TFs, 5 fetchs + 5*4 engines)
+   - Sobreposição: M5 é baixado DUAS vezes (main 5d + MTF 1mo M5) — janelas diferentes, não intercambiáveis
+     sem normalização explícita.
+
+4) Onde indicadores são calculados
+   - IndicatorEngine.calculate(df) logo após cada fetch (main + cada TF do MTF).
+   - Indicadores são rolling stateful (ewm span 9/21/50, RSI 14, ATR 14, MACD 12/26/9, Bollinger 14)
+     Recalculados integralmente sobre toda a janela a cada scan (não incremental).
+   - Trend/Structure/Liquidity/Volatility engines consomem MarketData/DF e produzem Evidence lists.
+
+5) Onde DecisionResult é criado
+   - Caminho feliz: MercuryDecisionEngine.analyze(context, evidence_bundle, trade_filter)
+     -> Validation -> Quality -> Conflict -> Ranking -> Memory -> Confidence -> Confluence
+     -> Probability -> DecisionResolverEngine.resolve() -> Narrative -> InstitutionalScore
+     -> DecisionResultBuilder.build()  monta DecisionResult com audit_id = sha256(asset|timeframe|timestamp|count|evidence_hash)
+                                       confidence armazenado 0-1 (calibrated/100), buy/sell/wait 0-100 sum 100
+   - Caminhos terminais (sem passar pelo Builder):
+     * df empty -> _build_terminal_result audit DATA_PROVIDER_UNAVAILABLE  (WAIT 0/0/100)
+     * !is_valid (DataQualityEngine) -> inline DecisionResult audit DATA_QUALITY_FAIL
+     * len(df) < 2*pivot+1 -> inline audit INSUFFICIENT_DATA
+     * MarketClosedException -> inline audit MARKET_CLOSED
+     * Exception genérica -> inline audit PIPELINE_ERROR
+     Todos salvam DecisionSnapshot e retornam AnalysisResult dummy.
+
+6) Onde audit_id é criado
+   - Legítimo (hash 64 hex): DecisionResultBuilder.build() linha ~audit_input sha256
+   - Terminal: strings fixas em AnalysisPipeline (DATA_PROVIDER_UNAVAILABLE / DATA_QUALITY_FAIL / ...) 
+     distinguíveis por scanner: is_hash => WAIT/REAL legítimo; senão DATA_UNAVAILABLE/ERROR.
+
+7) Onde Top-3 é calculado
+   - Offline, pós-scan: scripts/top3_scanner.py lê reports/asset_universe/m5_full_scan.json
+   - Filtro elegibilidade: status==REAL_SIGNAL && decision in (BUY,SELL) && trade_allowed && prob_sum_ok (±0.5) && confidence!=None && confluence!=None
+   - Fórmula ranking (OFICIAL, NÃO duplicar):
+     ranking_score = confluence_weighted(0-100) + confidence_100*0.30 + grade_bonus(A+25/A20/B15/C10/D5) + dominant_prob*0.20
+     tie-breaker: internal_symbol ASC, audit_id ASC  (determinístico)
+   - Gera reports/asset_universe/top3_scanner.json/.txt ; determinismo testado via scripts/top3_determinism_test.py (hash run1==run2)
+
+8) Estrutura snapshots/cache existente
+   - DecisionSnapshotLogger: base_path mercury_ai/database/snapshots  (atomic write via tempfile+replace, threading.Lock)
+     filename = {sanitized_asset}_{sanitized_timestamp}.json  (iso timestamp DeterministicClock.utcnow())
+     replay_id = sha256(asset|timeframe|timestamp|session_id|audit_id) validado ao salvar
+     atributes: timestamp (decision time, DeterministicClock), asset, timeframe, context, evidence_bundle, decision_result, version_metadata, audit_events, session_id, replay_id
+   - AnalysisPipeline.last_snapshots dict[str, Snapshot] + last_snapshot (memória volátil, não persistida)
+   - RuntimeReport: RuntimeReport(symbol, stages=[TelemetryData]) escrito atomic_json_write f"runtime_report_{symbol}_{ts}.json"
+   - PipelineProfiler: threading.local stack, mas tracemalloc global (start/stop) — race em paralelo
+   - DeterministicClock: threading.local _current_time (isolado por thread), métodos set_time/utcnow/snapshot/restore
+   - MarketDataService / YahooAdapter: sem cache persistente; TTL Yahoo implícito ~60s mas não implementado no código.
+
+========================================================================
+CURRENT_BOTTLENECK — Medição Real (reports/asset_universe/m5_operational_latency.json)
+========================================================================
+Universo: 64  | Medido em 2026-09-02 04:26-04:43 UTC
+
+Wall total sequencial: 1026.14s (17.1 min)  avg 15.61s / ativo  median 18.70s  p95 24.04s  max 24.73s
+Quebra:
+  FETCH probe (MarketDataService 5m 5d) : 26.79s sum (2.6% do wall)  mean 418ms  median 295ms
+  ANALYSIS (AnalysisPipeline.analyze wall - DataLoading): 972.60s (94.8%)
+  RANKING: 0.0009s (~0%)
+  MTFAnalysis (dentro de ANALYSIS): 14.45s avg / 18.54s aggregate avg per asset  = 78% do total por ativo
+  StructureAnalysis: 2.33s (12.6%)
+  DataLoading: 0.50s
+
+MTF detalhe (deep_dive):
+  5 TFs sequenciais, cada TF: 1 yfinance download (0.2-0.5s) + IndicatorEngine + 4 engines
+  Medido ao vivo EURUSD=X: MTF.analyze wall 5.9s sendo 1.59s fetch + 4.3s compute
+  Em escala real o fetch se dilui (yfinance cache/TTL, rede), compute domina.
+
+Paralelização controlada (max_workers=4, 12 ativos sample):
+  Sequential 237.33s vs Parallel 183.67s => speedup 1.29x
+  Projetado 64: 1026s seq -> 794s par4  ainda >> 300s (janela M5) => FAIL (margem -494s)
+  Veredito medido: PARALLELIZATION_CANDIDATE=YES mas INSUFICIENTE sozinha; precisa combinar com otimização MTF compute.
+
+Cache candidato: NO (fetch 2.6% do wall). Mesmo cache perfeito (26.79s->5s) economiza ~21s, insignificante frente a 1026s.
+  Cache só faz sentido como freshness correctness, não como otimização de performance neste sprint.
+  Stale risk ALTO se cache > TTL ou se reutilizar janela 1mo sem verificar last candle.
+
+Top3: 57 REAL_SIGNAL eligible / 64 total (7 DATA_UNAVAILABLE). Determinismo PASS (hash idêntico entre runs sequenciais).
+Next-candle readiness: FAIL (margin -947.12s — scan só fica pronto 947s DEPOIS da próxima vela).
+Bottleneck oficial: ANALYSIS — MTFAnalysis 78% (5 timeframes sequenciais com 5 downloads + 4 motores por TF).
+
+========================================================================
+REUSABLE_STATE — O que PODE ser reutilizado com segurança (com validação)
+========================================================================
+Candidate REUSABLE (exige freshness gate: cached_last_candle == required_decision_candle):
+
+  - Normalized DataFrame M5 5d + MTF TFs 1mo (após DataNormalizer) — SE df.index[-1] == current_candle
+  - IndicatorEngine output por TF (MarketData fields: ema9/21/50, rsi, atr, macd...) — SE df não mudou
+  - DataQualityEngine result (is_valid, score, reason) — SE df idêntico
+  - Telemetry / RuntimeReport stages anteriores (apenas para auditoria, não para decisão)
+
+  Condição de validade SEMPRE: comparar data_latest_timestamp (df.index[-1]) com decision_candle_timestamp
+  + verificar que o candle é o fechamento correto (M5 boundary). TTL sozinho NÃO é suficiente.
+
+RISCO: Yahoo pode atrasar entrega da última vela (lag). Freshness deve comparar timestamps do índice,
+não relógio wall.
+
+========================================================================
+NON_REUSABLE_STATE — O que NÃO pode ser reutilizado / exige recálculo integral
+========================================================================
+
+  - DecisionResult / DecisionSnapshot / audit_id: dependem de confluência total + timestamp da decisão.
+    Nunca reutilizar DecisionResult de vela antiga como se fosse nova. Se stale, STATUS=STALE explícito.
+
+  - EvidenceBundle e todos os Evidence (strength/confidence/direction) : dependem de indicadores recém-calculados.
+
+  - ConfluenceResult / ConfidenceResult / ProbabilityResult / MTFConsensus : agregações ponderadas sobre
+    evidências atuais; qualquer mudança de candle altera scores.
+
+  - MarketContext (construído duas vezes: placeholder risk + final risk) — não cacheável isoladamente.
+
+  - Ranking Top-3: recalculado a cada ciclo a partir dos DecisionResults frescos (mesma fórmula, mas nova entrada).
+
+  - PipelineProfiler state, DeterministicClock snapshot, MarketDataService internal provider selection:
+    efêmeros por execução, não persistir entre ciclos.
+
+  - Snapshot files no disco (mercury_ai/database/snapshots/*.json): cada decisão gera novo arquivo
+    com timestamp único; reutilizar arquivo antigo como se fosse novo viola rastreabilidade.
+
+NOTA MTF: A presente auditoria classifica componentes MTF conforme seção MTF CONSUMO abaixo.
+Não há estado reutilizável seguro entre timeframes sem garantir que a janela histórica completa seja idêntica.
+Reuso cego de TF H1/H4 quando apenas M5 mudou pode parecer seguro (TF superior ainda não fechou),
+mas H1/H4 também agregam evidencia por candle; se a última vela M5 fecha dentro do candle H1 em progresso,
+o indicador de H1 não deve incorporar candle ainda não fechado — mas isso NÃO foi provado seguro neste sprint
+e é classificado como UNKNOWN até validação.
+
+========================================================================
+CONSENT CHECK — O que este sprint NÃO tocará
+========================================================================
+  DecisionResolverEngine, DecisionResult, regras BUY/SELL/WAIT, fórmula ranking/pesos ranking,
+  DataQualityEngine, regras trade_allowed, probability normalization, confluence/confidence,
+  critérios elegibilidade Top-3 — todos PRESERVADOS. Nenhuma segunda implementação de decisão criada.
+
+  Mudanças permitidas: arquitetura do scanner (orquestração, filas, estado incremental, freshness,
+  cache validado, paralelização controlada, medição).
+
+========================================================================
+REFERÊNCIAS
+========================================================================
+  Fonte de medição: reports/asset_universe/m5_operational_latency.json (gerado 2026-09-02 06:16 UTC)
+  Código inspecionado: scripts/m5_full_scan.py, scripts/top3_scanner.py, core/analysis_pipeline.py,
+    data/market_data.py, analysis/mtf_engine.py, models/decision_result.py, models/decision_snapshot.py,
+    database/snapshot_logger.py, config/universe.py, config/timeframes.py, providers/data_adapters.py,
+    core/runtime_report.py, core/pipeline_profiler.py, utils/deterministic_clock.py

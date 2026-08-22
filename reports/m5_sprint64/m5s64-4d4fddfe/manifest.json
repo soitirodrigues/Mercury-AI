@@ -1,0 +1,24 @@
+{
+  "session_id": "m5s64-4d4fddfe",
+  "created_at": "2026-09-05T04:35:24.985644+00:00",
+  "artifacts": [
+    {
+      "artifact_name": "cycle_audit\\m5s64-live-202609050430-df1a.json",
+      "artifact_path": "C:\\Projetos\\Mercury-AI\\reports\\m5_sprint64\\m5s64-4d4fddfe\\cycle_audit\\m5s64-live-202609050430-df1a.json",
+      "artifact_size": 3972,
+      "artifact_hash": "5ef1fcc90a586d01c1a40709685c5dd41081f33e5b3a6a73b181c6b7fe4ff921",
+      "created_at": "2026-09-05T04:31:51.150725+00:00",
+      "session_id": "m5s64-4d4fddfe",
+      "cycle_id": "m5s64-live-202609050430-df1a"
+    },
+    {
+      "artifact_name": "cycle_audit\\m5s64-live-202609050435-b620.json",
+      "artifact_path": "C:\\Projetos\\Mercury-AI\\reports\\m5_sprint64\\m5s64-4d4fddfe\\cycle_audit\\m5s64-live-202609050435-b620.json",
+      "artifact_size": 3972,
+      "artifact_hash": "24a1233848ee03689bedb7668811d71a00f6efed32e042c65d1b7150995acdf2",
+      "created_at": "2026-09-05T04:35:24.972788+00:00",
+      "session_id": "m5s64-4d4fddfe",
+      "cycle_id": "m5s64-live-202609050435-b620"
+    }
+  ]
+}
