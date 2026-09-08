@@ -17,6 +17,8 @@ from mercury_ai.core.exceptions import (
     InvalidSymbolError,
     ProviderError,
 )
+from mercury_ai.sessions.market_sessions import MarketSessions
+from mercury_ai.utils.deterministic_clock import DeterministicClock
 
 logger = logging.getLogger(__name__)
 
@@ -122,10 +124,47 @@ class MercuryScanner:
             )
         )
 
+        # F2 — Session eligibility gate (antes de pipeline).
+        # Replay: quando DeterministicClock estiver congelado, o scanner esta
+        # sendo usado dentro de HistoricalReplayEngine; nesse caso NAO aplicar
+        # gate de sessao live (replay deve ser deterministico por indice, nao
+        # por calendario real). Bypass observavel via replay_isolated flag.
+        replay_isolated = DeterministicClock.is_frozen()
+        filtered_by_session: list[str] = []
+        if not replay_isolated:
+            gate = MarketSessions()
+            kept = []
+            for a in enabled_assets:
+                # resolve market via universe (FOREX/CRYPTO) — fallback via Asset.category
+                try:
+                    from mercury_ai.config.universe import get_asset
+                    ua = get_asset(a.symbol)
+                    market = ua.market if ua is not None else (a.market or a.category or "")
+                except Exception:
+                    market = a.market or a.category or ""
+                if gate.is_market_eligible(market):
+                    kept.append(a)
+                else:
+                    filtered_by_session.append(a.symbol)
+                    logger.info(
+                        "SESSION_FILTER: %s (%s) -> NOT ELIGIBLE (weekend, %s)",
+                        a.symbol, market, gate.eligibility_reason(market),
+                    )
+            if filtered_by_session:
+                logger.info(
+                    "SESSION_FILTER: %s ativos filtrados (Forex weekend), %s seguem para analise",
+                    len(filtered_by_session), len(kept),
+                )
+            enabled_assets = kept
+
         symbols = [
             a.symbol
             for a in enabled_assets
         ]
+
+        # Observabilidade: quando tudo foi filtrado por sessao, registrar vazio
+        if not symbols and filtered_by_session:
+            logger.info("SESSION_FILTER: nenhum ativo elegivel para este ciclo (weekend Forex)")
 
         for symbol in symbols:
 

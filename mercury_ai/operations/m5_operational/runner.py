@@ -269,6 +269,37 @@ class M5OperationalRunner:
         Returns: structured cycle report (também usado para observabilidade/artifacts).
         """
         symbols = list(universe_override) if universe_override is not None else list(self.universe)
+
+        # F2 — Session eligibility gate (antes de submeter workers).
+        # Bypass quando DeterministicClock congelado (replay: nao aplicar calendario live).
+        # Eligibilidade por market (FOREX/CRYPTO) UTC weekend, via MarketSessions.
+        try:
+            from mercury_ai.utils.deterministic_clock import DeterministicClock as _DC
+            from mercury_ai.sessions.market_sessions import MarketSessions as _MS2
+            from mercury_ai.config.universe import get_asset as _ga2
+            if not _DC.is_frozen():
+                _ms_gate = _MS2()
+                _kept: list[str] = []
+                _skipped: list[str] = []
+                for _sym in symbols:
+                    try:
+                        _ua = _ga2(_sym)
+                        _mkt = _ua.market if _ua is not None else ""
+                    except Exception:
+                        _mkt = ""
+                    if not _mkt:
+                        # fallback: classify by universe membership already covered; treat unknown as kept
+                        _kept.append(_sym)
+                    elif _ms_gate.is_market_eligible(_mkt):
+                        _kept.append(_sym)
+                    else:
+                        _skipped.append(_sym)
+                if _skipped:
+                    logger.info("[M5OperationalRunner] SESSION_FILTER F2: %s skipped (Forex weekend), %s kept", len(_skipped), len(_kept))
+                symbols = _kept
+        except Exception as _e:
+            logger.warning("[M5OperationalRunner] SESSION_FILTER F2 bypassed por erro: %s", _e)
+
         executor_type = executor_override or self.config.executor
         workers = workers_override if workers_override is not None else self.config.workers_for_executor()
 
