@@ -113,9 +113,16 @@ class MercuryDataProvider:
         interval: str = "5m",
         period: str = "5d",
     ):
-        """Obtém dados diretamente do melhor provider (sem cache/retry)."""
+        """Obtém dados diretamente do melhor provider (sem cache/retry).
+
+        S33-E.2 P2 — repassa period para que a chave de cache do adapter
+        represente o pedido real (fetch do Yahoo segue fixo "5d", intacto).
+        """
         provider = self._get_best_provider(symbol)
-        return provider.get_data(symbol, interval)
+        try:
+            return provider.get_data(symbol, interval, period=period)
+        except TypeError:
+            return provider.get_data(symbol, interval)
 
     # ---------------------------------------------------------
 

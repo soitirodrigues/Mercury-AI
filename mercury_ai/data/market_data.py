@@ -6,6 +6,24 @@ from mercury_ai.core.exceptions import MarketClosedException
 from mercury_ai.data.data_normalizer import DataNormalizer
 
 
+def _accepts_period(provider) -> bool:
+    """S33-E.2 P2 — compat: só repassa period a adapters que o aceitam."""
+    try:
+        import inspect as _inspect
+        try:
+            _sig = _inspect.signature(provider.get_data)
+        except (TypeError, ValueError):
+            return False
+        for _p in _sig.parameters.values():
+            if _p.kind == _inspect.Parameter.VAR_KEYWORD:
+                return True
+            if _p.name == "period":
+                return True
+        return False
+    except Exception:
+        return False
+
+
 
 class MarketDataService:
 
@@ -137,6 +155,10 @@ class MarketDataService:
 
 
                     df = provider.get_data(
+                        symbol,
+                        interval,
+                        period=period,
+                    ) if _accepts_period(provider) else provider.get_data(
                         symbol,
                         interval
                     )
