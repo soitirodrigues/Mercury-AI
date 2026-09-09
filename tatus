@@ -1,0 +1,129 @@
+[1mdiff --git a/mercury_ai/providers/historical_replay_provider.py b/mercury_ai/providers/historical_replay_provider.py[m
+[1mindex e433d1e4..97fdc7a8 100644[m
+[1m--- a/mercury_ai/providers/historical_replay_provider.py[m
+[1m+++ b/mercury_ai/providers/historical_replay_provider.py[m
+[36m@@ -19,7 +19,17 @@[m [mclass HistoricalReplayProvider:[m
+     def get_data(self, symbol: str, interval: str = "5m", period: str = "5d") -> pd.DataFrame:[m
+         # Se temos dados em memória, retorna fatia até o índice atual[m
+         if self._df is not None:[m
+[31m-            return self._df.iloc[:self._current_index + 1][m
+[32m+[m[32m            df_slice = self._df.iloc[:self._current_index + 1][m
+[32m+[m[32m            if df_slice.empty:[m
+[32m+[m[32m                return df_slice[m
+[32m+[m[32m            # Fase 4 — M5 preserva comportamento temporal exato (sem transformação)[m
+[32m+[m[32m            if interval == "5m":[m
+[32m+[m[32m                return df_slice[m
+[32m+[m[32m            # M1 não desagregável a partir de base M5 — retorna fatia M5 por compatibilidade[m
+[32m+[m[32m            if interval == "1m":[m
+[32m+[m[32m                return df_slice[m
+[32m+[m[32m            # Fase 5 — timeframes superiores agregam EXCLUSIVAMENTE df_slice (anti-lookahead)[m
+[32m+[m[32m            return self._resample_slice(df_slice, interval)[m
+         [m
+         # Fallback: carrega do disco[m
+         filename = f"replay_{symbol}.csv"[m
+[36m@@ -30,6 +40,105 @@[m [mclass HistoricalReplayProvider:[m
+             [m
+         return pd.read_csv(filepath)[m
+ [m
+[32m+[m[32m    def _resample_slice(self, df_slice: pd.DataFrame, interval: str) -> pd.DataFrame:[m
+[32m+[m[32m        """Agrega df_slice (já fatiado até current_index) para o interval solicitado.[m
+[32m+[m
+[32m+[m[32m        Ordem temporal obrigatória (Fase 3):[m
+[32m+[m[32m          full_df -> current_index -> df_slice -> agregação -> retorno[m
+[32m+[m[32m        Nunca full_df -> resample -> slice.[m
+[32m+[m
+[32m+[m[32m        Semântica OHLCV: open=first, high=max, low=min, close=last, volume=sum[m
+[32m+[m[32m        Somente para colunas existentes. Timestamp = início do candle (floor).[m
+[32m+[m[32m        Candle parcial é preservado (não elimina, não completa com futuro).[m
+[32m+[m[32m        """[m
+[32m+[m[32m        interval_to_rule = {[m
+[32m+[m[32m            "15m": "15min",[m
+[32m+[m[32m            "30m": "30min",[m
+[32m+[m[32m            "1h": "1h",[m
+[32m+[m[32m            "4h": "4h",[m
+[32m+[m[32m            "1d": "1D",[m
+[32m+[m[32m            "1wk": "1W",[m
+[32m+[m[32m            "1mo": "ME",[m
+[32m+[m[32m        }[m
+[32m+[m[32m        rule = interval_to_rule.get(interval)[m
+[32m+[m[32m        if rule is None:[m
+[32m+[m[32m            # tenta inferir numericamente (ex: "15m" -> "15min")[m
+[32m+[m[32m            if isinstance(interval, str) and interval.endswith("m"):[m
+[32m+[m[32m                try:[m
+[32m+[m[32m                    num = int(interval[:-1])[m
+[32m+[m[32m                    rule = f"{num}min"[m
+[32m+[m[32m                except ValueError:[m
+[32m+[m[32m                    return df_slice[m
+[32m+[m[32m            elif isinstance(interval, str) and interval.endswith("h"):[m
+[32m+[m[32m                rule = interval[m
+[32m+[m[32m            else:[m
+[32m+[m[32m                return df_slice[m
+[32m+[m
+[32m+[m[32m        # Monta agg apenas para OHLCV existentes (não inventa colunas)[m
+[32m+[m[32m        agg = {}[m
+[32m+[m[32m        for col in df_slice.columns:[m
+[32m+[m[32m            lower = str(col).lower()[m
+[32m+[m[32m            if lower == "open":[m
+[32m+[m[32m                agg[col] = "first"[m
+[32m+[m[32m            elif lower == "high":[m
+[32m+[m[32m                agg[col] = "max"[m
+[32m+[m[32m            elif lower == "low":[m
+[32m+[m[32m                agg[col] = "min"[m
+[32m+[m[32m            elif lower == "close":[m
+[32m+[m[32m                agg[col] = "last"[m
+[32m+[m[32m            elif lower == "volume":[m
+[32m+[m[32m                agg[col] = "sum"[m
+[32m+[m[32m        if not agg:[m
+[32m+[m[32m            return df_slice[m
+[32m+[m
+[32m+[m[32m        # Garante DatetimeIndex[m
+[32m+[m[32m        if not isinstance(df_slice.index, pd.DatetimeIndex):[m
+[32m+[m[32m            try:[m
+[32m+[m[32m                tmp = df_slice.copy()[m
+[32m+[m[32m                tmp.index = pd.to_datetime(tmp.index)[m
+[32m+[m[32m                df_slice = tmp[m
+[32m+[m[32m            except Exception:[m
+[32m+[m[32m                return df_slice[m
+[32m+[m[32m        if not isinstance(df_slice.index, pd.DatetimeIndex):[m
+[32m+[m[32m            return df_slice[m
+[32m+[m[32m        # Ordena se necessário[m
+[32m+[m[32m        try:[m
+[32m+[m[32m            if not df_slice.index.is_monotonic_increasing:[m
+[32m+[m[32m                df_slice = df_slice.sort_index()[m
+[32m+[m[32m        except Exception:[m
+[32m+[m[32m            df_slice = df_slice.sort_index()[m
+[32m+[m
+[32m+[m[32m        # Agregação por floor + groupby evita bins vazios de mercado fechado[m
+[32m+[m[32m        try:[m
+[32m+[m[32m            floored = df_slice.index.floor(rule)[m
+[32m+[m[32m        except Exception:[m
+[32m+[m[32m            # fallback resample[m
+[32m+[m[32m            try:[m
+[32m+[m[32m                resampled = df_slice.resample(rule).agg(agg)[m
+[32m+[m[32m                resampled = resampled.dropna(how="all")[m
+[32m+[m[32m                close_cols = [c for c in resampled.columns if str(c).lower() == "close"][m
+[32m+[m[32m                if close_cols:[m
+[32m+[m[32m                    resampled = resampled.dropna(subset=close_cols, how="all")[m
+[32m+[m[32m                return resampled[m
+[32m+[m[32m            except Exception:[m
+[32m+[m[32m                return df_slice[m
+[32m+[m
+[32m+[m[32m        try:[m
+[32m+[m[32m            grouped = df_slice.groupby(floored, sort=True).agg(agg)[m
+[32m+[m[32m            grouped.index.name = df_slice.index.name[m
+[32m+[m[32m            if not isinstance(grouped.index, pd.DatetimeIndex):[m
+[32m+[m[32m                try:[m
+[32m+[m[32m                    grouped.index = pd.to_datetime(grouped.index)[m
+[32m+[m[32m                except Exception:[m
+[32m+[m[32m                    pass[m
+[32m+[m[32m            return grouped[m
+[32m+[m[32m        except Exception:[m
+[32m+[m[32m            try:[m
+[32m+[m[32m                resampled = df_slice.resample(rule).agg(agg).dropna(how="all")[m
+[32m+[m[32m                return resampled[m
+[32m+[m[32m            except Exception:[m
+[32m+[m[32m                return df_slice[m
+[32m+[m
+     def is_available(self) -> bool:[m
+         return True[m
+ [m
