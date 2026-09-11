@@ -6,7 +6,12 @@ if str(ROOT) not in sys.path:
 
 import streamlit as st
 import pandas as pd
-from mercury_ai.brain.scanner import MercuryScanner
+from mercury_ai.brain.scan_service import run_dashboard_scan
+from app.dashboard.scan_presentation import (
+    present_scan,
+    status_banner,
+    counters_line,
+)
 from mercury_ai.analysis.operational_history import OperationalHistory
 from mercury_ai.analysis.performance_statistics import PerformanceStatistics
 from mercury_ai.analysis.integrity_checker import IntegrityChecker
@@ -22,9 +27,26 @@ st.sidebar.subheader("Modo de Operação")
 st.sidebar.write(f"**Demo Mode:** {'ATIVO' if settings.READ_ONLY else 'DESATIVADO'}")
 st.sidebar.write(f"**Versão:** {settings.VERSION}")
 
-# 1. Scanner & Market
+# 1. Scanner & Market — S33-E.5: UMA execucao workers=4 + ScanReport real.
+# S33-E.6: APENAS apresentacao do envelope (TOP3/status/contadores verbatim).
 st.header("1. Scanner & Mercado")
-analyses = MercuryScanner().scan()
+analyses, _scan_report = run_dashboard_scan()
+_view = present_scan(_scan_report.to_dict())
+st.caption(
+    f"scan_id={_view.get('scan_id')} status={_view.get('status')} "
+    f"completed={_view.get('progress_text')} "
+    f"ranqueados={_view.get('ranked_count')} "
+    f"workers={_view.get('workers')} duration={_view.get('duration_s')}s"
+)
+st.caption(counters_line(_view))
+st.caption(status_banner(_view))
+if _view.get("has_top3"):
+    st.dataframe(pd.DataFrame(_view.get("top3")), use_container_width=True)
+else:
+    st.info(
+        "TOP 3 vazio neste ciclo — nenhum item inventado. "
+        f"(status={_view.get('status')})"
+    )
 if analyses:
     analysis = analyses[0] # Mostrando o primeiro por conveniência
     st.metric("Ativo", analysis.market.symbol)

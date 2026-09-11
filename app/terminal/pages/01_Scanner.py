@@ -6,18 +6,44 @@ if str(ROOT) not in sys.path: sys.path.insert(0, str(ROOT))
 import streamlit as st
 import pandas as pd
 import time
-from mercury_ai.brain.scanner import MercuryScanner
+from mercury_ai.brain.scan_service import run_dashboard_scan
+from app.dashboard.scan_presentation import (
+    present_scan,
+    status_banner,
+    counters_line,
+)
 from mercury_ai.config import settings
 
 st.set_page_config(page_title="Scanner Institucional", layout="wide")
 st.title("🔍 Scanner Institucional")
 
-# Load data (Cached)
+# Load data (Cached) — S33-E.5: UMA execucao workers=4 + ScanReport real.
+# S33-E.6: APENAS apresentacao do envelope (TOP3/status/contadores verbatim).
 @st.cache_data(ttl=60)
 def load_data():
-    return MercuryScanner().scan()
+    ranked, report = run_dashboard_scan()
+    return ranked, report.to_dict()
 
-analyses = load_data()
+analyses, scan_report = load_data()
+view = present_scan(scan_report)
+st.caption(
+    f"scan_id={view.get('scan_id')} "
+    f"status={view.get('status')} "
+    f"completed={view.get('progress_text')} "
+    f"ranqueados={view.get('ranked_count')} "
+    f"workers={view.get('workers')}"
+)
+st.caption(counters_line(view))
+st.caption(status_banner(view))
+
+st.subheader("TOP 3 — ScanReport (sem recálculo)")
+if view.get("has_top3"):
+    st.dataframe(pd.DataFrame(view.get("top3")), use_container_width=True)
+else:
+    st.info(
+        "TOP 3 vazio neste ciclo — nenhum item inventado. "
+        f"(status={view.get('status')} completed={view.get('progress_text')})"
+    )
 
 # Controls
 col_ctrl1, col_ctrl2 = st.columns([1, 4])

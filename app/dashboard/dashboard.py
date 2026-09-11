@@ -9,7 +9,12 @@ if str(ROOT) not in sys.path:
 
 import streamlit as st
 import pandas as pd
-from mercury_ai.brain.scanner import MercuryScanner
+from mercury_ai.brain.scan_service import run_dashboard_scan
+from app.dashboard.scan_presentation import (
+    present_scan,
+    status_banner,
+    counters_line,
+)
 from mercury_ai.analysis.performance_statistics import PerformanceStatistics
 from mercury_ai.analysis.engine_performance_auditor import EnginePerformanceAuditor
 from mercury_ai.analysis.institutional_report_generator import InstitutionalReportGenerator
@@ -28,15 +33,88 @@ render_logout_button()
 
 st.title("🧠 Mercury AI | Dashboard Institucional")
 
+# S33-E.5 — UMA execucao pelo caminho validado (workers=4) + ScanReport real.
+# S33-E.6 — APENAS apresentacao: TOP3/status/contadores consomem ScanReport.top3
+# via present_scan(), SEM recalcular ranking, SEM segundo scan, SEM engines.
 @st.cache_data
 def load_data():
-    scanner = MercuryScanner()
-    return scanner.scan()
+    ranked, report = run_dashboard_scan()
+    return ranked, report.to_dict()
 
-analyses = load_data()
+analyses, scan_report = load_data()
+
+# S33-E.6 — view-model de apresentacao (passthrough, sem inteligencia).
+view = present_scan(scan_report)
+
+# S33-E.6 — TOP 3 REAL + ESTADOS (consome UM ScanReport, nao executa scanner).
+st.subheader("TOP 3 — ScanReport (sem recálculo)")
+st.caption(f"scan_id={view.get('scan_id')}")
+_banner = status_banner(view)
+_status = view.get("status")
+if _status == "COMPLETE":
+    st.success(_banner)
+elif _status == "PARTIAL":
+    st.warning(_banner)
+elif _status == "TIMEOUT":
+    st.error(_banner)
+elif _status == "ERROR":
+    st.error(f"{_banner} — {view.get('error')}")
+else:
+    st.warning(_banner)
+st.caption(counters_line(view))
+st.caption(
+    f"Progresso: {view.get('progress_text')} "
+    f"| duração={view.get('duration_s')}s "
+    f"| workers={view.get('workers')} "
+    f"| ranqueados={view.get('ranked_count')}"
+)
+if view.get("has_top3"):
+    st.dataframe(pd.DataFrame(view.get("top3")), use_container_width=True)
+else:
+    st.info(
+        "TOP 3 vazio neste ciclo — nenhum item inventado. "
+        f"(status={view.get('status')} completed={view.get('progress_text')})"
+    )
+with st.expander("Detalhe por ativo (RANKED vs SKIPPED vs ERROR)", expanded=False):
+    _per = view.get("per_asset", [])
+    if _per:
+        st.dataframe(
+            pd.DataFrame(
+                [
+                    {
+                        "symbol": r.get("symbol"),
+                        "outcome": r.get("outcome"),
+                        "decision": r.get("decision"),
+                        "score": r.get("score"),
+                        "error": r.get("error"),
+                    }
+                    for r in _per
+                ]
+            ),
+            use_container_width=True,
+        )
+    else:
+        st.write("per_asset vazio.")
+
+# Estado do backend disponivel para a UI (Fase 7: sem placeholder inventado).
+with st.sidebar.expander("Estado do Scan (S33-E.5/E.6)", expanded=False):
+    st.write(f"**scan_id:** {view.get('scan_id')}")
+    st.write(f"**status:** {view.get('status')}")
+    st.write(f"**completed:** {view.get('progress_text')}")
+    st.write(f"**ranqueados:** {view.get('ranked_count')}")
+    st.write(f"**duration_s:** {view.get('duration_s')}")
+    st.write(f"**workers:** {view.get('workers')}")
+    st.write(f"**top3:** {view.get('top3_symbols')}")
+    st.write(f"**contadores:** {counters_line(view)}")
 
 if not analyses:
-    st.warning("Nenhuma oportunidade encontrada.")
+    st.warning(
+        f"Nenhuma oportunidade encontrada. "
+        f"(scan {scan_report.get('scan_id')} "
+        f"status={scan_report.get('status')} "
+        f"completed={scan_report.get('symbols_completed')}/"
+        f"{scan_report.get('symbols_total')})"
+    )
     st.stop()
 
 # Selector
@@ -63,7 +141,8 @@ st.sidebar.write(f"**Health:** {'🟢' if health.system_ready else '🔴'}")
 
 # Statistics & Counters
 st.sidebar.subheader("Auditoria de Dados")
-snapshots = MercuryScanner().snapshot_logger.list_snapshots()
+from mercury_ai.database.snapshot_logger import DecisionSnapshotLogger
+snapshots = DecisionSnapshotLogger().list_snapshots()
 st.sidebar.write(f"**Snapshots:** {len(snapshots)}")
 st.sidebar.write(f"**Replay Count:** {len(snapshots)}") # Replay is supported if snapshots exist
 
@@ -128,7 +207,17 @@ with tabs[1]:
 
 with tabs[2]:
     st.subheader("Scanner Institucional")
-    all_analyses = load_data()
+    # S33-E.5: reusa a execucao unica do load_data (sem segundo scan).
+    # S33-E.6: contadores reais — completed/total DISTINTO de ranked.
+    all_analyses = analyses
+    st.caption(
+        f"scan_id={view.get('scan_id')} "
+        f"status={view.get('status')} "
+        f"completed={view.get('progress_text')} "
+        f"ranqueados={view.get('ranked_count')} "
+        f"workers={view.get('workers')}"
+    )
+    st.caption(counters_line(view))
     scan_data = []
     for a in all_analyses:
         scan_data.append({
