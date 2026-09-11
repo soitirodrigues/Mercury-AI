@@ -533,6 +533,13 @@ class AnalysisPipeline:
                 structure_analysis=structure,
                 decision=decision
             )
+            # S33-E.6: SIGNAL formal (propagacao pura; nunca altera decisao).
+            # last_m5_ts vem do df real (df.index[-1]); sem vela -> EXPIRED honesto.
+            try:
+                from mercury_ai.signals.signal_builder import build_signal_from_analysis as _build_signal
+                result = replace(result, signal=_build_signal(result, market_df=df))
+            except Exception:
+                pass
             self.profiler.end_pipeline()
             
             if self.runtime_report:

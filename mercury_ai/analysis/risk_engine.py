@@ -64,11 +64,22 @@ class RiskEngine:
         atr = context.market.atr
         price = context.market.close
 
-        invalidation = (
-            price * 0.99
-            if context.smart_money.structure.trend == "BULLISH"
-            else price * 1.01
-        )
+        # M5-SMC: invalidação por ATR (1.5x) em vez de percentual fixo 1%.
+        # Preserva RR=2.0 e todo o restante do cálculo (VaR/Kelly/stress intactos).
+        # Fallback: se ATR inválido, usa o percentual legado para nunca quebrar.
+        _atr = atr if isinstance(atr, (int, float)) and atr > 0 else 0.0
+        if _atr > 0:
+            invalidation = (
+                price - 1.5 * _atr
+                if context.smart_money.structure.trend == "BULLISH"
+                else price + 1.5 * _atr
+            )
+        else:
+            invalidation = (
+                price * 0.99
+                if context.smart_money.structure.trend == "BULLISH"
+                else price * 1.01
+            )
 
         stop = invalidation
         reward_dist = (price - stop) * 2.0

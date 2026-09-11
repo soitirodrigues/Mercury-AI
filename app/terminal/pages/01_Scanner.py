@@ -13,6 +13,8 @@ from app.dashboard.scan_presentation import (
     counters_line,
 )
 from mercury_ai.config import settings
+from mercury_ai.signals.top3_selector import select_top3
+from app.dashboard.m5_widgets import render_m5_clock, render_signal_cards
 
 st.set_page_config(page_title="Scanner Institucional", layout="wide")
 st.title("🔍 Scanner Institucional")
@@ -36,7 +38,23 @@ st.caption(
 st.caption(counters_line(view))
 st.caption(status_banner(view))
 
-st.subheader("TOP 3 — ScanReport (sem recálculo)")
+# M5-SMC: relógio servidor + countdown (fronteira de last_m5_ts do Top-3).
+_top3_raw = view.get("top3") or []
+_last_m5 = None
+try:
+    _first = _top3_raw[0] if _top3_raw else None
+    _sig0 = (_first.get("signal") if isinstance(_first, dict) else None) or {}
+    _last_m5 = _sig0.get("last_m5_ts")
+except Exception:
+    _last_m5 = None
+render_m5_clock(_last_m5)
+
+# M5-SMC: Top-3 filtrado (BUY/SELL + VALID + RR>=2 + score>=70, 0..3).
+# O ScanReport bruto permanece exibido abaixo, verbatim, sem recálculo.
+_top3 = select_top3(scan_report)
+render_signal_cards(_top3)
+
+st.subheader("TOP 3 — ScanReport (bruto, sem recálculo)")
 if view.get("has_top3"):
     st.dataframe(pd.DataFrame(view.get("top3")), use_container_width=True)
 else:

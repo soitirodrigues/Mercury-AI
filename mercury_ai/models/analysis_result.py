@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import Tuple
+from typing import Optional, Tuple
 from enum import Enum
 from mercury_ai.utils.deterministic_clock import DeterministicClock
 from mercury_ai.config import settings
@@ -22,6 +22,7 @@ from mercury_ai.models.evidence_ranking import EvidenceRankingResult
 from mercury_ai.models.volume_analysis import VolumeAnalysis
 from mercury_ai.models.market_structure_profile import MarketStructureProfile
 from mercury_ai.models.decision_result import DecisionResult
+from mercury_ai.models.signal import Signal
 
 # AnalysisDirection moved to direction.py to avoid circular imports
 
@@ -46,5 +47,7 @@ class AnalysisResult:
     volume_analysis: VolumeAnalysis
     structure_analysis: MarketStructureProfile
     decision: DecisionResult
+    # S33-E.6: SIGNAL formal (propagacao; None = ainda nao construito).
+    signal: Optional[Signal] = None
     timestamp: str = field(default_factory=lambda: DeterministicClock.utcnow().isoformat())
     version: str = field(default_factory=lambda: settings.VERSION)

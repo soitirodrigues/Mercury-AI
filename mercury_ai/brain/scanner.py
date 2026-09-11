@@ -100,6 +100,8 @@ class ScanReport:
                     "grade": getattr(dec, "grade", None),
                     "audit_id": getattr(dec, "audit_id", None),
                     "regime": getattr(reg, "regime", None) if reg else None,
+                    # S33-E.6: SIGNAL formal (propagacao; ranking intacto).
+                    "signal": MercuryScanner._signal_payload(a),
                 }
             except Exception:
                 return {"symbol": "?", "error": "summarize-failed"}
@@ -497,7 +499,31 @@ class MercuryScanner:
                 })
         except Exception:
             pass
+        try:
+            if analysis is not None:
+                # S33-E.6: SIGNAL formal (propagacao; nunca altera outcome).
+                row["signal"] = MercuryScanner._signal_payload(analysis)
+        except Exception:
+            pass
         return row
+
+    @staticmethod
+    def _signal_payload(analysis):
+        """Signal serializado (S33-E.6) para ranked/top3/per_asset.
+
+        Usa o Signal pre-construido pelo pipeline (AnalysisResult.signal);
+        fallback constroi via propagacao pura quando ausente (resultados
+        terminais sem df) — nunca recalcula decisao/ranking, nunca lanca
+        (retorna None so em erro inesperado).
+        """
+        try:
+            prebuilt = getattr(analysis, "signal", None)
+            if prebuilt is not None and hasattr(prebuilt, "to_dict"):
+                return prebuilt.to_dict()
+            from mercury_ai.signals.signal_builder import build_signal_from_analysis
+            return build_signal_from_analysis(analysis).to_dict()
+        except Exception:
+            return None
 
     def _build_worker_pipeline(self, scan_id=None):
         """Pipeline isolada por ativo (S33-E.2): provider+service+pipeline próprios.

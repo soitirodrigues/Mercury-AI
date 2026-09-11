@@ -169,6 +169,15 @@ EXCLUDED_EXACT = frozenset({
     "filename", "filepath", "file_path", "tmp_path", "temp_path",
     "snapshot_path", "memory_path", "registry_file", "base_path",
     "worker", "worker_id", "thread", "thread_id",
+    # S33-E.6: envelope temporal de emissao do Signal (identidade wall-clock,
+    # mesma categoria dos IDs/timestamps ja excluidos — sem clock congelado
+    # neste teste, seq x par emitem signal_ts em instantes reais distintos).
+    # last_m5_ts/next_m5_ts/entry_window_end SEGUEM comparados (derivam do
+    # dataset congelado, deterministicos). Conteudo semantico do Signal
+    # (decision, entry_price, risco, MTF, reason) SEGUE comparado.
+    "signal_id", "signal_ts", "entry_window_start", "entry_window_seconds",
+    "seconds_to_next_m5", "entry_valid_for_next_m5", "entry_timing_state",
+    "valid_for_next_m5",
 })
 
 
