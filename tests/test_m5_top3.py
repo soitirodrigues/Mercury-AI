@@ -9,6 +9,12 @@ from mercury_ai.analysis.institutional_confirmation import (
 from mercury_ai.signals.top3_selector import select_top3
 from mercury_ai.signals.m5_alerts import alert_state
 from mercury_ai.signals.m5_timing import compute_next_m5, compute_entry_window
+from mercury_ai.signals.entry_time import (
+    countdown_s,
+    enrich_top3_oportunidades,
+    format_br,
+    next_entry_utc,
+)
 
 
 def _df(n=60, seed=7):
@@ -81,3 +87,27 @@ def test_timing_strict_ceil():
     assert w["valid"] is True and w["state"] == "VALID"
     w2 = compute_entry_window(nxt, nxt)
     assert w2["valid"] is False and w2["state"] == "EXPIRED"
+
+
+def test_entry_time_next_m5():
+    # Caso do print: sinal 02:52:22 -> entrada 02:55:00Z
+    assert next_entry_utc(signal_ts="2026-09-13T02:52:22.061200+00:00") == "2026-09-13T02:55:00+00:00"
+    assert next_entry_utc(signal_ts="2026-09-13T02:55:00+00:00") == "2026-09-13T03:00:00+00:00"
+    assert next_entry_utc() is None
+    assert format_br("2026-09-13T02:55:00+00:00") == "13/09 02:55:00 UTC"
+    assert format_br(None) == "--"
+
+
+def test_enrich_top3_oportunidades():
+    ops = [
+        {"symbol": "LTC-USD", "decision": "BUY", "score": 72.99,
+         "signal_ts": "2026-09-13T02:52:22+00:00"},
+        {"symbol": "XRP-USD", "decision": "BUY", "score": 72.93,
+         "signal": {"signal_ts": "2026-09-13T02:52:22+00:00"}},
+    ]
+    out = enrich_top3_oportunidades(ops)
+    assert out[0]["entrada_sugerida_utc"] == "2026-09-13T02:55:00+00:00"
+    assert out[0]["entrada_sugerida_br"] == "13/09 02:55:00 UTC"
+    assert out[1]["entrada_sugerida_utc"] == "2026-09-13T02:55:00+00:00"
+    # verbatim: originais intactos
+    assert out[0]["symbol"] == "LTC-USD" and out[0]["score"] == 72.99
