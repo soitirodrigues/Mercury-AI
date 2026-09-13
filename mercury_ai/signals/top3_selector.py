@@ -4,7 +4,8 @@ Regras absolutas:
 - NUNCA recalcula score, confluencia, risco ou ranking base.
 - Consome exclusivamente ScanReport.to_dict() (top3 + ranked, ordem preservada).
 - Emite 0..3 sinais: nunca completa com sintetico.
-- Gate: decision BUY/SELL + entry_timing_state VALID + risk_reward>=2.0 + score>=70.
+- Gate: decision BUY/SELL + entry_timing_state VALID + risk_reward>=2.0 + score>=70
+  + forward_state CONFIRMED (F7: sem continuação p/ a próxima vela = sem Top-3).
 - Dedup por simbolo (maior score vence).
 - Ordena: (score, confidence, confluence, risk_reward) desc.
 - EXPIRED / WAIT / SKIPPED / ERROR jamais entram.
@@ -17,6 +18,7 @@ from typing import Any, Dict, List
 MIN_SCORE = 70.0
 MIN_RR = 2.0
 VALID_STATE = "VALID"
+FORWARD_OK = "CONFIRMED"
 
 
 def _sig(entry: Dict[str, Any]) -> Dict[str, Any]:
@@ -36,6 +38,11 @@ def _is_eligible(entry: Dict[str, Any]) -> bool:
         return False
     sig = _sig(entry)
     if sig.get("entry_timing_state", VALID_STATE) != VALID_STATE:
+        return False
+    # CORREÇÃO F7 (falso positivo): forward-bias CONFIRMED obrigatório.
+    # Sinal cuja direção não sobrevive até a próxima vela (WEAK/EXPIRED)
+    # nunca entra no Top-3 — operador Hezilex só vê continuação real.
+    if str(sig.get("forward_state", FORWARD_OK)).upper() != FORWARD_OK:
         return False
     try:
         rr = float(sig.get("risk_reward", 0) or 0)

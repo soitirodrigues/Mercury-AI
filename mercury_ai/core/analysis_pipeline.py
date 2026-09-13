@@ -444,6 +444,12 @@ class AnalysisPipeline:
             self._record_telemetry("EvidenceComposition", start, context, evidence_bundle, evidence_count=len(evidence_bundle.evidences))
 
             # 5. Risk Analysis
+            # CORREÇÃO F5 (falso positivo): garfo direcional por decisão.
+            # O RiskEngine calcula stop/TP pelo lado dominante das evidências;
+            # se a decisão final divergir do lado, recalcula o espelho
+            # (stop/TP/invalidação/RR) SEM tocar em VaR/Kelly/stress/qualidade.
+            # Sem isso, SELL com estrutura BULLISH gerava RR -2.0 (SL e TP
+            # para o mesmo lado) — número inventado que ia parar no painel.
             start = DeterministicClock.utcnow()
             with self.profiler.stage("RiskAnalysis"):
                 risk_assessment = self.risk_engine.assess(context, evidence_bundle)
@@ -512,6 +518,49 @@ class AnalysisPipeline:
                 confluence = _confl_tuple[0] if isinstance(_confl_tuple, tuple) else _confl_tuple
 
             # Final Result Assembly
+            # CORREÇÃO F5b (falso positivo): garfo direcional pós-decisão.
+            # Se decision=SELL mas o risco veio BULLISH (stop abaixo, TP acima),
+            # espelha stop/TP/invalidação p/ o lado SELL com o mesmo ATR-dist
+            # (RR volta a +2.0). BUY espelha o inverso. WAIT mantém.
+            # Não toca VaR/Kelly/stress/qualidade — só geometria do trade.
+            try:
+                _dec = str(getattr(decision, "decision", "") or "").upper()
+                _px = float(market.close) if market.close else 0.0
+                _sl = float(getattr(risk_assessment, "suggested_stop", 0.0) or 0.0)
+                _tp = float(getattr(risk_assessment, "suggested_take_profit", 0.0) or 0.0)
+                if _dec in ("BUY", "SELL") and _px > 0 and _sl > 0 and _tp > 0:
+                    _need_bull = (_sl < _px < _tp)
+                    _need_bear = (_tp < _px < _sl)
+                    _ok = (_need_bull if _dec == "BUY" else _need_bear)
+                    if not _ok:
+                        _dist = abs(_px - _sl)
+                        if _dist > 0:
+                            if _dec == "BUY":
+                                _nsl, _ntp = _px - _dist, _px + 2.0 * _dist
+                            else:
+                                _nsl, _ntp = _px + _dist, _px - 2.0 * _dist
+                            from dataclasses import replace as _rp
+                            risk_assessment = _rp(
+                                risk_assessment,
+                                suggested_stop=float(_nsl),
+                                suggested_take_profit=float(_ntp),
+                                invalidation_point=float(_nsl),
+                                risk_reward_ratio=2.0,
+                            )
+                            context = self.context_builder.build(
+                                market=market,
+                                trend=trend_evidences,
+                                price_action=price_action,
+                                support_resistance=sr,
+                                smart_money=smart_money,
+                                market_state=market_state,
+                                regime=regime,
+                                risk_assessment=risk_assessment,
+                                mtf_consensus=mtf_consensus,
+                                structure=structure,
+                            )
+            except Exception:
+                pass
             result = AnalysisResult(
                 market=market,
                 context=context,

@@ -163,18 +163,22 @@ class YahooAdapter(BaseAdapter):
         with self._cache_lock:
             self._downloads += 1
 
-        # S33-E.2 P2 — fetch INTACTO (proibido alterar quantidade de dados):
-        # period fixo "5d"; start/end/auto_adjust NÃO são repassados à rede
-        # porque nenhum chamador atual os utiliza (verificado: MarketDataService
-        # e MTFEngine passam só interval/period). A chave os inclui de forma
-        # defensiva: se um dia forem utilizados, nunca colidem com entradas
-        # antigas. Pedidos com period distinto (ex: MTF "1mo" vs pipeline "5d")
-        # nunca compartilham entrada — cada um busca o próprio dataset.
+        # Hezilex operacional: period/request/timeout env-driven.
+        # MERCURY_YF_PERIOD (default "5d" — legado intacto),
+        # MERCURY_YF_TIMEOUT_S (default 20s — yfinance 1.5.2 aceita timeout).
+        # Sem torch em pesos/formulas: so limites de rede.
+        import os as _os
+        _period = _os.getenv("MERCURY_YF_PERIOD", "5d")
+        try:
+            _timeout = float(_os.getenv("MERCURY_YF_TIMEOUT_S", "20"))
+        except (TypeError, ValueError):
+            _timeout = 20.0
         df = yf.download(
             symbol,
-            period="5d",
+            period=_period,
             interval=interval,
-            progress=False
+            progress=False,
+            timeout=min(max(_timeout, 5.0), 60.0),
         )
 
 

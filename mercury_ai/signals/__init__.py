@@ -17,6 +17,7 @@ from mercury_ai.signals.m5_timing import (
 from mercury_ai.signals.signal_builder import build_signal_from_analysis
 from mercury_ai.signals.top3_selector import select_top3, setup_label
 from mercury_ai.signals.m5_alerts import alert_state
+from mercury_ai.signals.forward_bias import forward_bias, CONFIRMED, WEAK, EXPIRED_FWD
 from mercury_ai.signals.entry_time import (
     countdown_s,
     enrich_top3_oportunidades,
@@ -37,6 +38,10 @@ __all__ = [
     "select_top3",
     "setup_label",
     "alert_state",
+    "forward_bias",
+    "CONFIRMED",
+    "WEAK",
+    "EXPIRED_FWD",
     "next_entry_utc",
     "format_br",
     "countdown_s",

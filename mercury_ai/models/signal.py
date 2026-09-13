@@ -71,6 +71,11 @@ class Signal:
     reason: str = ""
     audit_id: str = ""
 
+    # --- Forward-bias M5 (classificação p/ PRÓXIMA vela; sem alterar decisão) ---
+    forward_state: str = "EXPIRED"
+    forward_reason: str = ""
+    forward_direction: str = "NONE"
+
     @property
     def symbol(self) -> str:
         """Alias operacional: symbol == asset (contrato S33-E.6)."""

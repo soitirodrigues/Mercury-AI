@@ -112,12 +112,19 @@ class IndicatorEngine:
         )
 
 
-        # ADX simplificado (V1)
-
-        adx = pd.Series(
-            0.0,
-            index=data.index
-        )
+        # ADX-14 Wilder (F4: antes zerado — regime nunca detectava tendência).
+        # +DM/-DM suavizados por Wilder, DX médio 14 períodos. Sem upload de
+        # pesos: cálculo determinístico puro sobre high/low/close.
+        up_move = high.diff()
+        down_move = (-low.diff()).clip(lower=0)
+        up_move = up_move.clip(lower=0)
+        plus_dm = pd.Series(np.where((up_move > down_move), up_move, 0.0), index=data.index)
+        minus_dm = pd.Series(np.where((down_move > up_move), down_move, 0.0), index=data.index)
+        atr_w = true_range.ewm(alpha=1.0 / 14, adjust=False).mean()
+        plus_di = 100.0 * (plus_dm.ewm(alpha=1.0 / 14, adjust=False).mean() / atr_w.replace(0, np.nan))
+        minus_di = 100.0 * (minus_dm.ewm(alpha=1.0 / 14, adjust=False).mean() / atr_w.replace(0, np.nan))
+        dx = (100.0 * (plus_di - minus_di).abs() / (plus_di + minus_di).replace(0, np.nan)).fillna(0.0)
+        adx = dx.ewm(alpha=1.0 / 14, adjust=False).mean().fillna(0.0)
 
 
 

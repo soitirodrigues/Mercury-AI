@@ -128,6 +128,25 @@ class MercuryDecisionEngine:
             context, evidence_bundle
         )
 
+        # CORREÇÃO F6 (falso positivo): gate de geometria do risco.
+        # Se stop/TP estão do mesmo lado do preço (RR<=0 ou stop==TP==0),
+        # NENHUMA decisão direcional é válida — força WAIT a jusante
+        # (is_valid=False derruba nas regras 1 do Resolver). WAIT legítimo
+        # nunca gera SL/TP no painel.
+        try:
+            _px = float(getattr(context.market, "close", 0.0) or 0.0)
+            _ra = getattr(context, "risk_assessment", None)
+            _sl = float(getattr(_ra, "suggested_stop", 0.0) or 0.0) if _ra is not None else 0.0
+            _tp = float(getattr(_ra, "suggested_take_profit", 0.0) or 0.0) if _ra is not None else 0.0
+            _rr = float(getattr(_ra, "risk_reward_ratio", 0.0) or 0.0) if _ra is not None else 0.0
+            if _px > 0 and ((_sl <= 0 or _tp <= 0) or _rr <= 0):
+                is_valid = False
+                validation_warnings = list(validation_warnings) + [
+                    f"RISK_GEOMETRY_INVALID: price={_px} stop={_sl} tp={_tp} rr={_rr}"
+                ]
+        except Exception:
+            pass
+
         if not trade_filter_result.allowed:
             is_valid = False
             validation_warnings.extend(trade_filter_result.reasons)

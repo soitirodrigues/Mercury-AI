@@ -90,7 +90,10 @@ class SmartMoneyEngine:
 
         # OB
         ob = self.ob_engine.analyze(df)
-        if ob is not None: 
-            evidences.append(Evidence("SmartMoney", "OrderBlock", "NEUTRAL", 50.0, 80.0, f"OB detectado", 30.0))
+        if ob is not None:
+            # CORREÇÃO F2 (falso positivo): OB carrega a DIREÇÃO do impulso
+            # (BULLISH/BEARISH), nunca NEUTRAL — evidência NEUTRAL com peso 30
+            # diluía a confluência direcional e mascarava conflito real.
+            evidences.append(Evidence("SmartMoney", f"OrderBlock {ob.direction}", ob.direction, 50.0, 80.0, f"OB {ob.direction} detectado", 30.0))
 
         return evidences

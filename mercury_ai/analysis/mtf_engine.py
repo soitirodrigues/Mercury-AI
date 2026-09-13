@@ -32,14 +32,23 @@ class MTFEngine:
         main_m5_df: Optional[pd.DataFrame] = None,
         use_parallel: bool = True,
         max_workers: int = 2,
+        fetch_timeout_s: float = 30.0,
     ) -> Tuple[List[Evidence], MTFConsensus]:
         """Análise MTF com otimizações seguras (R01+R02+R03).
 
         - R01: reuso de swings (evaluate_with_swings) — elimina 2ª detect_swings por TF.
         - R02: fetch paralelo controlado workers=2.
         - R03: reuso M5 do pipeline principal quando elegível (condições verificadas).
+        - Hezilex: fetch_timeout_s env MERCURY_MTF_FETCH_TIMEOUT_S (default 30s);
+          sem worker pendurado além do teto por TF.
         Semântica 100% preservada; retorna REUSED/NOT_REUSED em timeframe_errors quando aplicável.
         """
+        import os as _os
+        try:
+            _ft = float(_os.getenv("MERCURY_MTF_FETCH_TIMEOUT_S", str(fetch_timeout_s)))
+        except (TypeError, ValueError):
+            _ft = float(fetch_timeout_s)
+        fetch_timeout_s = min(max(_ft, 5.0), 120.0)
         all_evidences: List[Evidence] = []
         timeframes = ["M1", "M5", "M15", "H1", "H4"]
         timeframe_status: Dict[str, str] = {}
@@ -84,7 +93,7 @@ class MTFEngine:
                 for fut in as_completed(fut_map):
                     tf = fut_map[fut]
                     try:
-                        df = fut.result(timeout=30)
+                        df = fut.result(timeout=fetch_timeout_s)
                         fetched[tf] = df
                         if tf == "M5" and m5_reuse_eligible and df is main_m5_df or (main_m5_df is not None and df is not None and len(df)==len(main_m5_df) and not df.empty):
                             # mark reused (distinguish by object identity or structural match)

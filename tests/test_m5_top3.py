@@ -9,12 +9,14 @@ from mercury_ai.analysis.institutional_confirmation import (
 from mercury_ai.signals.top3_selector import select_top3
 from mercury_ai.signals.m5_alerts import alert_state
 from mercury_ai.signals.m5_timing import compute_next_m5, compute_entry_window
+from mercury_ai.signals.forward_bias import forward_bias
 from mercury_ai.signals.entry_time import (
     countdown_s,
     enrich_top3_oportunidades,
     format_br,
     next_entry_utc,
 )
+from mercury_ai.data.indicator_engine import IndicatorEngine
 
 
 def _df(n=60, seed=7):
@@ -111,3 +113,95 @@ def test_enrich_top3_oportunidades():
     assert out[1]["entrada_sugerida_utc"] == "2026-09-13T02:55:00+00:00"
     # verbatim: originais intactos
     assert out[0]["symbol"] == "LTC-USD" and out[0]["score"] == 72.99
+
+
+def _risk_ctx(price, atr, trend, bull_n=3, bear_n=1):
+    from mercury_ai.models.market_data import MarketData
+    from mercury_ai.models.market_structure import MarketStructure
+    from mercury_ai.models.smart_money import SmartMoneyAnalysis
+    from mercury_ai.models.market_context import MarketContext
+    from mercury_ai.models.market_evidence_bundle import MarketEvidenceBundle
+    from mercury_ai.models.evidence import Evidence
+    mkt = MarketData(symbol="T", timeframe="M5", close=price, ema9=price,
+                     ema21=price, ema50=price, rsi=50.0, atr=atr, adx=25.0,
+                     macd=0.0, macd_signal=0.0, bollinger_upper=price,
+                     bollinger_lower=price, volume=1000.0)
+    evs = tuple([Evidence("E", f"b{i}", "BULLISH", 70.0, 70.0, "d", 10.0) for i in range(bull_n)] +
+                [Evidence("E", f"s{i}", "BEARISH", 70.0, 70.0, "d", 10.0) for i in range(bear_n)])
+    ctx = MarketContext(market=mkt, trend=[], price_action=None,
+                        support_resistance=None,
+                        smart_money=SmartMoneyAnalysis(structure=MarketStructure(trend=trend)),
+                        market_state=None, liquidity=None, market_regime=None,
+                        mtf_consensus=None, risk_assessment=None)
+    return ctx, MarketEvidenceBundle(evidences=evs, timestamp="t", asset="T", timeframe="M5")
+
+
+def test_f1_risk_side_by_evidence():
+    # F1: estrutura BULLISH mas evidências BEARISH -> stop ACIMA (lado SELL)
+    from mercury_ai.analysis.risk_engine import RiskEngine
+    ctx, bundle = _risk_ctx(100.0, 1.0, "BULLISH", bull_n=1, bear_n=4)
+    ra = RiskEngine().assess(ctx, bundle)
+    assert ra.suggested_stop > 100.0 and ra.suggested_take_profit < 100.0
+    assert ra.risk_reward_ratio == 2.0
+
+
+def test_f2_ob_carries_direction():
+    # F2: OB nunca NEUTRAL (testa OrderBlockEngine direto, sem liquidez)
+    from mercury_ai.analysis.smart_money.order_block_engine import OrderBlockEngine
+    n = 30
+    idx = pd.date_range("2026-09-13 14:00", periods=n, freq="5min", tz="UTC")
+    base = 100 + np.arange(n) * 0.5
+    df = pd.DataFrame({"Open": base, "High": base + 0.5, "Low": base - 0.3,
+                       "Close": base + 0.4, "Volume": 3000,
+                       "open": base, "high": base + 0.5, "low": base - 0.3,
+                       "close": base + 0.4, "volume": 3000}, index=idx)
+    ob = OrderBlockEngine().analyze(df)
+    if ob is not None:
+        assert ob.direction in ("BULLISH", "BEARISH")
+
+
+def test_f3_fvg_ignores_spread_noise():
+    # F3: micro-gap de spread não é FVG
+    from mercury_ai.analysis.fair_value_gap_engine import FairValueGapEngine
+    from mercury_ai.core.pipeline_executor import PipelineExecutor
+    idx = pd.date_range("2026-09-13 14:00", periods=5, freq="5min", tz="UTC")
+    df = pd.DataFrame({"Open": [100, 100, 100.00001, 100, 100],
+                       "High": [101, 101, 101.00001, 101, 101],
+                       "Low": [99, 99, 99.00001, 99, 99],
+                       "Close": [100.5, 100.5, 100.50001, 100.5, 100.5]},
+                      index=idx)
+    res = FairValueGapEngine(PipelineExecutor()).analyze(df)
+    assert not res.is_bullish_fvg and not res.is_bearish_fvg
+
+
+def test_f4_adx_real_trend():
+    # F4: ADX de Wilder detecta tendência (antes sempre 0.0)
+    n = 60
+    idx = pd.date_range("2026-09-13 14:00", periods=n, freq="5min", tz="UTC")
+    base = 100 + np.arange(n) * 0.5
+    df = pd.DataFrame({"open": base, "high": base + 0.4, "low": base - 0.2,
+                       "close": base + 0.3, "volume": 1000}, index=idx)
+    adx = IndicatorEngine().calculate(df)["adx"]
+    assert adx > 20.0
+
+
+def test_f7_top3_requires_forward_confirmed():
+    # F7: WEAK/EXPIRED nunca entra no Top-3
+    def e(sym, fwd):
+        return {"symbol": sym, "decision": "BUY", "score": 95, "confidence": 90,
+                "signal": {"symbol": sym, "decision": "BUY", "entry_timing_state": "VALID",
+                           "forward_state": fwd, "risk_reward": 2.5, "score": 95,
+                           "confidence": 90, "confluence": 90}}
+    rep = {"top3": [e("A", "WEAK"), e("B", "EXPIRED"), e("C", "CONFIRMED")], "ranked": []}
+    top3 = select_top3(rep)
+    assert [t["symbol"] for t in top3] == ["C"]
+
+
+def test_forward_bias_states():
+    n = 30
+    idx = pd.date_range("2026-09-13 14:00", periods=n, freq="5min", tz="UTC")
+    base = 100 + np.arange(n) * 0.3
+    df = pd.DataFrame({"Open": base, "High": base + 0.4, "Low": base - 0.2,
+                       "Close": base + 0.25, "Volume": 1000}, index=idx)
+    assert forward_bias(df, "BUY")["state"] == "CONFIRMED"
+    assert forward_bias(df, "SELL")["state"] == "EXPIRED"

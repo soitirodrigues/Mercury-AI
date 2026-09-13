@@ -92,6 +92,7 @@ class ScanReport:
                 dec = getattr(a, "decision", None)
                 mkt = getattr(a, "market", None)
                 reg = getattr(a, "market_regime", None)
+                sess = getattr(a, "session_analysis", None)
                 return {
                     "symbol": getattr(mkt, "symbol", "?"),
                     "decision": getattr(dec, "decision", "?"),
@@ -100,6 +101,9 @@ class ScanReport:
                     "grade": getattr(dec, "grade", None),
                     "audit_id": getattr(dec, "audit_id", None),
                     "regime": getattr(reg, "regime", None) if reg else None,
+                    # F8 (sessão fina): liquidez da sessão p/ selo Hezilex.
+                    "session": getattr(sess, "session", None) if sess else None,
+                    "session_liquidity": getattr(sess, "liquidity_score", None) if sess else None,
                     # S33-E.6: SIGNAL formal (propagacao; ranking intacto).
                     "signal": MercuryScanner._signal_payload(a),
                 }
@@ -155,7 +159,8 @@ class MercuryScanner:
         # S33-E: envelope observável do último ciclo (None antes do 1º scan).
         self.last_scan_report: Optional[ScanReport] = None
 
-    def scan(self, workers: int = 1, cycle_timeout_s: float = SCAN_DEFAULT_CYCLE_TIMEOUT_S):
+    def scan(self, workers: int = 1, cycle_timeout_s: float = SCAN_DEFAULT_CYCLE_TIMEOUT_S,
+             worker_timeout_s=None, only_symbols=None):
         """Executa o scan do universo operacional.
 
         S33-E: path sequencial (workers<=1, default) preserva byte-a-byte o
@@ -165,9 +170,36 @@ class MercuryScanner:
         COMPLETE/PARTIAL/TIMEOUT/ERROR. Replay (clock congelado) SEMPRE usa o
         path sequencial para preservar determinismo (thread-local clock não
         herdado por workers).
+
+        Hezilex operacional: worker_timeout_s (env MERCURY_WORKER_TIMEOUT_S)
+        conta SOMENTE a partir de RUNNING; workers na fila não consomem
+        deadline. cycle_timeout global prevalece. Sem thread-kill.
+
+        Análise dirigida (SMC confirm): only_symbols restringe o universo ao
+        que o operador viu oportunidade (whitelist universo canônico, ordem
+        preservada). None/vazio = 39 ativos (comportamento legado).
         """
 
         symbols, replay_isolated, filtered_by_session = self._resolve_scan_symbols()
+
+        # Análise dirigida (SMC confirm): restringe ao whitelist do operador.
+        # Fora do universo/session = descartado com outcome observável.
+        directed_note = None
+        if only_symbols:
+            try:
+                from mercury_ai.config.universe import OPERATIONAL_UNIVERSE as _U
+                want = [s for s in only_symbols if s in _U]
+                ignored = [s for s in only_symbols if s not in _U]
+            except Exception:
+                want, ignored = list(only_symbols), []
+            keep = [s for s in symbols if s in set(want)]
+            dropped_session = [s for s in want if s not in set(symbols)]
+            directed_note = f"DIRECTED scan: {len(keep)}/{len(symbols)} ativos (operador)"
+            logger.info("DIRECTED: operador pediu %s -> elegíveis %s | fora-universo %s | fora-sessão %s",
+                        list(only_symbols), keep, ignored, dropped_session)
+            symbols = keep
+            if ignored or dropped_session:
+                filtered_by_session = list(filtered_by_session) + list(dropped_session)
 
         # Observabilidade: quando tudo foi filtrado por sessao, registrar vazio
         if not symbols and filtered_by_session:
@@ -195,7 +227,8 @@ class MercuryScanner:
         if replay_isolated or workers is None or workers <= 1 or len(symbols) <= 1:
             return self._scan_sequential(symbols, filtered_by_session, workers=1, cycle_timeout_s=cycle_timeout_s)
 
-        return self._scan_parallel(symbols, workers=workers, cycle_timeout_s=cycle_timeout_s)
+        return self._scan_parallel(symbols, workers=workers, cycle_timeout_s=cycle_timeout_s,
+                                   worker_timeout_s=worker_timeout_s)
 
     def _resolve_scan_symbols(self):
         """Pré-ambulo compartilhado: perfil, broker, registry, session gate.

@@ -67,24 +67,37 @@ class RiskEngine:
         # M5-SMC: invalidação por ATR (1.5x) em vez de percentual fixo 1%.
         # Preserva RR=2.0 e todo o restante do cálculo (VaR/Kelly/stress intactos).
         # Fallback: se ATR inválido, usa o percentual legado para nunca quebrar.
+        # CORREÇÃO F1 (falso positivo): lado pela DIREÇÃO DOMINANTE das
+        # evidências (BUY/SELL), não pela estrutura legada — estrutura pode
+        # dizer BULLISH enquanto a decisão final é SELL (ex: job dirigido
+        # XRP-USD SELL com stop ACIMA mas TP calculado p/ baixo => RR -2).
+        try:
+            _bull = sum(1 for e in evidence_bundle.evidences
+                        if str(getattr(e, "direction", "")).upper() == "BULLISH")
+            _bear = sum(1 for e in evidence_bundle.evidences
+                        if str(getattr(e, "direction", "")).upper() == "BEARISH")
+        except Exception:
+            _bull, _bear = 0, 0
+        _side = "BULLISH" if _bull >= _bear else "BEARISH"
         _atr = atr if isinstance(atr, (int, float)) and atr > 0 else 0.0
         if _atr > 0:
             invalidation = (
                 price - 1.5 * _atr
-                if context.smart_money.structure.trend == "BULLISH"
+                if _side == "BULLISH"
                 else price + 1.5 * _atr
             )
         else:
             invalidation = (
                 price * 0.99
-                if context.smart_money.structure.trend == "BULLISH"
+                if _side == "BULLISH"
                 else price * 1.01
             )
 
         stop = invalidation
         reward_dist = (price - stop) * 2.0
         tp = price + reward_dist
-        rr = reward_dist / abs(price - stop) if abs(price - stop) > 0 else 0.0
+        _dist = abs(price - stop)
+        rr = abs(reward_dist) / _dist if _dist > 0 else 0.0
 
         drawdown = next(
             (e.strength for e in evidence_bundle.evidences if e.engine_name == "VolatilityEngine"),

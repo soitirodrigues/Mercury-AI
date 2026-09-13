@@ -181,6 +181,20 @@ def build_signal_from_analysis(
     reason = _extract_reason(result)
     audit_id = getattr(decision, "audit_id", "") or ""
 
+    # Forward-bias M5: confirmação de continuação p/ a PRÓXIMA vela
+    # (classificação pura sobre df fechado + MTF; nunca altera decisão/score).
+    # CONTRATO anti-repaint: forward_bias exige SOMENTE velas fechadas.
+    # market_df inclui a vela em formação (última linha, parcial — com um
+    # único tick, High==Low==Close => range 0 => "range nulo" EXPIRED falso
+    # em TODOS os ativos). Drop explícito da última linha aqui.
+    _mtf = _extract_mtf_summary(result)
+    try:
+        from mercury_ai.signals.forward_bias import forward_bias as _fwd
+        _closed = market_df.iloc[:-1] if market_df is not None and len(market_df) >= 4 else market_df
+        _fb = _fwd(_closed, action, _mtf)
+    except Exception:
+        _fb = {"state": "EXPIRED", "reason": "forward-bias indisponível", "direction": "NONE"}
+
     explanation = getattr(decision, "explanation", None) if decision is not None else None
     strong = ()
     if explanation is not None and not isinstance(explanation, str):
@@ -224,4 +238,7 @@ def build_signal_from_analysis(
         market_regime=_extract_regime(result),
         reason=reason,
         audit_id=audit_id,
+        forward_state=str((_fb or {}).get("state", "EXPIRED")),
+        forward_reason=str((_fb or {}).get("reason", "")),
+        forward_direction=str((_fb or {}).get("direction", "NONE")),
     )

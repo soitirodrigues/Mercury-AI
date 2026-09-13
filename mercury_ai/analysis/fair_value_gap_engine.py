@@ -82,10 +82,22 @@ class FairValueGapEngine:
         # FVG institucional
         # Bullish FVG: gap entre high_1 e low_3 (low_3 > high_1)
         # Bearish FVG: gap entre high_3 e low_1 (high_3 < low_1)
+        # CORREÇÃO F3 (falso positivo): gap mínimo de 0.2*ATR.
+        # Sem filtro, qualquer micro-gap de spread (0.00001) virava "FVG"
+        # com strength 60+ e empurrava BUY/SELL fantasma no Top-3.
+        try:
+            _tr = max(
+                float(c1["High"]) - float(c1["Low"]),
+                float(c2["High"]) - float(c2["Low"]),
+                float(c3["High"]) - float(c3["Low"]),
+            )
+        except (KeyError, TypeError, ValueError):
+            _tr = 0.0
+        _min_gap = 0.2 * _tr if _tr > 0 else 0.0
 
-        bullish_fvg = low_3 > high_1
+        bullish_fvg = (low_3 > high_1) and ((low_3 - high_1) >= _min_gap)
 
-        bearish_fvg = high_3 < low_1
+        bearish_fvg = (high_3 < low_1) and ((low_1 - high_3) >= _min_gap)
 
 
         filled = False
