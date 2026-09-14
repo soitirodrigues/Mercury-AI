@@ -205,3 +205,53 @@ def test_forward_bias_states():
                        "Close": base + 0.25, "Volume": 1000}, index=idx)
     assert forward_bias(df, "BUY")["state"] == "CONFIRMED"
     assert forward_bias(df, "SELL")["state"] == "EXPIRED"
+
+
+def test_next_candle_predictor_uptrend():
+    # Preditor: tendência de alta com BOS/momentum -> BULLISH
+    # (série monotônica não forma pivots — RANGE estrutural é honesto;
+    # a direção vem de BOS + momentum, não da sequência HH/HL)
+    from mercury_ai.signals.next_candle_predictor import (
+        predict_next_candle, predictor_agrees, _structure)
+    n = 30
+    idx = pd.date_range("2026-09-13 14:00", periods=n, freq="5min", tz="UTC")
+    base = 100 + np.arange(n) * 0.5
+    df = pd.DataFrame({"Open": base, "High": base + 0.4, "Low": base - 0.2,
+                       "Close": base + 0.35, "Volume": 1000}, index=idx)
+    p = predict_next_candle(df)
+    assert p["direction"] == "BULLISH"
+    assert p["confidence"] > 50.0
+    assert p["structure"] in ("UP", "RANGE")
+    assert predictor_agrees(p, "BUY") is True
+    assert predictor_agrees(p, "SELL") is False
+    # Estrutura HH+HL -> UP; LH+LL -> DOWN (unidade pura)
+    s_up, _ = _structure([(5, 101.0), (12, 102.0)], [(3, 99.0), (10, 100.0)])
+    assert s_up == "UP"
+    s_dn, _ = _structure([(5, 102.0), (12, 101.0)], [(3, 100.0), (10, 99.0)])
+    assert s_dn == "DOWN"
+
+
+def test_next_candle_predictor_neutral_range():
+    # Preditor: range sem gatilho -> NEUTRAL (sem aposta)
+    from mercury_ai.signals.next_candle_predictor import (
+        predict_next_candle, predictor_agrees)
+    n = 30
+    idx = pd.date_range("2026-09-13 14:00", periods=n, freq="5min", tz="UTC")
+    base = 100 + 0.05 * np.sin(np.arange(n))
+    df = pd.DataFrame({"Open": base, "High": base + 0.05, "Low": base - 0.05,
+                       "Close": base, "Volume": 1000}, index=idx)
+    p = predict_next_candle(df)
+    assert p["direction"] == "NEUTRAL"
+    assert predictor_agrees(p, "BUY") is None
+
+
+def test_tp1_be_exit_plan():
+    # TP1 = 1R (metade do TP 2R), BE trigger = TP1
+    from mercury_ai.analysis.risk_engine import RiskEngine
+    ctx, bundle = _risk_ctx(100.0, 1.0, "BULLISH", bull_n=4, bear_n=1)
+    ra = RiskEngine().assess(ctx, bundle)
+    assert ra.suggested_stop < 100.0  # lado BUY
+    assert ra.take_profit_1r > 100.0
+    assert ra.suggested_take_profit > ra.take_profit_1r  # TP2 > TP1
+    assert abs((ra.take_profit_1r - 100.0) - (100.0 - ra.suggested_stop)) < 1e-9
+    assert ra.exit_plan == "TP1_50_BE_RUNNER_2R"

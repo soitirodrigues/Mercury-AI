@@ -99,6 +99,12 @@ class RiskEngine:
         _dist = abs(price - stop)
         rr = abs(reward_dist) / _dist if _dist > 0 else 0.0
 
+        # Exit plan TP1+BE (backtest-validado): parcial 50% em 1R (mesma
+        # distância do stop), move stop p/ breakeven, restante busca 2R.
+        # TP1 = price ± 1×dist; BE trigger = TP1 tocado (stop vai p/ entry).
+        _tp1_dist = (price - stop) * 1.0
+        tp1 = price + _tp1_dist
+
         drawdown = next(
             (e.strength for e in evidence_bundle.evidences if e.engine_name == "VolatilityEngine"),
             5.0,
@@ -150,6 +156,9 @@ class RiskEngine:
             kelly_quarter=kelly_quarter,
             correlation_matrix=corr_matrix,
             stress_test_loss=stress_loss,
+            take_profit_1r=float(tp1),
+            breakeven_trigger=float(tp1),
+            exit_plan="TP1_50_BE_RUNNER_2R",
         )
 
     # ------------------------------------------------------------------

@@ -178,6 +178,13 @@ def build_signal_from_analysis(
     invalidation = float(inv) if isinstance(inv, (int, float)) and inv != 0 else None
     risk_reward = _f(risk, "risk_reward_ratio", 0.0)
 
+    # Exit plan TP1+BE (propagação pura do RiskEngine; sem recalcular).
+    _tp1 = getattr(risk, "take_profit_1r", None) if risk is not None else None
+    _be = getattr(risk, "breakeven_trigger", None) if risk is not None else None
+    take_profit_1r = float(_tp1) if isinstance(_tp1, (int, float)) and _tp1 > 0 else None
+    breakeven_trigger = float(_be) if isinstance(_be, (int, float)) and _be > 0 else None
+    exit_plan = getattr(risk, "exit_plan", "TP1_50_BE_RUNNER_2R") or "TP1_50_BE_RUNNER_2R"
+
     reason = _extract_reason(result)
     audit_id = getattr(decision, "audit_id", "") or ""
 
@@ -195,6 +202,18 @@ def build_signal_from_analysis(
     except Exception:
         _fb = {"state": "EXPIRED", "reason": "forward-bias indisponível", "direction": "NONE"}
 
+    # Preditor da PRÓXIMA vela (SMC estrutural: topos/fundos — replica a
+    # leitura do trader institucional; nunca altera decisão/score).
+    try:
+        from mercury_ai.signals.next_candle_predictor import (
+            predict_next_candle as _predict, predictor_agrees as _agrees)
+        _pred = _predict(_closed)
+        _agree = _agrees(_pred, action)
+    except Exception:
+        _pred = {"direction": "NEUTRAL", "confidence": 0.0, "reason": "preditor indisponível",
+                 "structure": "RANGE", "key_level": None, "key_kind": "NONE", "reasons": []}
+        _agree = None
+
     explanation = getattr(decision, "explanation", None) if decision is not None else None
     strong = ()
     if explanation is not None and not isinstance(explanation, str):
@@ -202,6 +221,16 @@ def build_signal_from_analysis(
             strong = tuple(str(e) for e in (getattr(explanation, "strong_evidences", ()) or ()))[:5]
         except TypeError:
             strong = ()
+
+    # Sessão operacional (propagação pura de session_analysis; sem recalcular).
+    _sess = getattr(result, "session_analysis", None)
+    _sess_name = getattr(_sess, "session", None) if _sess is not None else None
+    _sess_liq = getattr(_sess, "liquidity_score", None) if _sess is not None else None
+    try:
+        _sess_liq_f = float(_sess_liq) if _sess_liq is not None else None
+    except (TypeError, ValueError):
+        _sess_liq_f = None
+    _sess_thin = bool(_sess_liq_f is not None and _sess_liq_f < 50)
 
     return Signal(
         asset=symbol,
@@ -227,6 +256,9 @@ def build_signal_from_analysis(
         entry_timing_state=window["state"],
         invalidation=invalidation,
         risk_reward=risk_reward,
+        take_profit_1r=take_profit_1r,
+        breakeven_trigger=breakeven_trigger,
+        exit_plan=exit_plan,
         probability_buy=_f(decision, "buy_probability", 0.0),
         probability_sell=_f(decision, "sell_probability", 0.0),
         probability_wait=_f(decision, "wait_probability", 0.0),
@@ -241,4 +273,17 @@ def build_signal_from_analysis(
         forward_state=str((_fb or {}).get("state", "EXPIRED")),
         forward_reason=str((_fb or {}).get("reason", "")),
         forward_direction=str((_fb or {}).get("direction", "NONE")),
+        forward_displacement=bool((_fb or {}).get("displacement", False)),
+        forward_exhausted=bool((_fb or {}).get("exhausted", False)),
+        next_direction=str((_pred or {}).get("direction", "NEUTRAL")),
+        next_confidence=float((_pred or {}).get("confidence", 0.0) or 0.0),
+        next_reason=" | ".join((_pred or {}).get("reasons", []) or [])[:500],
+        next_structure=str((_pred or {}).get("structure", "RANGE")),
+        next_key_level=(float((_pred or {}).get("key_level"))
+                        if (_pred or {}).get("key_level") is not None else None),
+        next_key_kind=str((_pred or {}).get("key_kind", "NONE")),
+        next_agrees=_agree,
+        session=str(_sess_name) if _sess_name else "UNKNOWN",
+        session_liquidity=_sess_liq_f,
+        session_thin=_sess_thin,
     )

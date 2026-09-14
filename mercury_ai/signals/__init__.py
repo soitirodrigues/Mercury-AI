@@ -18,6 +18,10 @@ from mercury_ai.signals.signal_builder import build_signal_from_analysis
 from mercury_ai.signals.top3_selector import select_top3, setup_label
 from mercury_ai.signals.m5_alerts import alert_state
 from mercury_ai.signals.forward_bias import forward_bias, CONFIRMED, WEAK, EXPIRED_FWD
+from mercury_ai.signals.next_candle_predictor import (
+    predict_next_candle,
+    predictor_agrees,
+)
 from mercury_ai.signals.entry_time import (
     countdown_s,
     enrich_top3_oportunidades,
@@ -42,6 +46,8 @@ __all__ = [
     "CONFIRMED",
     "WEAK",
     "EXPIRED_FWD",
+    "predict_next_candle",
+    "predictor_agrees",
     "next_entry_utc",
     "format_br",
     "countdown_s",

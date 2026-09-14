@@ -58,6 +58,11 @@ class Signal:
     invalidation: float | None = None
     risk_reward: float = 0.0
 
+    # --- Exit plan TP1+BE (propagado do RiskEngine; sem recalculo) ---
+    take_profit_1r: float | None = None
+    breakeven_trigger: float | None = None
+    exit_plan: str = "TP1_50_BE_RUNNER_2R"
+
     # --- S33-E.6: decisao (propagada, sem alterar regras) ---
     probability_buy: float = 0.0
     probability_sell: float = 0.0
@@ -75,6 +80,29 @@ class Signal:
     forward_state: str = "EXPIRED"
     forward_reason: str = ""
     forward_direction: str = "NONE"
+    # Flags SMC do forward (p/ gates automáticos; sem alterar decisão):
+    # displacement=True => trigger N é vela de força (exigido p/ selo A);
+    # exhausted=True => pavio oposto dominante/corpo raquítico (corta selo A/B).
+    forward_displacement: bool = False
+    forward_exhausted: bool = False
+
+    # --- Sessão operacional (propagada de session_analysis; sem recalcular) ---
+    # session_thin=True => liquidez<50 (SYDNEY fina): spread/slippage alto
+    # na Hezilex — capa selo em C automaticamente (gate F8 automático).
+    session: str = "UNKNOWN"
+    session_liquidity: float | None = None
+    session_thin: bool = False
+
+    # --- Preditor da PRÓXIMA vela (SMC estrutural: topos/fundos; sem alterar decisão) ---
+    # direction: BULLISH/BEARISH/NEUTRAL — para onde o preço VAI em N+1.
+    # agrees: True concorda c/ decision | False discorda (gate G4) | None NEUTRAL/sem direção.
+    next_direction: str = "NEUTRAL"
+    next_confidence: float = 0.0
+    next_reason: str = ""
+    next_structure: str = "RANGE"
+    next_key_level: float | None = None
+    next_key_kind: str = "NONE"
+    next_agrees: bool | None = None
 
     @property
     def symbol(self) -> str:

@@ -28,3 +28,10 @@ class RiskAssessment:
     # --- Bloco 4: Correlation & Stress ---
     correlation_matrix: Optional[Tuple[Tuple[float, ...], ...]] = None  # Matriz de correlação entre ativos
     stress_test_loss: float = 0.0  # Perda estimada no pior cenário de stress
+
+    # --- Exit plan TP1+BE (melhoria assertividade, backtest-validada) ---
+    # TP1 = 1R (parcial 50%), runner = 2R (restante), BE após TP1.
+    # Propagação pura: RiskEngine calcula a partir de stop/entry já definidos.
+    take_profit_1r: float = 0.0
+    breakeven_trigger: float = 0.0
+    exit_plan: str = "TP1_50_BE_RUNNER_2R"
