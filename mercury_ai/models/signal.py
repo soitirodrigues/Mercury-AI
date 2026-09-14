@@ -104,6 +104,32 @@ class Signal:
     next_key_kind: str = "NONE"
     next_agrees: bool | None = None
 
+    # --- Filtros institucionais M5 (observáveis puros; sem bloquear) ---
+    # Calculados por mercury_ai.signals.m5_institutional_filters sobre df_closed
+    # (só velas fechadas). Propagação pura p/ auditoria/exibição — nenhum gate
+    # bloqueante: amostra 55 ciclos/127 TOP3 não sustenta bloqueio (G0 49.6%).
+    # trigger_body_ratio: corpo/range da trigger N (mediana WIN 0.634 vs LOSS 0.513).
+    # trigger_aligned: trigger N fechou na direção da decisão (None = doji/sem direção).
+    # trigger_range_atr: range_N / ATR14 (p75 WIN 1.495 vs LOSS 1.082; cap 2.0).
+    # ema200_aligned: close_N vs EMA200 a favor (50.5% vs 47.2% — sem edge isolado).
+    # ema200_dist_atr: |px-EMA200|/ATR14 (None se df < 200 fechadas).
+    trigger_body_ratio: float | None = None
+    trigger_aligned: bool | None = None
+    trigger_range_atr: float | None = None
+    ema200_aligned: bool | None = None
+    ema200_dist_atr: float | None = None
+    # --- SMC Engine (4 métricas pedidas; observáveis, sem bloquear) ---
+    # has_liquidity_sweep: sweep estrutural (lookback 20) a favor da decisão.
+    # has_fvg: FVG/im-balance aberto a favor (gap >= 0.2*ATR, não preenchido).
+    # has_inducement: mini-sweep interno (lookback 5, 12 velas) — indução do varejo.
+    # in_premium_discount_zone: preço no lado institucional da fib 50% (BUY<50%, SELL>50%).
+    # Medição 2026-09-14: FVG-ok 55.3%, FVG+IDM 59.3%, combo+zona 83.3% (5/6, n.s.)
+    # => LINHA DE ESTUDO, nunca bloqueio (cobertura 4.7%).
+    has_liquidity_sweep: bool | None = None
+    in_premium_discount_zone: bool | None = None
+    has_fvg: bool | None = None
+    has_inducement: bool | None = None
+
     @property
     def symbol(self) -> str:
         """Alias operacional: symbol == asset (contrato S33-E.6)."""

@@ -28,6 +28,16 @@ from mercury_ai.signals.entry_time import (
     format_br,
     next_entry_utc,
 )
+from mercury_ai.signals.m5_institutional_filters import (
+    ATR_CAP,
+    ATR_SPAN,
+    EMA_SPAN,
+    IDM_LOOKBACK,
+    TRIGGER_BODY_MIN,
+    ZONE_LOOKBACK,
+    institutional_flags,
+    smc_flags,
+)
 
 __all__ = [
     "Signal",
@@ -52,4 +62,12 @@ __all__ = [
     "format_br",
     "countdown_s",
     "enrich_top3_oportunidades",
+    "institutional_flags",
+    "smc_flags",
+    "TRIGGER_BODY_MIN",
+    "ATR_CAP",
+    "EMA_SPAN",
+    "ATR_SPAN",
+    "IDM_LOOKBACK",
+    "ZONE_LOOKBACK",
 ]

@@ -232,6 +232,17 @@ def build_signal_from_analysis(
         _sess_liq_f = None
     _sess_thin = bool(_sess_liq_f is not None and _sess_liq_f < 50)
 
+    # Filtros institucionais M5 (observáveis puros sobre df fechado;
+    # sem bloquear, sem alterar decisão/score — ver m5_institutional_filters).
+    try:
+        from mercury_ai.signals.m5_institutional_filters import (
+            institutional_flags as _inst_flags)
+        _inst = _inst_flags(_closed, action)
+    except Exception:
+        _inst = {"trigger_body_ratio": None, "trigger_aligned": None,
+                 "trigger_range_atr": None, "ema200_aligned": None,
+                 "ema200_dist_atr": None}
+
     return Signal(
         asset=symbol,
         action=action,
@@ -286,4 +297,13 @@ def build_signal_from_analysis(
         session=str(_sess_name) if _sess_name else "UNKNOWN",
         session_liquidity=_sess_liq_f,
         session_thin=_sess_thin,
+        trigger_body_ratio=(_inst or {}).get("trigger_body_ratio"),
+        trigger_aligned=(_inst or {}).get("trigger_aligned"),
+        trigger_range_atr=(_inst or {}).get("trigger_range_atr"),
+        ema200_aligned=(_inst or {}).get("ema200_aligned"),
+        ema200_dist_atr=(_inst or {}).get("ema200_dist_atr"),
+        has_liquidity_sweep=(_inst or {}).get("has_liquidity_sweep"),
+        in_premium_discount_zone=(_inst or {}).get("in_premium_discount_zone"),
+        has_fvg=(_inst or {}).get("has_fvg"),
+        has_inducement=(_inst or {}).get("has_inducement"),
     )

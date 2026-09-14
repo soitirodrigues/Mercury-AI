@@ -46,15 +46,25 @@ def closed_df(df: pd.DataFrame) -> pd.DataFrame:
     return df.iloc[:-1].copy()
 
 
-def detect_liquidity_sweep(df_closed: pd.DataFrame, atr: float) -> Dict[str, Any]:
-    """Sweep com reclaim (wick). Retorna {detected, direction, level, index}."""
+def detect_liquidity_sweep(df_closed: pd.DataFrame, atr: float, lookback: int = SWEEP_LOOKBACK) -> Dict[str, Any]:
+    """Sweep com reclaim (wick). Retorna {detected, direction, level, index}.
+
+    lookback parametrizável (default 20 = legado): IDM usa janela curta (5)
+    sem mutação global — a divergência de Pecados auditada em 2026-09-14
+    (6 vs 0 combos) veio de mutação de SWEEP_LOOKBACK entre probes.
+    """
+    try:
+        lb = int(lookback)
+    except (TypeError, ValueError):
+        lb = SWEEP_LOOKBACK
+    lb = max(2, lb)
     out: Dict[str, Any] = {"detected": False, "direction": "NONE", "level": None, "index": None}
-    if df_closed is None or len(df_closed) < SWEEP_LOOKBACK + 2 or atr <= 0:
+    if df_closed is None or len(df_closed) < lb + 2 or atr <= 0:
         return out
     df = df_closed.reset_index(drop=True)
-    for i in range(SWEEP_LOOKBACK, len(df)):
-        win_lo = float(df["Low"].iloc[i - SWEEP_LOOKBACK:i].min())
-        win_hi = float(df["High"].iloc[i - SWEEP_LOOKBACK:i].max())
+    for i in range(lb, len(df)):
+        win_lo = float(df["Low"].iloc[i - lb:i].min())
+        win_hi = float(df["High"].iloc[i - lb:i].max())
         lo, hi, cl = float(df["Low"].iloc[i]), float(df["High"].iloc[i]), float(df["Close"].iloc[i])
         # Bear-trap -> LONG
         if lo < win_lo - SWEEP_WICK_ATR * atr and cl > win_lo and (win_lo - lo) >= SWEEP_WICK_ATR * atr:
