@@ -68,6 +68,18 @@ def render_signal_cards(signals: List[Dict[str, Any]]) -> None:
                 f"**Conf:** {entry.get('confidence', sig.get('confidence', 0))}"
             )
             st.caption(f"Setup: {entry.get('setup_label', sig.get('setup', 'Confluence'))}")
+            # Estrutura SMC horizontal (topos/fundos) + diagonais LTA/LTB + noticias.
+            _struct = sig.get("next_structure") or "RANGE"
+            _bias = sig.get("trendline_bias") or "NEUTRAL"
+            _tl = sig.get("trendline_detail") or ""
+            _nr = str(sig.get("news_risk", "CLEAR")).upper()
+            _smc_line = f"Estrutura: {_struct} | LTA/LTB: {_bias}"
+            if _tl:
+                _smc_line += f" ({_tl[:90]})"
+            st.caption(_smc_line)
+            if _nr in ("BLOCK", "CAUTION"):
+                _ico = "⛔" if _nr == "BLOCK" else "⚠️"
+                st.caption(f"{_ico} {sig.get('news_detail') or _nr}")
             st.caption(
                 f"Entrada sugerida: {sig.get('next_m5_ts')} UTC | "
                 f"{sig.get('entry_timing_state')} ({sig.get('entry_window_seconds', 0)}s)"

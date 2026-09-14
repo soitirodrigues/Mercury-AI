@@ -129,6 +129,54 @@ class Signal:
     in_premium_discount_zone: bool | None = None
     has_fvg: bool | None = None
     has_inducement: bool | None = None
+    # --- RSI+ADX audit-only (2026-09-15; observavel, NUNCA bloqueia) ---
+    # rsi: RSI-14 Wilder (0-100, 50 neutro). adx: forca tendencia (trend>=20).
+    # plus_di/minus_di: direcao (+DI>-DI => comprador domina).
+    # rsi_adx_approved: True=>passa no gate auditivo; False=>rejeitado por
+    # lateralidade/exaustao; None=>incalculavel. Agregado 38 ativos
+    # 48.98%->48.46% (-0.52pp): NAO usar como bloqueio.
+    rsi: float | None = None
+    adx: float | None = None
+    plus_di: float | None = None
+    minus_di: float | None = None
+    rsi_adx_approved: bool | None = None
+    # --- Prompt-analise M5 audit-only (2026-09-15; mesmo padrao, NUNCA bloqueia) ---
+    # bollinger_pos: posicao close_N vs BB20/2 (ABOVE_UPPER|TOUCH_UPPER|INSIDE|
+    #   TOUCH_LOWER|BELOW_LOWER). rsi_value: alias nominal de rsi (prompt).
+    # reversal_candle: BULLISH_REVERSAL|BEARISH_REVERSAL|NONE (martelo/engolfo).
+    # sr_distance: distancia ao S/R (pivot 3, 48 fechadas) em ATRs.
+    # band_expansion: True=bandas abrindo | False=contraindo | None=incalculavel.
+    # bb_upper/middle/lower/bandwidth: valores BB20/2 p/ painel/logs.
+    bollinger_pos: str | None = None
+    rsi_value: float | None = None
+    reversal_candle: str | None = None
+    sr_distance: float | None = None
+    band_expansion: bool | None = None
+    bb_upper: float | None = None
+    bb_middle: float | None = None
+    bb_lower: float | None = None
+    bb_bandwidth: float | None = None
+    # --- Trendlines LTA/LTB audit-only (2026-09-15; mesmo padrao, NUNCA bloqueia) ---
+    # lta_exists/ltb_exists: diagonal valida (>=2 toques, slope certo).
+    # trendline_bias: BULLISH (LTA intacta) | BEARISH (LTB intacta) | NEUTRAL.
+    # trendline_aligned: True=a favor da decisao | False=rompida/contra | None=sem diagonal.
+    # trendline_distance_atr: distancia do close a linha do lado da decisao (ATRs).
+    # trendline_detail: "LTA 3 toques slope ... + LTB ..." p/ painel.
+    lta_exists: bool | None = None
+    ltb_exists: bool | None = None
+    trendline_bias: str | None = None
+    trendline_aligned: bool | None = None
+    trendline_distance_atr: float | None = None
+    trendline_detail: str = ""
+    # --- Filtro noticias audit-only (2026-09-15; mesmo padrao, NUNCA bloqueia motor) ---
+    # news_risk: BLOCK (3★ ±30min: EVITAR) | CAUTION (2★ ±30min: forca nas velas,
+    #   exigir confirmacao extra) | CLEAR | UNKNOWN. blocked/caution: bools p/ selo.
+    # news_event: "NFP (USD 3★ 09:30)" | None. news_detail: frase p/ painel.
+    news_risk: str = "CLEAR"
+    news_blocked: bool = False
+    news_caution: bool = False
+    news_event: str | None = None
+    news_detail: str = ""
 
     @property
     def symbol(self) -> str:

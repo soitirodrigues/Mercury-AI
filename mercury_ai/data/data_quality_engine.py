@@ -83,7 +83,16 @@ class DataQualityEngine:
                         # Verifica se o gap cruza uma fronteira de dia UTC
                         prev_idx = time_diffs.index[time_diffs.index.get_loc(idx) - 1]
                         crosses_day = prev_idx.day != idx.day
-                        if gap_size > expected_interval * 3 and not crosses_day:
+                        # 2026-09-16: gap intradiario <=30min (ex: 20-25min Yahoo
+                        # Forex 22:50) e provado transitório (reteste: 1171+
+                        # linhas) — degrada score, não descarta (era o motivo
+                        # dos 5 SKIPPED_DQ por ciclo: EURCAD/GBPCHF/EURAUD/
+                        # CADCHF/AUDCHF). Só descarta gap >30min sem cruzar dia.
+                        intraday_grace = (
+                            not crosses_day
+                            and gap_size <= pd.Timedelta(minutes=30)
+                        )
+                        if gap_size > expected_interval * 3 and not crosses_day and not intraday_grace:
                             unexpected_gaps.append((idx, gap_size))
 
                     if unexpected_gaps:

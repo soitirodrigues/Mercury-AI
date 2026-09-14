@@ -17,6 +17,7 @@ from mercury_ai.analysis.performance_statistics import PerformanceStatistics
 from mercury_ai.analysis.integrity_checker import IntegrityChecker
 from mercury_ai.analysis.health_checker import HealthChecker
 from mercury_ai.config import settings
+from app.dashboard.scan_alerts import render_scan_progress, render_scan_done_sound
 
 st.set_page_config(page_title="Mercury Operation Center", layout="wide")
 
@@ -32,6 +33,8 @@ st.sidebar.write(f"**Versão:** {settings.VERSION}")
 st.header("1. Scanner & Mercado")
 analyses, _scan_report = run_dashboard_scan()
 _view = present_scan(_scan_report.to_dict())
+render_scan_done_sound(_view)
+render_scan_progress(_view)
 st.caption(
     f"scan_id={_view.get('scan_id')} status={_view.get('status')} "
     f"completed={_view.get('progress_text')} "

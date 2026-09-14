@@ -241,7 +241,23 @@ def build_signal_from_analysis(
     except Exception:
         _inst = {"trigger_body_ratio": None, "trigger_aligned": None,
                  "trigger_range_atr": None, "ema200_aligned": None,
-                 "ema200_dist_atr": None}
+                 "ema200_dist_atr": None, "rsi": None, "adx": None,
+                 "plus_di": None, "minus_di": None,
+                 "rsi_adx_approved": None, "bollinger_pos": None,
+                 "rsi_value": None, "reversal_candle": None,
+                 "sr_distance": None, "band_expansion": None,
+                 "bb_upper": None, "bb_middle": None, "bb_lower": None,
+                 "bb_bandwidth": None, "lta_exists": None, "ltb_exists": None,
+                 "trendline_bias": None, "trendline_aligned": None,
+                 "trendline_distance_atr": None, "trendline_detail": ""}
+
+    # Filtro de noticias (observavel audit-only; NUNCA bloqueia o motor).
+    try:
+        from mercury_ai.calendar.news_filter import assess_symbol as _news
+        _nw = _news(symbol)
+    except Exception:
+        _nw = {"risk": "UNKNOWN", "blocked": False, "caution": False,
+               "event": None, "detail": ""}
 
     return Signal(
         asset=symbol,
@@ -306,4 +322,29 @@ def build_signal_from_analysis(
         in_premium_discount_zone=(_inst or {}).get("in_premium_discount_zone"),
         has_fvg=(_inst or {}).get("has_fvg"),
         has_inducement=(_inst or {}).get("has_inducement"),
+        rsi=(_inst or {}).get("rsi"),
+        adx=(_inst or {}).get("adx"),
+        plus_di=(_inst or {}).get("plus_di"),
+        minus_di=(_inst or {}).get("minus_di"),
+        rsi_adx_approved=(_inst or {}).get("rsi_adx_approved"),
+        bollinger_pos=(_inst or {}).get("bollinger_pos"),
+        rsi_value=(_inst or {}).get("rsi_value"),
+        reversal_candle=(_inst or {}).get("reversal_candle"),
+        sr_distance=(_inst or {}).get("sr_distance"),
+        band_expansion=(_inst or {}).get("band_expansion"),
+        bb_upper=(_inst or {}).get("bb_upper"),
+        bb_middle=(_inst or {}).get("bb_middle"),
+        bb_lower=(_inst or {}).get("bb_lower"),
+        bb_bandwidth=(_inst or {}).get("bb_bandwidth"),
+        lta_exists=(_inst or {}).get("lta_exists"),
+        ltb_exists=(_inst or {}).get("ltb_exists"),
+        trendline_bias=(_inst or {}).get("trendline_bias"),
+        trendline_aligned=(_inst or {}).get("trendline_aligned"),
+        trendline_distance_atr=(_inst or {}).get("trendline_distance_atr"),
+        trendline_detail=str((_inst or {}).get("trendline_detail", "") or ""),
+        news_risk=str((_nw or {}).get("risk", "UNKNOWN")),
+        news_blocked=bool((_nw or {}).get("blocked", False)),
+        news_caution=bool((_nw or {}).get("caution", False)),
+        news_event=(_nw or {}).get("event"),
+        news_detail=str((_nw or {}).get("detail", "") or ""),
     )

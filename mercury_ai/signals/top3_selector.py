@@ -19,6 +19,10 @@ MIN_SCORE = 70.0
 MIN_RR = 2.0
 VALID_STATE = "VALID"
 FORWARD_OK = "CONFIRMED"
+# Selo de qualidade A (2026-09-16, 2 falhas auditadas em micro-range):
+# estrutura RANGE sem displacement e sem corpo minimo => selo B (sem prioridade).
+# A = (UP/DOWN) OU displacement OU trigger_body>=0.40 OU LTA/LTB alinhada.
+MIN_TRIGGER_BODY_A = 0.40
 
 
 def _sig(entry: Dict[str, Any]) -> Dict[str, Any]:
@@ -73,7 +77,35 @@ def _sort_key(entry: Dict[str, Any]):
     conf = _f(entry.get("confidence", sig.get("confidence")))
     confl = _f(sig.get("confluence"))
     rr = _f(sig.get("risk_reward"))
-    return (score, conf, confl, rr)
+    # Selo A tem prioridade (desempate antes do score): corta micro-range.
+    return (1.0 if quality_seal(entry) == "A" else 0.0, score, conf, confl, rr)
+
+
+def quality_seal(entry: Dict[str, Any]) -> str:
+    """Selo A/B observavel (nunca bloqueia elegibilidade, so ordena/desempata).
+
+    A = direcao com forca: estrutura UP/DOWN, ou displacement, ou corpo>=0.40,
+        ou LTA/BUY-LTB/SELL alinhada. B = resto (RANGE parado: operar com cautela).
+    """
+    sig = _sig(entry)
+    dec = str(entry.get("decision") or sig.get("decision") or "").upper()
+    if dec not in ("BUY", "SELL"):
+        return "B"
+    if str(sig.get("next_structure", "")).upper() in ("UP", "DOWN"):
+        return "A"
+    if sig.get("forward_displacement"):
+        return "A"
+    try:
+        body = float(sig.get("trigger_body_ratio", 0) or 0)
+    except (TypeError, ValueError):
+        body = 0.0
+    if body >= MIN_TRIGGER_BODY_A:
+        return "A"
+    if dec == "BUY" and sig.get("lta_exists") and sig.get("trendline_aligned"):
+        return "A"
+    if dec == "SELL" and sig.get("ltb_exists") and sig.get("trendline_aligned"):
+        return "A"
+    return "B"
 
 
 def select_top3(scan_report: Dict[str, Any]) -> List[Dict[str, Any]]:
@@ -102,6 +134,36 @@ def setup_label(entry: Dict[str, Any]) -> str:
     mtf = sig.get("mtf_summary") or {}
     if isinstance(mtf, dict) and mtf.get("status") == "present":
         parts.append("H1/M5 Alignment" if float(mtf.get("alignment_score", 0) or 0) >= 60 else "MTF")
+    # Estrutura SMC horizontal (topos/fundos): preditor + BOS/CHoCH diretos.
+    if str(sig.get("next_structure", "")).upper() in ("UP", "DOWN"):
+        parts.append(f"Estrutura {sig.get('next_structure')}")
+    _kk = str(sig.get("next_key_kind", "") or "")
+    if _kk in ("TOPO_ROMPIDO", "FUNDO_ROMPIDO"):
+        parts.append("BOS")
+    elif _kk in ("TOPO_VARREDURA", "FUNDO_VARREDURA"):
+        parts.append("Sweep")
+    # Diagonais LTA/LTB (observavel trendlines.py; nunca bloqueia).
+    if sig.get("lta_exists") and str(sig.get("decision", entry.get("decision", ""))).upper() == "BUY":
+        parts.append("LTA")
+    if sig.get("ltb_exists") and str(sig.get("decision", entry.get("decision", ""))).upper() == "SELL":
+        parts.append("LTB")
+    if sig.get("has_liquidity_sweep"):
+        parts.append("Sweep")
+    if sig.get("has_fvg"):
+        parts.append("FVG")
+    if sig.get("has_inducement"):
+        parts.append("IDM")
+    # Filtro noticias: selo visivel (nunca bloqueia o Top-3).
+    if str(sig.get("news_risk", "")).upper() == "BLOCK":
+        parts.append("⛔ NOTICIA 3★")
+    elif str(sig.get("news_risk", "")).upper() == "CAUTION":
+        parts.append("⚠️ NOTICIA 2★")
+    # Selo de qualidade A/B (estrutura/forca; nunca bloqueia).
+    try:
+        _seal = quality_seal(entry)
+        parts.append(f"SELO {_seal}")
+    except Exception:
+        pass
     for e in list(evs)[:3]:
         s = str(e)
         if "sweep" in s.lower() or "liquidity" in s.lower():

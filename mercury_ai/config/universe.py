@@ -234,7 +234,8 @@ CRYPTO_UNIVERSE: Dict[str, UniverseAsset] = {
     "SUI-USD": UniverseAsset(
         symbol="SUI-USD", display_name="SUI/USD", market="CRYPTO",
         provider_symbol="SUI-USD", volatility="high", precision=4, priority=3,
-        notes="Sui"
+        enabled=False,
+        notes="Sui — DESABILITADO 2026-09-16: Yahoo delisted (0 rows em todos os tickers)"
     ),
     "XLM-USD": UniverseAsset(
         symbol="XLM-USD", display_name="XLM/USD", market="CRYPTO",

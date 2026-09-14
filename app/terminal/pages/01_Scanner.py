@@ -15,6 +15,7 @@ from app.dashboard.scan_presentation import (
 from mercury_ai.config import settings
 from mercury_ai.signals.top3_selector import select_top3
 from app.dashboard.m5_widgets import render_m5_clock, render_signal_cards
+from app.dashboard.scan_alerts import render_scan_progress, render_scan_done_sound
 
 st.set_page_config(page_title="Scanner Institucional", layout="wide")
 st.title("🔍 Scanner Institucional")
@@ -28,6 +29,10 @@ def load_data():
 
 analyses, scan_report = load_data()
 view = present_scan(scan_report)
+# Alerta sonoro 1x por scan_id + banner gigante (ver outra tela).
+render_scan_done_sound(view)
+# Andamento REAL completed/total + contadores + ultimos concluidos.
+render_scan_progress(view)
 st.caption(
     f"scan_id={view.get('scan_id')} "
     f"status={view.get('status')} "

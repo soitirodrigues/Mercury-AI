@@ -11,12 +11,15 @@ from app.dashboard.scan_presentation import (
     status_banner,
     counters_line,
 )
+from app.dashboard.scan_alerts import render_scan_progress, render_scan_done_sound
 
 st.title("Dashboard Institucional")
 # S33-E.5: UMA execucao workers=4 + ScanReport real.
 # S33-E.6: APENAS apresentacao do envelope (TOP3/status/contadores verbatim).
 analyses, _scan_report = run_dashboard_scan()
 _view = present_scan(_scan_report.to_dict())
+render_scan_done_sound(_view)
+render_scan_progress(_view)
 st.caption(
     f"scan_id={_view.get('scan_id')} status={_view.get('status')} "
     f"completed={_view.get('progress_text')} "

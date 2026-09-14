@@ -19,6 +19,7 @@ from mercury_ai.analysis.performance_statistics import PerformanceStatistics
 from mercury_ai.analysis.engine_performance_auditor import EnginePerformanceAuditor
 from mercury_ai.analysis.institutional_report_generator import InstitutionalReportGenerator
 from mercury_ai.analysis.notification_center import NotificationCenter
+from app.dashboard.scan_alerts import render_scan_progress, render_scan_done_sound
 from app.auth import require_auth, render_logout_button
 from app.ui_utils import apply_design_system, display_metric
 
@@ -45,6 +46,11 @@ analyses, scan_report = load_data()
 
 # S33-E.6 — view-model de apresentacao (passthrough, sem inteligencia).
 view = present_scan(scan_report)
+
+# Alerta sonoro 1x por scan_id + banner gigante (operar em outra tela).
+render_scan_done_sound(view)
+# Andamento REAL completed/total (nunca timer falso).
+render_scan_progress(view)
 
 # S33-E.6 — TOP 3 REAL + ESTADOS (consome UM ScanReport, nao executa scanner).
 st.subheader("TOP 3 — ScanReport (sem recálculo)")

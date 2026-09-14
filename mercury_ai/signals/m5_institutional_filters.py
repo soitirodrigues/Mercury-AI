@@ -39,6 +39,27 @@ EMA_SPAN = 200
 ATR_SPAN = 14
 IDM_LOOKBACK = 5
 ZONE_LOOKBACK = 48
+# RSI+ADX audit-only (2026-09-15, 38 ativos M5, sem lookahead):
+# RSI-14 Wilder, ADX-14 Wilder +DI/-DI. Gate APROVADO como observavel,
+# REFUTADO como bloqueio (agregado 48.98% -> 48.46% = -0.52pp, -74.6% sinais).
+# TOP3 linha de estudo: NZDCAD 53.09% (+4.82pp), AUDCHF 52.55%, GBPCHF 52.12%.
+# NUNCA bloquear: rsi_adx_approved e puro observavel (bool|None).
+RSI_SPAN = 14
+ADX_SPAN = 14
+ADX_MIN_TREND = 20.0
+RSI_BUY_LO = 50.0
+RSI_BUY_HI = 70.0
+RSI_SELL_LO = 30.0
+RSI_SELL_HI = 50.0
+# Prompt-analise M5 audit-only (2026-09-15, mesmo padrao rsi_adx_approved):
+# 5 observaveis novos (bollinger_pos, rsi_value, reversal_candle,
+# sr_distance, band_expansion). NUNCA bloqueiam: só painel/logs/auditoria.
+# BB 20/2 canonico (IndicatorEngine usa 14/2; aqui padrao industria 20/2).
+# S/R = swings pivot(janela 3) nos ultimos 48 fechadas (~4h M5).
+BB_SPAN = 20
+BB_STD_MULT = 2.0
+SR_LOOKBACK = 48
+SR_PIVOT = 3
 
 
 def _f(v: Any, default: float = 0.0) -> float:
@@ -138,6 +159,239 @@ def ema200_side(df_closed: Any, decision: str) -> Dict[str, Any]:
         return out
 
 
+def rsi14(df_closed: Any, span: int = RSI_SPAN) -> Optional[float]:
+    """RSI-14 Wilder sobre fechadas (audit-only). None se incalculavel."""
+    try:
+        if df_closed is None or len(df_closed) < span + 1:
+            return None
+        c = df_closed["Close"].astype(float)
+        d = c.diff()
+        g = d.clip(lower=0.0)
+        loss = -d.clip(upper=0.0)
+        ag = g.ewm(alpha=1.0 / span, adjust=False).mean()
+        al = loss.ewm(alpha=1.0 / span, adjust=False).mean()
+        rs = ag / al.replace(0.0, float("nan"))
+        val = float((100.0 - 100.0 / (1.0 + rs)).fillna(50.0).iloc[-1])
+        return round(val, 2)
+    except (KeyError, IndexError, TypeError, ValueError):
+        return None
+
+
+def adx_dmi(df_closed: Any, span: int = ADX_SPAN) -> Dict[str, Any]:
+    """ADX-14 Wilder + DI+/DI- sobre fechadas (audit-only, sem rede).
+
+    Retorna {"adx": float|None, "plus_di": float|None, "minus_di": float|None}.
+    Nones honestos quando df insuficiente (<span+1) ou range nulo.
+    Matematica identica a IndicatorEngine (Wilder ewm alpha=1/14).
+    """
+    out: Dict[str, Any] = {"adx": None, "plus_di": None, "minus_di": None}
+    try:
+        if df_closed is None or len(df_closed) < span + 1:
+            return out
+        h = df_closed["High"].astype(float)
+        lo = df_closed["Low"].astype(float)
+        c = df_closed["Close"].astype(float)
+        up = h.diff().clip(lower=0.0)
+        dn = (-lo.diff()).clip(lower=0.0)
+        import pandas as _pd
+        pm = _pd.Series([u if u > d else 0.0 for u, d in zip(up.tolist(), dn.tolist())],
+                        index=df_closed.index)
+        mm = _pd.Series([d if d > u else 0.0 for u, d in zip(up.tolist(), dn.tolist())],
+                        index=df_closed.index)
+        tr = (h - lo).abs().combine((h - c.shift()).abs(), max).combine(
+            (lo - c.shift()).abs(), max)
+        atrw = tr.ewm(alpha=1.0 / span, adjust=False).mean()
+        if float(atrw.iloc[-1] or 0.0) <= 0:
+            return out
+        pdi = 100.0 * (pm.ewm(alpha=1.0 / span, adjust=False).mean() / atrw.replace(0, float("nan")))
+        mdi = 100.0 * (mm.ewm(alpha=1.0 / span, adjust=False).mean() / atrw.replace(0, float("nan")))
+        denom = (pdi + mdi).replace(0, float("nan"))
+        dx = (100.0 * (pdi - mdi).abs() / denom).fillna(0.0)
+        adx = dx.ewm(alpha=1.0 / span, adjust=False).mean().fillna(0.0)
+        out["adx"] = round(float(adx.iloc[-1]), 2)
+        out["plus_di"] = round(float(pdi.fillna(0.0).iloc[-1]), 2)
+        out["minus_di"] = round(float(mdi.fillna(0.0).iloc[-1]), 2)
+        return out
+    except (KeyError, IndexError, TypeError, ValueError):
+        return out
+
+
+def rsi_adx_approved(df_closed: Any, decision: str) -> Optional[bool]:
+    """Flag audit-only RSI+ADX (NUNCA bloqueia; None = incalculavel).
+
+    BUY  aprova SE ADX>=20 E +DI>-DI E 50<=RSI<=70.
+    SELL aprova SE ADX>=20 E -DI>+DI E 30<=RSI<=50.
+    ADX<20 (lateral) ou RSI exaustao (>70/<30) => False.
+    """
+    dec = str(decision or "").upper()
+    if dec not in ("BUY", "SELL"):
+        return None
+    try:
+        rsi = rsi14(df_closed)
+        dmi = adx_dmi(df_closed)
+        adx, pdi, mdi = dmi.get("adx"), dmi.get("plus_di"), dmi.get("minus_di")
+        if rsi is None or adx is None or pdi is None or mdi is None:
+            return None
+        if adx < ADX_MIN_TREND:
+            return False
+        if dec == "BUY":
+            return bool(pdi > mdi and RSI_BUY_LO <= rsi <= RSI_BUY_HI)
+        return bool(mdi > pdi and RSI_SELL_LO <= rsi <= RSI_SELL_HI)
+    except (KeyError, IndexError, TypeError, ValueError):
+        return None
+
+
+def rsi_value(df_closed: Any, span: int = RSI_SPAN) -> Optional[float]:
+    """Alias nominal do prompt (rsi_value == rsi14). Audit-only, None-safe."""
+    return rsi14(df_closed, span=span)
+
+
+def bollinger_bands(df_closed: Any, span: int = BB_SPAN,
+                    std_mult: float = BB_STD_MULT) -> Dict[str, Any]:
+    """BB 20/2 sobre fechadas. Retorna {middle,upper,lower,bandwidth}|Nones."""
+    out: Dict[str, Any] = {"middle": None, "upper": None,
+                            "lower": None, "bandwidth": None}
+    try:
+        if df_closed is None or len(df_closed) < span:
+            return out
+        cl = df_closed["Close"].astype(float)
+        mid = cl.rolling(span).mean()
+        std = cl.rolling(span).std()
+        m, s = float(mid.iloc[-1]), float(std.iloc[-1])
+        if not (m > 0) or not (s >= 0):
+            return out
+        upper, lower = m + std_mult * s, m - std_mult * s
+        bw = (upper - lower) / m if m else None
+        out["middle"] = round(m, 5)
+        out["upper"] = round(float(upper), 5)
+        out["lower"] = round(float(lower), 5)
+        out["bandwidth"] = round(float(bw), 5) if bw is not None else None
+        return out
+    except (KeyError, IndexError, TypeError, ValueError):
+        return out
+
+
+def bollinger_pos(df_closed: Any, span: int = BB_SPAN,
+                  std_mult: float = BB_STD_MULT) -> Optional[str]:
+    """Posicao do close_N vs BB (audit-only).
+
+    ABOVE_UPPER | TOUCH_UPPER | INSIDE | TOUCH_LOWER | BELOW_LOWER.
+    TOUCH = pavio encosta na banda mas close fecha dentro (rejeicao).
+    None se incalculavel. NUNCA bloqueia.
+    """
+    try:
+        if df_closed is None or len(df_closed) < span:
+            return None
+        bb = bollinger_bands(df_closed, span=span, std_mult=std_mult)
+        upper, lower = bb.get("upper"), bb.get("lower")
+        if upper is None or lower is None:
+            return None
+        row = df_closed.iloc[-1]
+        o, h, lo, c = (_f(row["Open"]), _f(row["High"]),
+                        _f(row["Low"]), _f(row["Close"]))
+        if c > upper:
+            return "ABOVE_UPPER"
+        if c < lower:
+            return "BELOW_LOWER"
+        if h >= upper:
+            return "TOUCH_UPPER"
+        if lo <= lower:
+            return "TOUCH_LOWER"
+        return "INSIDE"
+    except (KeyError, IndexError, TypeError, ValueError):
+        return None
+
+
+def band_expansion(df_closed: Any, span: int = BB_SPAN,
+                   std_mult: float = BB_STD_MULT) -> Optional[bool]:
+    """True = bandas expandindo (volatilidade abre); False = contraindo.
+
+    Compara bandwidth_N vs bandwidth_N-1 (penultima janela fechada).
+    None se incalculavel. Audit-only.
+    """
+    try:
+        if df_closed is None or len(df_closed) < span + 1:
+            return None
+        b_now = bollinger_bands(df_closed, span=span, std_mult=std_mult).get("bandwidth")
+        b_prev = bollinger_bands(df_closed.iloc[:-1], span=span,
+                                 std_mult=std_mult).get("bandwidth")
+        if b_now is None or b_prev is None:
+            return None
+        return bool(b_now > b_prev)
+    except (KeyError, IndexError, TypeError, ValueError):
+        return None
+
+
+def reversal_candle(df_closed: Any) -> Optional[str]:
+    """Candle de reversao confirmado no M5 (trigger N fechada).
+
+    BULLISH_REVERSAL: martelo (pavio inf >= 2x corpo, close>open) ou
+      engolfo altista vs N-1. BEARISH_REVERSAL: espelho.
+    NONE = sem padrao. None = incalculavel (doji/range nulo/df curto).
+    Audit-only, nunca bloqueia.
+    """
+    try:
+        if df_closed is None or len(df_closed) < 2:
+            return None
+        r0, r1 = df_closed.iloc[-2], df_closed.iloc[-1]
+        o0, c0 = _f(r0["Open"]), _f(r0["Close"])
+        o1, h1, l1, c1 = (_f(r1["Open"]), _f(r1["High"]),
+                          _f(r1["Low"]), _f(r1["Close"]))
+        rng = h1 - l1
+        body = abs(c1 - o1)
+        if rng <= 0 or body <= 0:
+            return None  # doji/range nulo: sem direcao honesta
+        up_wick = h1 - max(o1, c1)
+        lo_wick = min(o1, c1) - l1
+        bull_hammer = (c1 > o1) and (lo_wick >= 2.0 * body)
+        bear_shoot = (c1 < o1) and (up_wick >= 2.0 * body)
+        bull_eng = (c0 < o0) and (c1 > o1) and (c1 >= o0) and (o1 <= c0)
+        bear_eng = (c0 > o0) and (c1 < o1) and (c1 <= o0) and (o1 >= c0)
+        if bull_hammer or bull_eng:
+            return "BULLISH_REVERSAL"
+        if bear_shoot or bear_eng:
+            return "BEARISH_REVERSAL"
+        return "NONE"
+    except (KeyError, IndexError, TypeError, ValueError):
+        return None
+
+
+def sr_distance(df_closed: Any, lookback: int = SR_LOOKBACK,
+                window: int = SR_PIVOT) -> Optional[float]:
+    """Distancia ao S/R mais proximo em multiplos de ATR14 (audit-only).
+
+    Niveis = pivots high/low (janela `window`) nas ultimas `lookback`
+    fechadas (mesma matematica do next_candle_predictor._swings).
+    Retorna min(|close-nivel|)/ATR14, round 3. None se sem nivel/ATR/df.
+    """
+    try:
+        if df_closed is None or len(df_closed) < 15:
+            return None
+        win = df_closed.iloc[-lookback:] if len(df_closed) >= lookback else df_closed
+        h = [_f(v) for v in win["High"].tolist()]
+        lo = [_f(v) for v in win["Low"].tolist()]
+        n = len(h)
+        levels = []
+        for i in range(window, n - window):
+            seg_h = h[i - window:i + window + 1]
+            seg_l = lo[i - window:i + window + 1]
+            if h[i] >= max(seg_h) and (seg_h.count(h[i]) == 1
+                                       or seg_h.index(h[i]) == window):
+                levels.append(h[i])
+            if lo[i] <= min(seg_l) and (seg_l.count(lo[i]) == 1
+                                        or seg_l.index(lo[i]) == window):
+                levels.append(lo[i])
+        if not levels:
+            return None
+        atr = atr14(df_closed)
+        if atr is None or atr <= 0:
+            return None
+        px = float(df_closed["Close"].astype(float).iloc[-1])
+        return round(min(abs(px - lv) for lv in levels) / atr, 3)
+    except (KeyError, IndexError, TypeError, ValueError):
+        return None
+
+
 def institutional_flags(df_closed: Any, decision: str) -> Dict[str, Any]:
     """Pacote observável completo (tudo None-safe).
 
@@ -149,6 +403,13 @@ def institutional_flags(df_closed: Any, decision: str) -> Dict[str, Any]:
     """
     ema = ema200_side(df_closed, decision)
     smc = smc_flags(df_closed, decision)
+    dmi = adx_dmi(df_closed)
+    bb = bollinger_bands(df_closed)
+    try:
+        from mercury_ai.signals.trendlines import trendline_flags as _tl_flags
+        _tl = _tl_flags(df_closed, decision)
+    except Exception:
+        _tl = {}
     return {
         "trigger_body_ratio": trigger_body_ratio(df_closed),
         "trigger_aligned": trigger_aligned(df_closed, decision),
@@ -159,6 +420,26 @@ def institutional_flags(df_closed: Any, decision: str) -> Dict[str, Any]:
         "in_premium_discount_zone": smc.get("in_premium_discount_zone"),
         "has_fvg": smc.get("has_fvg"),
         "has_inducement": smc.get("has_inducement"),
+        "rsi": rsi14(df_closed),
+        "adx": dmi.get("adx"),
+        "plus_di": dmi.get("plus_di"),
+        "minus_di": dmi.get("minus_di"),
+        "rsi_adx_approved": rsi_adx_approved(df_closed, decision),
+        "bollinger_pos": bollinger_pos(df_closed),
+        "rsi_value": rsi_value(df_closed),
+        "reversal_candle": reversal_candle(df_closed),
+        "sr_distance": sr_distance(df_closed),
+        "band_expansion": band_expansion(df_closed),
+        "bb_upper": bb.get("upper"),
+        "bb_middle": bb.get("middle"),
+        "bb_lower": bb.get("lower"),
+        "bb_bandwidth": bb.get("bandwidth"),
+        "lta_exists": (_tl or {}).get("lta_exists"),
+        "ltb_exists": (_tl or {}).get("ltb_exists"),
+        "trendline_bias": (_tl or {}).get("trendline_bias"),
+        "trendline_aligned": (_tl or {}).get("trendline_aligned"),
+        "trendline_distance_atr": (_tl or {}).get("trendline_distance_atr"),
+        "trendline_detail": (_tl or {}).get("trendline_detail", ""),
     }
 
 
