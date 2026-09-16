@@ -12,7 +12,7 @@
             "ema50": 97.48182302324754,
             "rsi": 50.040360784387374,
             "atr": 0.4562057785133352,
-            "adx": 0.0,
+            "adx": 19.736633345512768,
             "macd": -0.10906779142962364,
             "macd_signal": -0.22140788923828564,
             "bollinger_upper": 97.51037644798872,
@@ -733,15 +733,15 @@
             }
         },
         "risk_assessment": {
-            "suggested_stop": 98.14275517757089,
-            "suggested_take_profit": 95.22762383566284,
-            "risk_reward_ratio": -2.0,
+            "suggested_stop": 97.8553533980382,
+            "suggested_take_profit": 95.80242739472821,
+            "risk_reward_ratio": 2.0,
             "expected_drawdown": 5.0,
             "expected_volatility": 0.46948736609726893,
             "trade_quality": 60.375000000000014,
             "max_exposure": 0.02,
-            "invalidation_point": 98.14275517757089,
-            "institutional_risk_score": 83.77499999999999,
+            "invalidation_point": 97.8553533980382,
+            "institutional_risk_score": 43.77499999999999,
             "var_95": 0.0,
             "var_99": 0.0,
             "cvar_95": 0.0,
@@ -749,7 +749,10 @@
             "kelly_half": 0.125,
             "kelly_quarter": 0.0625,
             "correlation_matrix": null,
-            "stress_test_loss": 0.23474368304863447
+            "stress_test_loss": 0.23474368304863447,
+            "take_profit_1r": 96.48673606249821,
+            "breakeven_trigger": 96.48673606249821,
+            "exit_plan": "TP1_50_BE_RUNNER_2R"
         }
     },
     "evidence_bundle": {
@@ -1067,18 +1070,18 @@
     },
     "decision_result": {
         "decision": "SELL",
-        "grade": "D",
-        "confidence": 0.6858315,
+        "grade": "B",
+        "confidence": 0.6954315,
         "clarity": 100.0,
-        "risk_score": 83.77499999999999,
-        "score": 63.5912225,
+        "risk_score": 43.77499999999999,
+        "score": 73.2162225,
         "quality": 80.0,
         "expected_strength": 381.3958972308238,
         "buy_probability": 0.0,
-        "sell_probability": 44.75,
-        "wait_probability": 55.25,
-        "expected_risk": 98.14275517757089,
-        "expected_reward": 95.22762383566284,
+        "sell_probability": 60.41,
+        "wait_probability": 39.59,
+        "expected_risk": 97.8553533980382,
+        "expected_reward": 95.80242739472821,
         "expected_drawdown": 5.0,
         "audit_id": "f60e0deb71e5c45c00fa50482fe9bdefc5f16f55196d3adf936941e5e28b7ae6",
         "version_metadata": {
@@ -1098,7 +1101,7 @@
             "volume_context": "Volume check passed.",
             "smart_money_context": "Smart Money confirmed.",
             "confluence_context": "Net Confluence: 100.00",
-            "risk_assessment": "Risk Score: 83.77499999999999",
+            "risk_assessment": "Risk Score: 43.77499999999999",
             "confidence_rationale": "Confidence calibrated via evidence quality and consistency.",
             "strong_evidences": [
                 "EMA Alignment",
@@ -1161,12 +1164,12 @@
                 "New LL",
                 "OTE"
             ],
-            "risk_analysis": "Score: 83.77499999999999",
+            "risk_analysis": "Score: 43.77499999999999",
             "institutional_context": "Regime: MarketRegimeEnum.COMPRESSION",
             "suggested_entry": 97.1710447302682,
-            "suggested_stop": 98.14275517757089,
+            "suggested_stop": 97.8553533980382,
             "suggested_targets": [
-                95.22762383566284
+                95.80242739472821
             ],
             "confidence_explanation": "Score: 60.375000000000014",
             "machine_readable": {
@@ -1575,12 +1578,12 @@
         },
         "explainability": {
             "decision": "SELL",
-            "reason": "Regra 6: dominant_direction=SELL, grade=D, conflict=False, is_valid=True",
+            "reason": "Regra 6: dominant_direction=SELL, grade=B, conflict=False, is_valid=True",
             "dominant_direction": "SELL",
-            "opportunity_grade": "D",
+            "opportunity_grade": "B",
             "conflicting_signals": false,
-            "institutional_score": 63.5912225,
-            "confidence": 68.58315,
+            "institutional_score": 73.2162225,
+            "confidence": 69.54315,
             "triggered_rule": 6,
             "contributions": [
                 {
@@ -1734,9 +1737,9 @@
                 "3.Conflict: score=1.00",
                 "4.Ranking: 16 evidencias",
                 "5.Memory: consistency=0.50",
-                "6.Confidence: final=68.58",
+                "6.Confidence: final=69.54",
                 "7.Confluence: direction=SELL, weighted=100.00",
-                "8.Probability: grade=D, buy=0.00, sell=44.75",
+                "8.Probability: grade=B, buy=0.00, sell=60.41",
                 "9.Resolver: rule=6, decision=SELL"
             ]
         }
@@ -1748,8 +1751,8 @@
         "weights_version": "1.2.0"
     },
     "audit_events": [],
-    "session_id": "03f5066b-b8e8-44ef-9b23-c738819575b5",
-    "replay_id": "a1ee696de170c7a2125911b5f0ae1b0ef57ab1e592b3ee72175dae983c6e4f8b",
+    "session_id": "3f52915a-9494-499c-a751-69dfc06388e9",
+    "replay_id": "c64a69b551c0208bfbdabdfa5227d5a0e1ebc03e171dd5c89b1a143bfdaca107",
     "evidence_ranking": {
         "ranked_evidences": [
             {

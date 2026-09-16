@@ -69,6 +69,7 @@ def _extract_mtf_summary(result: Any) -> Dict[str, Any]:
             "local_bias": "UNKNOWN",
             "alignment_score": 0.0,
             "conflict_detected": False,
+            "conflict_score": 0.0,
             "summary": "",
             "timeframes": per_tf,
         }
@@ -87,6 +88,7 @@ def _extract_mtf_summary(result: Any) -> Dict[str, Any]:
         "local_bias": getattr(consensus, "local_bias", "UNKNOWN"),
         "alignment_score": float(getattr(consensus, "alignment_score", 0.0) or 0.0),
         "conflict_detected": bool(getattr(consensus, "conflict_detected", False)),
+        "conflict_score": float(getattr(consensus, "conflict_score", 0.0) or 0.0),
         "summary": getattr(consensus, "summary", "") or "",
         "timeframes": per_tf,
     }
@@ -251,6 +253,35 @@ def build_signal_from_analysis(
                  "trendline_bias": None, "trendline_aligned": None,
                  "trendline_distance_atr": None, "trendline_detail": ""}
 
+    # Selo N3 (observavel audit-only; NUNCA bloqueia o motor).
+    try:
+        from mercury_ai.signals.m5_institutional_filters import n3_flags as _n3
+        _n3d = _n3(_closed, action, symbol)
+    except Exception:
+        _n3d = {}
+
+    # Entry mode (EXECUCAO, nunca filtro): limite na regiao OTE/FVG quando
+    # ha FVG aberto a favor; mercado caso contrario (vela exausta/sem pullback).
+    # Zona = ponto medio do gap quando disponivel via smc (senao entry_price).
+    try:
+        _has_fvg = bool((_inst or {}).get("has_fvg"))
+    except Exception:
+        _has_fvg = False
+    _entry_mode = "LIMIT_OTE" if _has_fvg else "MARKET"
+    _entry_zone = None
+    if _has_fvg:
+        try:
+            from mercury_ai.analysis.institutional_confirmation import atr14 as _a14, detect_fvg as _dfvg
+            _atr_v = _a14(_closed)
+            _fv = _dfvg(_closed, _atr_v) if _atr_v else {}
+            _top, _bot = _fv.get("top"), _fv.get("bottom")
+            if _top is not None and _bot is not None:
+                _entry_zone = round((float(_top) + float(_bot)) / 2.0, 5)
+        except Exception:
+            _entry_zone = None
+    if _entry_zone is None:
+        _entry_zone = entry_price
+
     # Filtro de noticias (observavel audit-only; NUNCA bloqueia o motor).
     try:
         from mercury_ai.calendar.news_filter import assess_symbol as _news
@@ -258,6 +289,24 @@ def build_signal_from_analysis(
     except Exception:
         _nw = {"risk": "UNKNOWN", "blocked": False, "caution": False,
                "event": None, "detail": ""}
+
+    # Plano de reentrada protegida G1/G2 (prospectivo; NUNCA altera decisão).
+    # Regra legível para o painel: quando reentrar, quando parar.
+    _re_rule = ""
+    _re_allowed = action in ("BUY", "SELL")
+    if _re_allowed:
+        try:
+            from mercury_ai.signals.reentry_engine import (
+                MAX_GALES as _MG, REJECTION_WICK_MIN as _RW)
+            _re_rule = (
+                f"Se a vela de entrada fechar contra: reentrar na mesma direção "
+                f"na abertura da próxima vela SOMENTE se houver proteção "
+                f"(pavio de rejeição >= {_RW:.0%} do range ou displacement renovado). "
+                f"Máx {_MG} gales (G1/G2); G2 só em Tokyo/London/NY. "
+                f"Sem proteção ou após G2: STOP (LOSS_FINAL)."
+            )
+        except Exception:
+            _re_rule = "reentrada protegida: até 2 gales com confirmação de rejeição"
 
     return Signal(
         asset=symbol,
@@ -342,9 +391,20 @@ def build_signal_from_analysis(
         trendline_aligned=(_inst or {}).get("trendline_aligned"),
         trendline_distance_atr=(_inst or {}).get("trendline_distance_atr"),
         trendline_detail=str((_inst or {}).get("trendline_detail", "") or ""),
+        n3_touches=(_n3d or {}).get("n3_touches"),
+        n3_level=(_n3d or {}).get("n3_level"),
+        n3_tight=(_n3d or {}).get("n3_tight"),
+        n3_rejection=(_n3d or {}).get("n3_rejection"),
+        n3_wr_hist=(_n3d or {}).get("n3_wr_hist"),
+        n3_score=(_n3d or {}).get("n3_score"),
+        n3_detail=str((_n3d or {}).get("n3_detail", "") or ""),
+        entry_mode=_entry_mode,
+        entry_zone=_entry_zone,
         news_risk=str((_nw or {}).get("risk", "UNKNOWN")),
         news_blocked=bool((_nw or {}).get("blocked", False)),
         news_caution=bool((_nw or {}).get("caution", False)),
         news_event=(_nw or {}).get("event"),
         news_detail=str((_nw or {}).get("detail", "") or ""),
+        reentry_allowed=_re_allowed,
+        reentry_rule=_re_rule,
     )

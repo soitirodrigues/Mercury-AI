@@ -17,6 +17,7 @@ from mercury_ai.analysis.performance_statistics import PerformanceStatistics
 from mercury_ai.analysis.integrity_checker import IntegrityChecker
 from mercury_ai.analysis.health_checker import HealthChecker
 from mercury_ai.config import settings
+from app.dashboard.m5_widgets import render_rejections
 from app.dashboard.scan_alerts import render_scan_progress, render_scan_done_sound
 
 st.set_page_config(page_title="Mercury Operation Center", layout="wide")
@@ -50,6 +51,10 @@ else:
         "TOP 3 vazio neste ciclo — nenhum item inventado. "
         f"(status={_view.get('status')})"
     )
+try:
+    render_rejections(_scan_report.to_dict())
+except Exception:
+    pass
 if analyses:
     analysis = analyses[0] # Mostrando o primeiro por conveniência
     st.metric("Ativo", analysis.market.symbol)

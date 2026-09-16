@@ -14,7 +14,7 @@ from app.dashboard.scan_presentation import (
 )
 from mercury_ai.config import settings
 from mercury_ai.signals.top3_selector import select_top3
-from app.dashboard.m5_widgets import render_m5_clock, render_signal_cards
+from app.dashboard.m5_widgets import render_m5_clock, render_signal_cards, render_rejections
 from app.dashboard.scan_alerts import render_scan_progress, render_scan_done_sound
 
 st.set_page_config(page_title="Scanner Institucional", layout="wide")
@@ -58,6 +58,7 @@ render_m5_clock(_last_m5)
 # O ScanReport bruto permanece exibido abaixo, verbatim, sem recálculo.
 _top3 = select_top3(scan_report)
 render_signal_cards(_top3)
+render_rejections(scan_report)
 
 st.subheader("TOP 3 — ScanReport (bruto, sem recálculo)")
 if view.get("has_top3"):

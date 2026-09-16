@@ -34,5 +34,17 @@ class TradeOutcomeEngine:
                 return "WIN"
             elif current_price >= stop:
                 return "LOSS"
-                
+
         return "OPEN"
+
+    @staticmethod
+    def determine_reentry_outcome(df_closed, direction: str, entry_index: int) -> Dict[str, Any]:
+        """Feedback de ganho/perda COM reentrada protegida (G1/G2).
+
+        Delega ao reentry_engine: retorna WIN / REENTRY_G1 / REENTRY_G2 /
+        LOSS_FINAL + trilha de tentativas, pronto para preencher os campos
+        reentry_result / reentry_gales_used do Signal e alimentar o
+        learning_engine com o resultado real do sinal.
+        """
+        from mercury_ai.signals.reentry_engine import evaluate_reentry
+        return evaluate_reentry(df_closed, direction, entry_index)

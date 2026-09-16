@@ -12,7 +12,7 @@
             "ema50": 97.48450810007854,
             "rsi": 64.65594511772628,
             "atr": 0.4711804722971209,
-            "adx": 0.0,
+            "adx": 18.620042689791344,
             "macd": -0.019088967587904904,
             "macd_signal": -0.15826895412379488,
             "bollinger_upper": 97.7482095819055,
@@ -823,14 +823,14 @@
             }
         },
         "risk_assessment": {
-            "suggested_stop": 96.76346563804192,
-            "suggested_take_profit": 99.69569186949772,
+            "suggested_stop": 97.03410367341485,
+            "suggested_take_profit": 99.15441579875187,
             "risk_reward_ratio": 2.0,
             "expected_drawdown": 5.0,
             "expected_volatility": 0.4820710631831283,
             "trade_quality": 59.83157894736843,
             "max_exposure": 0.02,
-            "invalidation_point": 96.76346563804192,
+            "invalidation_point": 97.03410367341485,
             "institutional_risk_score": 44.101052631578945,
             "var_95": 0.0,
             "var_99": 0.0,
@@ -839,7 +839,10 @@
             "kelly_half": 0.125,
             "kelly_quarter": 0.0625,
             "correlation_matrix": null,
-            "stress_test_loss": 0.24103553159156416
+            "stress_test_loss": 0.24103553159156416,
+            "take_profit_1r": 98.4476450903062,
+            "breakeven_trigger": 98.4476450903062,
+            "exit_plan": "TP1_50_BE_RUNNER_2R"
         }
     },
     "evidence_bundle": {
@@ -1212,8 +1215,8 @@
         "buy_probability": 60.11,
         "sell_probability": 0.0,
         "wait_probability": 39.89,
-        "expected_risk": 96.76346563804192,
-        "expected_reward": 99.69569186949772,
+        "expected_risk": 97.03410367341485,
+        "expected_reward": 99.15441579875187,
         "expected_drawdown": 5.0,
         "audit_id": "6fac059efed4f556c4954f1a444c9f6ddea12b5f753129351783212b8b1aeb1c",
         "version_metadata": {
@@ -1308,9 +1311,9 @@
             "risk_analysis": "Score: 44.101052631578945",
             "institutional_context": "Regime: MarketRegimeEnum.COMPRESSION",
             "suggested_entry": 97.74087438186052,
-            "suggested_stop": 96.76346563804192,
+            "suggested_stop": 97.03410367341485,
             "suggested_targets": [
-                99.69569186949772
+                99.15441579875187
             ],
             "confidence_explanation": "Score: 59.83157894736843",
             "machine_readable": {
@@ -1965,8 +1968,8 @@
         "weights_version": "1.2.0"
     },
     "audit_events": [],
-    "session_id": "03f5066b-b8e8-44ef-9b23-c738819575b5",
-    "replay_id": "19f24cacc238f5a95c1c81880bbaae9fdce794644297a4d7747011c7a327a330",
+    "session_id": "3f52915a-9494-499c-a751-69dfc06388e9",
+    "replay_id": "8ce49ef5c355f0d584b08fe9fc3cb228fab7b4dc41a9ec68b68ffd127b7ed67a",
     "evidence_ranking": {
         "ranked_evidences": [
             {

@@ -12,6 +12,7 @@ from app.dashboard.scan_presentation import (
     counters_line,
 )
 from app.dashboard.scan_alerts import render_scan_progress, render_scan_done_sound
+from app.dashboard.m5_widgets import render_rejections
 
 st.title("Dashboard Institucional")
 # S33-E.5: UMA execucao workers=4 + ScanReport real.
@@ -36,6 +37,10 @@ else:
         "TOP 3 vazio neste ciclo — nenhum item inventado. "
         f"(status={_view.get('status')})"
     )
+try:
+    render_rejections(_scan_report.to_dict())
+except Exception:
+    pass
 if analyses:
     analysis = analyses[0]
     st.metric("Viés", analysis.decision.decision)

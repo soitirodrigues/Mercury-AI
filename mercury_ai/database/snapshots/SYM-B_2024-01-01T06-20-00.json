@@ -12,7 +12,7 @@
             "ema50": 97.5317172939315,
             "rsi": 63.378037422316574,
             "atr": 0.5195607115074908,
-            "adx": 0.0,
+            "adx": 17.00957317103664,
             "macd": 0.12112738658520072,
             "macd_signal": 0.014761380764470878,
             "bollinger_upper": 98.30271284662598,
@@ -251,7 +251,7 @@
                 "strength": 50.0,
                 "confidence": 85.0,
                 "description": "Rompimento de estrutura de alta confirmado.",
-                "weight": 19.5,
+                "weight": 15.0,
                 "contribution_score": 0.0,
                 "quality_score": 62.99999999999999,
                 "context_score": 100.0,
@@ -266,7 +266,7 @@
                 "strength": 50.0,
                 "confidence": 80.0,
                 "description": "CHOCH Bullish detectado.",
-                "weight": 19.5,
+                "weight": 15.0,
                 "contribution_score": 0.0,
                 "quality_score": 62.99999999999999,
                 "context_score": 100.0,
@@ -426,8 +426,8 @@
             "explanation": "Mercado lateral | Sess\u00e3o: TOKYO"
         },
         "market_regime": {
-            "regime": "MarketRegimeEnum.CONSOLIDATION",
-            "confidence": 0.7,
+            "regime": "MarketRegimeEnum.UNKNOWN",
+            "confidence": 0.5,
             "supporting_evidences": [
                 {
                     "engine_name": "Trend",
@@ -660,7 +660,7 @@
                     "strength": 50.0,
                     "confidence": 85.0,
                     "description": "Rompimento de estrutura de alta confirmado.",
-                    "weight": 19.5,
+                    "weight": 15.0,
                     "contribution_score": 0.0,
                     "quality_score": 62.99999999999999,
                     "context_score": 100.0,
@@ -675,7 +675,7 @@
                     "strength": 50.0,
                     "confidence": 80.0,
                     "description": "CHOCH Bullish detectado.",
-                    "weight": 19.5,
+                    "weight": 15.0,
                     "contribution_score": 0.0,
                     "quality_score": 62.99999999999999,
                     "context_score": 100.0,
@@ -788,19 +788,19 @@
                 "H4": "rejected"
             },
             "timeframe_errors": {
-                "M5_reuse": "REUSED_M5_FROM_MAIN",
-                "M1_reuse": "REUSED_M5_FROM_MAIN"
+                "M1_reuse": "REUSED_M5_FROM_MAIN",
+                "M5_reuse": "REUSED_M5_FROM_MAIN"
             }
         },
         "risk_assessment": {
-            "suggested_stop": 96.70941819735454,
-            "suggested_take_profit": 99.64000662757742,
+            "suggested_stop": 96.90693994016759,
+            "suggested_take_profit": 99.24496314195132,
             "risk_reward_ratio": 2.0,
             "expected_drawdown": 5.0,
             "expected_volatility": 0.5318666102847946,
             "trade_quality": 59.26666666666668,
             "max_exposure": 0.02,
-            "invalidation_point": 96.70941819735454,
+            "invalidation_point": 96.90693994016759,
             "institutional_risk_score": 44.43999999999999,
             "var_95": 0.0,
             "var_99": 0.0,
@@ -809,7 +809,10 @@
             "kelly_half": 0.125,
             "kelly_quarter": 0.0625,
             "correlation_matrix": null,
-            "stress_test_loss": 0.2659333051423973
+            "stress_test_loss": 0.2659333051423973,
+            "take_profit_1r": 98.46562207469007,
+            "breakeven_trigger": 98.46562207469007,
+            "exit_plan": "TP1_50_BE_RUNNER_2R"
         }
     },
     "evidence_bundle": {
@@ -1045,7 +1048,7 @@
                 "strength": 50.0,
                 "confidence": 85.0,
                 "description": "Rompimento de estrutura de alta confirmado.",
-                "weight": 19.5,
+                "weight": 15.0,
                 "contribution_score": 0.0,
                 "quality_score": 62.99999999999999,
                 "context_score": 100.0,
@@ -1060,7 +1063,7 @@
                 "strength": 50.0,
                 "confidence": 80.0,
                 "description": "CHOCH Bullish detectado.",
-                "weight": 19.5,
+                "weight": 15.0,
                 "contribution_score": 0.0,
                 "quality_score": 62.99999999999999,
                 "context_score": 100.0,
@@ -1161,16 +1164,16 @@
         "confidence": 0.6875010666666668,
         "clarity": 100.0,
         "risk_score": 44.43999999999999,
-        "score": 73.61084933333333,
-        "quality": 88.0,
-        "expected_strength": 471.7,
+        "score": 74.81084933333334,
+        "quality": 100.0,
+        "expected_strength": 451.0,
         "buy_probability": 59.94,
         "sell_probability": 0.0,
         "wait_probability": 40.06,
-        "expected_risk": 96.70941819735454,
-        "expected_reward": 99.64000662757742,
+        "expected_risk": 96.90693994016759,
+        "expected_reward": 99.24496314195132,
         "expected_drawdown": 5.0,
-        "audit_id": "67513709052749e5feb6c47582b42199da97aaf78e3ab6f398277bae5cefb603",
+        "audit_id": "4d3814661ff6f5a6ab08c9fd6d879833f6975e6d9bb5dd5cafd6f7c7ced2be72",
         "version_metadata": {
             "engine_version": "1.2.0",
             "pipeline_version": "1.2.0",
@@ -1258,11 +1261,11 @@
                 "MSS"
             ],
             "risk_analysis": "Score: 44.43999999999999",
-            "institutional_context": "Regime: MarketRegimeEnum.CONSOLIDATION",
+            "institutional_context": "Regime: MarketRegimeEnum.UNKNOWN",
             "suggested_entry": 97.68628100742883,
-            "suggested_stop": 96.70941819735454,
+            "suggested_stop": 96.90693994016759,
             "suggested_targets": [
-                99.64000662757742
+                99.24496314195132
             ],
             "confidence_explanation": "Score: 59.26666666666668",
             "machine_readable": {
@@ -1279,7 +1282,7 @@
                 "M5 - SwingEngine": 16.0,
                 "M5 - StructureEngine": 50.0,
                 "M15 - Trend": 10.0,
-                "SmartMoney": 25.35,
+                "SmartMoney": 15.0,
                 "SwingEngine": 16.0,
                 "StructureEngine": 50.0
             },
@@ -1288,11 +1291,9 @@
         "mtf_consensus": null,
         "market_regime": null,
         "trade_allowed": true,
-        "trade_block_reasons": [
-            "Low Liquidity Regime"
-        ],
-        "trade_quality_score": 88.0,
-        "trade_quality_level": "A",
+        "trade_block_reasons": [],
+        "trade_quality_score": 100.0,
+        "trade_quality_level": "A+",
         "trace": null,
         "warnings": [],
         "weaknesses": [],
@@ -1355,36 +1356,6 @@
                         "break_price": 97.41621570473119,
                         "current_price": 97.68628100742883
                     }
-                },
-                {
-                    "engine_name": "SmartMoney",
-                    "evidence_name": "BOS BULLISH",
-                    "direction": "BULLISH",
-                    "strength": 50.0,
-                    "confidence": 85.0,
-                    "description": "Rompimento de estrutura de alta confirmado.",
-                    "weight": 25.35,
-                    "contribution_score": 0.1077375,
-                    "quality_score": 56.699999999999996,
-                    "context_score": 100.0,
-                    "timeframe": "M5",
-                    "timestamp": "2024-01-01T06:20:00",
-                    "metadata": {}
-                },
-                {
-                    "engine_name": "SmartMoney",
-                    "evidence_name": "CHOCH BULLISH",
-                    "direction": "BULLISH",
-                    "strength": 50.0,
-                    "confidence": 80.0,
-                    "description": "CHOCH Bullish detectado.",
-                    "weight": 25.35,
-                    "contribution_score": 0.1014,
-                    "quality_score": 56.699999999999996,
-                    "context_score": 100.0,
-                    "timeframe": "M5",
-                    "timestamp": "2024-01-01T06:20:00",
-                    "metadata": {}
                 },
                 {
                     "engine_name": "StructureEngine",
@@ -1570,6 +1541,21 @@
                     "metadata": {}
                 },
                 {
+                    "engine_name": "SmartMoney",
+                    "evidence_name": "BOS BULLISH",
+                    "direction": "BULLISH",
+                    "strength": 50.0,
+                    "confidence": 85.0,
+                    "description": "Rompimento de estrutura de alta confirmado.",
+                    "weight": 15.0,
+                    "contribution_score": 0.06375,
+                    "quality_score": 56.699999999999996,
+                    "context_score": 100.0,
+                    "timeframe": "M5",
+                    "timestamp": "2024-01-01T06:20:00",
+                    "metadata": {}
+                },
+                {
                     "engine_name": "SwingEngine",
                     "evidence_name": "New HL",
                     "direction": "BULLISH",
@@ -1637,6 +1623,21 @@
                         "swing_strength": 30.0,
                         "distance_from_previous": 0.0
                     }
+                },
+                {
+                    "engine_name": "SmartMoney",
+                    "evidence_name": "CHOCH BULLISH",
+                    "direction": "BULLISH",
+                    "strength": 50.0,
+                    "confidence": 80.0,
+                    "description": "CHOCH Bullish detectado.",
+                    "weight": 15.0,
+                    "contribution_score": 0.06,
+                    "quality_score": 56.699999999999996,
+                    "context_score": 100.0,
+                    "timeframe": "M5",
+                    "timestamp": "2024-01-01T06:20:00",
+                    "metadata": {}
                 }
             ],
             "contribution_percentage": {
@@ -1663,33 +1664,25 @@
                 }
             },
             "weakest_evidence": {
-                "engine_name": "M1 - SwingEngine",
-                "evidence_name": "New HL",
+                "engine_name": "SmartMoney",
+                "evidence_name": "CHOCH BULLISH",
                 "direction": "BULLISH",
-                "strength": 56.5,
-                "confidence": 69.5,
-                "description": "Swing Low HL at price 97.9262",
-                "weight": 16.0,
-                "contribution_score": 0.062828,
+                "strength": 50.0,
+                "confidence": 80.0,
+                "description": "CHOCH Bullish detectado.",
+                "weight": 15.0,
+                "contribution_score": 0.06,
                 "quality_score": 56.699999999999996,
                 "context_score": 100.0,
-                "timeframe": "M1",
+                "timeframe": "M5",
                 "timestamp": "2024-01-01T06:20:00",
-                "metadata": {
-                    "swing_type": "LOW",
-                    "classification": "HL",
-                    "price": 97.92616595367184,
-                    "index": 30,
-                    "atr": 0.4580536376976582,
-                    "swing_strength": 30.0,
-                    "distance_from_previous": 0.0
-                }
+                "metadata": {}
             },
-            "total_weight": 471.7,
-            "bullish_weight": 471.7,
+            "total_weight": 451.0,
+            "bullish_weight": 451.0,
             "bearish_weight": 0,
             "neutral_weight": 0,
-            "bullish_score": 1.496153077354497,
+            "bullish_score": 1.4107655773544971,
             "bearish_score": 0,
             "neutral_score": 0,
             "top_bullish_evidence": {
@@ -1719,7 +1712,7 @@
             "dominant_direction": "BUY",
             "opportunity_grade": "C",
             "conflicting_signals": false,
-            "institutional_score": 73.61084933333333,
+            "institutional_score": 74.81084933333334,
             "confidence": 68.75010666666668,
             "triggered_rule": 5,
             "contributions": [
@@ -1906,8 +1899,8 @@
         "weights_version": "1.2.0"
     },
     "audit_events": [],
-    "session_id": "e9ccfc82-2eb7-47ee-ac35-f2e542022293",
-    "replay_id": "69617a748ca6bcf54c854b67a02028ad2f95b37e19193690d5e85a688bc7ffb9",
+    "session_id": "5c69f47f-e780-48af-ae94-2a11a889c4f6",
+    "replay_id": "a9ca129a7dc36786f1f945f7e561c05f18f5f4db38f022dc92a48131b4f7b1ef",
     "evidence_ranking": {
         "ranked_evidences": [
             {
@@ -1963,36 +1956,6 @@
                     "break_price": 97.41621570473119,
                     "current_price": 97.68628100742883
                 }
-            },
-            {
-                "engine_name": "SmartMoney",
-                "evidence_name": "BOS BULLISH",
-                "direction": "BULLISH",
-                "strength": 50.0,
-                "confidence": 85.0,
-                "description": "Rompimento de estrutura de alta confirmado.",
-                "weight": 25.35,
-                "contribution_score": 0.1077375,
-                "quality_score": 56.699999999999996,
-                "context_score": 100.0,
-                "timeframe": "M5",
-                "timestamp": "2024-01-01T06:20:00",
-                "metadata": {}
-            },
-            {
-                "engine_name": "SmartMoney",
-                "evidence_name": "CHOCH BULLISH",
-                "direction": "BULLISH",
-                "strength": 50.0,
-                "confidence": 80.0,
-                "description": "CHOCH Bullish detectado.",
-                "weight": 25.35,
-                "contribution_score": 0.1014,
-                "quality_score": 56.699999999999996,
-                "context_score": 100.0,
-                "timeframe": "M5",
-                "timestamp": "2024-01-01T06:20:00",
-                "metadata": {}
             },
             {
                 "engine_name": "StructureEngine",
@@ -2178,6 +2141,21 @@
                 "metadata": {}
             },
             {
+                "engine_name": "SmartMoney",
+                "evidence_name": "BOS BULLISH",
+                "direction": "BULLISH",
+                "strength": 50.0,
+                "confidence": 85.0,
+                "description": "Rompimento de estrutura de alta confirmado.",
+                "weight": 15.0,
+                "contribution_score": 0.06375,
+                "quality_score": 56.699999999999996,
+                "context_score": 100.0,
+                "timeframe": "M5",
+                "timestamp": "2024-01-01T06:20:00",
+                "metadata": {}
+            },
+            {
                 "engine_name": "SwingEngine",
                 "evidence_name": "New HL",
                 "direction": "BULLISH",
@@ -2245,6 +2223,21 @@
                     "swing_strength": 30.0,
                     "distance_from_previous": 0.0
                 }
+            },
+            {
+                "engine_name": "SmartMoney",
+                "evidence_name": "CHOCH BULLISH",
+                "direction": "BULLISH",
+                "strength": 50.0,
+                "confidence": 80.0,
+                "description": "CHOCH Bullish detectado.",
+                "weight": 15.0,
+                "contribution_score": 0.06,
+                "quality_score": 56.699999999999996,
+                "context_score": 100.0,
+                "timeframe": "M5",
+                "timestamp": "2024-01-01T06:20:00",
+                "metadata": {}
             }
         ],
         "contribution_percentage": {
@@ -2271,33 +2264,25 @@
             }
         },
         "weakest_evidence": {
-            "engine_name": "M1 - SwingEngine",
-            "evidence_name": "New HL",
+            "engine_name": "SmartMoney",
+            "evidence_name": "CHOCH BULLISH",
             "direction": "BULLISH",
-            "strength": 56.5,
-            "confidence": 69.5,
-            "description": "Swing Low HL at price 97.9262",
-            "weight": 16.0,
-            "contribution_score": 0.062828,
+            "strength": 50.0,
+            "confidence": 80.0,
+            "description": "CHOCH Bullish detectado.",
+            "weight": 15.0,
+            "contribution_score": 0.06,
             "quality_score": 56.699999999999996,
             "context_score": 100.0,
-            "timeframe": "M1",
+            "timeframe": "M5",
             "timestamp": "2024-01-01T06:20:00",
-            "metadata": {
-                "swing_type": "LOW",
-                "classification": "HL",
-                "price": 97.92616595367184,
-                "index": 30,
-                "atr": 0.4580536376976582,
-                "swing_strength": 30.0,
-                "distance_from_previous": 0.0
-            }
+            "metadata": {}
         },
-        "total_weight": 471.7,
-        "bullish_weight": 471.7,
+        "total_weight": 451.0,
+        "bullish_weight": 451.0,
         "bearish_weight": 0,
         "neutral_weight": 0,
-        "bullish_score": 1.496153077354497,
+        "bullish_score": 1.4107655773544971,
         "bearish_score": 0,
         "neutral_score": 0,
         "top_bullish_evidence": {

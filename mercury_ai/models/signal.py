@@ -177,6 +177,43 @@ class Signal:
     news_caution: bool = False
     news_event: str | None = None
     news_detail: str = ""
+    # --- Selo N3 audit-only (2026-09-16; mesmo padrao, NUNCA bloqueia) ---
+    # Reversao em topos/fundos multiplos: >=3 toques sem rompimento.
+    # n3_touches/n3_level: zona a favor (None = sem zona). n3_tight: True =
+    # amplitude <=0.1% (padrao ouro do protocolo). n3_rejection: pinbar/engolfo
+    # na trigger. n3_wr_hist: win rate do backtest do ativo (None se n<5).
+    # n3_score: toques x wr x bonus_rejeicao x prox (p/ Top-3 N3 e painel).
+    n3_touches: int | None = None
+    n3_level: float | None = None
+    n3_tight: bool | None = None
+    n3_rejection: bool | None = None
+    n3_wr_hist: float | None = None
+    n3_score: float | None = None
+    n3_detail: str = ""
+    # --- Entry mode (2026-09-16; EXECUCAO, nunca filtro de sinal) ---
+    # LIMIT_OTE (preferencial: limite na regiao OTE/FVG) vs MARKET
+    # (vela exausta/sem pullback). Calculado por signal_builder a partir
+    # de has_fvg +OTE: com FVG aberto => LIMIT_OTE, sem => MARKET.
+    # Nao altera decisao/score/ranking; so orienta o executor.
+    entry_mode: str = "MARKET"
+    entry_zone: float | None = None
+
+    # --- Reentrada protegida G1/G2 (2026-09-16; PLANO prospectivo, nunca bloqueia) ---
+    # Plano de reentrada emitido JUNTO com o sinal (como a IA de referência):
+    # reentry_allowed: True = se a vela de entrada fechar contra COM proteção
+    #   (pavio de rejeição >=40% ou displacement renovado), reentrar na mesma
+    #   direção na abertura da próxima vela. False = não reentrar (stop seco).
+    # reentry_max_gales: teto de reentradas (2 = G1+G2). reentry_g2_session_only:
+    #   G2 só em Tokyo/London/NY. reentry_rule: texto legível p/ painel.
+    # Campos de FEEDBACK (preenchidos pós-fechamento pelo outcome engine):
+    # reentry_result: WIN | REENTRY_G1 | REENTRY_G2 | LOSS_FINAL | None (aberto).
+    # reentry_gales_used: quantos gales foram usados no desfecho.
+    reentry_allowed: bool = True
+    reentry_max_gales: int = 2
+    reentry_g2_session_only: bool = True
+    reentry_rule: str = ""
+    reentry_result: str | None = None
+    reentry_gales_used: int | None = None
 
     @property
     def symbol(self) -> str:

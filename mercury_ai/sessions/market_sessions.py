@@ -120,3 +120,52 @@ class MarketSessions:
         if wd >= 5:
             return f"{m} CLOSED weekend ({wd_name} UTC) -> {eligible}"
         return f"{m} OPEN weekday ({wd_name} UTC) -> {eligible}"
+
+    # -------------------------------------------------------------
+    # Killzones institucionais (observavel; NAO bloqueia scanner)
+    # Londres 07-11h UTC, Nova York 12-16h UTC, Overlap 12-16h.
+    # Sydney/Asia (21-07h) = fora de killzone p/ Forex majors.
+    # Crypto: sempre em killzone (24/7, sem sessao fina estrutural).
+    # Medicao 2026-09-16 (n=30, 100% madrugada): sem amostra Londres/NY
+    # para comparar — por isso OBSERVAVEL por 2 semanas antes de gate.
+    # -------------------------------------------------------------
+    KILLZONES_UTC = {
+        "LONDON": (7, 11),
+        "NEW_YORK": (12, 16),
+    }
+    THIN_HOURS_UTC = set(list(range(21, 24)) + list(range(0, 7)))
+
+    @staticmethod
+    def _utc_hour(now: Optional[datetime] = None) -> int:
+        if now is not None:
+            dt = now
+            if dt.tzinfo is None:
+                dt = dt.replace(tzinfo=timezone.utc)
+            else:
+                dt = dt.astimezone(timezone.utc)
+            return dt.hour
+        dc_now = DeterministicClock.utcnow()
+        if dc_now.tzinfo is None:
+            dc_now = dc_now.replace(tzinfo=timezone.utc)
+        return dc_now.hour
+
+    def is_in_killzone(self, symbol: str, now: Optional[datetime] = None) -> bool:
+        """True se o simbolo esta em killzone operacional (Londres/NY p/ Forex)."""
+        try:
+            from mercury_ai.config.universe import get_asset
+            asset = get_asset(symbol)
+            market = (asset.market if asset is not None else "").upper()
+        except Exception:
+            market = ""
+        if market == self.CRYPTO_MARKET or market == "CRIPTO":
+            return True
+        return self._utc_hour(now) not in self.THIN_HOURS_UTC
+
+    def killzone_reason(self, symbol: str, now: Optional[datetime] = None) -> str:
+        """Razao legivel p/ observabilidade (SKIPPED_OUTSIDE_KILLZONE futuro)."""
+        h = self._utc_hour(now)
+        inside = self.is_in_killzone(symbol, now)
+        if inside:
+            return f"{symbol} IN_KILLZONE ({h:02d}h UTC: Londres 07-11/NY 12-16)"
+        return (f"{symbol} OUTSIDE_KILLZONE ({h:02d}h UTC: Sydney/Asia fina "
+                f"21-07h — observar 2 semanas antes de bloquear)")

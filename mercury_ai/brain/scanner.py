@@ -321,6 +321,21 @@ class MercuryScanner:
                     len(filtered_by_session), len(kept),
                 )
             enabled_assets = kept
+            # Killzone observavel (2026-09-16): marca quem esta fora de
+            # Londres/NY SEM filtrar (2 semanas de medicao antes de gate).
+            # Guardado em self._killzone_outside p/ o per_asset do ciclo.
+            try:
+                self._killzone_outside = {
+                    a.symbol for a in enabled_assets
+                    if not gate.is_in_killzone(a.symbol)
+                }
+                if self._killzone_outside:
+                    logger.info(
+                        "KILLZONE_OBSERVE: %d ativos fora de killzone (Sydney/Asia fina): %s",
+                        len(self._killzone_outside), sorted(self._killzone_outside)[:8],
+                    )
+            except Exception:
+                self._killzone_outside = set()
 
         symbols = [
             a.symbol
@@ -373,7 +388,8 @@ class MercuryScanner:
                         f"{audit_id}: {analysis.decision.summary}",
                     )
                     n_error += 1
-                    per_asset.append(self._row(scan_id, symbol, "ERROR", analysis, time.perf_counter() - t0, None))
+                    per_asset.append(self._row(scan_id, symbol, "ERROR", analysis, time.perf_counter() - t0, None,
+                                                 getattr(self, "_killzone_outside", set())))
                     continue
 
                 if audit_id in PIPELINE_SKIP_STATES:
@@ -384,7 +400,8 @@ class MercuryScanner:
                         analysis.decision.summary,
                         analysis.decision.score,
                     )
-                    per_asset.append(self._row(scan_id, symbol, f"SKIPPED_{audit_id}", analysis, time.perf_counter() - t0, None))
+                    per_asset.append(self._row(scan_id, symbol, f"SKIPPED_{audit_id}", analysis, time.perf_counter() - t0, None,
+                                                 getattr(self, "_killzone_outside", set())))
                     continue
 
                 logger.debug("=" * 80)
@@ -413,7 +430,8 @@ class MercuryScanner:
 
                 if score < self.min_quality_score:
                     logger.info(">>> DESCARTADO PELO SCANNER <<<")
-                    per_asset.append(self._row(scan_id, symbol, "DISCARDED_SCORE", analysis, time.perf_counter() - t0, None))
+                    per_asset.append(self._row(scan_id, symbol, "DISCARDED_SCORE", analysis, time.perf_counter() - t0, None,
+                                                 getattr(self, "_killzone_outside", set())))
                     continue
 
                 logger.info(">>> ADICIONADO AO RANKING <<<")
@@ -421,7 +439,8 @@ class MercuryScanner:
                 analyses.append(
                     analysis
                 )
-                per_asset.append(self._row(scan_id, symbol, "RANKED", analysis, time.perf_counter() - t0, None))
+                per_asset.append(self._row(scan_id, symbol, "RANKED", analysis, time.perf_counter() - t0, None,
+                                             getattr(self, "_killzone_outside", set())))
 
                 self._print_report(
                     analysis
@@ -440,7 +459,8 @@ class MercuryScanner:
                 logger.error("=" * 80)
 
                 n_error += 1
-                per_asset.append(self._row(scan_id, symbol, "EXCEPTION", None, time.perf_counter() - t0, e))
+                per_asset.append(self._row(scan_id, symbol, "EXCEPTION", None, time.perf_counter() - t0, e,
+                                             getattr(self, "_killzone_outside", set())))
 
                 # Trigger provider failover on failure
                 if hasattr(self, 'provider_manager') and self.provider_manager is not None:
@@ -507,7 +527,7 @@ class MercuryScanner:
         return ranked
 
     @staticmethod
-    def _row(scan_id, symbol, outcome, analysis, duration_s, error):
+    def _row(scan_id, symbol, outcome, analysis, duration_s, error, _killzone_outside=None):
         """Linha per_asset do ScanReport (S33-E Fase 3: identidade da execução)."""
         row = {
             "scan_id": scan_id,
@@ -538,6 +558,12 @@ class MercuryScanner:
                 row["signal"] = MercuryScanner._signal_payload(analysis)
         except Exception:
             pass
+        try:
+            # Killzone observavel: marca sem filtrar (medicao 2 semanas).
+            kz = _killzone_outside if _killzone_outside is not None else set()
+            row["outside_killzone"] = bool(symbol in (kz or set()))
+        except Exception:
+            row["outside_killzone"] = False
         return row
 
     @staticmethod
@@ -761,7 +787,8 @@ class MercuryScanner:
                     _res = fut.result()
                 except Exception as e:  # noqa: BLE001 — nunca deveria acontecer
                     n_error += 1
-                    per_asset.append(self._row(scan_id, symbol, "EXCEPTION", None, 0.0, e))
+                    per_asset.append(self._row(scan_id, symbol, "EXCEPTION", None, 0.0, e,
+                                                 getattr(self, "_killzone_outside", set())))
                     continue
                 try:
                     (_sym, analysis, exc, dur, failed, worker_scan_id) = _res
@@ -794,7 +821,8 @@ class MercuryScanner:
                 if exc is not None or analysis is None:
                     logger.error("ERRO DURANTE A ANÁLISE DE %s: %s", symbol, exc)
                     n_error += 1
-                    per_asset.append(self._row(scan_id, symbol, "EXCEPTION", None, dur, exc))
+                    per_asset.append(self._row(scan_id, symbol, "EXCEPTION", None, dur, exc,
+                                                 getattr(self, "_killzone_outside", set())))
                     self._trigger_failover(symbol, str(exc) if exc else "unknown")
                     continue
 
@@ -805,7 +833,8 @@ class MercuryScanner:
                         symbol, audit_id, analysis.decision.summary, analysis.decision.score,
                     )
                     n_error += 1
-                    per_asset.append(self._row(scan_id, symbol, "ERROR", analysis, dur, None))
+                    per_asset.append(self._row(scan_id, symbol, "ERROR", analysis, dur, None,
+                                                 getattr(self, "_killzone_outside", set())))
                     self._trigger_failover(symbol, f"{audit_id}: {analysis.decision.summary}")
                     continue
 
@@ -814,7 +843,8 @@ class MercuryScanner:
                         ">>> ANÁLISE DESCARTADA em %s (estado observável): audit_id=%s | %s | score=%.2f",
                         symbol, audit_id, analysis.decision.summary, analysis.decision.score,
                     )
-                    per_asset.append(self._row(scan_id, symbol, f"SKIPPED_{audit_id}", analysis, dur, None))
+                    per_asset.append(self._row(scan_id, symbol, f"SKIPPED_{audit_id}", analysis, dur, None,
+                                                 getattr(self, "_killzone_outside", set())))
                     continue
 
                 score = analysis.decision.score
@@ -822,12 +852,14 @@ class MercuryScanner:
                 logger.info("Scanner Score........: %.2f", score)
                 if score < self.min_quality_score:
                     logger.info(">>> DESCARTADO PELO SCANNER <<<")
-                    per_asset.append(self._row(scan_id, symbol, "DISCARDED_SCORE", analysis, dur, None))
+                    per_asset.append(self._row(scan_id, symbol, "DISCARDED_SCORE", analysis, dur, None,
+                                                 getattr(self, "_killzone_outside", set())))
                     continue
 
                 logger.info(">>> ADICIONADO AO RANKING <<<")
                 analyses.append(analysis)
-                per_asset.append(self._row(scan_id, symbol, "RANKED", analysis, dur, None))
+                per_asset.append(self._row(scan_id, symbol, "RANKED", analysis, dur, None,
+                                             getattr(self, "_killzone_outside", set())))
         finally:
             # Não bloquear no deadline: cancela pendentes; órfãs quarentenadas
             # via scan_id (P3) + memória isolada por worker (P1: tempfile

@@ -12,7 +12,7 @@
             "ema50": 97.51928974792146,
             "rsi": 54.42148212166132,
             "atr": 0.5256556929995791,
-            "adx": 0.0,
+            "adx": 18.201254342994375,
             "macd": 0.09553213059929533,
             "macd_signal": -0.04214214251022725,
             "bollinger_upper": 98.18782199305325,
@@ -221,7 +221,7 @@
                 "strength": 50.0,
                 "confidence": 85.0,
                 "description": "Rompimento de estrutura de baixa confirmado.",
-                "weight": 19.5,
+                "weight": 15.0,
                 "contribution_score": 0.0,
                 "quality_score": 62.99999999999999,
                 "context_score": 100.0,
@@ -236,7 +236,7 @@
                 "strength": 50.0,
                 "confidence": 80.0,
                 "description": "CHOCH Bearish detectado.",
-                "weight": 19.5,
+                "weight": 15.0,
                 "contribution_score": 0.0,
                 "quality_score": 62.99999999999999,
                 "context_score": 100.0,
@@ -381,8 +381,8 @@
             "explanation": "Mercado lateral | Sess\u00e3o: TOKYO"
         },
         "market_regime": {
-            "regime": "MarketRegimeEnum.CONSOLIDATION",
-            "confidence": 0.7,
+            "regime": "MarketRegimeEnum.UNKNOWN",
+            "confidence": 0.5,
             "supporting_evidences": [
                 {
                     "engine_name": "Trend",
@@ -585,7 +585,7 @@
                     "strength": 50.0,
                     "confidence": 85.0,
                     "description": "Rompimento de estrutura de baixa confirmado.",
-                    "weight": 19.5,
+                    "weight": 15.0,
                     "contribution_score": 0.0,
                     "quality_score": 62.99999999999999,
                     "context_score": 100.0,
@@ -600,7 +600,7 @@
                     "strength": 50.0,
                     "confidence": 80.0,
                     "description": "CHOCH Bearish detectado.",
-                    "weight": 19.5,
+                    "weight": 15.0,
                     "contribution_score": 0.0,
                     "quality_score": 62.99999999999999,
                     "context_score": 100.0,
@@ -703,15 +703,15 @@
             }
         },
         "risk_assessment": {
-            "suggested_stop": 98.38773209700126,
-            "suggested_take_profit": 95.4653242129319,
-            "risk_reward_ratio": -2.0,
+            "suggested_stop": 98.20207967514418,
+            "suggested_take_profit": 95.83662905664607,
+            "risk_reward_ratio": 2.0,
             "expected_drawdown": 5.0,
             "expected_volatility": 0.5396122449556457,
             "trade_quality": 62.44000000000001,
             "max_exposure": 0.02,
-            "invalidation_point": 98.38773209700126,
-            "institutional_risk_score": 82.536,
+            "invalidation_point": 98.20207967514418,
+            "institutional_risk_score": 42.535999999999994,
             "var_95": 0.0,
             "var_99": 0.0,
             "cvar_95": 0.0,
@@ -719,7 +719,10 @@
             "kelly_half": 0.125,
             "kelly_quarter": 0.0625,
             "correlation_matrix": null,
-            "stress_test_loss": 0.2698061224778229
+            "stress_test_loss": 0.2698061224778229,
+            "take_profit_1r": 96.62511259614544,
+            "breakeven_trigger": 96.62511259614544,
+            "exit_plan": "TP1_50_BE_RUNNER_2R"
         }
     },
     "evidence_bundle": {
@@ -925,7 +928,7 @@
                 "strength": 50.0,
                 "confidence": 85.0,
                 "description": "Rompimento de estrutura de baixa confirmado.",
-                "weight": 19.5,
+                "weight": 15.0,
                 "contribution_score": 0.0,
                 "quality_score": 62.99999999999999,
                 "context_score": 100.0,
@@ -940,7 +943,7 @@
                 "strength": 50.0,
                 "confidence": 80.0,
                 "description": "CHOCH Bearish detectado.",
-                "weight": 19.5,
+                "weight": 15.0,
                 "contribution_score": 0.0,
                 "quality_score": 62.99999999999999,
                 "context_score": 100.0,
@@ -1022,20 +1025,20 @@
     },
     "decision_result": {
         "decision": "SELL",
-        "grade": "D",
-        "confidence": 0.6962913600000001,
+        "grade": "B",
+        "confidence": 0.7058913600000001,
         "clarity": 100.0,
-        "risk_score": 82.536,
-        "score": 65.0167704,
-        "quality": 88.0,
-        "expected_strength": 332.0958972308238,
+        "risk_score": 42.535999999999994,
+        "score": 75.8697704,
+        "quality": 100.0,
+        "expected_strength": 311.3958972308238,
         "buy_probability": 0.0,
-        "sell_probability": 45.44,
-        "wait_probability": 54.56,
-        "expected_risk": 98.38773209700126,
-        "expected_reward": 95.4653242129319,
+        "sell_probability": 61.18,
+        "wait_probability": 38.82,
+        "expected_risk": 98.20207967514418,
+        "expected_reward": 95.83662905664607,
         "expected_drawdown": 5.0,
-        "audit_id": "2cf6f22145bd0397e7a1dd15df1749ffc4e2642aa3c47cabffa43745030b2465",
+        "audit_id": "4e6a475b875f2aacd32cd07d979ed850724e54e4cbf866a7043bb1d93cf2321b",
         "version_metadata": {
             "engine_version": "1.2.0",
             "pipeline_version": "1.2.0",
@@ -1053,7 +1056,7 @@
             "volume_context": "Volume check passed.",
             "smart_money_context": "Smart Money confirmed.",
             "confluence_context": "Net Confluence: 100.00",
-            "risk_assessment": "Risk Score: 82.536",
+            "risk_assessment": "Risk Score: 42.535999999999994",
             "confidence_rationale": "Confidence calibrated via evidence quality and consistency.",
             "strong_evidences": [
                 "Price vs EMA9",
@@ -1113,12 +1116,12 @@
                 "New LL",
                 "OTE"
             ],
-            "risk_analysis": "Score: 82.536",
-            "institutional_context": "Regime: MarketRegimeEnum.CONSOLIDATION",
+            "risk_analysis": "Score: 42.535999999999994",
+            "institutional_context": "Regime: MarketRegimeEnum.UNKNOWN",
             "suggested_entry": 97.41359613564481,
-            "suggested_stop": 98.38773209700126,
+            "suggested_stop": 98.20207967514418,
             "suggested_targets": [
-                95.4653242129319
+                95.83662905664607
             ],
             "confidence_explanation": "Score: 62.44000000000001",
             "machine_readable": {
@@ -1135,7 +1138,7 @@
                 "M5 - SwingEngine": 21.7986324102746,
                 "M5 - StructureEngine": 30.0,
                 "M15 - Trend": 30.0,
-                "SmartMoney": 25.35,
+                "SmartMoney": 15.0,
                 "SwingEngine": 21.7986324102746,
                 "StructureEngine": 30.0
             },
@@ -1144,18 +1147,16 @@
         "mtf_consensus": null,
         "market_regime": null,
         "trade_allowed": true,
-        "trade_block_reasons": [
-            "Low Liquidity Regime"
-        ],
-        "trade_quality_score": 88.0,
-        "trade_quality_level": "A",
+        "trade_block_reasons": [],
+        "trade_quality_score": 100.0,
+        "trade_quality_level": "A+",
         "trace": null,
         "warnings": [],
         "weaknesses": [],
         "blockers": [],
         "summary": "Institutional SELL signal triggered based on current market regime.",
         "technical_reason": "Decision SELL triggered primarily by EMA Alignment (Strength: 90.0%) with a confluence score of 100.00.",
-        "institutional_alignment": false,
+        "institutional_alignment": true,
         "evidence_ranking": {
             "ranked_evidences": [
                 {
@@ -1375,36 +1376,6 @@
                     }
                 },
                 {
-                    "engine_name": "SmartMoney",
-                    "evidence_name": "BOS BEARISH",
-                    "direction": "BEARISH",
-                    "strength": 50.0,
-                    "confidence": 85.0,
-                    "description": "Rompimento de estrutura de baixa confirmado.",
-                    "weight": 25.35,
-                    "contribution_score": 0.1077375,
-                    "quality_score": 56.699999999999996,
-                    "context_score": 100.0,
-                    "timeframe": "M5",
-                    "timestamp": "2024-01-01T06:10:00",
-                    "metadata": {}
-                },
-                {
-                    "engine_name": "SmartMoney",
-                    "evidence_name": "CHOCH BEARISH",
-                    "direction": "BEARISH",
-                    "strength": 50.0,
-                    "confidence": 80.0,
-                    "description": "CHOCH Bearish detectado.",
-                    "weight": 25.35,
-                    "contribution_score": 0.1014,
-                    "quality_score": 56.699999999999996,
-                    "context_score": 100.0,
-                    "timeframe": "M5",
-                    "timestamp": "2024-01-01T06:10:00",
-                    "metadata": {}
-                },
-                {
                     "engine_name": "Trend",
                     "evidence_name": "Price vs EMA9",
                     "direction": "BEARISH",
@@ -1448,6 +1419,36 @@
                     "timeframe": "M1",
                     "timestamp": "2024-01-01T06:10:00",
                     "metadata": {}
+                },
+                {
+                    "engine_name": "SmartMoney",
+                    "evidence_name": "BOS BEARISH",
+                    "direction": "BEARISH",
+                    "strength": 50.0,
+                    "confidence": 85.0,
+                    "description": "Rompimento de estrutura de baixa confirmado.",
+                    "weight": 15.0,
+                    "contribution_score": 0.06375,
+                    "quality_score": 56.699999999999996,
+                    "context_score": 100.0,
+                    "timeframe": "M5",
+                    "timestamp": "2024-01-01T06:10:00",
+                    "metadata": {}
+                },
+                {
+                    "engine_name": "SmartMoney",
+                    "evidence_name": "CHOCH BEARISH",
+                    "direction": "BEARISH",
+                    "strength": 50.0,
+                    "confidence": 80.0,
+                    "description": "CHOCH Bearish detectado.",
+                    "weight": 15.0,
+                    "contribution_score": 0.06,
+                    "quality_score": 56.699999999999996,
+                    "context_score": 100.0,
+                    "timeframe": "M5",
+                    "timestamp": "2024-01-01T06:10:00",
+                    "metadata": {}
                 }
             ],
             "contribution_percentage": {
@@ -1471,26 +1472,26 @@
                 "metadata": {}
             },
             "weakest_evidence": {
-                "engine_name": "M1 - Trend",
-                "evidence_name": "Price vs EMA9",
+                "engine_name": "SmartMoney",
+                "evidence_name": "CHOCH BEARISH",
                 "direction": "BEARISH",
-                "strength": 80.0,
+                "strength": 50.0,
                 "confidence": 80.0,
-                "description": "Pre\u00e7o abaixo da EMA9",
-                "weight": 10.0,
-                "contribution_score": 0.064,
-                "quality_score": 70.0,
+                "description": "CHOCH Bearish detectado.",
+                "weight": 15.0,
+                "contribution_score": 0.06,
+                "quality_score": 56.699999999999996,
                 "context_score": 100.0,
-                "timeframe": "M1",
+                "timeframe": "M5",
                 "timestamp": "2024-01-01T06:10:00",
                 "metadata": {}
             },
-            "total_weight": 332.0958972308238,
+            "total_weight": 311.3958972308238,
             "bullish_weight": 0,
-            "bearish_weight": 332.0958972308238,
+            "bearish_weight": 311.3958972308238,
             "neutral_weight": 0,
             "bullish_score": 0,
-            "bearish_score": 2.092310120674559,
+            "bearish_score": 2.006922620674559,
             "neutral_score": 0,
             "top_bullish_evidence": null,
             "top_bearish_evidence": {
@@ -1512,12 +1513,12 @@
         },
         "explainability": {
             "decision": "SELL",
-            "reason": "Regra 6: dominant_direction=SELL, grade=D, conflict=False, is_valid=True",
+            "reason": "Regra 6: dominant_direction=SELL, grade=B, conflict=False, is_valid=True",
             "dominant_direction": "SELL",
-            "opportunity_grade": "D",
+            "opportunity_grade": "B",
             "conflicting_signals": false,
-            "institutional_score": 65.0167704,
-            "confidence": 69.62913600000002,
+            "institutional_score": 75.8697704,
+            "confidence": 70.58913600000001,
             "triggered_rule": 6,
             "contributions": [
                 {
@@ -1662,9 +1663,9 @@
                 "3.Conflict: score=1.00",
                 "4.Ranking: 15 evidencias",
                 "5.Memory: consistency=0.50",
-                "6.Confidence: final=69.63",
+                "6.Confidence: final=70.59",
                 "7.Confluence: direction=SELL, weighted=100.00",
-                "8.Probability: grade=D, buy=0.00, sell=45.44",
+                "8.Probability: grade=B, buy=0.00, sell=61.18",
                 "9.Resolver: rule=6, decision=SELL"
             ]
         }
@@ -1676,8 +1677,8 @@
         "weights_version": "1.2.0"
     },
     "audit_events": [],
-    "session_id": "03f5066b-b8e8-44ef-9b23-c738819575b5",
-    "replay_id": "b5045c13f11385be59ed40e024e0a2720f44250a3f32791fcceae4c5f95fc44a",
+    "session_id": "3f52915a-9494-499c-a751-69dfc06388e9",
+    "replay_id": "6097621c434c737e05651a6d86fd2b6e75fab1505818c8b13a06cb94c782abb3",
     "evidence_ranking": {
         "ranked_evidences": [
             {
@@ -1897,36 +1898,6 @@
                 }
             },
             {
-                "engine_name": "SmartMoney",
-                "evidence_name": "BOS BEARISH",
-                "direction": "BEARISH",
-                "strength": 50.0,
-                "confidence": 85.0,
-                "description": "Rompimento de estrutura de baixa confirmado.",
-                "weight": 25.35,
-                "contribution_score": 0.1077375,
-                "quality_score": 56.699999999999996,
-                "context_score": 100.0,
-                "timeframe": "M5",
-                "timestamp": "2024-01-01T06:10:00",
-                "metadata": {}
-            },
-            {
-                "engine_name": "SmartMoney",
-                "evidence_name": "CHOCH BEARISH",
-                "direction": "BEARISH",
-                "strength": 50.0,
-                "confidence": 80.0,
-                "description": "CHOCH Bearish detectado.",
-                "weight": 25.35,
-                "contribution_score": 0.1014,
-                "quality_score": 56.699999999999996,
-                "context_score": 100.0,
-                "timeframe": "M5",
-                "timestamp": "2024-01-01T06:10:00",
-                "metadata": {}
-            },
-            {
                 "engine_name": "Trend",
                 "evidence_name": "Price vs EMA9",
                 "direction": "BEARISH",
@@ -1970,6 +1941,36 @@
                 "timeframe": "M1",
                 "timestamp": "2024-01-01T06:10:00",
                 "metadata": {}
+            },
+            {
+                "engine_name": "SmartMoney",
+                "evidence_name": "BOS BEARISH",
+                "direction": "BEARISH",
+                "strength": 50.0,
+                "confidence": 85.0,
+                "description": "Rompimento de estrutura de baixa confirmado.",
+                "weight": 15.0,
+                "contribution_score": 0.06375,
+                "quality_score": 56.699999999999996,
+                "context_score": 100.0,
+                "timeframe": "M5",
+                "timestamp": "2024-01-01T06:10:00",
+                "metadata": {}
+            },
+            {
+                "engine_name": "SmartMoney",
+                "evidence_name": "CHOCH BEARISH",
+                "direction": "BEARISH",
+                "strength": 50.0,
+                "confidence": 80.0,
+                "description": "CHOCH Bearish detectado.",
+                "weight": 15.0,
+                "contribution_score": 0.06,
+                "quality_score": 56.699999999999996,
+                "context_score": 100.0,
+                "timeframe": "M5",
+                "timestamp": "2024-01-01T06:10:00",
+                "metadata": {}
             }
         ],
         "contribution_percentage": {
@@ -1993,26 +1994,26 @@
             "metadata": {}
         },
         "weakest_evidence": {
-            "engine_name": "M1 - Trend",
-            "evidence_name": "Price vs EMA9",
+            "engine_name": "SmartMoney",
+            "evidence_name": "CHOCH BEARISH",
             "direction": "BEARISH",
-            "strength": 80.0,
+            "strength": 50.0,
             "confidence": 80.0,
-            "description": "Pre\u00e7o abaixo da EMA9",
-            "weight": 10.0,
-            "contribution_score": 0.064,
-            "quality_score": 70.0,
+            "description": "CHOCH Bearish detectado.",
+            "weight": 15.0,
+            "contribution_score": 0.06,
+            "quality_score": 56.699999999999996,
             "context_score": 100.0,
-            "timeframe": "M1",
+            "timeframe": "M5",
             "timestamp": "2024-01-01T06:10:00",
             "metadata": {}
         },
-        "total_weight": 332.0958972308238,
+        "total_weight": 311.3958972308238,
         "bullish_weight": 0,
-        "bearish_weight": 332.0958972308238,
+        "bearish_weight": 311.3958972308238,
         "neutral_weight": 0,
         "bullish_score": 0,
-        "bearish_score": 2.092310120674559,
+        "bearish_score": 2.006922620674559,
         "neutral_score": 0,
         "top_bullish_evidence": null,
         "top_bearish_evidence": {

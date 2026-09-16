@@ -12,7 +12,7 @@ Regras absolutas:
 """
 from __future__ import annotations
 
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 
 MIN_SCORE = 70.0
@@ -23,6 +23,24 @@ FORWARD_OK = "CONFIRMED"
 # estrutura RANGE sem displacement e sem corpo minimo => selo B (sem prioridade).
 # A = (UP/DOWN) OU displacement OU trigger_body>=0.40 OU LTA/LTB alinhada.
 MIN_TRIGGER_BODY_A = 0.40
+# Rejeicoes duras com motivo (2026-09-16, pacote aprovado com dados):
+# - REJECTED_MTF_CONFLICT: conflict_detected ou H1 processado contra a direcao
+#   (MTF>=75 REFUTADO: teto real ~55, cobertura 0% — nunca usar threshold).
+# - REJECTED_COMPRESSION_BREAKOUT: COMPRESSION/CONSOLIDATION + displacement
+#   sem sweep/FVG (breakout puro em range = armadilha).
+# - REJECTED_TRIGGER_STRONGLY_OPPOSED: corpo>0.6 contra a direcao
+#   (trigger_alinhada obrigatoria REFUTADA: 40.3% vs 60.7% — so o extremo).
+REJECT_MTF_CONFLICT = "REJECTED_MTF_CONFLICT"
+REJECT_COMPRESSION_BREAKOUT = "REJECTED_COMPRESSION_BREAKOUT"
+REJECT_TRIGGER_OPPOSED = "REJECTED_TRIGGER_STRONGLY_OPPOSED"
+REJECT_OUTSIDE_KILLZONE = "REJECTED_OUTSIDE_KILLZONE"
+REJECT_WEAK_TRIGGER_BODY = "REJECTED_WEAK_TRIGGER_BODY"
+STRONG_OPPOSE_BODY = 0.60
+# Piso de corpo da trigger (2026-09-16, auditoria lado vendido):
+# SELLs dojis (corpo 0.04-0.33) geraram o anti-sinal; TRIGGER_BODY_MIN=0.25
+# e o piso documentado do motor. Sem significancia pre-filtro? Apos n=54
+# valido, reaplicar este gate exige re-medir n>=30 pos-filtro.
+MIN_TRIGGER_BODY = 0.25
 
 
 def _sig(entry: Dict[str, Any]) -> Dict[str, Any]:
@@ -64,6 +82,68 @@ def _is_eligible(entry: Dict[str, Any]) -> bool:
     if not sym:
         return False
     return True
+
+
+def reject_reason(entry: Dict[str, Any]) -> Optional[str]:
+    """Motivo da rejeicao dura (None = elegivel). Nunca recalcula nada.
+
+    Ordem de checagem (barata primeiro): MTF conflict -> compression
+    breakout -> trigger fortemente oposta. Killzone e observavel no
+    scanner (SKIPPED_OUTSIDE_KILLZONE futuro), nao aqui.
+    """
+    if not isinstance(entry, dict):
+        return None
+    sig = _sig(entry)
+    dec = str(entry.get("decision") or sig.get("decision") or sig.get("action") or "").upper()
+    if dec not in ("BUY", "SELL"):
+        return None
+    want = "BULLISH" if dec == "BUY" else "BEARISH"
+    # 1) MTF conflict ou H1 contra
+    # NOTA 2026-09-16: conflict_detected = bullish>0 and bearish>0 (qualquer
+    # voto minoritario, 37/38 no scan real) — sensivel demais para gate.
+    # Usa conflict_score>=40 (conflito real ~40/60) + H1 contra a direcao.
+    try:
+        mtf = sig.get("mtf_summary") or {}
+        if isinstance(mtf, dict) and mtf.get("status") == "present":
+            try:
+                cscore = float(mtf.get("conflict_score", 0) or 0)
+            except (TypeError, ValueError):
+                cscore = 0.0
+            if cscore >= 40.0:
+                return REJECT_MTF_CONFLICT
+            tf = mtf.get("timeframes") or {}
+            h1 = str(tf.get("H1", "")).upper()
+            if "processed" in h1 or "BULLISH" in h1 or "BEARISH" in h1:
+                if ("BULLISH" in h1 and want == "BEARISH") or ("BEARISH" in h1 and want == "BULLISH"):
+                    return REJECT_MTF_CONFLICT
+    except (AttributeError, TypeError, ValueError):
+        pass
+    # 2) Compression breakout: regime parado + displacement sem sweep/FVG
+    try:
+        regime = str(sig.get("market_regime", "")).upper()
+        if regime in ("COMPRESSION", "CONSOLIDATION", "MARKETREGIMEENUM.COMPRESSION",
+                      "MARKETREGIMEENUM.CONSOLIDATION"):
+            if sig.get("forward_displacement") and not sig.get("has_liquidity_sweep") \
+                    and not sig.get("has_fvg"):
+                return REJECT_COMPRESSION_BREAKOUT
+    except (AttributeError, TypeError, ValueError):
+        pass
+    # 3) Trigger fortemente oposta (corpo>0.6 contra) — nao qualquer desalinhamento
+    try:
+        body = float(sig.get("trigger_body_ratio", 0) or 0)
+        aligned = sig.get("trigger_aligned")
+        if aligned is False and body >= STRONG_OPPOSE_BODY:
+            return REJECT_TRIGGER_OPPOSED
+    except (TypeError, ValueError):
+        pass
+    # 4) Corpo minimo da trigger (doji/micro-range nao opera: spread come o sinal)
+    try:
+        body = float(sig.get("trigger_body_ratio", 0) or 0)
+        if body < MIN_TRIGGER_BODY:
+            return REJECT_WEAK_TRIGGER_BODY
+    except (TypeError, ValueError):
+        return REJECT_WEAK_TRIGGER_BODY
+    return None
 
 
 def _sort_key(entry: Dict[str, Any]):
@@ -109,13 +189,23 @@ def quality_seal(entry: Dict[str, Any]) -> str:
 
 
 def select_top3(scan_report: Dict[str, Any]) -> List[Dict[str, Any]]:
-    """Filtra Top-3 elegivel de ScanReport dict. Retorna 0..3 dicts (verbatim)."""
+    """Filtra Top-3 elegivel de ScanReport dict. Retorna 0..3 dicts (verbatim).
+
+    Rejeicoes duras registram entry["reject_reason"] (copia rasa, original
+    intacto) — observabilidade total do motivo, sem segundo scan.
+    """
     if not isinstance(scan_report, dict):
         return []
     pool = list(scan_report.get("top3", []) or []) + list(scan_report.get("ranked", []) or [])
     best: Dict[str, Dict[str, Any]] = {}
     for entry in pool:
         if not _is_eligible(entry):
+            continue
+        reason = reject_reason(entry)
+        if reason is not None:
+            cp = dict(entry)
+            cp["reject_reason"] = reason
+            entry = cp
             continue
         sig = _sig(entry)
         sym = entry.get("symbol") or sig.get("symbol") or sig.get("asset")
@@ -162,6 +252,18 @@ def setup_label(entry: Dict[str, Any]) -> str:
     try:
         _seal = quality_seal(entry)
         parts.append(f"SELO {_seal}")
+    except Exception:
+        pass
+    # Selo N3 (topos/fundos multiplos; nunca bloqueia).
+    try:
+        _nt = sig.get("n3_touches")
+        if _nt:
+            _n3p = [f"N3x{_nt}"]
+            if sig.get("n3_tight"):
+                _n3p.append("tight")
+            if sig.get("n3_rejection"):
+                _n3p.append("REJ")
+            parts.append(" ".join(_n3p))
     except Exception:
         pass
     for e in list(evs)[:3]:

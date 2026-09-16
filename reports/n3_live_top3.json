@@ -1,0 +1,41 @@
+{
+  "top3": [
+    {
+      "ativo": "GBPCHF=X",
+      "direcao": "COMPRA",
+      "zona": 1.1032,
+      "toques": 6,
+      "wr_hist": 53.8,
+      "rr": "1:2",
+      "score": 4.84,
+      "gatilho": "TOQUE",
+      "dist_atr": 0.22,
+      "px": 1.10305
+    },
+    {
+      "ativo": "EURUSD=X",
+      "direcao": "VENDA",
+      "zona": 1.15491,
+      "toques": 7,
+      "wr_hist": 55.6,
+      "rr": "1:2",
+      "score": 4.67,
+      "gatilho": "REJEICAO",
+      "dist_atr": 1.41,
+      "px": 1.15513
+    },
+    {
+      "ativo": "GBPCAD=X",
+      "direcao": "COMPRA",
+      "zona": 1.87729,
+      "toques": 7,
+      "wr_hist": 44.4,
+      "rr": "1:2",
+      "score": 4.66,
+      "gatilho": "TOQUE",
+      "dist_atr": 0.17,
+      "px": 1.8774
+    }
+  ],
+  "n_zonas": 61
+}

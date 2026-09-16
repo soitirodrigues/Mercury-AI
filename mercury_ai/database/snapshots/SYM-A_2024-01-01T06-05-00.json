@@ -12,7 +12,7 @@
             "ema50": 97.52383943997754,
             "rsi": 65.29005175807816,
             "atr": 0.48380401219765595,
-            "adx": 0.0,
+            "adx": 19.388045241542034,
             "macd": 0.10145696005520222,
             "macd_signal": -0.07656071310741495,
             "bollinger_upper": 98.15674412768061,
@@ -275,21 +275,6 @@
                 "metadata": {}
             },
             {
-                "engine_name": "FairValueGapEngine",
-                "evidence_name": "FVG",
-                "direction": "BULLISH",
-                "strength": 65.9,
-                "confidence": 66.0,
-                "description": "BULLISH Fair Value Gap detectado (gap_size=0.0586, filled=False)",
-                "weight": 60.0,
-                "contribution_score": 0.0,
-                "quality_score": 70.0,
-                "context_score": 100.0,
-                "timeframe": "M5",
-                "timestamp": "2024-01-01T06:05:00",
-                "metadata": {}
-            },
-            {
                 "engine_name": "SwingEngine",
                 "evidence_name": "New HH",
                 "direction": "BULLISH",
@@ -422,7 +407,7 @@
             },
             "score": 40,
             "confidence": 40.0,
-            "institutional_score": 50.0,
+            "institutional_score": 30.0,
             "explanation": [
                 "Estrutura Bullish"
             ]
@@ -699,21 +684,6 @@
                     "metadata": {}
                 },
                 {
-                    "engine_name": "FairValueGapEngine",
-                    "evidence_name": "FVG",
-                    "direction": "BULLISH",
-                    "strength": 65.9,
-                    "confidence": 66.0,
-                    "description": "BULLISH Fair Value Gap detectado (gap_size=0.0586, filled=False)",
-                    "weight": 60.0,
-                    "contribution_score": 0.0,
-                    "quality_score": 70.0,
-                    "context_score": 100.0,
-                    "timeframe": "M5",
-                    "timestamp": "2024-01-01T06:05:00",
-                    "metadata": {}
-                },
-                {
                     "engine_name": "SwingEngine",
                     "evidence_name": "New HH",
                     "direction": "BULLISH",
@@ -823,15 +793,15 @@
             }
         },
         "risk_assessment": {
-            "suggested_stop": 97.21752447020302,
-            "suggested_take_profit": 100.16351006020918,
+            "suggested_stop": 97.47381364857526,
+            "suggested_take_profit": 99.65093170346469,
             "risk_reward_ratio": 2.0,
             "expected_drawdown": 5.0,
             "expected_volatility": 0.49267452003726087,
-            "trade_quality": 59.83157894736843,
+            "trade_quality": 59.26666666666668,
             "max_exposure": 0.02,
-            "invalidation_point": 97.21752447020302,
-            "institutional_risk_score": 44.101052631578945,
+            "invalidation_point": 97.47381364857526,
+            "institutional_risk_score": 44.43999999999999,
             "var_95": 0.0,
             "var_99": 0.0,
             "cvar_95": 0.0,
@@ -839,7 +809,10 @@
             "kelly_half": 0.125,
             "kelly_quarter": 0.0625,
             "correlation_matrix": null,
-            "stress_test_loss": 0.24633726001863043
+            "stress_test_loss": 0.24633726001863043,
+            "take_profit_1r": 98.92522568516821,
+            "breakeven_trigger": 98.92522568516821,
+            "exit_plan": "TP1_50_BE_RUNNER_2R"
         }
     },
     "evidence_bundle": {
@@ -1099,21 +1072,6 @@
                 "metadata": {}
             },
             {
-                "engine_name": "FairValueGapEngine",
-                "evidence_name": "FVG",
-                "direction": "BULLISH",
-                "strength": 65.9,
-                "confidence": 66.0,
-                "description": "BULLISH Fair Value Gap detectado (gap_size=0.0586, filled=False)",
-                "weight": 60.0,
-                "contribution_score": 0.0,
-                "quality_score": 70.0,
-                "context_score": 100.0,
-                "timeframe": "M5",
-                "timestamp": "2024-01-01T06:05:00",
-                "metadata": {}
-            },
-            {
                 "engine_name": "SwingEngine",
                 "evidence_name": "New HH",
                 "direction": "BULLISH",
@@ -1202,20 +1160,20 @@
     },
     "decision_result": {
         "decision": "BUY",
-        "grade": "B",
-        "confidence": 0.6889946947368422,
+        "grade": "C",
+        "confidence": 0.6875010666666668,
         "clarity": 100.0,
-        "risk_score": 44.101052631578945,
-        "score": 72.95489410526316,
+        "risk_score": 44.43999999999999,
+        "score": 72.81084933333334,
         "quality": 80.0,
-        "expected_strength": 511.0,
-        "buy_probability": 60.11,
+        "expected_strength": 451.0,
+        "buy_probability": 59.94,
         "sell_probability": 0.0,
-        "wait_probability": 39.89,
-        "expected_risk": 97.21752447020302,
-        "expected_reward": 100.16351006020918,
+        "wait_probability": 40.06,
+        "expected_risk": 97.47381364857526,
+        "expected_reward": 99.65093170346469,
         "expected_drawdown": 5.0,
-        "audit_id": "4f0f84c2c9142f02af7dc520860151a21d1f23e36f85d8f9adb0a458e66b26e3",
+        "audit_id": "caa378097247e4c8fc1e1a0faed357fb457b7b2b68b52af2b0ffffe2cdafa836",
         "version_metadata": {
             "engine_version": "1.2.0",
             "pipeline_version": "1.2.0",
@@ -1233,7 +1191,7 @@
             "volume_context": "Volume check passed.",
             "smart_money_context": "Smart Money confirmed.",
             "confluence_context": "Net Confluence: 100.00",
-            "risk_assessment": "Risk Score: 44.101052631578945",
+            "risk_assessment": "Risk Score: 44.43999999999999",
             "confidence_rationale": "Confidence calibrated via evidence quality and consistency.",
             "strong_evidences": [
                 "Price vs EMA9",
@@ -1254,7 +1212,6 @@
                 "New HL",
                 "BOS BULLISH",
                 "CHOCH BULLISH",
-                "FVG",
                 "New HH",
                 "New HL"
             ],
@@ -1271,7 +1228,6 @@
                 "Price vs EMA9",
                 "Price vs EMA9",
                 "Price vs EMA9",
-                "FVG",
                 "New HL",
                 "New HH",
                 "New HL",
@@ -1299,24 +1255,23 @@
                 "Price vs EMA9",
                 "BOS BULLISH",
                 "CHOCH BULLISH",
-                "FVG",
                 "New HH",
                 "New HL",
                 "CHoCH",
                 "MSS"
             ],
-            "risk_analysis": "Score: 44.101052631578945",
+            "risk_analysis": "Score: 44.43999999999999",
             "institutional_context": "Regime: MarketRegimeEnum.COMPRESSION",
             "suggested_entry": 98.19951966687174,
-            "suggested_stop": 97.21752447020302,
+            "suggested_stop": 97.47381364857526,
             "suggested_targets": [
-                100.16351006020918
+                99.65093170346469
             ],
-            "confidence_explanation": "Score: 59.83157894736843",
+            "confidence_explanation": "Score: 59.26666666666668",
             "machine_readable": {
                 "decision": "BUY",
                 "confluence": 100.0,
-                "evidence_count": 19
+                "evidence_count": 18
             },
             "engine_weights": {
                 "Trend": 10.0,
@@ -1328,7 +1283,6 @@
                 "M5 - StructureEngine": 50.0,
                 "M15 - Trend": 10.0,
                 "SmartMoney": 15.0,
-                "FairValueGapEngine": 60.0,
                 "SwingEngine": 16.0,
                 "StructureEngine": 50.0
             },
@@ -1458,21 +1412,6 @@
                         "break_price": 97.41621570473119,
                         "current_price": 98.19951966687174
                     }
-                },
-                {
-                    "engine_name": "FairValueGapEngine",
-                    "evidence_name": "FVG",
-                    "direction": "BULLISH",
-                    "strength": 65.9,
-                    "confidence": 66.0,
-                    "description": "BULLISH Fair Value Gap detectado (gap_size=0.0586, filled=False)",
-                    "weight": 60.0,
-                    "contribution_score": 0.26096400000000003,
-                    "quality_score": 70.0,
-                    "context_score": 100.0,
-                    "timeframe": "M5",
-                    "timestamp": "2024-01-01T06:05:00",
-                    "metadata": {}
                 },
                 {
                     "engine_name": "SwingEngine",
@@ -1741,11 +1680,11 @@
                 "timestamp": "2024-01-01T06:05:00",
                 "metadata": {}
             },
-            "total_weight": 511.0,
-            "bullish_weight": 511.0,
+            "total_weight": 451.0,
+            "bullish_weight": 451.0,
             "bearish_weight": 0,
             "neutral_weight": 0,
-            "bullish_score": 3.185560750923509,
+            "bullish_score": 2.924596750923509,
             "bearish_score": 0,
             "neutral_score": 0,
             "top_bullish_evidence": {
@@ -1771,12 +1710,12 @@
         },
         "explainability": {
             "decision": "BUY",
-            "reason": "Regra 5: dominant_direction=BUY, grade=B, conflict=False, is_valid=True",
+            "reason": "Regra 5: dominant_direction=BUY, grade=C, conflict=False, is_valid=True",
             "dominant_direction": "BUY",
-            "opportunity_grade": "B",
+            "opportunity_grade": "C",
             "conflicting_signals": false,
-            "institutional_score": 72.95489410526316,
-            "confidence": 68.89946947368422,
+            "institutional_score": 72.81084933333334,
+            "confidence": 68.75010666666668,
             "triggered_rule": 5,
             "contributions": [
                 {
@@ -1906,15 +1845,6 @@
                     "explanation": "SmartMoney: direcao=BULLISH, strength=50.0, peso=18.0, contribuicao_ponderada=9.0000"
                 },
                 {
-                    "engine_name": "FairValueGapEngine",
-                    "weight": 20.0,
-                    "raw_score": 65.9,
-                    "weighted_score": 13.18,
-                    "direction": "BULLISH",
-                    "confidence": 66.0,
-                    "explanation": "FairValueGapEngine: direcao=BULLISH, strength=65.9, peso=20.0, contribuicao_ponderada=13.1800"
-                },
-                {
                     "engine_name": "SwingEngine",
                     "weight": 20.0,
                     "raw_score": 56.5,
@@ -1953,13 +1883,13 @@
             ],
             "decision_chain": [
                 "1.Validation: is_valid=True",
-                "2.Quality: avg=59.83",
+                "2.Quality: avg=59.27",
                 "3.Conflict: score=1.00",
-                "4.Ranking: 19 evidencias",
+                "4.Ranking: 18 evidencias",
                 "5.Memory: consistency=0.50",
-                "6.Confidence: final=68.90",
+                "6.Confidence: final=68.75",
                 "7.Confluence: direction=BUY, weighted=100.00",
-                "8.Probability: grade=B, buy=60.11, sell=0.00",
+                "8.Probability: grade=C, buy=59.94, sell=0.00",
                 "9.Resolver: rule=5, decision=BUY"
             ]
         }
@@ -1971,8 +1901,8 @@
         "weights_version": "1.2.0"
     },
     "audit_events": [],
-    "session_id": "73b63efb-22c4-4fbe-b92f-8577babf820d",
-    "replay_id": "3a0fdc4fea63ba6f7f16006797cfa83d8090b4bb1f7a830cbd08eaff5805d9db",
+    "session_id": "12135a6e-e837-49ad-8226-3645648ea79f",
+    "replay_id": "40cb4e167b5d40ac322a3739bb9ada14632a66872db745a5466c3c40b23d4b0e",
     "evidence_ranking": {
         "ranked_evidences": [
             {
@@ -2082,21 +2012,6 @@
                     "break_price": 97.41621570473119,
                     "current_price": 98.19951966687174
                 }
-            },
-            {
-                "engine_name": "FairValueGapEngine",
-                "evidence_name": "FVG",
-                "direction": "BULLISH",
-                "strength": 65.9,
-                "confidence": 66.0,
-                "description": "BULLISH Fair Value Gap detectado (gap_size=0.0586, filled=False)",
-                "weight": 60.0,
-                "contribution_score": 0.26096400000000003,
-                "quality_score": 70.0,
-                "context_score": 100.0,
-                "timeframe": "M5",
-                "timestamp": "2024-01-01T06:05:00",
-                "metadata": {}
             },
             {
                 "engine_name": "SwingEngine",
@@ -2365,11 +2280,11 @@
             "timestamp": "2024-01-01T06:05:00",
             "metadata": {}
         },
-        "total_weight": 511.0,
-        "bullish_weight": 511.0,
+        "total_weight": 451.0,
+        "bullish_weight": 451.0,
         "bearish_weight": 0,
         "neutral_weight": 0,
-        "bullish_score": 3.185560750923509,
+        "bullish_score": 2.924596750923509,
         "bearish_score": 0,
         "neutral_score": 0,
         "top_bullish_evidence": {

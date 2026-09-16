@@ -443,6 +443,17 @@ def institutional_flags(df_closed: Any, decision: str) -> Dict[str, Any]:
     }
 
 
+def n3_flags(df_closed: Any, decision: str, symbol: str = "") -> Dict[str, Any]:
+    """Selo N3 (observavel, sem bloquear). Nones honestos se sem zona."""
+    try:
+        from mercury_ai.signals.n3_seal import n3_seal as _seal
+        return dict(_seal(df_closed, decision, symbol))
+    except Exception:
+        return {"n3_touches": None, "n3_level": None, "n3_tight": None,
+                "n3_rejection": None, "n3_wr_hist": None, "n3_score": None,
+                "n3_detail": ""}
+
+
 def smc_flags(df_closed: Any, decision: str) -> Dict[str, Any]:
     """4 métricas SMC (observáveis, sem bloquear).
 

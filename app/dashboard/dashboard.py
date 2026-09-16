@@ -20,6 +20,7 @@ from mercury_ai.analysis.engine_performance_auditor import EnginePerformanceAudi
 from mercury_ai.analysis.institutional_report_generator import InstitutionalReportGenerator
 from mercury_ai.analysis.notification_center import NotificationCenter
 from app.dashboard.scan_alerts import render_scan_progress, render_scan_done_sound
+from app.dashboard.m5_widgets import render_rejections
 from app.auth import require_auth, render_logout_button
 from app.ui_utils import apply_design_system, display_metric
 
@@ -81,6 +82,7 @@ else:
         "TOP 3 vazio neste ciclo — nenhum item inventado. "
         f"(status={view.get('status')} completed={view.get('progress_text')})"
     )
+render_rejections(scan_report)
 with st.expander("Detalhe por ativo (RANKED vs SKIPPED vs ERROR)", expanded=False):
     _per = view.get("per_asset", [])
     if _per:
