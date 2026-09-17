@@ -215,6 +215,23 @@ class Signal:
     reentry_result: str | None = None
     reentry_gales_used: int | None = None
 
+    # --- Liquidity Sweep Reversal (2026-09-17; observável, NUNCA bloqueia) ---
+    # Edge medido fora da amostra: GBPUSD base 54.8-55.7% (treino/teste),
+    # combinada c/ 2 gales 92.9%. Válido SÓ em ativos validados (GBP*).
+    # sweep_reversal: True = última vela fechada é sweep+rejeição válido.
+    # sweep_direction/sweep_level/sweep_wick: direção, nível varrido, pavio.
+    # sweep_asset_validated: ativo tem edge medido p/ este padrão.
+    # sweep_detail: texto auditável p/ painel.
+    sweep_reversal: bool = False
+    sweep_direction: str = "NONE"
+    sweep_level: float | None = None
+    sweep_wick: float | None = None
+    sweep_asset_validated: bool = False
+    sweep_detail: str = ""
+    # sweep_override: True = este sinal foi GERADO pelo sweep engine (pipeline
+    # original era WAIT). Marca explícita p/ auditoria — nunca esconde origem.
+    sweep_override: bool = False
+
     @property
     def symbol(self) -> str:
         """Alias operacional: symbol == asset (contrato S33-E.6)."""

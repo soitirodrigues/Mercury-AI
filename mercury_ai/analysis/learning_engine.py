@@ -87,5 +87,41 @@ class LearningEngine:
                 "win_rate": data["wins"] / data["total"] if data["total"] > 0 else 0
             })
         report["most_accurate_evidences"] = sorted(ev_perf, key=lambda x: x["win_rate"], reverse=True)[:5]
-        
+
         return report
+
+    def record_reentry_outcome(self, asset: str, outcome: Dict[str, Any],
+                               payout: float = 0.87) -> str:
+        """Grava outcome do reentry_engine como métrica compatível (hit/pl).
+
+        Alimenta run_learning() com resultados reais de sinais com G1/G2:
+        WIN/REENTRY_G1/REENTRY_G2 => hit=True; LOSS_FINAL => hit=False.
+        pl em unidades de stake: win no gale g => payout*2^g - (2^g - 1);
+        loss final com g gales => -((2^(g+1)) - 1).
+        Retorna o path do arquivo gravado.
+        """
+        result = str(outcome.get("outcome", ""))
+        gales = int(outcome.get("gales_used", 0) or 0)
+        if result in ("WIN", "REENTRY_G1", "REENTRY_G2"):
+            hit = True
+            pl = payout * (2 ** gales) - ((2 ** gales) - 1)
+        else:
+            hit = False
+            pl = -float((2 ** (gales + 1)) - 1)
+        os.makedirs(self.metrics_dir, exist_ok=True)
+        ts = outcome.get("attempts", [{}])[0].get("ts", "unknown")
+        safe_ts = "".join(ch if ch.isalnum() else "_" for ch in str(ts))
+        fname = f"reentry_{asset}_{safe_ts}.json"
+        path = os.path.join(self.metrics_dir, fname)
+        payload = {
+            "asset": asset,
+            "hit": hit,
+            "pl": pl,
+            "reentry_result": result,
+            "gales_used": gales,
+            "attempts": outcome.get("attempts", []),
+            "source": "reentry_engine",
+        }
+        with open(path, "w", encoding="utf-8") as f:
+            json.dump(payload, f, ensure_ascii=False, indent=2)
+        return path

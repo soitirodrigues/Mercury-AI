@@ -308,6 +308,45 @@ def build_signal_from_analysis(
         except Exception:
             _re_rule = "reentrada protegida: até 2 gales com confirmação de rejeição"
 
+    # Liquidity Sweep Reversal (observável; NUNCA altera decisão/score).
+    try:
+        from mercury_ai.signals.liquidity_sweep_engine import (
+            asset_validated as _sw_ok, detect_sweep_reversal as _sweep)
+        _sw = _sweep(_closed)
+        _sw_valid = _sw_ok(symbol)
+    except Exception:
+        _sw = {"direction": "NONE", "swept_level": None, "wick_ratio": 0.0,
+               "in_session": False, "reason": "sweep engine indisponível"}
+        _sw_valid = False
+
+    # MODO ATIVO (2026-09-17, autorizado pelo operador): sweep+rejeição em
+    # ativo validado GERA sinal quando o pipeline decidiu WAIT/UNKNOWN.
+    # Edge medido: GBPUSD 54.9% (n=102), ETH 56.1% (n=171) — base > 52%.
+    # Regras duras: somente ativo validado, somente em sessão, nunca
+    # sobrescreve BUY/SELL existente (só preenche o vazio de WAIT).
+    _sw_override = False
+    if (action not in ("BUY", "SELL")
+            and _sw_valid
+            and (_sw or {}).get("direction") in ("BUY", "SELL")
+            and (_sw or {}).get("in_session")):
+        action = str(_sw["direction"])
+        _sw_override = True
+        reason = (f"SWEEP-REVERSAL ativo: {_sw.get('reason', '')} | "
+                  f"pipeline original: WAIT")
+        _re_allowed = True
+        try:
+            from mercury_ai.signals.reentry_engine import (
+                MAX_GALES as _MG2, REJECTION_WICK_MIN as _RW2)
+            _re_rule = (
+                f"Se a vela de entrada fechar contra: reentrar na mesma direção "
+                f"na abertura da próxima vela SOMENTE se houver proteção "
+                f"(pavio de rejeição >= {_RW2:.0%} do range ou displacement renovado). "
+                f"Máx {_MG2} gales (G1/G2); G2 só em Tokyo/London/NY. "
+                f"Sem proteção ou após G2: STOP (LOSS_FINAL)."
+            )
+        except Exception:
+            pass
+
     return Signal(
         asset=symbol,
         action=action,
@@ -407,4 +446,13 @@ def build_signal_from_analysis(
         news_detail=str((_nw or {}).get("detail", "") or ""),
         reentry_allowed=_re_allowed,
         reentry_rule=_re_rule,
+        sweep_reversal=bool((_sw or {}).get("direction", "NONE") != "NONE"),
+        sweep_direction=str((_sw or {}).get("direction", "NONE")),
+        sweep_level=(float((_sw or {}).get("swept_level"))
+                     if (_sw or {}).get("swept_level") is not None else None),
+        sweep_wick=(float((_sw or {}).get("wick_ratio"))
+                    if (_sw or {}).get("wick_ratio") is not None else None),
+        sweep_asset_validated=_sw_valid,
+        sweep_detail=str((_sw or {}).get("reason", "") or ""),
+        sweep_override=_sw_override,
     )
