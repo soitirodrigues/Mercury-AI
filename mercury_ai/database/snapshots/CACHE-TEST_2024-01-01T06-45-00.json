@@ -758,8 +758,8 @@
                 "H4": "rejected"
             },
             "timeframe_errors": {
-                "M5_reuse": "REUSED_M5_FROM_MAIN",
-                "M1_reuse": "REUSED_M5_FROM_MAIN"
+                "M1_reuse": "REUSED_M5_FROM_MAIN",
+                "M5_reuse": "REUSED_M5_FROM_MAIN"
             }
         },
         "risk_assessment": {
@@ -1821,8 +1821,8 @@
         "weights_version": "1.2.0"
     },
     "audit_events": [],
-    "session_id": "2059d3d5-8962-421b-8dd0-4b0532ee8cf3",
-    "replay_id": "543ad241fb0b2a6308d39c4a258b25f45c3a83dd86a38c9db7b2672a92d0429e",
+    "session_id": "e3615e0e-4276-4f40-8d49-85798017d587",
+    "replay_id": "0e37c967deea2d6e316e6baa672549bb7b26c1609b2d8d813a8c94d511eac07e",
     "evidence_ranking": {
         "ranked_evidences": [
             {

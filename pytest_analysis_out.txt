@@ -1,0 +1,99 @@
+.................................................+++++++++++++++++++++++++++++++++++ Timeout +++++++++++++++++++++++++++++++++++
+~~~~~~~~~~~~~~~~~~~~~~~~~ Stack of MainThread (11072) ~~~~~~~~~~~~~~~~~~~~~~~~~
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\jujuf\AppData\Local\Programs\Python\Python311\Lib\site-packages\pytest\__main__.py", line 9, in <module>
+    raise SystemExit(_console_main())
+  File "C:\Users\jujuf\AppData\Local\Programs\Python\Python311\Lib\site-packages\_pytest\config\__init__.py", line 253, in _console_main
+    code = _main(prog=_get_prog_name(sys.argv))
+  File "C:\Users\jujuf\AppData\Local\Programs\Python\Python311\Lib\site-packages\_pytest\config\__init__.py", line 229, in _main
+    ret: ExitCode | int = config.hook.pytest_cmdline_main(config=config)
+  File "C:\Users\jujuf\AppData\Local\Programs\Python\Python311\Lib\site-packages\pluggy\_hooks.py", line 512, in __call__
+    return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+  File "C:\Users\jujuf\AppData\Local\Programs\Python\Python311\Lib\site-packages\pluggy\_manager.py", line 120, in _hookexec
+    return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+  File "C:\Users\jujuf\AppData\Local\Programs\Python\Python311\Lib\site-packages\pluggy\_callers.py", line 121, in _multicall
+    res = hook_impl.function(*args)
+  File "C:\Users\jujuf\AppData\Local\Programs\Python\Python311\Lib\site-packages\_pytest\main.py", line 377, in pytest_cmdline_main
+    return wrap_session(config, _main)
+  File "C:\Users\jujuf\AppData\Local\Programs\Python\Python311\Lib\site-packages\_pytest\main.py", line 330, in wrap_session
+    session.exitstatus = doit(config, session) or 0
+  File "C:\Users\jujuf\AppData\Local\Programs\Python\Python311\Lib\site-packages\_pytest\main.py", line 384, in _main
+    config.hook.pytest_runtestloop(session=session)
+  File "C:\Users\jujuf\AppData\Local\Programs\Python\Python311\Lib\site-packages\pluggy\_hooks.py", line 512, in __call__
+    return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+  File "C:\Users\jujuf\AppData\Local\Programs\Python\Python311\Lib\site-packages\pluggy\_manager.py", line 120, in _hookexec
+    return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+  File "C:\Users\jujuf\AppData\Local\Programs\Python\Python311\Lib\site-packages\pluggy\_callers.py", line 121, in _multicall
+    res = hook_impl.function(*args)
+  File "C:\Users\jujuf\AppData\Local\Programs\Python\Python311\Lib\site-packages\_pytest\main.py", line 408, in pytest_runtestloop
+    item.config.hook.pytest_runtest_protocol(item=item, nextitem=nextitem)
+  File "C:\Users\jujuf\AppData\Local\Programs\Python\Python311\Lib\site-packages\pluggy\_hooks.py", line 512, in __call__
+    return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+  File "C:\Users\jujuf\AppData\Local\Programs\Python\Python311\Lib\site-packages\pluggy\_manager.py", line 120, in _hookexec
+    return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+  File "C:\Users\jujuf\AppData\Local\Programs\Python\Python311\Lib\site-packages\pluggy\_callers.py", line 121, in _multicall
+    res = hook_impl.function(*args)
+  File "C:\Users\jujuf\AppData\Local\Programs\Python\Python311\Lib\site-packages\_pytest\runner.py", line 118, in pytest_runtest_protocol
+    runtestprotocol(item, nextitem=nextitem)
+  File "C:\Users\jujuf\AppData\Local\Programs\Python\Python311\Lib\site-packages\_pytest\runner.py", line 139, in runtestprotocol
+    reports.append(call_and_report(item, "call", log))
+  File "C:\Users\jujuf\AppData\Local\Programs\Python\Python311\Lib\site-packages\_pytest\runner.py", line 249, in call_and_report
+    call = CallInfo.from_call(
+  File "C:\Users\jujuf\AppData\Local\Programs\Python\Python311\Lib\site-packages\_pytest\runner.py", line 361, in from_call
+    result: TResult | None = func()
+  File "C:\Users\jujuf\AppData\Local\Programs\Python\Python311\Lib\site-packages\_pytest\runner.py", line 250, in <lambda>
+    lambda: runtest_hook(item=item, **kwds),
+  File "C:\Users\jujuf\AppData\Local\Programs\Python\Python311\Lib\site-packages\pluggy\_hooks.py", line 512, in __call__
+    return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+  File "C:\Users\jujuf\AppData\Local\Programs\Python\Python311\Lib\site-packages\pluggy\_manager.py", line 120, in _hookexec
+    return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+  File "C:\Users\jujuf\AppData\Local\Programs\Python\Python311\Lib\site-packages\pluggy\_callers.py", line 121, in _multicall
+    res = hook_impl.function(*args)
+  File "C:\Users\jujuf\AppData\Local\Programs\Python\Python311\Lib\site-packages\_pytest\runner.py", line 184, in pytest_runtest_call
+    item.runtest()
+  File "C:\Users\jujuf\AppData\Local\Programs\Python\Python311\Lib\site-packages\_pytest\python.py", line 1707, in runtest
+    self.ihook.pytest_pyfunc_call(pyfuncitem=self)
+  File "C:\Users\jujuf\AppData\Local\Programs\Python\Python311\Lib\site-packages\pluggy\_hooks.py", line 512, in __call__
+    return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+  File "C:\Users\jujuf\AppData\Local\Programs\Python\Python311\Lib\site-packages\pluggy\_manager.py", line 120, in _hookexec
+    return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+  File "C:\Users\jujuf\AppData\Local\Programs\Python\Python311\Lib\site-packages\pluggy\_callers.py", line 121, in _multicall
+    res = hook_impl.function(*args)
+  File "C:\Users\jujuf\AppData\Local\Programs\Python\Python311\Lib\site-packages\_pytest\python.py", line 167, in pytest_pyfunc_call
+    result = testfunction(**testargs)
+  File "C:\Projetos\Mercury-AI\mercury_ai\analysis\tests\test_historical_replay_engine.py", line 128, in test_different_symbols_separate_cache
+    engine.run_replay("SYM-B", sample_df, n_candles=5, silent=True)
+  File "C:\Projetos\Mercury-AI\mercury_ai\analysis\historical_replay_engine.py", line 168, in run_replay
+    pipeline.analyze(
+  File "C:\Projetos\Mercury-AI\mercury_ai\core\analysis_pipeline.py", line 344, in analyze
+    mtf_evidences, mtf_consensus = self.mtf_engine.analyze(symbol, main_m5_df=df)
+  File "C:\Projetos\Mercury-AI\mercury_ai\analysis\mtf_engine.py", line 137, in analyze
+    indicator_data = self.indicators.calculate(df)
+  File "C:\Projetos\Mercury-AI\mercury_ai\data\indicator_engine.py", line 120, in calculate
+    up_move = up_move.clip(lower=0)
+  File "C:\Users\jujuf\AppData\Local\Programs\Python\Python311\Lib\site-packages\pandas\core\generic.py", line 8757, in clip
+    return self._clip_with_scalar(lower, upper, inplace=inplace)
+  File "C:\Users\jujuf\AppData\Local\Programs\Python\Python311\Lib\site-packages\pandas\core\generic.py", line 8553, in _clip_with_scalar
+    result = result.where(cond, lower, inplace=inplace)
+  File "C:\Users\jujuf\AppData\Local\Programs\Python\Python311\Lib\site-packages\pandas\core\generic.py", line 10309, in where
+    return self._where(cond, other, inplace=inplace, axis=axis, level=level)
+  File "C:\Users\jujuf\AppData\Local\Programs\Python\Python311\Lib\site-packages\pandas\core\generic.py", line 10134, in _where
+    new_data = self._mgr.where(
+  File "C:\Users\jujuf\AppData\Local\Programs\Python\Python311\Lib\site-packages\pandas\core\internals\managers.py", line 476, in where
+    return self.apply(
+  File "C:\Users\jujuf\AppData\Local\Programs\Python\Python311\Lib\site-packages\pandas\core\internals\managers.py", line 435, in apply
+    kwargs[k] = obj.iloc[b.mgr_locs.indexer]._values
+  File "C:\Users\jujuf\AppData\Local\Programs\Python\Python311\Lib\site-packages\pandas\core\indexing.py", line 1207, in __getitem__
+    return self._getitem_axis(maybe_callable, axis=axis)
+  File "C:\Users\jujuf\AppData\Local\Programs\Python\Python311\Lib\site-packages\pandas\core\indexing.py", line 1750, in _getitem_axis
+    return self._get_slice_axis(key, axis=axis)
+  File "C:\Users\jujuf\AppData\Local\Programs\Python\Python311\Lib\site-packages\pandas\core\indexing.py", line 1786, in _get_slice_axis
+    return self.obj._slice(slice_obj, axis=axis)
+  File "C:\Users\jujuf\AppData\Local\Programs\Python\Python311\Lib\site-packages\pandas\core\series.py", line 940, in _slice
+    mgr = self._mgr.get_slice(slobj, axis=axis)
+  File "C:\Users\jujuf\AppData\Local\Programs\Python\Python311\Lib\site-packages\pandas\core\internals\managers.py", line 2187, in get_slice
+    return type(self)(block, new_index)
+  File "C:\Users\jujuf\AppData\Local\Programs\Python\Python311\Lib\site-packages\pandas\core\internals\managers.py", line 2027, in __init__
+    def __init__(
++++++++++++++++++++++++++++++++++++ Timeout +++++++++++++++++++++++++++++++++++
