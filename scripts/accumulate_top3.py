@@ -109,6 +109,28 @@ def report():
                     rows.append(_json.loads(line))
                 except Exception:
                     pass
+    # Mescla feedback do backfill (linhas antigas sem reentry_result no HIST).
+    fb_file = HIST.with_name(HIST.stem + "_fb.jsonl")
+    if fb_file.exists():
+        backfill = {}
+        with open(fb_file, encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if not line:
+                    continue
+                try:
+                    r = _json.loads(line)
+                except Exception:
+                    continue
+                if r.get("reentry_result"):
+                    backfill[(r.get("ts"), r.get("symbol"))] = r
+        for r in rows:
+            if not r.get("reentry_result"):
+                b = backfill.get((r.get("ts"), r.get("symbol")))
+                if b:
+                    for k in ("reentry_result", "reentry_gales_used",
+                              "reentry_reason", "reentry_attempts", "resultado"):
+                        r[k] = b.get(k)
     ok = [r for r in rows if r.get("n1_dir_ok") is not None]
     fb = [r for r in rows if r.get("reentry_result")]
     print(f"== HISTÓRICO {HIST} ==")
