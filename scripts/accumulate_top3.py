@@ -50,6 +50,7 @@ def one_cycle(workers=4):
 def validate_forward(rows):
     import yfinance as yf
     import pandas as pd
+    from mercury_ai.signals.reentry_engine import signal_feedback
     for r in rows:
         try:
             df = yf.download(r["symbol"], period="1d", interval="5m",
@@ -78,9 +79,60 @@ def validate_forward(rows):
             r["n1_dir_ok"] = bool(c > entry) if is_buy else bool(c < entry)
             r["n1_fav_pips"] = round(((float(c0["High"]) - entry) / pip if is_buy
                                       else (entry - float(c0["Low"])) / pip), 1)
+            # Feedback de ganho/perda com reentrada protegida (G1/G2) —
+            # mesmo retorno que a IA de referência exibe no sinal.
+            if len(fwd) >= 1:
+                fb = signal_feedback(fwd, r["decision"], 0)
+                r["reentry_result"] = fb["result"]
+                r["reentry_gales_used"] = fb["gales_used"]
+                r["reentry_reason"] = fb["reason"]
+                r["reentry_attempts"] = fb["attempts"]
+                r["resultado"] = ("GANHO" if fb["result"] in
+                                  ("WIN", "REENTRY_G1", "REENTRY_G2") else "PERDA")
         except Exception as e:
             r["fwd_error"] = str(e)[:200]
     return rows
+
+
+def report():
+    """Assertividade acumulada do histórico (direto, com gales, combinada)."""
+    import json as _json
+    if not HIST.exists():
+        print("sem histórico ainda:", HIST)
+        return
+    rows = []
+    with open(HIST, encoding="utf-8") as f:
+        for line in f:
+            line = line.strip()
+            if line:
+                try:
+                    rows.append(_json.loads(line))
+                except Exception:
+                    pass
+    ok = [r for r in rows if r.get("n1_dir_ok") is not None]
+    fb = [r for r in rows if r.get("reentry_result")]
+    print(f"== HISTÓRICO {HIST} ==")
+    print(f"total sinais: {len(rows)} | validados N+1: {len(ok)} | com feedback gale: {len(fb)}")
+    if ok:
+        w = sum(1 for r in ok if r["n1_dir_ok"])
+        print(f"assertividade DIRETA (N+1 fecha a favor): {w}/{len(ok)} = {w/len(ok):.1%}")
+    if fb:
+        res = {"WIN": 0, "REENTRY_G1": 0, "REENTRY_G2": 0, "LOSS_FINAL": 0}
+        for r in fb:
+            res[r["reentry_result"]] = res.get(r["reentry_result"], 0) + 1
+        n = len(fb)
+        comb = (res["WIN"] + res["REENTRY_G1"] + res["REENTRY_G2"]) / n
+        print(f"WIN direto={res['WIN']/n:.1%}  G1={res['REENTRY_G1']/n:.1%}  "
+              f"G2={res['REENTRY_G2']/n:.1%}  LOSS_FINAL={res['LOSS_FINAL']/n:.1%}")
+        print(f"ASSERTIVIDADE COMBINADA (com até 2 gales protegidos): {comb:.1%}")
+        by_sym = {}
+        for r in fb:
+            s = by_sym.setdefault(r["symbol"], [0, 0])
+            s[1] += 1
+            if r["reentry_result"] != "LOSS_FINAL":
+                s[0] += 1
+        for sym, (w2, n2) in sorted(by_sym.items()):
+            print(f"  {sym}: {w2}/{n2} = {w2/n2:.1%}")
 
 
 def main():
@@ -88,7 +140,12 @@ def main():
     ap.add_argument("--cycles", type=int, default=1)
     ap.add_argument("--workers", type=int, default=4)
     ap.add_argument("--sleep-s", type=float, default=300.0)
+    ap.add_argument("--report", action="store_true",
+                    help="só imprime a assertividade acumulada e sai")
     a = ap.parse_args()
+    if a.report:
+        report()
+        return
     HIST.parent.mkdir(exist_ok=True)
     for i in range(a.cycles):
         t0 = time.perf_counter()
