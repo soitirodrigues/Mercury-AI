@@ -1,0 +1,61 @@
+{
+    "timestamp": "2024-01-01T08:35:00",
+    "asset": "T-A",
+    "timeframe": "M5",
+    "context": null,
+    "evidence_bundle": null,
+    "decision_result": {
+        "decision": "WAIT",
+        "grade": "N/A",
+        "confidence": 0.0,
+        "clarity": 0.0,
+        "risk_score": 0.0,
+        "score": 0.0,
+        "quality": 0.0,
+        "expected_strength": 0.0,
+        "buy_probability": 0.0,
+        "sell_probability": 0.0,
+        "wait_probability": 100.0,
+        "expected_risk": 0.0,
+        "expected_reward": 0.0,
+        "expected_drawdown": 0.0,
+        "audit_id": "PIPELINE_ERROR",
+        "version_metadata": {
+            "engine_version": "1.0.0",
+            "pipeline_version": "1.0.0",
+            "context_version": "1.0.0",
+            "weights_version": "1.0.0"
+        },
+        "explanation": "Pipeline error: PermissionError",
+        "mtf_consensus": null,
+        "market_regime": null,
+        "trade_allowed": true,
+        "trade_block_reasons": [],
+        "trade_quality_score": 0.0,
+        "trade_quality_level": "N/A",
+        "trace": null,
+        "warnings": [],
+        "weaknesses": [],
+        "blockers": [],
+        "summary": "[WinError 5] Acesso negado: 'C:\\\\Projetos\\\\Mercury-AI\\\\mercury_ai\\\\database\\\\snapshots\\\\.snap_ui7ynaci.tmp' -> 'mercury_ai\\\\database\\\\snapshots\\\\T-A_2024-01-01T08-35-00.json'",
+        "technical_reason": "",
+        "institutional_alignment": false,
+        "evidence_ranking": null,
+        "explainability": null
+    },
+    "version_metadata": {
+        "engine_version": "1.0.0",
+        "pipeline_version": "1.0.0",
+        "context_version": "1.0.0",
+        "weights_version": "1.0.0"
+    },
+    "audit_events": [
+        "Pipeline Error"
+    ],
+    "session_id": "31586b5d-5d45-4a8b-88ca-489b865df052",
+    "replay_id": "3590929cc58655dbd2356b511de9ea16e842828ffb7561d53671cf32d5c6b71c",
+    "evidence_ranking": null,
+    "dataset_hash": "",
+    "config_hash": "",
+    "version": "0.1"
+}

@@ -232,6 +232,15 @@ class Signal:
     # original era WAIT). Marca explícita p/ auditoria — nunca esconde origem.
     sweep_override: bool = False
 
+    # --- Edge Tracker (2026-09-18; observável, NUNCA bloqueia) ---
+    # Desempenho medido do ativo no histórico real (reports/top3_*.jsonl).
+    # edge_n: amostra; edge_winrate: assertividade combinada (com gales);
+    # edge_status: EDGE (>=60%) | NEUTRO | ANTI_EDGE (<=35% e n>=10) |
+    # INSUFICIENTE (n<5). Bloqueio automático NUNCA — decisão do operador.
+    edge_n: int = 0
+    edge_winrate: float | None = None
+    edge_status: str = "INSUFICIENTE"
+
     @property
     def symbol(self) -> str:
         """Alias operacional: symbol == asset (contrato S33-E.6)."""
