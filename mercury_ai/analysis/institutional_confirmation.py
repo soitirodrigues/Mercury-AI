@@ -112,7 +112,7 @@ def detect_displacement(df_closed: pd.DataFrame, atr: float) -> Dict[str, Any]:
 
 def detect_fvg(df_closed: pd.DataFrame, atr: float) -> Dict[str, Any]:
     """FVG bullish/bearish aberto com gap >= 0.2*ATR. Retorna {detected, direction, top, bottom}."""
-    out: Dict[str, Any] = {"detected": False, "direction": "NONE", "top": None, "bottom": None}
+    out: Dict[str, Any] = {"detected": False, "direction": "NONE", "top": None, "bottom": None, "index": None}
     if df_closed is None or len(df_closed) < 5 or atr <= 0:
         return out
     df = df_closed.reset_index(drop=True)
@@ -124,12 +124,12 @@ def detect_fvg(df_closed: pd.DataFrame, atr: float) -> Dict[str, Any]:
             # fill check: nenhum low posterior <= h1
             if (df["Low"].iloc[i + 1:] <= h1).any():
                 continue
-            out.update(detected=True, direction="BULLISH", top=l3, bottom=h1)
+            out.update(detected=True, direction="BULLISH", top=l3, bottom=h1, index=i)
             return out
         if h3 < l1 and (l1 - h3) >= FVG_MIN_ATR * atr:
             if (df["High"].iloc[i + 1:] >= l1).any():
                 continue
-            out.update(detected=True, direction="BEARISH", top=l1, bottom=h3)
+            out.update(detected=True, direction="BEARISH", top=l1, bottom=h3, index=i)
             return out
     return out
 

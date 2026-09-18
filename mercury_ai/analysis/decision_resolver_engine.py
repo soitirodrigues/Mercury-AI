@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+import math
 from typing import Optional
 
 from mercury_ai.config import settings
@@ -126,6 +127,23 @@ class DecisionResolverEngine:
     ) -> DecisionResolverResult:
 
         confidence_override: Optional[float] = None
+
+        # Dados não finitos não podem produzir uma decisão direcional.
+        # Tratar NaN como ausência de confluência evita que comparações
+        # booleanas deixem BUY/SELL passar por acidente.
+        try:
+            if not math.isfinite(float(confluence_score)):
+                return DecisionResolverResult(
+                    decision="WAIT",
+                    confidence_override=None,
+                    triggered_rule=3,
+                )
+        except (TypeError, ValueError):
+            return DecisionResolverResult(
+                decision="WAIT",
+                confidence_override=None,
+                triggered_rule=3,
+            )
 
         # Regra 1: Validação
         if not is_valid:

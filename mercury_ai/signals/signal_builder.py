@@ -282,6 +282,95 @@ def build_signal_from_analysis(
     if _entry_zone is None:
         _entry_zone = entry_price
 
+    # Formato de saída compatível com o analista manual, sem importar sua
+    # fórmula arbitrária de assertividade. Cada campo mantém a origem real.
+    _plus_di = (_inst or {}).get("plus_di")
+    _minus_di = (_inst or {}).get("minus_di")
+    if _plus_di is not None and _minus_di is not None:
+        _flow = "COMPRADOR" if _plus_di > _minus_di else "VENDEDOR" if _minus_di > _plus_di else "MISTO"
+    else:
+        _flow = "DESCONHECIDO"
+    _analyst_context = {
+        "horario_entrada": next_iso,
+        "acao": action,
+        "confidence": _f(decision, "confidence", 0.0),
+        "confidence_semantics": "model_confidence_not_win_probability",
+        "timeframe": getattr(market, "timeframe", None) or "M5",
+        "tendencia": _extract_regime(result),
+        "rsi": (_inst or {}).get("rsi"),
+        "bollinger": (_inst or {}).get("bollinger_pos"),
+        "estado_bandas": (_inst or {}).get("band_expansion"),
+        "candle": (_inst or {}).get("reversal_candle"),
+        "suporte_resistencia": (_inst or {}).get("sr_distance"),
+        "rejeicao": bool((_inst or {}).get("reversal_candle")),
+        "momentum": str((_pred or {}).get("direction", "NEUTRAL")),
+        "fluxo_direcional": _flow,
+        "pullback": str((_pred or {}).get("key_kind", "NONE")),
+        "proxima_vela": {
+            "direcao": str((_pred or {}).get("direction", "NEUTRAL")),
+            "confianca": float((_pred or {}).get("confidence", 0.0) or 0.0),
+            "estrutura": str((_pred or {}).get("structure", "RANGE")),
+            "nivel": (_pred or {}).get("key_level"),
+            "concorda_decisao": _agree,
+        },
+        "explicacao": reason,
+    }
+
+    # Framework order flow em quatro etapas. A versao atual usa apenas dados
+    # que o Mercury realmente possui; L2, tape, delta, volume profile e GEX
+    # ficam explicitamente UNKNOWN, nunca inferidos de OHLCV.
+    _context = getattr(result, "context", None)
+    _liquidity = getattr(_context, "liquidity", None)
+    _structure = getattr(result, "structure_analysis", None)
+    _sr = getattr(result, "support_resistance", None)
+    _smart_money = getattr(result, "smart_money", None)
+    _analyst_context["order_flow_framework"] = {
+        "status": "OHLCV_M1_M5_ONLY",
+        "environment": {
+            "status": "AVAILABLE",
+            "regime": _extract_regime(result),
+            "mtf": _mtf,
+            "session": _sess_name or "UNKNOWN",
+            "volatility": getattr(getattr(result, "volatility_analysis", None), "regime", None),
+            "derivatives_gex": "UNKNOWN",
+            "reason": "Ambiente baseado em regime, MTF, sessão e volatilidade observados.",
+        },
+        "location": {
+            "status": "AVAILABLE",
+            "support": getattr(_sr, "support", None),
+            "resistance": getattr(_sr, "resistance", None),
+            "distance_support": getattr(_sr, "distance_support", None),
+            "distance_resistance": getattr(_sr, "distance_resistance", None),
+            "liquidity_sweep": (_inst or {}).get("has_liquidity_sweep"),
+            "fvg": (_inst or {}).get("has_fvg"),
+            "order_block": "UNKNOWN",
+            "book_depth": "UNKNOWN",
+        },
+        "context": {
+            "status": "PARTIAL",
+            "structure": getattr(_structure, "trend", None) or getattr(_smart_money, "structure", None),
+            "liquidity_profile": {
+                "internal": getattr(_liquidity, "internal_liquidity", None),
+                "external": getattr(_liquidity, "external_liquidity", None),
+                "stop_hunt_probability": getattr(_liquidity, "stop_hunt_probability", None),
+            },
+            "participant_intent": "UNKNOWN",
+            "trapped_positions": "UNKNOWN",
+            "order_flow_delta": "UNKNOWN",
+            "reason": "Intencao e posicionamento dos participantes exigem tape/L2 ou dados de derivativos.",
+        },
+        "confirmation": {
+            "status": "AVAILABLE",
+            "decision": action,
+            "candle": (_inst or {}).get("reversal_candle"),
+            "forward_state": str((_fb or {}).get("state", "EXPIRED")),
+            "next_direction": str((_pred or {}).get("direction", "NEUTRAL")),
+            "next_confidence": float((_pred or {}).get("confidence", 0.0) or 0.0),
+            "agrees_with_decision": _agree,
+            "entry_window": {"start": window["start"], "end": window["end"], "valid": window["valid"]},
+        },
+    }
+
     # Filtro de noticias (observavel audit-only; NUNCA bloqueia o motor).
     try:
         from mercury_ai.calendar.news_filter import assess_symbol as _news
@@ -466,4 +555,5 @@ def build_signal_from_analysis(
         edge_n=_edge.get("edge_n", 0),
         edge_winrate=_edge.get("edge_winrate"),
         edge_status=str(_edge.get("edge_status", "INSUFICIENTE")),
+        analyst_context=_analyst_context,
     )

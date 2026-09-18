@@ -60,6 +60,8 @@ BB_SPAN = 20
 BB_STD_MULT = 2.0
 SR_LOOKBACK = 48
 SR_PIVOT = 3
+SMC_REVERSAL_MIN_SCORE = 80.0
+SMC_EVENT_MAX_AGE = 3
 
 
 def _f(v: Any, default: float = 0.0) -> float:
@@ -443,6 +445,137 @@ def institutional_flags(df_closed: Any, decision: str) -> Dict[str, Any]:
     }
 
 
+def smc_reversal_flags(df_closed: Any, decision: str) -> Dict[str, Any]:
+    """Calcula somente as flags consumidas pelo gate de reversao SMC.
+
+    Mantem a mesma matematica de ``smc_flags`` e dos detectores de trigger,
+    mas evita observaveis de painel que nao influenciam a aprovacao.
+    """
+    smc = smc_flags(df_closed, decision)
+    sweep_age = None
+    fvg_age = None
+    inducement_age = None
+    try:
+        from mercury_ai.analysis.institutional_confirmation import (
+            atr14 as _atr14,
+            detect_fvg as _fvg,
+            detect_liquidity_sweep as _sweep,
+        )
+        from mercury_ai.analysis.institutional_confirmation import SWEEP_LOOKBACK as _SWEEP_LOOKBACK
+        atr = _atr14(df_closed)
+        if atr and atr > 0:
+            recent_start = max(0, len(df_closed) - (_SWEEP_LOOKBACK + SMC_EVENT_MAX_AGE + 2))
+            sweep = _sweep(df_closed.iloc[recent_start:], atr)
+            fvg = _fvg(df_closed, atr)
+            last_index = len(df_closed) - 1
+            if sweep.get("detected") and sweep.get("direction") == ("BULLISH" if str(decision).upper() == "BUY" else "BEARISH"):
+                sweep_age = len(df_closed.iloc[recent_start:]) - 1 - int(sweep["index"])
+            if fvg.get("detected") and fvg.get("direction") == ("BULLISH" if str(decision).upper() == "BUY" else "BEARISH"):
+                fvg_age = last_index - int(fvg["index"])
+            win = df_closed.iloc[-12:-1] if len(df_closed) >= 13 else df_closed
+            inducement = _sweep(win, atr, lookback=IDM_LOOKBACK)
+            if inducement.get("detected") and inducement.get("direction") == ("BULLISH" if str(decision).upper() == "BUY" else "BEARISH"):
+                inducement_age = (len(df_closed) - 2) - int(inducement["index"])
+    except (KeyError, IndexError, TypeError, ValueError):
+        pass
+    return {
+        "has_liquidity_sweep": smc.get("has_liquidity_sweep"),
+        "in_premium_discount_zone": smc.get("in_premium_discount_zone"),
+        "has_fvg": smc.get("has_fvg"),
+        "has_inducement": smc.get("has_inducement"),
+        "sweep_age": sweep_age,
+        "fvg_age": fvg_age,
+        "inducement_age": inducement_age,
+        "reversal_candle": reversal_candle(df_closed),
+        "trigger_aligned": trigger_aligned(df_closed, decision),
+        "trigger_body_ratio": trigger_body_ratio(df_closed),
+        "trigger_range_atr": trigger_range_atr(df_closed),
+    }
+
+
+def smc_reversal_setup(flags: Dict[str, Any], decision: str) -> Dict[str, Any]:
+    """Avalia uma reversao SMC estrita a partir de flags ja calculadas.
+
+    O resultado e opt-in: ele descreve a qualidade da oportunidade, mas nao
+    altera a decisao principal. A aprovacao exige sweep, zona, candle de
+    reversao, alinhamento da trigger, range controlado e confirmacao FVG/IDM.
+    """
+    dec = str(decision or "").upper()
+    if dec not in ("BUY", "SELL"):
+        return {"score": 0.0, "approved": False, "reasons": ("invalid_direction",)}
+
+    expected_reversal = (
+        "BULLISH_REVERSAL" if dec == "BUY" else "BEARISH_REVERSAL"
+    )
+    score = 0.0
+    reasons = []
+
+    if flags.get("has_liquidity_sweep") is True:
+        sweep_age = flags.get("sweep_age")
+        if sweep_age is None or _f(sweep_age) <= SMC_EVENT_MAX_AGE:
+            score += 25.0
+        else:
+            reasons.append("liquidity_sweep_stale")
+    else:
+        reasons.append("liquidity_sweep_missing")
+
+    if flags.get("in_premium_discount_zone") is True:
+        score += 15.0
+    else:
+        reasons.append("premium_discount_zone_missing")
+
+    if flags.get("reversal_candle") == expected_reversal:
+        score += 20.0
+    else:
+        reasons.append("reversal_candle_missing")
+
+    if flags.get("trigger_aligned") is True:
+        score += 10.0
+    else:
+        reasons.append("trigger_not_aligned")
+
+    body_ratio = flags.get("trigger_body_ratio")
+    if body_ratio is not None and _f(body_ratio) >= TRIGGER_BODY_MIN:
+        score += 10.0
+    else:
+        reasons.append("trigger_body_below_minimum")
+
+    range_atr = flags.get("trigger_range_atr")
+    if range_atr is not None and _f(range_atr) <= ATR_CAP:
+        score += 10.0
+    else:
+        reasons.append("trigger_range_above_atr_cap")
+
+    fvg_age = flags.get("fvg_age")
+    inducement_age = flags.get("inducement_age")
+    confirmation_recent = (
+        (flags.get("has_fvg") is True and (fvg_age is None or _f(fvg_age) <= SMC_EVENT_MAX_AGE))
+        or (flags.get("has_inducement") is True and (inducement_age is None or _f(inducement_age) <= SMC_EVENT_MAX_AGE))
+    )
+    if confirmation_recent:
+        score += 10.0
+    else:
+        reasons.append("fvg_or_inducement_missing_or_stale")
+
+    required = (
+        flags.get("has_liquidity_sweep") is True
+        and (flags.get("sweep_age") is None or _f(flags.get("sweep_age")) <= SMC_EVENT_MAX_AGE)
+        and flags.get("in_premium_discount_zone") is True
+        and flags.get("reversal_candle") == expected_reversal
+        and flags.get("trigger_aligned") is True
+        and body_ratio is not None
+        and _f(body_ratio) >= TRIGGER_BODY_MIN
+        and range_atr is not None
+        and _f(range_atr) <= ATR_CAP
+        and confirmation_recent
+    )
+    return {
+        "score": round(score, 2),
+        "approved": bool(required and score >= SMC_REVERSAL_MIN_SCORE),
+        "reasons": tuple(reasons),
+    }
+
+
 def n3_flags(df_closed: Any, decision: str, symbol: str = "") -> Dict[str, Any]:
     """Selo N3 (observavel, sem bloquear). Nones honestos se sem zona."""
     try:
@@ -489,7 +622,9 @@ def smc_flags(df_closed: Any, decision: str) -> Dict[str, Any]:
         out["has_fvg"] = bool(fv.get("detected")) and fv.get("direction") == want
         win = df_closed.iloc[-12:-1] if len(df_closed) >= 13 else df_closed
         idm = _sweep(win, atr, lookback=IDM_LOOKBACK)
-        out["has_inducement"] = bool(idm.get("detected"))
+        out["has_inducement"] = (
+            bool(idm.get("detected")) and idm.get("direction") == want
+        )
         leg = df_closed.iloc[-ZONE_LOOKBACK:] if len(df_closed) >= ZONE_LOOKBACK else df_closed
         try:
             hi = float(leg["High"].max())

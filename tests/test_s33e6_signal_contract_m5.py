@@ -181,6 +181,15 @@ def test_case_a_buy_signal():
     assert sig.institutional_score == 68.0 and sig.quality == 70.0
     assert sig.market_regime == "STRONG_UPTREND"
     assert "Regra 2" in sig.reason  # explicacao real, nao generica
+    assert sig.analyst_context["acao"] == "BUY"
+    assert sig.analyst_context["timeframe"] == "M5"
+    assert sig.analyst_context["confidence_semantics"] == "model_confidence_not_win_probability"
+    assert sig.analyst_context["proxima_vela"]["concorda_decisao"] is None
+    framework = sig.analyst_context["order_flow_framework"]
+    assert framework["status"] == "OHLCV_M1_M5_ONLY"
+    assert framework["environment"]["derivatives_gex"] == "UNKNOWN"
+    assert framework["location"]["book_depth"] == "UNKNOWN"
+    assert framework["confirmation"]["decision"] == "BUY"
     assert "strong BUY" not in sig.reason
     tf = sig.mtf_summary["timeframes"]
     assert tf["M5"] == "processed" and tf["M1"].startswith("rejected")

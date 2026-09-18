@@ -105,3 +105,47 @@ def test_runner_weekend_filters_forex_only(ms):
     assert len(kept) == 12
     kept_mon = [s for s in r.universe if ms.is_symbol_eligible(s, MON_NOON)]
     assert len(kept_mon) == 39
+
+
+# --- Weekly close boundaries (fix 2026-09-18: Forex fecha sex 21h UTC, reabre dom 21h UTC)
+FRI_2059 = datetime(2026, 9, 4, 20, 59, tzinfo=timezone.utc)
+FRI_2100 = datetime(2026, 9, 4, 21, 0, tzinfo=timezone.utc)
+FRI_2300 = datetime(2026, 9, 4, 23, 0, tzinfo=timezone.utc)
+SUN_2059 = datetime(2026, 9, 6, 20, 59, tzinfo=timezone.utc)
+SUN_2100 = datetime(2026, 9, 6, 21, 0, tzinfo=timezone.utc)
+
+
+def test_forex_friday_evening_closes(ms):
+    """Sexta >= 21h UTC: Forex FECHADO (bug original: aparecia no dashboard)."""
+    assert ms.is_market_eligible("FOREX", FRI_2059) is True
+    assert ms.is_market_eligible("FOREX", FRI_2100) is False
+    assert ms.is_market_eligible("FOREX", FRI_2300) is False
+    assert ms.is_symbol_eligible("USDJPY=X", FRI_2300) is False
+    assert ms.is_symbol_eligible("USDCHF=X", FRI_2300) is False
+
+
+def test_forex_sunday_evening_reopens(ms):
+    """Domingo >= 21h UTC: Forex REABRE (Sydney/Asia)."""
+    assert ms.is_market_eligible("FOREX", SUN_2059) is False
+    assert ms.is_market_eligible("FOREX", SUN_2100) is True
+    assert ms.is_symbol_eligible("EURUSD=X", SUN_2100) is True
+
+
+def test_crypto_unaffected_by_weekly_close(ms):
+    for t in (FRI_2300, SAT, SUN_2059, SUN_2100):
+        assert ms.is_market_eligible("CRYPTO", t) is True
+        assert ms.is_symbol_eligible("BTC-USD", t) is True
+
+
+def test_scanner_friday_night_filters_forex(ms):
+    """Sexta 23h UTC: apenas crypto passa pelo gate (count derivado do universo atual)."""
+    from mercury_ai.brain.scanner import MercuryScanner
+    from mercury_ai.config.universe import get_asset
+
+    scanner = MercuryScanner()
+    auth = scanner.asset_registry.get_assets_for_broker("XP")
+    enabled = [a for a in scanner.asset_registry.assets.values() if a.enabled and a.profile == "Demo" and a.symbol in auth]
+    expected_crypto = [a for a in enabled if get_asset(a.symbol) is not None and get_asset(a.symbol).market == "CRYPTO"]
+    kept = [a for a in enabled if ms.is_symbol_eligible(a.symbol, FRI_2300)]
+    assert len(kept) == len(expected_crypto)
+    assert all(get_asset(a.symbol).market == "CRYPTO" for a in kept)

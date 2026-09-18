@@ -1,0 +1,61 @@
+{
+    "timestamp": "2026-09-20T00:56:23.114466",
+    "asset": "ETH-USD",
+    "timeframe": "M5",
+    "context": null,
+    "evidence_bundle": null,
+    "decision_result": {
+        "decision": "WAIT",
+        "grade": "N/A",
+        "confidence": 0.0,
+        "clarity": 0.0,
+        "risk_score": 0.0,
+        "score": 0.0,
+        "quality": 0.0,
+        "expected_strength": 0.0,
+        "buy_probability": 0.0,
+        "sell_probability": 0.0,
+        "wait_probability": 100.0,
+        "expected_risk": 0.0,
+        "expected_reward": 0.0,
+        "expected_drawdown": 0.0,
+        "audit_id": "DATA_PROVIDER_UNAVAILABLE",
+        "version_metadata": {
+            "engine_version": "1.0.0",
+            "pipeline_version": "1.0.0",
+            "context_version": "1.0.0",
+            "weights_version": "1.0.0"
+        },
+        "explanation": "Data provider returned no data; cannot analyze.",
+        "mtf_consensus": null,
+        "market_regime": null,
+        "trade_allowed": true,
+        "trade_block_reasons": [],
+        "trade_quality_score": 0.0,
+        "trade_quality_level": "N/A",
+        "trace": null,
+        "warnings": [],
+        "weaknesses": [],
+        "blockers": [],
+        "summary": "No data returned by provider for ETH-USD",
+        "technical_reason": "",
+        "institutional_alignment": false,
+        "evidence_ranking": null,
+        "explainability": null
+    },
+    "version_metadata": {
+        "engine_version": "1.0.0",
+        "pipeline_version": "1.0.0",
+        "context_version": "1.0.0",
+        "weights_version": "1.0.0"
+    },
+    "audit_events": [
+        "Data provider unavailable"
+    ],
+    "session_id": "5d520ab4-e1a1-44fb-9be1-6319fb61e2d0",
+    "replay_id": "be053cd8b30d2baf59caa8f7769802685f1cfd10f71a3182a2c1dd4c1ab58503",
+    "evidence_ranking": null,
+    "dataset_hash": "",
+    "config_hash": "",
+    "version": "0.1"
+}

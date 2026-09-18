@@ -1,0 +1,279 @@
+{
+  "schema": "mercury.m5.intrabar-probe.v1",
+  "contract": "sweep_reclaim_entry_to_same_m5_close",
+  "results": [
+    {
+      "file": "AUDCHF_X_1m.csv",
+      "signals": 386,
+      "wins": 150,
+      "hit_rate": 0.38860103626943004,
+      "net_payout_080": -116.0
+    },
+    {
+      "file": "AUDJPY_X_1m.csv",
+      "signals": 337,
+      "wins": 134,
+      "hit_rate": 0.39762611275964393,
+      "net_payout_080": -95.8
+    },
+    {
+      "file": "AUDNZD_X_1m.csv",
+      "signals": 380,
+      "wins": 133,
+      "hit_rate": 0.35,
+      "net_payout_080": -140.6
+    },
+    {
+      "file": "AUDUSD_X_1m.csv",
+      "signals": 0,
+      "wins": 0,
+      "hit_rate": null,
+      "net_payout_080": 0.0
+    },
+    {
+      "file": "AVAX_USD_1m.csv",
+      "signals": 191,
+      "wins": 59,
+      "hit_rate": 0.3089005235602094,
+      "net_payout_080": -84.8
+    },
+    {
+      "file": "BNB_USD_1m.csv",
+      "signals": 174,
+      "wins": 71,
+      "hit_rate": 0.40804597701149425,
+      "net_payout_080": -46.199999999999996
+    },
+    {
+      "file": "BTC_USD_1m.csv",
+      "signals": 238,
+      "wins": 96,
+      "hit_rate": 0.40336134453781514,
+      "net_payout_080": -65.19999999999999
+    },
+    {
+      "file": "CADCHF_X_1m.csv",
+      "signals": 360,
+      "wins": 118,
+      "hit_rate": 0.3277777777777778,
+      "net_payout_080": -147.6
+    },
+    {
+      "file": "CADJPY_X_1m.csv",
+      "signals": 349,
+      "wins": 133,
+      "hit_rate": 0.38108882521489973,
+      "net_payout_080": -109.6
+    },
+    {
+      "file": "CHFJPY_X_1m.csv",
+      "signals": 372,
+      "wins": 159,
+      "hit_rate": 0.4274193548387097,
+      "net_payout_080": -85.8
+    },
+    {
+      "file": "DOGE_USD_1m.csv",
+      "signals": 160,
+      "wins": 57,
+      "hit_rate": 0.35625,
+      "net_payout_080": -57.4
+    },
+    {
+      "file": "ETH_USD_1m.csv",
+      "signals": 214,
+      "wins": 84,
+      "hit_rate": 0.3925233644859813,
+      "net_payout_080": -62.8
+    },
+    {
+      "file": "EURAUD_X_1m.csv",
+      "signals": 426,
+      "wins": 168,
+      "hit_rate": 0.39436619718309857,
+      "net_payout_080": -123.6
+    },
+    {
+      "file": "EURCAD_X_1m.csv",
+      "signals": 400,
+      "wins": 162,
+      "hit_rate": 0.405,
+      "net_payout_080": -108.4
+    },
+    {
+      "file": "EURCHF_X_1m.csv",
+      "signals": 367,
+      "wins": 144,
+      "hit_rate": 0.3923705722070845,
+      "net_payout_080": -107.8
+    },
+    {
+      "file": "EURGBP_X_1m.csv",
+      "signals": 294,
+      "wins": 112,
+      "hit_rate": 0.38095238095238093,
+      "net_payout_080": -92.39999999999999
+    },
+    {
+      "file": "EURJPY_X_1m.csv",
+      "signals": 303,
+      "wins": 123,
+      "hit_rate": 0.40594059405940597,
+      "net_payout_080": -81.6
+    },
+    {
+      "file": "EURNZD_X_1m.csv",
+      "signals": 435,
+      "wins": 162,
+      "hit_rate": 0.3724137931034483,
+      "net_payout_080": -143.4
+    },
+    {
+      "file": "EURUSD_X_1m.csv",
+      "signals": 0,
+      "wins": 0,
+      "hit_rate": null,
+      "net_payout_080": 0.0
+    },
+    {
+      "file": "GBPAUD_X_1m.csv",
+      "signals": 380,
+      "wins": 162,
+      "hit_rate": 0.4263157894736842,
+      "net_payout_080": -88.4
+    },
+    {
+      "file": "GBPCAD_X_1m.csv",
+      "signals": 388,
+      "wins": 162,
+      "hit_rate": 0.4175257731958763,
+      "net_payout_080": -96.4
+    },
+    {
+      "file": "GBPCHF_X_1m.csv",
+      "signals": 414,
+      "wins": 183,
+      "hit_rate": 0.4420289855072464,
+      "net_payout_080": -84.6
+    },
+    {
+      "file": "GBPNZD_X_1m.csv",
+      "signals": 376,
+      "wins": 173,
+      "hit_rate": 0.4601063829787234,
+      "net_payout_080": -64.6
+    },
+    {
+      "file": "GBPUSD_X_1m.csv",
+      "signals": 2,
+      "wins": 2,
+      "hit_rate": 1.0,
+      "net_payout_080": 1.6
+    },
+    {
+      "file": "LINK_USD_1m.csv",
+      "signals": 198,
+      "wins": 75,
+      "hit_rate": 0.3787878787878788,
+      "net_payout_080": -63.0
+    },
+    {
+      "file": "LTC_USD_1m.csv",
+      "signals": 234,
+      "wins": 90,
+      "hit_rate": 0.38461538461538464,
+      "net_payout_080": -72.0
+    },
+    {
+      "file": "NZDCAD_X_1m.csv",
+      "signals": 350,
+      "wins": 126,
+      "hit_rate": 0.36,
+      "net_payout_080": -123.19999999999999
+    },
+    {
+      "file": "NZDCHF_X_1m.csv",
+      "signals": 346,
+      "wins": 136,
+      "hit_rate": 0.3930635838150289,
+      "net_payout_080": -101.19999999999999
+    },
+    {
+      "file": "NZDJPY_X_1m.csv",
+      "signals": 291,
+      "wins": 122,
+      "hit_rate": 0.41924398625429554,
+      "net_payout_080": -71.39999999999999
+    },
+    {
+      "file": "NZDUSD_X_1m.csv",
+      "signals": 0,
+      "wins": 0,
+      "hit_rate": null,
+      "net_payout_080": 0.0
+    },
+    {
+      "file": "SOL_USD_1m.csv",
+      "signals": 215,
+      "wins": 84,
+      "hit_rate": 0.39069767441860465,
+      "net_payout_080": -63.8
+    },
+    {
+      "file": "USDAUD_X_1m.csv",
+      "signals": 0,
+      "wins": 0,
+      "hit_rate": null,
+      "net_payout_080": 0.0
+    },
+    {
+      "file": "USDCAD_X_1m.csv",
+      "signals": 358,
+      "wins": 123,
+      "hit_rate": 0.3435754189944134,
+      "net_payout_080": -136.6
+    },
+    {
+      "file": "USDCHF_X_1m.csv",
+      "signals": 332,
+      "wins": 137,
+      "hit_rate": 0.4126506024096386,
+      "net_payout_080": -85.39999999999999
+    },
+    {
+      "file": "USDJPY_X_1m.csv",
+      "signals": 334,
+      "wins": 145,
+      "hit_rate": 0.4341317365269461,
+      "net_payout_080": -73.0
+    },
+    {
+      "file": "XLM_USD_1m.csv",
+      "signals": 220,
+      "wins": 91,
+      "hit_rate": 0.41363636363636364,
+      "net_payout_080": -56.2
+    },
+    {
+      "file": "XPL_USD_1m.csv",
+      "signals": 112,
+      "wins": 36,
+      "hit_rate": 0.32142857142857145,
+      "net_payout_080": -47.2
+    },
+    {
+      "file": "XRP_USD_1m.csv",
+      "signals": 196,
+      "wins": 72,
+      "hit_rate": 0.3673469387755102,
+      "net_payout_080": -66.4
+    }
+  ],
+  "aggregate": {
+    "assets": 38,
+    "signals": 10132,
+    "wins": 3984,
+    "hit_rate": 0.3932096328464272,
+    "net_payout_080": -2960.7999999999997
+  }
+}

@@ -9,7 +9,11 @@ class MarketSessions:
     """Sessao de mercado + elegibilidade operacional por classe de ativo (S7.X-F2).
 
     Contrato F2 (UTC, via DeterministicClock):
-      FOREX  -> elegivel em dias uteis (Mon-Fri), NAO elegivel no weekend (Sat/Sun)
+      FOREX  -> elegivel na janela semanal real do mercado:
+                ABERTO de domingo 21:00 UTC ate sexta 21:00 UTC;
+                FECHADO de sexta >= 21:00 UTC ate domingo < 21:00 UTC
+                (sabado inteiro fechado). Antes a regra so bloqueava Sat/Sun,
+                o que deixava Forex operar sexta a noite com mercado fechado.
       CRYPTO -> sempre elegivel (24/7)
 
     Distingue SESSION ELIGIBILITY (regra operacional) de PROVIDER DATA AVAILABILITY.
@@ -70,25 +74,57 @@ class MarketSessions:
             dc_now = dc_now.replace(tzinfo=timezone.utc)
         return dc_now.weekday()
 
+    # Janela semanal Forex (UTC): fecha sexta 21:00, reabre domingo 21:00.
+    FOREX_CLOSE_WEEKDAY = 4   # Friday
+    FOREX_REOPEN_WEEKDAY = 6  # Sunday
+    FOREX_CLOSE_HOUR_UTC = 21
+
+    @staticmethod
+    def _utc_weekday_hour(now: Optional[datetime] = None) -> tuple:
+        """Retorna (weekday, hour) UTC usando DeterministicClock quando possivel."""
+        if now is not None:
+            dt = now
+            if dt.tzinfo is None:
+                dt = dt.replace(tzinfo=timezone.utc)
+            else:
+                dt = dt.astimezone(timezone.utc)
+            return dt.weekday(), dt.hour
+        dc_now = DeterministicClock.utcnow()
+        if dc_now.tzinfo is None:
+            dc_now = dc_now.replace(tzinfo=timezone.utc)
+        return dc_now.weekday(), dc_now.hour
+
     @staticmethod
     def _is_weekend_utc(now: Optional[datetime] = None) -> bool:
         return MarketSessions._utc_weekday(now) >= 5  # 5=Sat, 6=Sun
 
+    def _is_forex_weekly_close(self, now: Optional[datetime] = None) -> bool:
+        """True se o instante esta dentro do fechamento semanal do Forex (UTC).
+
+        Fechado: sexta >= 21:00 UTC, sabado inteiro, domingo < 21:00 UTC.
+        """
+        wd, hour = self._utc_weekday_hour(now)
+        if wd == 5:  # Saturday
+            return True
+        if wd == self.FOREX_CLOSE_WEEKDAY and hour >= self.FOREX_CLOSE_HOUR_UTC:
+            return True
+        if wd == self.FOREX_REOPEN_WEEKDAY and hour < self.FOREX_CLOSE_HOUR_UTC:
+            return True
+        return False
+
     def is_market_eligible(self, market: str, now: Optional[datetime] = None) -> bool:
         """Retorna True se o mercado esta elegivel para analise live no instante now (UTC).
 
-        Regra F2:
-          FOREX  -> False no weekend (Sat/Sun UTC), True caso contrario
+        Regra F2 (corrigida 2026-09-18):
+          FOREX  -> False no fechamento semanal (sexta >= 21h UTC ate domingo < 21h UTC)
           CRYPTO -> True sempre (24/7)
-          STOCK/COMMODITY/unknown -> False se weekend? Contrato F2 preserva 39 ativos;
-            para compatibilidade, trata STOCK/COMMODITY como nao elegivel no weekend
-            e elegivel em weekday (nao operacionais no F1, mas regra clara).
+          STOCK/COMMODITY -> mesma janela do Forex (conservador).
         """
         m = (market or "").strip().upper()
         if m == self.CRYPTO_MARKET or m == "CRIPTO":
             return True
-        # FOREX (e STOCK/COMMODITY por extensao) fechado no weekend UTC
-        if self._is_weekend_utc(now):
+        # FOREX (e STOCK/COMMODITY por extensao) fechado no fechamento semanal UTC
+        if self._is_forex_weekly_close(now):
             return False
         return True
 
@@ -112,14 +148,15 @@ class MarketSessions:
     def eligibility_reason(self, market: str, now: Optional[datetime] = None) -> str:
         """Retorna razao legivel para observabilidade (nao altera decisao)."""
         m = (market or "").strip().upper()
-        wd = self._utc_weekday(now)
+        wd, hour = self._utc_weekday_hour(now)
         wd_name = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"][wd]
         eligible = self.is_market_eligible(market, now)
         if m in (self.CRYPTO_MARKET, "CRIPTO"):
-            return f"{m} 24/7 eligible ({wd_name} UTC) -> {eligible}"
-        if wd >= 5:
-            return f"{m} CLOSED weekend ({wd_name} UTC) -> {eligible}"
-        return f"{m} OPEN weekday ({wd_name} UTC) -> {eligible}"
+            return f"{m} 24/7 eligible ({wd_name} {hour:02d}h UTC) -> {eligible}"
+        if not eligible:
+            return (f"{m} CLOSED weekly close ({wd_name} {hour:02d}h UTC; "
+                    f"Fri>=21h -> Sun<21h) -> {eligible}")
+        return f"{m} OPEN weekly window ({wd_name} {hour:02d}h UTC) -> {eligible}"
 
     # -------------------------------------------------------------
     # Killzones institucionais (observavel; NAO bloqueia scanner)

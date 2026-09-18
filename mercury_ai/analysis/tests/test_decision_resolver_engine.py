@@ -211,6 +211,18 @@ class TestDecisionResolverEngine:
         assert result.decision == "WAIT"
         assert result.triggered_rule == 3
 
+    def test_non_finite_confluence_returns_wait(self, resolver):
+        result = resolver.resolve(
+            dominant_direction="BUY",
+            is_valid=True,
+            opportunity_grade="A+",
+            conflicting_signals=False,
+            confluence_score=float("nan"),
+            market_regime=None,
+        )
+        assert result.decision == "WAIT"
+        assert result.triggered_rule == 3
+
     # ============================================================
     # TESTE 12: BUY + Conflict + Grade C = WAIT
     # ============================================================

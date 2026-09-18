@@ -241,6 +241,10 @@ class Signal:
     edge_winrate: float | None = None
     edge_status: str = "INSUFICIENTE"
 
+    # Contexto compatível com o formato do analista manual. Os valores são
+    # observáveis já calculados pelo pipeline; não representam assertividade.
+    analyst_context: Dict[str, Any] = field(default_factory=dict)
+
     @property
     def symbol(self) -> str:
         """Alias operacional: symbol == asset (contrato S33-E.6)."""

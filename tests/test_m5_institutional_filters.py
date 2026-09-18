@@ -30,7 +30,10 @@ from mercury_ai.signals.m5_institutional_filters import (
     rsi_adx_approved,
     rsi_value,
     smc_flags,
+    smc_reversal_flags,
+    SMC_EVENT_MAX_AGE,
     sr_distance,
+    smc_reversal_setup,
     trigger_aligned,
     trigger_body_ratio,
     trigger_range_atr,
@@ -108,14 +111,18 @@ def test_institutional_flags_shape():
     rows = [(100 + i * 0.05, 100 + i * 0.05 + 0.4, 100 + i * 0.05 - 0.4, 100 + i * 0.05 + 0.1)
             for i in range(30)]
     flags = institutional_flags(_df(rows), "BUY")
-    assert set(flags) == {"trigger_body_ratio", "trigger_aligned",
-                          "trigger_range_atr", "ema200_aligned", "ema200_dist_atr",
-                          "has_liquidity_sweep", "in_premium_discount_zone",
-                          "has_fvg", "has_inducement",
-                          "rsi", "adx", "plus_di", "minus_di", "rsi_adx_approved",
-                          "bollinger_pos", "rsi_value", "reversal_candle",
-                          "sr_distance", "band_expansion",
-                          "bb_upper", "bb_middle", "bb_lower", "bb_bandwidth"}
+    expected_keys = {"trigger_body_ratio", "trigger_aligned",
+                     "trigger_range_atr", "ema200_aligned", "ema200_dist_atr",
+                     "has_liquidity_sweep", "in_premium_discount_zone",
+                     "has_fvg", "has_inducement",
+                     "rsi", "adx", "plus_di", "minus_di", "rsi_adx_approved",
+                     "bollinger_pos", "rsi_value", "reversal_candle",
+                     "sr_distance", "band_expansion",
+                     "bb_upper", "bb_middle", "bb_lower", "bb_bandwidth"}
+    expected_keys |= {"lta_exists", "ltb_exists", "trendline_bias",
+                      "trendline_aligned", "trendline_distance_atr",
+                      "trendline_detail"}
+    assert set(flags) == expected_keys
     assert flags["trigger_body_ratio"] is not None
     assert flags["trigger_aligned"] in (True, False)
     assert flags["trigger_range_atr"] is not None
@@ -212,3 +219,57 @@ def test_smc_flags_shape_and_short_df():
         assert v in (True, False, None)
     # WAIT: sem direção => tudo None
     assert all(v is None for v in smc_flags(_df(rows), "WAIT").values())
+
+
+def test_smc_reversal_setup_requires_full_confirmation():
+    flags = {
+        "has_liquidity_sweep": True,
+        "in_premium_discount_zone": True,
+        "reversal_candle": "BULLISH_REVERSAL",
+        "trigger_aligned": True,
+        "trigger_body_ratio": 0.5,
+        "trigger_range_atr": 1.2,
+        "has_fvg": True,
+        "has_inducement": False,
+        "sweep_age": SMC_EVENT_MAX_AGE,
+        "fvg_age": SMC_EVENT_MAX_AGE,
+        "inducement_age": None,
+    }
+    approved = smc_reversal_setup(flags, "BUY")
+    assert approved == {"score": 100.0, "approved": True, "reasons": ()}
+
+    rejected = smc_reversal_setup({**flags, "has_liquidity_sweep": False}, "BUY")
+    assert rejected["approved"] is False
+    assert "liquidity_sweep_missing" in rejected["reasons"]
+
+
+def test_smc_reversal_flags_match_gate_inputs():
+    rows = [(100 + i * 0.05, 100 + i * 0.05 + 0.4,
+             100 + i * 0.05 - 0.4, 100 + i * 0.05 + 0.1)
+            for i in range(60)]
+    flags = smc_reversal_flags(_df(rows), "BUY")
+    assert set(flags) == {
+        "has_liquidity_sweep", "in_premium_discount_zone", "has_fvg",
+        "has_inducement", "reversal_candle", "trigger_aligned",
+        "trigger_body_ratio", "trigger_range_atr",
+        "sweep_age", "fvg_age", "inducement_age",
+    }
+
+
+def test_smc_reversal_setup_rejects_stale_events():
+    flags = {
+        "has_liquidity_sweep": True,
+        "sweep_age": SMC_EVENT_MAX_AGE + 1,
+        "in_premium_discount_zone": True,
+        "reversal_candle": "BULLISH_REVERSAL",
+        "trigger_aligned": True,
+        "trigger_body_ratio": 0.5,
+        "trigger_range_atr": 1.0,
+        "has_fvg": True,
+        "fvg_age": 0,
+        "has_inducement": False,
+        "inducement_age": None,
+    }
+    result = smc_reversal_setup(flags, "BUY")
+    assert result["approved"] is False
+    assert "liquidity_sweep_stale" in result["reasons"]
