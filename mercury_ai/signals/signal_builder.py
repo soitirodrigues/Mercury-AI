@@ -347,6 +347,14 @@ def build_signal_from_analysis(
         except Exception:
             pass
 
+    # Edge Tracker (observável; NUNCA altera decisão/score/ranking):
+    # desempenho medido do ativo no histórico real de sinais.
+    try:
+        from mercury_ai.signals.edge_tracker import symbol_edge as _sym_edge
+        _edge = _sym_edge(symbol)
+    except Exception:
+        _edge = {"edge_n": 0, "edge_winrate": None, "edge_status": "INSUFICIENTE"}
+
     return Signal(
         asset=symbol,
         action=action,
@@ -455,4 +463,7 @@ def build_signal_from_analysis(
         sweep_asset_validated=_sw_valid,
         sweep_detail=str((_sw or {}).get("reason", "") or ""),
         sweep_override=_sw_override,
+        edge_n=_edge.get("edge_n", 0),
+        edge_winrate=_edge.get("edge_winrate"),
+        edge_status=str(_edge.get("edge_status", "INSUFICIENTE")),
     )
