@@ -64,6 +64,7 @@ def test_top3_filters_and_caps():
         return {"symbol": sym, "decision": dec, "score": score,
                 "confidence": 70,
                 "signal": {"symbol": sym, "decision": dec, "entry_timing_state": state,
+                           "forward_state": "CONFIRMED", "trigger_body_ratio": 0.5,
                            "risk_reward": rr, "score": score, "confidence": 70, "confluence": 70}}
     rep = {"top3": [e("A", "BUY", 90), e("B", "SELL", 85), e("C", "BUY", 80),
                     e("D", "BUY", 75), e("W", "WAIT", 99), e("X", "BUY", 95, "EXPIRED"),
@@ -190,7 +191,8 @@ def test_f7_top3_requires_forward_confirmed():
     def e(sym, fwd):
         return {"symbol": sym, "decision": "BUY", "score": 95, "confidence": 90,
                 "signal": {"symbol": sym, "decision": "BUY", "entry_timing_state": "VALID",
-                           "forward_state": fwd, "risk_reward": 2.5, "score": 95,
+                           "forward_state": fwd, "trigger_body_ratio": 0.5,
+                           "risk_reward": 2.5, "score": 95,
                            "confidence": 90, "confluence": 90}}
     rep = {"top3": [e("A", "WEAK"), e("B", "EXPIRED"), e("C", "CONFIRMED")], "ranked": []}
     top3 = select_top3(rep)
