@@ -1,0 +1,126 @@
+{
+  "schema": "mercury.m5.g0-improvement.v1",
+  "base_signals": 103609,
+  "filters": [
+    {
+      "filter": "base",
+      "train": {
+        "signals": 82887,
+        "wins": 39912,
+        "hit_rate": 0.4815230373882515,
+        "net_payout_080": -11045.399999999998
+      },
+      "test": {
+        "signals": 20722,
+        "wins": 9847,
+        "hit_rate": 0.4751954444551684,
+        "net_payout_080": -2997.3999999999996
+      }
+    },
+    {
+      "filter": "trend_aligned",
+      "train": {
+        "signals": 58907,
+        "wins": 28307,
+        "hit_rate": 0.4805371178297995,
+        "net_payout_080": -7954.399999999998
+      },
+      "test": {
+        "signals": 13438,
+        "wins": 6318,
+        "hit_rate": 0.47015924988837626,
+        "net_payout_080": -2065.5999999999995
+      }
+    },
+    {
+      "filter": "no_displacement",
+      "train": {
+        "signals": 79532,
+        "wins": 38351,
+        "hit_rate": 0.48220841925262786,
+        "net_payout_080": -10500.199999999997
+      },
+      "test": {
+        "signals": 19705,
+        "wins": 9367,
+        "hit_rate": 0.47536158335447853,
+        "net_payout_080": -2844.3999999999996
+      }
+    },
+    {
+      "filter": "low_extension",
+      "train": {
+        "signals": 69532,
+        "wins": 33479,
+        "hit_rate": 0.48149053673128916,
+        "net_payout_080": -9269.8
+      },
+      "test": {
+        "signals": 15121,
+        "wins": 7136,
+        "hit_rate": 0.4719264598902189,
+        "net_payout_080": -2276.2
+      }
+    },
+    {
+      "filter": "regime_trend",
+      "train": {
+        "signals": 82887,
+        "wins": 39912,
+        "hit_rate": 0.4815230373882515,
+        "net_payout_080": -11045.399999999998
+      },
+      "test": {
+        "signals": 20722,
+        "wins": 9847,
+        "hit_rate": 0.4751954444551684,
+        "net_payout_080": -2997.3999999999996
+      }
+    },
+    {
+      "filter": "trend_no_disp",
+      "train": {
+        "signals": 56791,
+        "wins": 27352,
+        "hit_rate": 0.4816256096916765,
+        "net_payout_080": -7557.399999999998
+      },
+      "test": {
+        "signals": 12842,
+        "wins": 6037,
+        "hit_rate": 0.47009811555832426,
+        "net_payout_080": -1975.3999999999996
+      }
+    },
+    {
+      "filter": "trend_low_ext",
+      "train": {
+        "signals": 50327,
+        "wins": 24219,
+        "hit_rate": 0.4812327378941721,
+        "net_payout_080": -6732.799999999999
+      },
+      "test": {
+        "signals": 10044,
+        "wins": 4677,
+        "hit_rate": 0.4656511350059737,
+        "net_payout_080": -1625.3999999999996
+      }
+    },
+    {
+      "filter": "all_three",
+      "train": {
+        "signals": 48896,
+        "wins": 23562,
+        "hit_rate": 0.4818799083769634,
+        "net_payout_080": -6484.399999999998
+      },
+      "test": {
+        "signals": 9702,
+        "wins": 4523,
+        "hit_rate": 0.46619253762110907,
+        "net_payout_080": -1560.6
+      }
+    }
+  ]
+}

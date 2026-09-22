@@ -1,0 +1,2514 @@
+{
+  "schema": "mercury.m5.macro-confluence.v1",
+  "timing_filter": "NOT_TESTABLE_ON_CLOSED_M5",
+  "results": [
+    {
+      "symbol": "AUDCHF_X_5m",
+      "candles": 16679,
+      "candidates": [
+        {
+          "candidate": "macro_exhaustion",
+          "train": {
+            "signals": 77,
+            "wins": 34,
+            "hit_rate": 0.44155844155844154,
+            "net_payout_080": -15.799999999999997
+          },
+          "test": {
+            "signals": 21,
+            "wins": 6,
+            "hit_rate": 0.2857142857142857,
+            "net_payout_080": -10.2
+          }
+        },
+        {
+          "candidate": "macro_rsi_only",
+          "train": {
+            "signals": 109,
+            "wins": 34,
+            "hit_rate": 0.3119266055045872,
+            "net_payout_080": -47.8
+          },
+          "test": {
+            "signals": 22,
+            "wins": 6,
+            "hit_rate": 0.2727272727272727,
+            "net_payout_080": -11.2
+          }
+        },
+        {
+          "candidate": "macro_bollinger_only",
+          "train": {
+            "signals": 462,
+            "wins": 34,
+            "hit_rate": 0.0735930735930736,
+            "net_payout_080": -400.8
+          },
+          "test": {
+            "signals": 116,
+            "wins": 6,
+            "hit_rate": 0.05172413793103448,
+            "net_payout_080": -105.2
+          }
+        },
+        {
+          "candidate": "macro_sr_only",
+          "train": {
+            "signals": 5177,
+            "wins": 34,
+            "hit_rate": 0.006567510141008306,
+            "net_payout_080": -5115.8
+          },
+          "test": {
+            "signals": 1257,
+            "wins": 6,
+            "hit_rate": 0.00477326968973747,
+            "net_payout_080": -1246.2
+          }
+        }
+      ]
+    },
+    {
+      "symbol": "AUDJPY_X_5m",
+      "candles": 16675,
+      "candidates": [
+        {
+          "candidate": "macro_exhaustion",
+          "train": {
+            "signals": 70,
+            "wins": 41,
+            "hit_rate": 0.5857142857142857,
+            "net_payout_080": 3.8000000000000043
+          },
+          "test": {
+            "signals": 21,
+            "wins": 12,
+            "hit_rate": 0.5714285714285714,
+            "net_payout_080": 0.6000000000000014
+          }
+        },
+        {
+          "candidate": "macro_rsi_only",
+          "train": {
+            "signals": 99,
+            "wins": 41,
+            "hit_rate": 0.41414141414141414,
+            "net_payout_080": -25.199999999999996
+          },
+          "test": {
+            "signals": 30,
+            "wins": 12,
+            "hit_rate": 0.4,
+            "net_payout_080": -8.399999999999999
+          }
+        },
+        {
+          "candidate": "macro_bollinger_only",
+          "train": {
+            "signals": 512,
+            "wins": 41,
+            "hit_rate": 0.080078125,
+            "net_payout_080": -438.2
+          },
+          "test": {
+            "signals": 144,
+            "wins": 12,
+            "hit_rate": 0.08333333333333333,
+            "net_payout_080": -122.4
+          }
+        },
+        {
+          "candidate": "macro_sr_only",
+          "train": {
+            "signals": 4758,
+            "wins": 41,
+            "hit_rate": 0.008617065994115174,
+            "net_payout_080": -4684.2
+          },
+          "test": {
+            "signals": 823,
+            "wins": 12,
+            "hit_rate": 0.014580801944106925,
+            "net_payout_080": -801.4
+          }
+        }
+      ]
+    },
+    {
+      "symbol": "AUDNZD_X_5m",
+      "candles": 16676,
+      "candidates": [
+        {
+          "candidate": "macro_exhaustion",
+          "train": {
+            "signals": 48,
+            "wins": 23,
+            "hit_rate": 0.4791666666666667,
+            "net_payout_080": -6.599999999999998
+          },
+          "test": {
+            "signals": 21,
+            "wins": 8,
+            "hit_rate": 0.38095238095238093,
+            "net_payout_080": -6.6
+          }
+        },
+        {
+          "candidate": "macro_rsi_only",
+          "train": {
+            "signals": 68,
+            "wins": 23,
+            "hit_rate": 0.3382352941176471,
+            "net_payout_080": -26.599999999999998
+          },
+          "test": {
+            "signals": 32,
+            "wins": 8,
+            "hit_rate": 0.25,
+            "net_payout_080": -17.6
+          }
+        },
+        {
+          "candidate": "macro_bollinger_only",
+          "train": {
+            "signals": 492,
+            "wins": 23,
+            "hit_rate": 0.046747967479674794,
+            "net_payout_080": -450.6
+          },
+          "test": {
+            "signals": 121,
+            "wins": 8,
+            "hit_rate": 0.06611570247933884,
+            "net_payout_080": -106.6
+          }
+        },
+        {
+          "candidate": "macro_sr_only",
+          "train": {
+            "signals": 6840,
+            "wins": 23,
+            "hit_rate": 0.0033625730994152046,
+            "net_payout_080": -6798.6
+          },
+          "test": {
+            "signals": 1387,
+            "wins": 8,
+            "hit_rate": 0.005767844268204758,
+            "net_payout_080": -1372.6
+          }
+        }
+      ]
+    },
+    {
+      "symbol": "AUDUSD_X_5m",
+      "candles": 16678,
+      "candidates": [
+        {
+          "candidate": "macro_exhaustion",
+          "train": {
+            "signals": 59,
+            "wins": 24,
+            "hit_rate": 0.4067796610169492,
+            "net_payout_080": -15.799999999999997
+          },
+          "test": {
+            "signals": 11,
+            "wins": 3,
+            "hit_rate": 0.2727272727272727,
+            "net_payout_080": -5.6
+          }
+        },
+        {
+          "candidate": "macro_rsi_only",
+          "train": {
+            "signals": 80,
+            "wins": 24,
+            "hit_rate": 0.3,
+            "net_payout_080": -36.8
+          },
+          "test": {
+            "signals": 20,
+            "wins": 3,
+            "hit_rate": 0.15,
+            "net_payout_080": -14.6
+          }
+        },
+        {
+          "candidate": "macro_bollinger_only",
+          "train": {
+            "signals": 480,
+            "wins": 24,
+            "hit_rate": 0.05,
+            "net_payout_080": -436.8
+          },
+          "test": {
+            "signals": 148,
+            "wins": 3,
+            "hit_rate": 0.02027027027027027,
+            "net_payout_080": -142.6
+          }
+        },
+        {
+          "candidate": "macro_sr_only",
+          "train": {
+            "signals": 5328,
+            "wins": 24,
+            "hit_rate": 0.0045045045045045045,
+            "net_payout_080": -5284.8
+          },
+          "test": {
+            "signals": 1449,
+            "wins": 3,
+            "hit_rate": 0.002070393374741201,
+            "net_payout_080": -1443.6
+          }
+        }
+      ]
+    },
+    {
+      "symbol": "AVAX_USD_5m",
+      "candles": 16938,
+      "candidates": [
+        {
+          "candidate": "macro_exhaustion",
+          "train": {
+            "signals": 47,
+            "wins": 27,
+            "hit_rate": 0.574468085106383,
+            "net_payout_080": 1.6000000000000014
+          },
+          "test": {
+            "signals": 12,
+            "wins": 6,
+            "hit_rate": 0.5,
+            "net_payout_080": -1.1999999999999993
+          }
+        },
+        {
+          "candidate": "macro_rsi_only",
+          "train": {
+            "signals": 94,
+            "wins": 27,
+            "hit_rate": 0.2872340425531915,
+            "net_payout_080": -45.4
+          },
+          "test": {
+            "signals": 17,
+            "wins": 6,
+            "hit_rate": 0.35294117647058826,
+            "net_payout_080": -6.199999999999999
+          }
+        },
+        {
+          "candidate": "macro_bollinger_only",
+          "train": {
+            "signals": 505,
+            "wins": 27,
+            "hit_rate": 0.053465346534653464,
+            "net_payout_080": -456.4
+          },
+          "test": {
+            "signals": 106,
+            "wins": 6,
+            "hit_rate": 0.05660377358490566,
+            "net_payout_080": -95.2
+          }
+        },
+        {
+          "candidate": "macro_sr_only",
+          "train": {
+            "signals": 521,
+            "wins": 27,
+            "hit_rate": 0.05182341650671785,
+            "net_payout_080": -472.4
+          },
+          "test": {
+            "signals": 93,
+            "wins": 6,
+            "hit_rate": 0.06451612903225806,
+            "net_payout_080": -82.2
+          }
+        }
+      ]
+    },
+    {
+      "symbol": "BNB_USD_5m",
+      "candles": 16938,
+      "candidates": [
+        {
+          "candidate": "macro_exhaustion",
+          "train": {
+            "signals": 44,
+            "wins": 23,
+            "hit_rate": 0.5227272727272727,
+            "net_payout_080": -2.599999999999998
+          },
+          "test": {
+            "signals": 16,
+            "wins": 6,
+            "hit_rate": 0.375,
+            "net_payout_080": -5.199999999999999
+          }
+        },
+        {
+          "candidate": "macro_rsi_only",
+          "train": {
+            "signals": 59,
+            "wins": 23,
+            "hit_rate": 0.3898305084745763,
+            "net_payout_080": -17.599999999999998
+          },
+          "test": {
+            "signals": 18,
+            "wins": 6,
+            "hit_rate": 0.3333333333333333,
+            "net_payout_080": -7.199999999999999
+          }
+        },
+        {
+          "candidate": "macro_bollinger_only",
+          "train": {
+            "signals": 538,
+            "wins": 23,
+            "hit_rate": 0.04275092936802974,
+            "net_payout_080": -496.6
+          },
+          "test": {
+            "signals": 116,
+            "wins": 6,
+            "hit_rate": 0.05172413793103448,
+            "net_payout_080": -105.2
+          }
+        },
+        {
+          "candidate": "macro_sr_only",
+          "train": {
+            "signals": 1056,
+            "wins": 23,
+            "hit_rate": 0.021780303030303032,
+            "net_payout_080": -1014.6
+          },
+          "test": {
+            "signals": 205,
+            "wins": 6,
+            "hit_rate": 0.02926829268292683,
+            "net_payout_080": -194.2
+          }
+        }
+      ]
+    },
+    {
+      "symbol": "BTC_USD_5m",
+      "candles": 16938,
+      "candidates": [
+        {
+          "candidate": "macro_exhaustion",
+          "train": {
+            "signals": 62,
+            "wins": 35,
+            "hit_rate": 0.5645161290322581,
+            "net_payout_080": 1.0
+          },
+          "test": {
+            "signals": 13,
+            "wins": 6,
+            "hit_rate": 0.46153846153846156,
+            "net_payout_080": -2.1999999999999993
+          }
+        },
+        {
+          "candidate": "macro_rsi_only",
+          "train": {
+            "signals": 93,
+            "wins": 35,
+            "hit_rate": 0.3763440860215054,
+            "net_payout_080": -30.0
+          },
+          "test": {
+            "signals": 17,
+            "wins": 6,
+            "hit_rate": 0.35294117647058826,
+            "net_payout_080": -6.199999999999999
+          }
+        },
+        {
+          "candidate": "macro_bollinger_only",
+          "train": {
+            "signals": 531,
+            "wins": 35,
+            "hit_rate": 0.06591337099811675,
+            "net_payout_080": -468.0
+          },
+          "test": {
+            "signals": 119,
+            "wins": 6,
+            "hit_rate": 0.05042016806722689,
+            "net_payout_080": -108.2
+          }
+        },
+        {
+          "candidate": "macro_sr_only",
+          "train": {
+            "signals": 1260,
+            "wins": 35,
+            "hit_rate": 0.027777777777777776,
+            "net_payout_080": -1197.0
+          },
+          "test": {
+            "signals": 265,
+            "wins": 6,
+            "hit_rate": 0.022641509433962263,
+            "net_payout_080": -254.2
+          }
+        }
+      ]
+    },
+    {
+      "symbol": "CADCHF_X_5m",
+      "candles": 16679,
+      "candidates": [
+        {
+          "candidate": "macro_exhaustion",
+          "train": {
+            "signals": 58,
+            "wins": 25,
+            "hit_rate": 0.43103448275862066,
+            "net_payout_080": -13.0
+          },
+          "test": {
+            "signals": 10,
+            "wins": 2,
+            "hit_rate": 0.2,
+            "net_payout_080": -6.4
+          }
+        },
+        {
+          "candidate": "macro_rsi_only",
+          "train": {
+            "signals": 80,
+            "wins": 25,
+            "hit_rate": 0.3125,
+            "net_payout_080": -35.0
+          },
+          "test": {
+            "signals": 16,
+            "wins": 2,
+            "hit_rate": 0.125,
+            "net_payout_080": -12.4
+          }
+        },
+        {
+          "candidate": "macro_bollinger_only",
+          "train": {
+            "signals": 518,
+            "wins": 25,
+            "hit_rate": 0.04826254826254826,
+            "net_payout_080": -473.0
+          },
+          "test": {
+            "signals": 121,
+            "wins": 2,
+            "hit_rate": 0.01652892561983471,
+            "net_payout_080": -117.4
+          }
+        },
+        {
+          "candidate": "macro_sr_only",
+          "train": {
+            "signals": 6279,
+            "wins": 25,
+            "hit_rate": 0.003981525720656155,
+            "net_payout_080": -6234.0
+          },
+          "test": {
+            "signals": 1511,
+            "wins": 2,
+            "hit_rate": 0.0013236267372600927,
+            "net_payout_080": -1507.4
+          }
+        }
+      ]
+    },
+    {
+      "symbol": "CADJPY_X_5m",
+      "candles": 16675,
+      "candidates": [
+        {
+          "candidate": "macro_exhaustion",
+          "train": {
+            "signals": 52,
+            "wins": 28,
+            "hit_rate": 0.5384615384615384,
+            "net_payout_080": -1.5999999999999979
+          },
+          "test": {
+            "signals": 14,
+            "wins": 11,
+            "hit_rate": 0.7857142857142857,
+            "net_payout_080": 5.800000000000001
+          }
+        },
+        {
+          "candidate": "macro_rsi_only",
+          "train": {
+            "signals": 94,
+            "wins": 28,
+            "hit_rate": 0.2978723404255319,
+            "net_payout_080": -43.599999999999994
+          },
+          "test": {
+            "signals": 21,
+            "wins": 11,
+            "hit_rate": 0.5238095238095238,
+            "net_payout_080": -1.1999999999999993
+          }
+        },
+        {
+          "candidate": "macro_bollinger_only",
+          "train": {
+            "signals": 489,
+            "wins": 28,
+            "hit_rate": 0.05725971370143149,
+            "net_payout_080": -438.6
+          },
+          "test": {
+            "signals": 133,
+            "wins": 11,
+            "hit_rate": 0.08270676691729323,
+            "net_payout_080": -113.2
+          }
+        },
+        {
+          "candidate": "macro_sr_only",
+          "train": {
+            "signals": 6350,
+            "wins": 28,
+            "hit_rate": 0.004409448818897638,
+            "net_payout_080": -6299.6
+          },
+          "test": {
+            "signals": 805,
+            "wins": 11,
+            "hit_rate": 0.013664596273291925,
+            "net_payout_080": -785.2
+          }
+        }
+      ]
+    },
+    {
+      "symbol": "CHFJPY_X_5m",
+      "candles": 16669,
+      "candidates": [
+        {
+          "candidate": "macro_exhaustion",
+          "train": {
+            "signals": 36,
+            "wins": 23,
+            "hit_rate": 0.6388888888888888,
+            "net_payout_080": 5.400000000000002
+          },
+          "test": {
+            "signals": 7,
+            "wins": 5,
+            "hit_rate": 0.7142857142857143,
+            "net_payout_080": 2.0
+          }
+        },
+        {
+          "candidate": "macro_rsi_only",
+          "train": {
+            "signals": 50,
+            "wins": 23,
+            "hit_rate": 0.46,
+            "net_payout_080": -8.599999999999998
+          },
+          "test": {
+            "signals": 10,
+            "wins": 5,
+            "hit_rate": 0.5,
+            "net_payout_080": -1.0
+          }
+        },
+        {
+          "candidate": "macro_bollinger_only",
+          "train": {
+            "signals": 486,
+            "wins": 23,
+            "hit_rate": 0.047325102880658436,
+            "net_payout_080": -444.6
+          },
+          "test": {
+            "signals": 105,
+            "wins": 5,
+            "hit_rate": 0.047619047619047616,
+            "net_payout_080": -96.0
+          }
+        },
+        {
+          "candidate": "macro_sr_only",
+          "train": {
+            "signals": 6267,
+            "wins": 23,
+            "hit_rate": 0.0036700175522578586,
+            "net_payout_080": -6225.6
+          },
+          "test": {
+            "signals": 806,
+            "wins": 5,
+            "hit_rate": 0.00620347394540943,
+            "net_payout_080": -797.0
+          }
+        }
+      ]
+    },
+    {
+      "symbol": "DOGE_USD_5m",
+      "candles": 16938,
+      "candidates": [
+        {
+          "candidate": "macro_exhaustion",
+          "train": {
+            "signals": 43,
+            "wins": 24,
+            "hit_rate": 0.5581395348837209,
+            "net_payout_080": 0.20000000000000284
+          },
+          "test": {
+            "signals": 10,
+            "wins": 6,
+            "hit_rate": 0.6,
+            "net_payout_080": 0.8000000000000007
+          }
+        },
+        {
+          "candidate": "macro_rsi_only",
+          "train": {
+            "signals": 54,
+            "wins": 24,
+            "hit_rate": 0.4444444444444444,
+            "net_payout_080": -10.799999999999997
+          },
+          "test": {
+            "signals": 18,
+            "wins": 6,
+            "hit_rate": 0.3333333333333333,
+            "net_payout_080": -7.199999999999999
+          }
+        },
+        {
+          "candidate": "macro_bollinger_only",
+          "train": {
+            "signals": 531,
+            "wins": 24,
+            "hit_rate": 0.04519774011299435,
+            "net_payout_080": -487.8
+          },
+          "test": {
+            "signals": 91,
+            "wins": 6,
+            "hit_rate": 0.06593406593406594,
+            "net_payout_080": -80.2
+          }
+        },
+        {
+          "candidate": "macro_sr_only",
+          "train": {
+            "signals": 656,
+            "wins": 24,
+            "hit_rate": 0.036585365853658534,
+            "net_payout_080": -612.8
+          },
+          "test": {
+            "signals": 128,
+            "wins": 6,
+            "hit_rate": 0.046875,
+            "net_payout_080": -117.2
+          }
+        }
+      ]
+    },
+    {
+      "symbol": "ETH_USD_5m",
+      "candles": 16938,
+      "candidates": [
+        {
+          "candidate": "macro_exhaustion",
+          "train": {
+            "signals": 65,
+            "wins": 37,
+            "hit_rate": 0.5692307692307692,
+            "net_payout_080": 1.6000000000000014
+          },
+          "test": {
+            "signals": 19,
+            "wins": 7,
+            "hit_rate": 0.3684210526315789,
+            "net_payout_080": -6.3999999999999995
+          }
+        },
+        {
+          "candidate": "macro_rsi_only",
+          "train": {
+            "signals": 82,
+            "wins": 37,
+            "hit_rate": 0.45121951219512196,
+            "net_payout_080": -15.399999999999999
+          },
+          "test": {
+            "signals": 20,
+            "wins": 7,
+            "hit_rate": 0.35,
+            "net_payout_080": -7.3999999999999995
+          }
+        },
+        {
+          "candidate": "macro_bollinger_only",
+          "train": {
+            "signals": 542,
+            "wins": 37,
+            "hit_rate": 0.06826568265682657,
+            "net_payout_080": -475.4
+          },
+          "test": {
+            "signals": 116,
+            "wins": 7,
+            "hit_rate": 0.0603448275862069,
+            "net_payout_080": -103.4
+          }
+        },
+        {
+          "candidate": "macro_sr_only",
+          "train": {
+            "signals": 982,
+            "wins": 37,
+            "hit_rate": 0.03767820773930754,
+            "net_payout_080": -915.4
+          },
+          "test": {
+            "signals": 200,
+            "wins": 7,
+            "hit_rate": 0.035,
+            "net_payout_080": -187.4
+          }
+        }
+      ]
+    },
+    {
+      "symbol": "EURAUD_X_5m",
+      "candles": 16679,
+      "candidates": [
+        {
+          "candidate": "macro_exhaustion",
+          "train": {
+            "signals": 63,
+            "wins": 30,
+            "hit_rate": 0.47619047619047616,
+            "net_payout_080": -9.0
+          },
+          "test": {
+            "signals": 11,
+            "wins": 5,
+            "hit_rate": 0.45454545454545453,
+            "net_payout_080": -2.0
+          }
+        },
+        {
+          "candidate": "macro_rsi_only",
+          "train": {
+            "signals": 107,
+            "wins": 30,
+            "hit_rate": 0.2803738317757009,
+            "net_payout_080": -53.0
+          },
+          "test": {
+            "signals": 18,
+            "wins": 5,
+            "hit_rate": 0.2777777777777778,
+            "net_payout_080": -9.0
+          }
+        },
+        {
+          "candidate": "macro_bollinger_only",
+          "train": {
+            "signals": 511,
+            "wins": 30,
+            "hit_rate": 0.05870841487279843,
+            "net_payout_080": -457.0
+          },
+          "test": {
+            "signals": 119,
+            "wins": 5,
+            "hit_rate": 0.04201680672268908,
+            "net_payout_080": -110.0
+          }
+        },
+        {
+          "candidate": "macro_sr_only",
+          "train": {
+            "signals": 7212,
+            "wins": 30,
+            "hit_rate": 0.004159733777038269,
+            "net_payout_080": -7158.0
+          },
+          "test": {
+            "signals": 1817,
+            "wins": 5,
+            "hit_rate": 0.00275178866263071,
+            "net_payout_080": -1808.0
+          }
+        }
+      ]
+    },
+    {
+      "symbol": "EURCAD_X_5m",
+      "candles": 16681,
+      "candidates": [
+        {
+          "candidate": "macro_exhaustion",
+          "train": {
+            "signals": 53,
+            "wins": 24,
+            "hit_rate": 0.4528301886792453,
+            "net_payout_080": -9.799999999999997
+          },
+          "test": {
+            "signals": 11,
+            "wins": 5,
+            "hit_rate": 0.45454545454545453,
+            "net_payout_080": -2.0
+          }
+        },
+        {
+          "candidate": "macro_rsi_only",
+          "train": {
+            "signals": 82,
+            "wins": 24,
+            "hit_rate": 0.2926829268292683,
+            "net_payout_080": -38.8
+          },
+          "test": {
+            "signals": 17,
+            "wins": 5,
+            "hit_rate": 0.29411764705882354,
+            "net_payout_080": -8.0
+          }
+        },
+        {
+          "candidate": "macro_bollinger_only",
+          "train": {
+            "signals": 519,
+            "wins": 24,
+            "hit_rate": 0.046242774566473986,
+            "net_payout_080": -475.8
+          },
+          "test": {
+            "signals": 153,
+            "wins": 5,
+            "hit_rate": 0.032679738562091505,
+            "net_payout_080": -144.0
+          }
+        },
+        {
+          "candidate": "macro_sr_only",
+          "train": {
+            "signals": 9267,
+            "wins": 24,
+            "hit_rate": 0.002589834898025251,
+            "net_payout_080": -9223.8
+          },
+          "test": {
+            "signals": 2186,
+            "wins": 5,
+            "hit_rate": 0.0022872827081427266,
+            "net_payout_080": -2177.0
+          }
+        }
+      ]
+    },
+    {
+      "symbol": "EURCHF_X_5m",
+      "candles": 16675,
+      "candidates": [
+        {
+          "candidate": "macro_exhaustion",
+          "train": {
+            "signals": 96,
+            "wins": 44,
+            "hit_rate": 0.4583333333333333,
+            "net_payout_080": -16.799999999999997
+          },
+          "test": {
+            "signals": 15,
+            "wins": 9,
+            "hit_rate": 0.6,
+            "net_payout_080": 1.2000000000000002
+          }
+        },
+        {
+          "candidate": "macro_rsi_only",
+          "train": {
+            "signals": 129,
+            "wins": 44,
+            "hit_rate": 0.34108527131782945,
+            "net_payout_080": -49.8
+          },
+          "test": {
+            "signals": 19,
+            "wins": 9,
+            "hit_rate": 0.47368421052631576,
+            "net_payout_080": -2.8
+          }
+        },
+        {
+          "candidate": "macro_bollinger_only",
+          "train": {
+            "signals": 512,
+            "wins": 44,
+            "hit_rate": 0.0859375,
+            "net_payout_080": -432.8
+          },
+          "test": {
+            "signals": 132,
+            "wins": 9,
+            "hit_rate": 0.06818181818181818,
+            "net_payout_080": -115.8
+          }
+        },
+        {
+          "candidate": "macro_sr_only",
+          "train": {
+            "signals": 9070,
+            "wins": 44,
+            "hit_rate": 0.0048511576626240355,
+            "net_payout_080": -8990.8
+          },
+          "test": {
+            "signals": 2083,
+            "wins": 9,
+            "hit_rate": 0.0043206913106096975,
+            "net_payout_080": -2066.8
+          }
+        }
+      ]
+    },
+    {
+      "symbol": "EURGBP_X_5m",
+      "candles": 16681,
+      "candidates": [
+        {
+          "candidate": "macro_exhaustion",
+          "train": {
+            "signals": 58,
+            "wins": 40,
+            "hit_rate": 0.6896551724137931,
+            "net_payout_080": 14.0
+          },
+          "test": {
+            "signals": 16,
+            "wins": 8,
+            "hit_rate": 0.5,
+            "net_payout_080": -1.5999999999999996
+          }
+        },
+        {
+          "candidate": "macro_rsi_only",
+          "train": {
+            "signals": 75,
+            "wins": 40,
+            "hit_rate": 0.5333333333333333,
+            "net_payout_080": -3.0
+          },
+          "test": {
+            "signals": 19,
+            "wins": 8,
+            "hit_rate": 0.42105263157894735,
+            "net_payout_080": -4.6
+          }
+        },
+        {
+          "candidate": "macro_bollinger_only",
+          "train": {
+            "signals": 572,
+            "wins": 40,
+            "hit_rate": 0.06993006993006994,
+            "net_payout_080": -500.0
+          },
+          "test": {
+            "signals": 135,
+            "wins": 8,
+            "hit_rate": 0.05925925925925926,
+            "net_payout_080": -120.6
+          }
+        },
+        {
+          "candidate": "macro_sr_only",
+          "train": {
+            "signals": 10108,
+            "wins": 40,
+            "hit_rate": 0.003957261574990107,
+            "net_payout_080": -10036.0
+          },
+          "test": {
+            "signals": 2667,
+            "wins": 8,
+            "hit_rate": 0.0029996250468691415,
+            "net_payout_080": -2652.6
+          }
+        }
+      ]
+    },
+    {
+      "symbol": "EURJPY_X_5m",
+      "candles": 16675,
+      "candidates": [
+        {
+          "candidate": "macro_exhaustion",
+          "train": {
+            "signals": 58,
+            "wins": 30,
+            "hit_rate": 0.5172413793103449,
+            "net_payout_080": -4.0
+          },
+          "test": {
+            "signals": 13,
+            "wins": 7,
+            "hit_rate": 0.5384615384615384,
+            "net_payout_080": -0.39999999999999947
+          }
+        },
+        {
+          "candidate": "macro_rsi_only",
+          "train": {
+            "signals": 74,
+            "wins": 30,
+            "hit_rate": 0.40540540540540543,
+            "net_payout_080": -20.0
+          },
+          "test": {
+            "signals": 18,
+            "wins": 7,
+            "hit_rate": 0.3888888888888889,
+            "net_payout_080": -5.3999999999999995
+          }
+        },
+        {
+          "candidate": "macro_bollinger_only",
+          "train": {
+            "signals": 513,
+            "wins": 30,
+            "hit_rate": 0.05847953216374269,
+            "net_payout_080": -459.0
+          },
+          "test": {
+            "signals": 124,
+            "wins": 7,
+            "hit_rate": 0.056451612903225805,
+            "net_payout_080": -111.4
+          }
+        },
+        {
+          "candidate": "macro_sr_only",
+          "train": {
+            "signals": 7596,
+            "wins": 30,
+            "hit_rate": 0.0039494470774091624,
+            "net_payout_080": -7542.0
+          },
+          "test": {
+            "signals": 913,
+            "wins": 7,
+            "hit_rate": 0.007667031763417305,
+            "net_payout_080": -900.4
+          }
+        }
+      ]
+    },
+    {
+      "symbol": "EURNZD_X_5m",
+      "candles": 16679,
+      "candidates": [
+        {
+          "candidate": "macro_exhaustion",
+          "train": {
+            "signals": 33,
+            "wins": 23,
+            "hit_rate": 0.696969696969697,
+            "net_payout_080": 8.400000000000002
+          },
+          "test": {
+            "signals": 19,
+            "wins": 9,
+            "hit_rate": 0.47368421052631576,
+            "net_payout_080": -2.8
+          }
+        },
+        {
+          "candidate": "macro_rsi_only",
+          "train": {
+            "signals": 45,
+            "wins": 23,
+            "hit_rate": 0.5111111111111111,
+            "net_payout_080": -3.599999999999998
+          },
+          "test": {
+            "signals": 27,
+            "wins": 9,
+            "hit_rate": 0.3333333333333333,
+            "net_payout_080": -10.8
+          }
+        },
+        {
+          "candidate": "macro_bollinger_only",
+          "train": {
+            "signals": 466,
+            "wins": 23,
+            "hit_rate": 0.04935622317596566,
+            "net_payout_080": -424.6
+          },
+          "test": {
+            "signals": 136,
+            "wins": 9,
+            "hit_rate": 0.0661764705882353,
+            "net_payout_080": -119.8
+          }
+        },
+        {
+          "candidate": "macro_sr_only",
+          "train": {
+            "signals": 5639,
+            "wins": 23,
+            "hit_rate": 0.00407873736478099,
+            "net_payout_080": -5597.6
+          },
+          "test": {
+            "signals": 1280,
+            "wins": 9,
+            "hit_rate": 0.00703125,
+            "net_payout_080": -1263.8
+          }
+        }
+      ]
+    },
+    {
+      "symbol": "EURUSD_X_5m",
+      "candles": 16675,
+      "candidates": [
+        {
+          "candidate": "macro_exhaustion",
+          "train": {
+            "signals": 60,
+            "wins": 18,
+            "hit_rate": 0.3,
+            "net_payout_080": -27.6
+          },
+          "test": {
+            "signals": 9,
+            "wins": 1,
+            "hit_rate": 0.1111111111111111,
+            "net_payout_080": -7.2
+          }
+        },
+        {
+          "candidate": "macro_rsi_only",
+          "train": {
+            "signals": 79,
+            "wins": 18,
+            "hit_rate": 0.22784810126582278,
+            "net_payout_080": -46.6
+          },
+          "test": {
+            "signals": 21,
+            "wins": 1,
+            "hit_rate": 0.047619047619047616,
+            "net_payout_080": -19.2
+          }
+        },
+        {
+          "candidate": "macro_bollinger_only",
+          "train": {
+            "signals": 474,
+            "wins": 18,
+            "hit_rate": 0.0379746835443038,
+            "net_payout_080": -441.6
+          },
+          "test": {
+            "signals": 115,
+            "wins": 1,
+            "hit_rate": 0.008695652173913044,
+            "net_payout_080": -113.2
+          }
+        },
+        {
+          "candidate": "macro_sr_only",
+          "train": {
+            "signals": 7918,
+            "wins": 18,
+            "hit_rate": 0.0022733013387218996,
+            "net_payout_080": -7885.6
+          },
+          "test": {
+            "signals": 2024,
+            "wins": 1,
+            "hit_rate": 0.0004940711462450593,
+            "net_payout_080": -2022.2
+          }
+        }
+      ]
+    },
+    {
+      "symbol": "GBPAUD_X_5m",
+      "candles": 16676,
+      "candidates": [
+        {
+          "candidate": "macro_exhaustion",
+          "train": {
+            "signals": 54,
+            "wins": 33,
+            "hit_rate": 0.6111111111111112,
+            "net_payout_080": 5.400000000000002
+          },
+          "test": {
+            "signals": 15,
+            "wins": 3,
+            "hit_rate": 0.2,
+            "net_payout_080": -9.6
+          }
+        },
+        {
+          "candidate": "macro_rsi_only",
+          "train": {
+            "signals": 92,
+            "wins": 33,
+            "hit_rate": 0.358695652173913,
+            "net_payout_080": -32.599999999999994
+          },
+          "test": {
+            "signals": 25,
+            "wins": 3,
+            "hit_rate": 0.12,
+            "net_payout_080": -19.6
+          }
+        },
+        {
+          "candidate": "macro_bollinger_only",
+          "train": {
+            "signals": 478,
+            "wins": 33,
+            "hit_rate": 0.06903765690376569,
+            "net_payout_080": -418.6
+          },
+          "test": {
+            "signals": 128,
+            "wins": 3,
+            "hit_rate": 0.0234375,
+            "net_payout_080": -122.6
+          }
+        },
+        {
+          "candidate": "macro_sr_only",
+          "train": {
+            "signals": 6161,
+            "wins": 33,
+            "hit_rate": 0.005356273332251258,
+            "net_payout_080": -6101.6
+          },
+          "test": {
+            "signals": 1702,
+            "wins": 3,
+            "hit_rate": 0.0017626321974148062,
+            "net_payout_080": -1696.6
+          }
+        }
+      ]
+    },
+    {
+      "symbol": "GBPCAD_X_5m",
+      "candles": 16677,
+      "candidates": [
+        {
+          "candidate": "macro_exhaustion",
+          "train": {
+            "signals": 48,
+            "wins": 27,
+            "hit_rate": 0.5625,
+            "net_payout_080": 0.6000000000000014
+          },
+          "test": {
+            "signals": 11,
+            "wins": 7,
+            "hit_rate": 0.6363636363636364,
+            "net_payout_080": 1.6000000000000005
+          }
+        },
+        {
+          "candidate": "macro_rsi_only",
+          "train": {
+            "signals": 74,
+            "wins": 27,
+            "hit_rate": 0.36486486486486486,
+            "net_payout_080": -25.4
+          },
+          "test": {
+            "signals": 17,
+            "wins": 7,
+            "hit_rate": 0.4117647058823529,
+            "net_payout_080": -4.3999999999999995
+          }
+        },
+        {
+          "candidate": "macro_bollinger_only",
+          "train": {
+            "signals": 481,
+            "wins": 27,
+            "hit_rate": 0.056133056133056136,
+            "net_payout_080": -432.4
+          },
+          "test": {
+            "signals": 120,
+            "wins": 7,
+            "hit_rate": 0.058333333333333334,
+            "net_payout_080": -107.4
+          }
+        },
+        {
+          "candidate": "macro_sr_only",
+          "train": {
+            "signals": 7820,
+            "wins": 27,
+            "hit_rate": 0.003452685421994885,
+            "net_payout_080": -7771.4
+          },
+          "test": {
+            "signals": 1948,
+            "wins": 7,
+            "hit_rate": 0.003593429158110883,
+            "net_payout_080": -1935.4
+          }
+        }
+      ]
+    },
+    {
+      "symbol": "GBPCHF_X_5m",
+      "candles": 16678,
+      "candidates": [
+        {
+          "candidate": "macro_exhaustion",
+          "train": {
+            "signals": 74,
+            "wins": 32,
+            "hit_rate": 0.43243243243243246,
+            "net_payout_080": -16.4
+          },
+          "test": {
+            "signals": 24,
+            "wins": 11,
+            "hit_rate": 0.4583333333333333,
+            "net_payout_080": -4.199999999999999
+          }
+        },
+        {
+          "candidate": "macro_rsi_only",
+          "train": {
+            "signals": 95,
+            "wins": 32,
+            "hit_rate": 0.3368421052631579,
+            "net_payout_080": -37.4
+          },
+          "test": {
+            "signals": 27,
+            "wins": 11,
+            "hit_rate": 0.4074074074074074,
+            "net_payout_080": -7.199999999999999
+          }
+        },
+        {
+          "candidate": "macro_bollinger_only",
+          "train": {
+            "signals": 519,
+            "wins": 32,
+            "hit_rate": 0.06165703275529865,
+            "net_payout_080": -461.4
+          },
+          "test": {
+            "signals": 132,
+            "wins": 11,
+            "hit_rate": 0.08333333333333333,
+            "net_payout_080": -112.2
+          }
+        },
+        {
+          "candidate": "macro_sr_only",
+          "train": {
+            "signals": 6725,
+            "wins": 32,
+            "hit_rate": 0.004758364312267658,
+            "net_payout_080": -6667.4
+          },
+          "test": {
+            "signals": 1649,
+            "wins": 11,
+            "hit_rate": 0.0066707095209217705,
+            "net_payout_080": -1629.2
+          }
+        }
+      ]
+    },
+    {
+      "symbol": "GBPNZD_X_5m",
+      "candles": 16676,
+      "candidates": [
+        {
+          "candidate": "macro_exhaustion",
+          "train": {
+            "signals": 46,
+            "wins": 27,
+            "hit_rate": 0.5869565217391305,
+            "net_payout_080": 2.6000000000000014
+          },
+          "test": {
+            "signals": 27,
+            "wins": 12,
+            "hit_rate": 0.4444444444444444,
+            "net_payout_080": -5.399999999999999
+          }
+        },
+        {
+          "candidate": "macro_rsi_only",
+          "train": {
+            "signals": 89,
+            "wins": 27,
+            "hit_rate": 0.30337078651685395,
+            "net_payout_080": -40.4
+          },
+          "test": {
+            "signals": 38,
+            "wins": 12,
+            "hit_rate": 0.3157894736842105,
+            "net_payout_080": -16.4
+          }
+        },
+        {
+          "candidate": "macro_bollinger_only",
+          "train": {
+            "signals": 484,
+            "wins": 27,
+            "hit_rate": 0.05578512396694215,
+            "net_payout_080": -435.4
+          },
+          "test": {
+            "signals": 141,
+            "wins": 12,
+            "hit_rate": 0.0851063829787234,
+            "net_payout_080": -119.4
+          }
+        },
+        {
+          "candidate": "macro_sr_only",
+          "train": {
+            "signals": 4920,
+            "wins": 27,
+            "hit_rate": 0.00548780487804878,
+            "net_payout_080": -4871.4
+          },
+          "test": {
+            "signals": 934,
+            "wins": 12,
+            "hit_rate": 0.01284796573875803,
+            "net_payout_080": -912.4
+          }
+        }
+      ]
+    },
+    {
+      "symbol": "GBPUSD_X_5m",
+      "candles": 16675,
+      "candidates": [
+        {
+          "candidate": "macro_exhaustion",
+          "train": {
+            "signals": 57,
+            "wins": 26,
+            "hit_rate": 0.45614035087719296,
+            "net_payout_080": -10.2
+          },
+          "test": {
+            "signals": 19,
+            "wins": 8,
+            "hit_rate": 0.42105263157894735,
+            "net_payout_080": -4.6
+          }
+        },
+        {
+          "candidate": "macro_rsi_only",
+          "train": {
+            "signals": 72,
+            "wins": 26,
+            "hit_rate": 0.3611111111111111,
+            "net_payout_080": -25.2
+          },
+          "test": {
+            "signals": 22,
+            "wins": 8,
+            "hit_rate": 0.36363636363636365,
+            "net_payout_080": -7.6
+          }
+        },
+        {
+          "candidate": "macro_bollinger_only",
+          "train": {
+            "signals": 530,
+            "wins": 26,
+            "hit_rate": 0.04905660377358491,
+            "net_payout_080": -483.2
+          },
+          "test": {
+            "signals": 144,
+            "wins": 8,
+            "hit_rate": 0.05555555555555555,
+            "net_payout_080": -129.6
+          }
+        },
+        {
+          "candidate": "macro_sr_only",
+          "train": {
+            "signals": 7336,
+            "wins": 26,
+            "hit_rate": 0.003544165757906216,
+            "net_payout_080": -7289.2
+          },
+          "test": {
+            "signals": 1837,
+            "wins": 8,
+            "hit_rate": 0.004354926510615134,
+            "net_payout_080": -1822.6
+          }
+        }
+      ]
+    },
+    {
+      "symbol": "LINK_USD_5m",
+      "candles": 16938,
+      "candidates": [
+        {
+          "candidate": "macro_exhaustion",
+          "train": {
+            "signals": 41,
+            "wins": 23,
+            "hit_rate": 0.5609756097560976,
+            "net_payout_080": 0.40000000000000213
+          },
+          "test": {
+            "signals": 8,
+            "wins": 4,
+            "hit_rate": 0.5,
+            "net_payout_080": -0.7999999999999998
+          }
+        },
+        {
+          "candidate": "macro_rsi_only",
+          "train": {
+            "signals": 63,
+            "wins": 23,
+            "hit_rate": 0.36507936507936506,
+            "net_payout_080": -21.599999999999998
+          },
+          "test": {
+            "signals": 13,
+            "wins": 4,
+            "hit_rate": 0.3076923076923077,
+            "net_payout_080": -5.8
+          }
+        },
+        {
+          "candidate": "macro_bollinger_only",
+          "train": {
+            "signals": 512,
+            "wins": 23,
+            "hit_rate": 0.044921875,
+            "net_payout_080": -470.6
+          },
+          "test": {
+            "signals": 112,
+            "wins": 4,
+            "hit_rate": 0.03571428571428571,
+            "net_payout_080": -104.8
+          }
+        },
+        {
+          "candidate": "macro_sr_only",
+          "train": {
+            "signals": 582,
+            "wins": 23,
+            "hit_rate": 0.03951890034364261,
+            "net_payout_080": -540.6
+          },
+          "test": {
+            "signals": 145,
+            "wins": 4,
+            "hit_rate": 0.027586206896551724,
+            "net_payout_080": -137.8
+          }
+        }
+      ]
+    },
+    {
+      "symbol": "LTC_USD_5m",
+      "candles": 16938,
+      "candidates": [
+        {
+          "candidate": "macro_exhaustion",
+          "train": {
+            "signals": 53,
+            "wins": 32,
+            "hit_rate": 0.6037735849056604,
+            "net_payout_080": 4.600000000000001
+          },
+          "test": {
+            "signals": 14,
+            "wins": 5,
+            "hit_rate": 0.35714285714285715,
+            "net_payout_080": -5.0
+          }
+        },
+        {
+          "candidate": "macro_rsi_only",
+          "train": {
+            "signals": 78,
+            "wins": 32,
+            "hit_rate": 0.41025641025641024,
+            "net_payout_080": -20.4
+          },
+          "test": {
+            "signals": 19,
+            "wins": 5,
+            "hit_rate": 0.2631578947368421,
+            "net_payout_080": -10.0
+          }
+        },
+        {
+          "candidate": "macro_bollinger_only",
+          "train": {
+            "signals": 505,
+            "wins": 32,
+            "hit_rate": 0.06336633663366337,
+            "net_payout_080": -447.4
+          },
+          "test": {
+            "signals": 129,
+            "wins": 5,
+            "hit_rate": 0.03875968992248062,
+            "net_payout_080": -120.0
+          }
+        },
+        {
+          "candidate": "macro_sr_only",
+          "train": {
+            "signals": 688,
+            "wins": 32,
+            "hit_rate": 0.046511627906976744,
+            "net_payout_080": -630.4
+          },
+          "test": {
+            "signals": 115,
+            "wins": 5,
+            "hit_rate": 0.043478260869565216,
+            "net_payout_080": -106.0
+          }
+        }
+      ]
+    },
+    {
+      "symbol": "NZDCAD_X_5m",
+      "candles": 16676,
+      "candidates": [
+        {
+          "candidate": "macro_exhaustion",
+          "train": {
+            "signals": 76,
+            "wins": 36,
+            "hit_rate": 0.47368421052631576,
+            "net_payout_080": -11.2
+          },
+          "test": {
+            "signals": 15,
+            "wins": 7,
+            "hit_rate": 0.4666666666666667,
+            "net_payout_080": -2.3999999999999995
+          }
+        },
+        {
+          "candidate": "macro_rsi_only",
+          "train": {
+            "signals": 102,
+            "wins": 36,
+            "hit_rate": 0.35294117647058826,
+            "net_payout_080": -37.2
+          },
+          "test": {
+            "signals": 23,
+            "wins": 7,
+            "hit_rate": 0.30434782608695654,
+            "net_payout_080": -10.399999999999999
+          }
+        },
+        {
+          "candidate": "macro_bollinger_only",
+          "train": {
+            "signals": 515,
+            "wins": 36,
+            "hit_rate": 0.06990291262135923,
+            "net_payout_080": -450.2
+          },
+          "test": {
+            "signals": 121,
+            "wins": 7,
+            "hit_rate": 0.05785123966942149,
+            "net_payout_080": -108.4
+          }
+        },
+        {
+          "candidate": "macro_sr_only",
+          "train": {
+            "signals": 4135,
+            "wins": 36,
+            "hit_rate": 0.008706166868198308,
+            "net_payout_080": -4070.2
+          },
+          "test": {
+            "signals": 941,
+            "wins": 7,
+            "hit_rate": 0.007438894792773645,
+            "net_payout_080": -928.4
+          }
+        }
+      ]
+    },
+    {
+      "symbol": "NZDCHF_X_5m",
+      "candles": 16676,
+      "candidates": [
+        {
+          "candidate": "macro_exhaustion",
+          "train": {
+            "signals": 60,
+            "wins": 32,
+            "hit_rate": 0.5333333333333333,
+            "net_payout_080": -2.3999999999999986
+          },
+          "test": {
+            "signals": 9,
+            "wins": 3,
+            "hit_rate": 0.3333333333333333,
+            "net_payout_080": -3.5999999999999996
+          }
+        },
+        {
+          "candidate": "macro_rsi_only",
+          "train": {
+            "signals": 75,
+            "wins": 32,
+            "hit_rate": 0.4266666666666667,
+            "net_payout_080": -17.4
+          },
+          "test": {
+            "signals": 10,
+            "wins": 3,
+            "hit_rate": 0.3,
+            "net_payout_080": -4.6
+          }
+        },
+        {
+          "candidate": "macro_bollinger_only",
+          "train": {
+            "signals": 474,
+            "wins": 32,
+            "hit_rate": 0.06751054852320675,
+            "net_payout_080": -416.4
+          },
+          "test": {
+            "signals": 142,
+            "wins": 3,
+            "hit_rate": 0.02112676056338028,
+            "net_payout_080": -136.6
+          }
+        },
+        {
+          "candidate": "macro_sr_only",
+          "train": {
+            "signals": 4525,
+            "wins": 32,
+            "hit_rate": 0.0070718232044198895,
+            "net_payout_080": -4467.4
+          },
+          "test": {
+            "signals": 1180,
+            "wins": 3,
+            "hit_rate": 0.002542372881355932,
+            "net_payout_080": -1174.6
+          }
+        }
+      ]
+    },
+    {
+      "symbol": "NZDJPY_X_5m",
+      "candles": 16675,
+      "candidates": [
+        {
+          "candidate": "macro_exhaustion",
+          "train": {
+            "signals": 33,
+            "wins": 24,
+            "hit_rate": 0.7272727272727273,
+            "net_payout_080": 10.200000000000003
+          },
+          "test": {
+            "signals": 11,
+            "wins": 8,
+            "hit_rate": 0.7272727272727273,
+            "net_payout_080": 3.4000000000000004
+          }
+        },
+        {
+          "candidate": "macro_rsi_only",
+          "train": {
+            "signals": 53,
+            "wins": 24,
+            "hit_rate": 0.4528301886792453,
+            "net_payout_080": -9.799999999999997
+          },
+          "test": {
+            "signals": 17,
+            "wins": 8,
+            "hit_rate": 0.47058823529411764,
+            "net_payout_080": -2.5999999999999996
+          }
+        },
+        {
+          "candidate": "macro_bollinger_only",
+          "train": {
+            "signals": 508,
+            "wins": 24,
+            "hit_rate": 0.047244094488188976,
+            "net_payout_080": -464.8
+          },
+          "test": {
+            "signals": 145,
+            "wins": 8,
+            "hit_rate": 0.05517241379310345,
+            "net_payout_080": -130.6
+          }
+        },
+        {
+          "candidate": "macro_sr_only",
+          "train": {
+            "signals": 4176,
+            "wins": 24,
+            "hit_rate": 0.005747126436781609,
+            "net_payout_080": -4132.8
+          },
+          "test": {
+            "signals": 817,
+            "wins": 8,
+            "hit_rate": 0.009791921664626682,
+            "net_payout_080": -802.6
+          }
+        }
+      ]
+    },
+    {
+      "symbol": "NZDUSD_X_5m",
+      "candles": 16680,
+      "candidates": [
+        {
+          "candidate": "macro_exhaustion",
+          "train": {
+            "signals": 50,
+            "wins": 27,
+            "hit_rate": 0.54,
+            "net_payout_080": -1.3999999999999986
+          },
+          "test": {
+            "signals": 26,
+            "wins": 11,
+            "hit_rate": 0.4230769230769231,
+            "net_payout_080": -6.199999999999999
+          }
+        },
+        {
+          "candidate": "macro_rsi_only",
+          "train": {
+            "signals": 86,
+            "wins": 27,
+            "hit_rate": 0.313953488372093,
+            "net_payout_080": -37.4
+          },
+          "test": {
+            "signals": 45,
+            "wins": 11,
+            "hit_rate": 0.24444444444444444,
+            "net_payout_080": -25.2
+          }
+        },
+        {
+          "candidate": "macro_bollinger_only",
+          "train": {
+            "signals": 494,
+            "wins": 27,
+            "hit_rate": 0.05465587044534413,
+            "net_payout_080": -445.4
+          },
+          "test": {
+            "signals": 130,
+            "wins": 11,
+            "hit_rate": 0.08461538461538462,
+            "net_payout_080": -110.2
+          }
+        },
+        {
+          "candidate": "macro_sr_only",
+          "train": {
+            "signals": 4055,
+            "wins": 27,
+            "hit_rate": 0.006658446362515413,
+            "net_payout_080": -4006.4
+          },
+          "test": {
+            "signals": 886,
+            "wins": 11,
+            "hit_rate": 0.012415349887133182,
+            "net_payout_080": -866.2
+          }
+        }
+      ]
+    },
+    {
+      "symbol": "SOL_USD_5m",
+      "candles": 16938,
+      "candidates": [
+        {
+          "candidate": "macro_exhaustion",
+          "train": {
+            "signals": 44,
+            "wins": 28,
+            "hit_rate": 0.6363636363636364,
+            "net_payout_080": 6.400000000000002
+          },
+          "test": {
+            "signals": 15,
+            "wins": 6,
+            "hit_rate": 0.4,
+            "net_payout_080": -4.199999999999999
+          }
+        },
+        {
+          "candidate": "macro_rsi_only",
+          "train": {
+            "signals": 66,
+            "wins": 28,
+            "hit_rate": 0.42424242424242425,
+            "net_payout_080": -15.599999999999998
+          },
+          "test": {
+            "signals": 24,
+            "wins": 6,
+            "hit_rate": 0.25,
+            "net_payout_080": -13.2
+          }
+        },
+        {
+          "candidate": "macro_bollinger_only",
+          "train": {
+            "signals": 536,
+            "wins": 28,
+            "hit_rate": 0.05223880597014925,
+            "net_payout_080": -485.6
+          },
+          "test": {
+            "signals": 114,
+            "wins": 6,
+            "hit_rate": 0.05263157894736842,
+            "net_payout_080": -103.2
+          }
+        },
+        {
+          "candidate": "macro_sr_only",
+          "train": {
+            "signals": 719,
+            "wins": 28,
+            "hit_rate": 0.03894297635605007,
+            "net_payout_080": -668.6
+          },
+          "test": {
+            "signals": 184,
+            "wins": 6,
+            "hit_rate": 0.03260869565217391,
+            "net_payout_080": -173.2
+          }
+        }
+      ]
+    },
+    {
+      "symbol": "USDAUD_X_5m",
+      "candles": 16678,
+      "candidates": [
+        {
+          "candidate": "macro_exhaustion",
+          "train": {
+            "signals": 59,
+            "wins": 24,
+            "hit_rate": 0.4067796610169492,
+            "net_payout_080": -15.799999999999997
+          },
+          "test": {
+            "signals": 11,
+            "wins": 3,
+            "hit_rate": 0.2727272727272727,
+            "net_payout_080": -5.6
+          }
+        },
+        {
+          "candidate": "macro_rsi_only",
+          "train": {
+            "signals": 80,
+            "wins": 24,
+            "hit_rate": 0.3,
+            "net_payout_080": -36.8
+          },
+          "test": {
+            "signals": 20,
+            "wins": 3,
+            "hit_rate": 0.15,
+            "net_payout_080": -14.6
+          }
+        },
+        {
+          "candidate": "macro_bollinger_only",
+          "train": {
+            "signals": 480,
+            "wins": 24,
+            "hit_rate": 0.05,
+            "net_payout_080": -436.8
+          },
+          "test": {
+            "signals": 148,
+            "wins": 3,
+            "hit_rate": 0.02027027027027027,
+            "net_payout_080": -142.6
+          }
+        },
+        {
+          "candidate": "macro_sr_only",
+          "train": {
+            "signals": 5333,
+            "wins": 24,
+            "hit_rate": 0.004500281267579224,
+            "net_payout_080": -5289.8
+          },
+          "test": {
+            "signals": 1446,
+            "wins": 3,
+            "hit_rate": 0.002074688796680498,
+            "net_payout_080": -1440.6
+          }
+        }
+      ]
+    },
+    {
+      "symbol": "USDCAD_X_5m",
+      "candles": 16623,
+      "candidates": [
+        {
+          "candidate": "macro_exhaustion",
+          "train": {
+            "signals": 16,
+            "wins": 9,
+            "hit_rate": 0.5625,
+            "net_payout_080": 0.20000000000000018
+          },
+          "test": {
+            "signals": 4,
+            "wins": 4,
+            "hit_rate": 1.0,
+            "net_payout_080": 3.2
+          }
+        },
+        {
+          "candidate": "macro_rsi_only",
+          "train": {
+            "signals": 23,
+            "wins": 9,
+            "hit_rate": 0.391304347826087,
+            "net_payout_080": -6.8
+          },
+          "test": {
+            "signals": 4,
+            "wins": 4,
+            "hit_rate": 1.0,
+            "net_payout_080": 3.2
+          }
+        },
+        {
+          "candidate": "macro_bollinger_only",
+          "train": {
+            "signals": 388,
+            "wins": 9,
+            "hit_rate": 0.023195876288659795,
+            "net_payout_080": -371.8
+          },
+          "test": {
+            "signals": 92,
+            "wins": 4,
+            "hit_rate": 0.043478260869565216,
+            "net_payout_080": -84.8
+          }
+        },
+        {
+          "candidate": "macro_sr_only",
+          "train": {
+            "signals": 8334,
+            "wins": 9,
+            "hit_rate": 0.0010799136069114472,
+            "net_payout_080": -8317.8
+          },
+          "test": {
+            "signals": 2347,
+            "wins": 4,
+            "hit_rate": 0.0017043033659991478,
+            "net_payout_080": -2339.8
+          }
+        }
+      ]
+    },
+    {
+      "symbol": "USDCHF_X_5m",
+      "candles": 16607,
+      "candidates": [
+        {
+          "candidate": "macro_exhaustion",
+          "train": {
+            "signals": 82,
+            "wins": 45,
+            "hit_rate": 0.5487804878048781,
+            "net_payout_080": -1.0
+          },
+          "test": {
+            "signals": 27,
+            "wins": 12,
+            "hit_rate": 0.4444444444444444,
+            "net_payout_080": -5.399999999999999
+          }
+        },
+        {
+          "candidate": "macro_rsi_only",
+          "train": {
+            "signals": 122,
+            "wins": 45,
+            "hit_rate": 0.36885245901639346,
+            "net_payout_080": -41.0
+          },
+          "test": {
+            "signals": 41,
+            "wins": 12,
+            "hit_rate": 0.2926829268292683,
+            "net_payout_080": -19.4
+          }
+        },
+        {
+          "candidate": "macro_bollinger_only",
+          "train": {
+            "signals": 515,
+            "wins": 45,
+            "hit_rate": 0.08737864077669903,
+            "net_payout_080": -434.0
+          },
+          "test": {
+            "signals": 150,
+            "wins": 12,
+            "hit_rate": 0.08,
+            "net_payout_080": -128.4
+          }
+        },
+        {
+          "candidate": "macro_sr_only",
+          "train": {
+            "signals": 4722,
+            "wins": 45,
+            "hit_rate": 0.009529860228716646,
+            "net_payout_080": -4641.0
+          },
+          "test": {
+            "signals": 1152,
+            "wins": 12,
+            "hit_rate": 0.010416666666666666,
+            "net_payout_080": -1130.4
+          }
+        }
+      ]
+    },
+    {
+      "symbol": "USDJPY_X_5m",
+      "candles": 16607,
+      "candidates": [
+        {
+          "candidate": "macro_exhaustion",
+          "train": {
+            "signals": 70,
+            "wins": 41,
+            "hit_rate": 0.5857142857142857,
+            "net_payout_080": 3.8000000000000043
+          },
+          "test": {
+            "signals": 14,
+            "wins": 8,
+            "hit_rate": 0.5714285714285714,
+            "net_payout_080": 0.40000000000000036
+          }
+        },
+        {
+          "candidate": "macro_rsi_only",
+          "train": {
+            "signals": 81,
+            "wins": 41,
+            "hit_rate": 0.5061728395061729,
+            "net_payout_080": -7.199999999999996
+          },
+          "test": {
+            "signals": 21,
+            "wins": 8,
+            "hit_rate": 0.38095238095238093,
+            "net_payout_080": -6.6
+          }
+        },
+        {
+          "candidate": "macro_bollinger_only",
+          "train": {
+            "signals": 528,
+            "wins": 41,
+            "hit_rate": 0.07765151515151515,
+            "net_payout_080": -454.2
+          },
+          "test": {
+            "signals": 123,
+            "wins": 8,
+            "hit_rate": 0.06504065040650407,
+            "net_payout_080": -108.6
+          }
+        },
+        {
+          "candidate": "macro_sr_only",
+          "train": {
+            "signals": 6785,
+            "wins": 41,
+            "hit_rate": 0.00604274134119381,
+            "net_payout_080": -6711.2
+          },
+          "test": {
+            "signals": 732,
+            "wins": 8,
+            "hit_rate": 0.01092896174863388,
+            "net_payout_080": -717.6
+          }
+        }
+      ]
+    },
+    {
+      "symbol": "XLM_USD_5m",
+      "candles": 16938,
+      "candidates": [
+        {
+          "candidate": "macro_exhaustion",
+          "train": {
+            "signals": 41,
+            "wins": 24,
+            "hit_rate": 0.5853658536585366,
+            "net_payout_080": 2.200000000000003
+          },
+          "test": {
+            "signals": 20,
+            "wins": 9,
+            "hit_rate": 0.45,
+            "net_payout_080": -3.8
+          }
+        },
+        {
+          "candidate": "macro_rsi_only",
+          "train": {
+            "signals": 60,
+            "wins": 24,
+            "hit_rate": 0.4,
+            "net_payout_080": -16.799999999999997
+          },
+          "test": {
+            "signals": 26,
+            "wins": 9,
+            "hit_rate": 0.34615384615384615,
+            "net_payout_080": -9.8
+          }
+        },
+        {
+          "candidate": "macro_bollinger_only",
+          "train": {
+            "signals": 540,
+            "wins": 24,
+            "hit_rate": 0.044444444444444446,
+            "net_payout_080": -496.8
+          },
+          "test": {
+            "signals": 129,
+            "wins": 9,
+            "hit_rate": 0.06976744186046512,
+            "net_payout_080": -112.8
+          }
+        },
+        {
+          "candidate": "macro_sr_only",
+          "train": {
+            "signals": 603,
+            "wins": 24,
+            "hit_rate": 0.03980099502487562,
+            "net_payout_080": -559.8
+          },
+          "test": {
+            "signals": 138,
+            "wins": 9,
+            "hit_rate": 0.06521739130434782,
+            "net_payout_080": -121.8
+          }
+        }
+      ]
+    },
+    {
+      "symbol": "XPL_USD_5m",
+      "candles": 16938,
+      "candidates": [
+        {
+          "candidate": "macro_exhaustion",
+          "train": {
+            "signals": 53,
+            "wins": 24,
+            "hit_rate": 0.4528301886792453,
+            "net_payout_080": -9.799999999999997
+          },
+          "test": {
+            "signals": 14,
+            "wins": 6,
+            "hit_rate": 0.42857142857142855,
+            "net_payout_080": -3.1999999999999993
+          }
+        },
+        {
+          "candidate": "macro_rsi_only",
+          "train": {
+            "signals": 110,
+            "wins": 24,
+            "hit_rate": 0.21818181818181817,
+            "net_payout_080": -66.8
+          },
+          "test": {
+            "signals": 21,
+            "wins": 6,
+            "hit_rate": 0.2857142857142857,
+            "net_payout_080": -10.2
+          }
+        },
+        {
+          "candidate": "macro_bollinger_only",
+          "train": {
+            "signals": 482,
+            "wins": 24,
+            "hit_rate": 0.04979253112033195,
+            "net_payout_080": -438.8
+          },
+          "test": {
+            "signals": 124,
+            "wins": 6,
+            "hit_rate": 0.04838709677419355,
+            "net_payout_080": -113.2
+          }
+        },
+        {
+          "candidate": "macro_sr_only",
+          "train": {
+            "signals": 437,
+            "wins": 24,
+            "hit_rate": 0.05491990846681922,
+            "net_payout_080": -393.8
+          },
+          "test": {
+            "signals": 128,
+            "wins": 6,
+            "hit_rate": 0.046875,
+            "net_payout_080": -117.2
+          }
+        }
+      ]
+    },
+    {
+      "symbol": "XRP_USD_5m",
+      "candles": 16938,
+      "candidates": [
+        {
+          "candidate": "macro_exhaustion",
+          "train": {
+            "signals": 49,
+            "wins": 28,
+            "hit_rate": 0.5714285714285714,
+            "net_payout_080": 1.4000000000000021
+          },
+          "test": {
+            "signals": 16,
+            "wins": 5,
+            "hit_rate": 0.3125,
+            "net_payout_080": -7.0
+          }
+        },
+        {
+          "candidate": "macro_rsi_only",
+          "train": {
+            "signals": 66,
+            "wins": 28,
+            "hit_rate": 0.42424242424242425,
+            "net_payout_080": -15.599999999999998
+          },
+          "test": {
+            "signals": 28,
+            "wins": 5,
+            "hit_rate": 0.17857142857142858,
+            "net_payout_080": -19.0
+          }
+        },
+        {
+          "candidate": "macro_bollinger_only",
+          "train": {
+            "signals": 523,
+            "wins": 28,
+            "hit_rate": 0.05353728489483748,
+            "net_payout_080": -472.6
+          },
+          "test": {
+            "signals": 103,
+            "wins": 5,
+            "hit_rate": 0.04854368932038835,
+            "net_payout_080": -94.0
+          }
+        },
+        {
+          "candidate": "macro_sr_only",
+          "train": {
+            "signals": 741,
+            "wins": 28,
+            "hit_rate": 0.037786774628879895,
+            "net_payout_080": -690.6
+          },
+          "test": {
+            "signals": 118,
+            "wins": 5,
+            "hit_rate": 0.0423728813559322,
+            "net_payout_080": -109.0
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,5 @@
+{
+  "schema": "mercury.m5.systematic-search.v1",
+  "min_test_signals": 100,
+  "candidates": []
+}

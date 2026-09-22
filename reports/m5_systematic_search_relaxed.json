@@ -1,0 +1,82 @@
+{
+  "schema": "mercury.m5.systematic-search.v1",
+  "min_test_signals": 20,
+  "candidates": [
+    {
+      "features": [
+        "bb_extreme",
+        "sr_touch",
+        "previous_aligned"
+      ],
+      "train": {
+        "signals": 319,
+        "wins": 176,
+        "hit_rate": 0.5517241379310345,
+        "net_payout_080": -2.1999999999999886
+      },
+      "test": {
+        "signals": 62,
+        "wins": 32,
+        "hit_rate": 0.5161290322580645,
+        "net_payout_080": -4.399999999999999
+      }
+    },
+    {
+      "features": [
+        "trend_aligned",
+        "rsi_extreme",
+        "bb_extreme"
+      ],
+      "train": {
+        "signals": 182,
+        "wins": 104,
+        "hit_rate": 0.5714285714285714,
+        "net_payout_080": 5.200000000000003
+      },
+      "test": {
+        "signals": 36,
+        "wins": 16,
+        "hit_rate": 0.4444444444444444,
+        "net_payout_080": -7.199999999999999
+      }
+    },
+    {
+      "features": [
+        "rsi_extreme",
+        "bb_extreme",
+        "previous_aligned"
+      ],
+      "train": {
+        "signals": 128,
+        "wins": 71,
+        "hit_rate": 0.5546875,
+        "net_payout_080": -0.19999999999999574
+      },
+      "test": {
+        "signals": 22,
+        "wins": 9,
+        "hit_rate": 0.4090909090909091,
+        "net_payout_080": -5.8
+      }
+    },
+    {
+      "features": [
+        "trend_aligned",
+        "rsi_extreme",
+        "reversal"
+      ],
+      "train": {
+        "signals": 121,
+        "wins": 68,
+        "hit_rate": 0.5619834710743802,
+        "net_payout_080": 1.4000000000000057
+      },
+      "test": {
+        "signals": 30,
+        "wins": 11,
+        "hit_rate": 0.36666666666666664,
+        "net_payout_080": -10.2
+      }
+    }
+  ]
+}

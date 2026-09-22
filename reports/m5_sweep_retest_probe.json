@@ -1,0 +1,627 @@
+{
+  "schema": "mercury.m5.sweep-retest.v1",
+  "aggregate": {
+    "train": {
+      "signals": 0,
+      "wins": 0,
+      "hit_rate": null,
+      "net_payout_080": 0.0
+    },
+    "test": {
+      "signals": 0,
+      "wins": 0,
+      "hit_rate": null,
+      "net_payout_080": 0.0
+    }
+  },
+  "results": [
+    {
+      "symbol": "AUDCHF_X_5m",
+      "train": {
+        "signals": 0,
+        "wins": 0,
+        "hit_rate": null,
+        "net_payout_080": 0.0
+      },
+      "test": {
+        "signals": 0,
+        "wins": 0,
+        "hit_rate": null,
+        "net_payout_080": 0.0
+      },
+      "observations": []
+    },
+    {
+      "symbol": "AUDJPY_X_5m",
+      "train": {
+        "signals": 0,
+        "wins": 0,
+        "hit_rate": null,
+        "net_payout_080": 0.0
+      },
+      "test": {
+        "signals": 0,
+        "wins": 0,
+        "hit_rate": null,
+        "net_payout_080": 0.0
+      },
+      "observations": []
+    },
+    {
+      "symbol": "AUDNZD_X_5m",
+      "train": {
+        "signals": 0,
+        "wins": 0,
+        "hit_rate": null,
+        "net_payout_080": 0.0
+      },
+      "test": {
+        "signals": 0,
+        "wins": 0,
+        "hit_rate": null,
+        "net_payout_080": 0.0
+      },
+      "observations": []
+    },
+    {
+      "symbol": "AUDUSD_X_5m",
+      "train": {
+        "signals": 0,
+        "wins": 0,
+        "hit_rate": null,
+        "net_payout_080": 0.0
+      },
+      "test": {
+        "signals": 0,
+        "wins": 0,
+        "hit_rate": null,
+        "net_payout_080": 0.0
+      },
+      "observations": []
+    },
+    {
+      "symbol": "AVAX_USD_5m",
+      "train": {
+        "signals": 0,
+        "wins": 0,
+        "hit_rate": null,
+        "net_payout_080": 0.0
+      },
+      "test": {
+        "signals": 0,
+        "wins": 0,
+        "hit_rate": null,
+        "net_payout_080": 0.0
+      },
+      "observations": []
+    },
+    {
+      "symbol": "BNB_USD_5m",
+      "train": {
+        "signals": 0,
+        "wins": 0,
+        "hit_rate": null,
+        "net_payout_080": 0.0
+      },
+      "test": {
+        "signals": 0,
+        "wins": 0,
+        "hit_rate": null,
+        "net_payout_080": 0.0
+      },
+      "observations": []
+    },
+    {
+      "symbol": "BTC_USD_5m",
+      "train": {
+        "signals": 0,
+        "wins": 0,
+        "hit_rate": null,
+        "net_payout_080": 0.0
+      },
+      "test": {
+        "signals": 0,
+        "wins": 0,
+        "hit_rate": null,
+        "net_payout_080": 0.0
+      },
+      "observations": []
+    },
+    {
+      "symbol": "CADCHF_X_5m",
+      "train": {
+        "signals": 0,
+        "wins": 0,
+        "hit_rate": null,
+        "net_payout_080": 0.0
+      },
+      "test": {
+        "signals": 0,
+        "wins": 0,
+        "hit_rate": null,
+        "net_payout_080": 0.0
+      },
+      "observations": []
+    },
+    {
+      "symbol": "CADJPY_X_5m",
+      "train": {
+        "signals": 0,
+        "wins": 0,
+        "hit_rate": null,
+        "net_payout_080": 0.0
+      },
+      "test": {
+        "signals": 0,
+        "wins": 0,
+        "hit_rate": null,
+        "net_payout_080": 0.0
+      },
+      "observations": []
+    },
+    {
+      "symbol": "CHFJPY_X_5m",
+      "train": {
+        "signals": 0,
+        "wins": 0,
+        "hit_rate": null,
+        "net_payout_080": 0.0
+      },
+      "test": {
+        "signals": 0,
+        "wins": 0,
+        "hit_rate": null,
+        "net_payout_080": 0.0
+      },
+      "observations": []
+    },
+    {
+      "symbol": "DOGE_USD_5m",
+      "train": {
+        "signals": 0,
+        "wins": 0,
+        "hit_rate": null,
+        "net_payout_080": 0.0
+      },
+      "test": {
+        "signals": 0,
+        "wins": 0,
+        "hit_rate": null,
+        "net_payout_080": 0.0
+      },
+      "observations": []
+    },
+    {
+      "symbol": "ETH_USD_5m",
+      "train": {
+        "signals": 0,
+        "wins": 0,
+        "hit_rate": null,
+        "net_payout_080": 0.0
+      },
+      "test": {
+        "signals": 0,
+        "wins": 0,
+        "hit_rate": null,
+        "net_payout_080": 0.0
+      },
+      "observations": []
+    },
+    {
+      "symbol": "EURAUD_X_5m",
+      "train": {
+        "signals": 0,
+        "wins": 0,
+        "hit_rate": null,
+        "net_payout_080": 0.0
+      },
+      "test": {
+        "signals": 0,
+        "wins": 0,
+        "hit_rate": null,
+        "net_payout_080": 0.0
+      },
+      "observations": []
+    },
+    {
+      "symbol": "EURCAD_X_5m",
+      "train": {
+        "signals": 0,
+        "wins": 0,
+        "hit_rate": null,
+        "net_payout_080": 0.0
+      },
+      "test": {
+        "signals": 0,
+        "wins": 0,
+        "hit_rate": null,
+        "net_payout_080": 0.0
+      },
+      "observations": []
+    },
+    {
+      "symbol": "EURCHF_X_5m",
+      "train": {
+        "signals": 0,
+        "wins": 0,
+        "hit_rate": null,
+        "net_payout_080": 0.0
+      },
+      "test": {
+        "signals": 0,
+        "wins": 0,
+        "hit_rate": null,
+        "net_payout_080": 0.0
+      },
+      "observations": []
+    },
+    {
+      "symbol": "EURGBP_X_5m",
+      "train": {
+        "signals": 0,
+        "wins": 0,
+        "hit_rate": null,
+        "net_payout_080": 0.0
+      },
+      "test": {
+        "signals": 0,
+        "wins": 0,
+        "hit_rate": null,
+        "net_payout_080": 0.0
+      },
+      "observations": []
+    },
+    {
+      "symbol": "EURJPY_X_5m",
+      "train": {
+        "signals": 0,
+        "wins": 0,
+        "hit_rate": null,
+        "net_payout_080": 0.0
+      },
+      "test": {
+        "signals": 0,
+        "wins": 0,
+        "hit_rate": null,
+        "net_payout_080": 0.0
+      },
+      "observations": []
+    },
+    {
+      "symbol": "EURNZD_X_5m",
+      "train": {
+        "signals": 0,
+        "wins": 0,
+        "hit_rate": null,
+        "net_payout_080": 0.0
+      },
+      "test": {
+        "signals": 0,
+        "wins": 0,
+        "hit_rate": null,
+        "net_payout_080": 0.0
+      },
+      "observations": []
+    },
+    {
+      "symbol": "EURUSD_X_5m",
+      "train": {
+        "signals": 0,
+        "wins": 0,
+        "hit_rate": null,
+        "net_payout_080": 0.0
+      },
+      "test": {
+        "signals": 0,
+        "wins": 0,
+        "hit_rate": null,
+        "net_payout_080": 0.0
+      },
+      "observations": []
+    },
+    {
+      "symbol": "GBPAUD_X_5m",
+      "train": {
+        "signals": 0,
+        "wins": 0,
+        "hit_rate": null,
+        "net_payout_080": 0.0
+      },
+      "test": {
+        "signals": 0,
+        "wins": 0,
+        "hit_rate": null,
+        "net_payout_080": 0.0
+      },
+      "observations": []
+    },
+    {
+      "symbol": "GBPCAD_X_5m",
+      "train": {
+        "signals": 0,
+        "wins": 0,
+        "hit_rate": null,
+        "net_payout_080": 0.0
+      },
+      "test": {
+        "signals": 0,
+        "wins": 0,
+        "hit_rate": null,
+        "net_payout_080": 0.0
+      },
+      "observations": []
+    },
+    {
+      "symbol": "GBPCHF_X_5m",
+      "train": {
+        "signals": 0,
+        "wins": 0,
+        "hit_rate": null,
+        "net_payout_080": 0.0
+      },
+      "test": {
+        "signals": 0,
+        "wins": 0,
+        "hit_rate": null,
+        "net_payout_080": 0.0
+      },
+      "observations": []
+    },
+    {
+      "symbol": "GBPNZD_X_5m",
+      "train": {
+        "signals": 0,
+        "wins": 0,
+        "hit_rate": null,
+        "net_payout_080": 0.0
+      },
+      "test": {
+        "signals": 0,
+        "wins": 0,
+        "hit_rate": null,
+        "net_payout_080": 0.0
+      },
+      "observations": []
+    },
+    {
+      "symbol": "GBPUSD_X_5m",
+      "train": {
+        "signals": 0,
+        "wins": 0,
+        "hit_rate": null,
+        "net_payout_080": 0.0
+      },
+      "test": {
+        "signals": 0,
+        "wins": 0,
+        "hit_rate": null,
+        "net_payout_080": 0.0
+      },
+      "observations": []
+    },
+    {
+      "symbol": "LINK_USD_5m",
+      "train": {
+        "signals": 0,
+        "wins": 0,
+        "hit_rate": null,
+        "net_payout_080": 0.0
+      },
+      "test": {
+        "signals": 0,
+        "wins": 0,
+        "hit_rate": null,
+        "net_payout_080": 0.0
+      },
+      "observations": []
+    },
+    {
+      "symbol": "LTC_USD_5m",
+      "train": {
+        "signals": 0,
+        "wins": 0,
+        "hit_rate": null,
+        "net_payout_080": 0.0
+      },
+      "test": {
+        "signals": 0,
+        "wins": 0,
+        "hit_rate": null,
+        "net_payout_080": 0.0
+      },
+      "observations": []
+    },
+    {
+      "symbol": "NZDCAD_X_5m",
+      "train": {
+        "signals": 0,
+        "wins": 0,
+        "hit_rate": null,
+        "net_payout_080": 0.0
+      },
+      "test": {
+        "signals": 0,
+        "wins": 0,
+        "hit_rate": null,
+        "net_payout_080": 0.0
+      },
+      "observations": []
+    },
+    {
+      "symbol": "NZDCHF_X_5m",
+      "train": {
+        "signals": 0,
+        "wins": 0,
+        "hit_rate": null,
+        "net_payout_080": 0.0
+      },
+      "test": {
+        "signals": 0,
+        "wins": 0,
+        "hit_rate": null,
+        "net_payout_080": 0.0
+      },
+      "observations": []
+    },
+    {
+      "symbol": "NZDJPY_X_5m",
+      "train": {
+        "signals": 0,
+        "wins": 0,
+        "hit_rate": null,
+        "net_payout_080": 0.0
+      },
+      "test": {
+        "signals": 0,
+        "wins": 0,
+        "hit_rate": null,
+        "net_payout_080": 0.0
+      },
+      "observations": []
+    },
+    {
+      "symbol": "NZDUSD_X_5m",
+      "train": {
+        "signals": 0,
+        "wins": 0,
+        "hit_rate": null,
+        "net_payout_080": 0.0
+      },
+      "test": {
+        "signals": 0,
+        "wins": 0,
+        "hit_rate": null,
+        "net_payout_080": 0.0
+      },
+      "observations": []
+    },
+    {
+      "symbol": "SOL_USD_5m",
+      "train": {
+        "signals": 0,
+        "wins": 0,
+        "hit_rate": null,
+        "net_payout_080": 0.0
+      },
+      "test": {
+        "signals": 0,
+        "wins": 0,
+        "hit_rate": null,
+        "net_payout_080": 0.0
+      },
+      "observations": []
+    },
+    {
+      "symbol": "USDAUD_X_5m",
+      "train": {
+        "signals": 0,
+        "wins": 0,
+        "hit_rate": null,
+        "net_payout_080": 0.0
+      },
+      "test": {
+        "signals": 0,
+        "wins": 0,
+        "hit_rate": null,
+        "net_payout_080": 0.0
+      },
+      "observations": []
+    },
+    {
+      "symbol": "USDCAD_X_5m",
+      "train": {
+        "signals": 0,
+        "wins": 0,
+        "hit_rate": null,
+        "net_payout_080": 0.0
+      },
+      "test": {
+        "signals": 0,
+        "wins": 0,
+        "hit_rate": null,
+        "net_payout_080": 0.0
+      },
+      "observations": []
+    },
+    {
+      "symbol": "USDCHF_X_5m",
+      "train": {
+        "signals": 0,
+        "wins": 0,
+        "hit_rate": null,
+        "net_payout_080": 0.0
+      },
+      "test": {
+        "signals": 0,
+        "wins": 0,
+        "hit_rate": null,
+        "net_payout_080": 0.0
+      },
+      "observations": []
+    },
+    {
+      "symbol": "USDJPY_X_5m",
+      "train": {
+        "signals": 0,
+        "wins": 0,
+        "hit_rate": null,
+        "net_payout_080": 0.0
+      },
+      "test": {
+        "signals": 0,
+        "wins": 0,
+        "hit_rate": null,
+        "net_payout_080": 0.0
+      },
+      "observations": []
+    },
+    {
+      "symbol": "XLM_USD_5m",
+      "train": {
+        "signals": 0,
+        "wins": 0,
+        "hit_rate": null,
+        "net_payout_080": 0.0
+      },
+      "test": {
+        "signals": 0,
+        "wins": 0,
+        "hit_rate": null,
+        "net_payout_080": 0.0
+      },
+      "observations": []
+    },
+    {
+      "symbol": "XPL_USD_5m",
+      "train": {
+        "signals": 0,
+        "wins": 0,
+        "hit_rate": null,
+        "net_payout_080": 0.0
+      },
+      "test": {
+        "signals": 0,
+        "wins": 0,
+        "hit_rate": null,
+        "net_payout_080": 0.0
+      },
+      "observations": []
+    },
+    {
+      "symbol": "XRP_USD_5m",
+      "train": {
+        "signals": 0,
+        "wins": 0,
+        "hit_rate": null,
+        "net_payout_080": 0.0
+      },
+      "test": {
+        "signals": 0,
+        "wins": 0,
+        "hit_rate": null,
+        "net_payout_080": 0.0
+      },
+      "observations": []
+    }
+  ]
+}

@@ -1,0 +1,69 @@
+{
+  "schema": "mercury.m5.advanced-strategies.v1",
+  "summary": {
+    "ob_fvg": {
+      "train": {
+        "signals": 8842,
+        "wins": 7340,
+        "hit_rate": 0.8301289301063108,
+        "direct_hit_rate": 0.45035059941189776,
+        "net_payout_080": 4370.0
+      },
+      "test": {
+        "signals": 2211,
+        "wins": 1873,
+        "hit_rate": 0.8471279963817278,
+        "direct_hit_rate": 0.4423337856173677,
+        "net_payout_080": 1160.4
+      }
+    },
+    "rsi_divergence": {
+      "train": {
+        "signals": 50437,
+        "wins": 43443,
+        "hit_rate": 0.861331958681127,
+        "direct_hit_rate": 0.4788349822550905,
+        "net_payout_080": 27760.4
+      },
+      "test": {
+        "signals": 12610,
+        "wins": 10864,
+        "hit_rate": 0.8615384615384616,
+        "direct_hit_rate": 0.4766851704996035,
+        "net_payout_080": 6945.200000000001
+      }
+    },
+    "vwap_reversal": {
+      "train": {
+        "signals": 41665,
+        "wins": 36339,
+        "hit_rate": 0.8721708868354734,
+        "direct_hit_rate": 0.4874354974198968,
+        "net_payout_080": 23745.2
+      },
+      "test": {
+        "signals": 10417,
+        "wins": 8924,
+        "hit_rate": 0.8566765863492368,
+        "direct_hit_rate": 0.46452913506767785,
+        "net_payout_080": 5646.200000000001
+      }
+    },
+    "combined": {
+      "train": {
+        "signals": 100945,
+        "wins": 86946,
+        "hit_rate": 0.8613205210758333,
+        "direct_hit_rate": 0.477864183466244,
+        "net_payout_080": 55557.8
+      },
+      "test": {
+        "signals": 25237,
+        "wins": 21837,
+        "hit_rate": 0.865277172405595,
+        "direct_hit_rate": 0.4767603122399651,
+        "net_payout_080": 14069.600000000002
+      }
+    }
+  }
+}

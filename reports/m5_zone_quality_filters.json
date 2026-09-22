@@ -1,0 +1,428 @@
+{
+  "schema": "mercury.m5.zone-quality-filters.v1",
+  "base_signals": 103609,
+  "single_filters": [
+    {
+      "filter": "base",
+      "train": {
+        "signals": 82887,
+        "wins": 39912,
+        "hit_rate": 0.4815230373882515,
+        "net_payout_080": -11045.399999999998
+      },
+      "test": {
+        "signals": 20722,
+        "wins": 9847,
+        "hit_rate": 0.4751954444551684,
+        "net_payout_080": -2997.3999999999996
+      }
+    },
+    {
+      "filter": "touches3",
+      "train": {
+        "signals": 82426,
+        "wins": 39704,
+        "hit_rate": 0.48169266978865893,
+        "net_payout_080": -10958.8
+      },
+      "test": {
+        "signals": 20300,
+        "wins": 9634,
+        "hit_rate": 0.47458128078817735,
+        "net_payout_080": -2958.7999999999993
+      }
+    },
+    {
+      "filter": "touches4",
+      "train": {
+        "signals": 81746,
+        "wins": 39376,
+        "hit_rate": 0.48168717735424366,
+        "net_payout_080": -10869.199999999997
+      },
+      "test": {
+        "signals": 19775,
+        "wins": 9370,
+        "hit_rate": 0.47383059418457646,
+        "net_payout_080": -2909.0
+      }
+    },
+    {
+      "filter": "wick40",
+      "train": {
+        "signals": 63079,
+        "wins": 30534,
+        "hit_rate": 0.4840596712059481,
+        "net_payout_080": -8117.799999999999
+      },
+      "test": {
+        "signals": 15774,
+        "wins": 7449,
+        "hit_rate": 0.47223278813236974,
+        "net_payout_080": -2365.7999999999993
+      }
+    },
+    {
+      "filter": "wick50",
+      "train": {
+        "signals": 52925,
+        "wins": 25676,
+        "hit_rate": 0.4851393481341521,
+        "net_payout_080": -6708.199999999997
+      },
+      "test": {
+        "signals": 12731,
+        "wins": 5966,
+        "hit_rate": 0.46861990417092136,
+        "net_payout_080": -1992.1999999999998
+      }
+    },
+    {
+      "filter": "body30",
+      "train": {
+        "signals": 10114,
+        "wins": 4915,
+        "hit_rate": 0.4859600553687957,
+        "net_payout_080": -1267.0
+      },
+      "test": {
+        "signals": 3593,
+        "wins": 1748,
+        "hit_rate": 0.48650153075424435,
+        "net_payout_080": -446.5999999999999
+      }
+    },
+    {
+      "filter": "range_atr15",
+      "train": {
+        "signals": 79532,
+        "wins": 38351,
+        "hit_rate": 0.48220841925262786,
+        "net_payout_080": -10500.199999999997
+      },
+      "test": {
+        "signals": 19705,
+        "wins": 9367,
+        "hit_rate": 0.47536158335447853,
+        "net_payout_080": -2844.3999999999996
+      }
+    },
+    {
+      "filter": "range_atr10",
+      "train": {
+        "signals": 52438,
+        "wins": 25437,
+        "hit_rate": 0.485087150539685,
+        "net_payout_080": -6651.399999999998
+      },
+      "test": {
+        "signals": 13625,
+        "wins": 6514,
+        "hit_rate": 0.47809174311926605,
+        "net_payout_080": -1899.7999999999993
+      }
+    },
+    {
+      "filter": "prev_aligned",
+      "train": {
+        "signals": 38246,
+        "wins": 18382,
+        "hit_rate": 0.4806254248810333,
+        "net_payout_080": -5158.4
+      },
+      "test": {
+        "signals": 9831,
+        "wins": 4726,
+        "hit_rate": 0.4807242396500865,
+        "net_payout_080": -1324.1999999999998
+      }
+    },
+    {
+      "filter": "london_ny",
+      "train": {
+        "signals": 31872,
+        "wins": 15658,
+        "hit_rate": 0.49127761044176704,
+        "net_payout_080": -3687.5999999999985
+      },
+      "test": {
+        "signals": 8308,
+        "wins": 3995,
+        "hit_rate": 0.4808618199325951,
+        "net_payout_080": -1117.0
+      }
+    }
+  ],
+  "combos": [
+    {
+      "combo": [
+        "body30",
+        "prev_aligned"
+      ],
+      "train": {
+        "signals": 4752,
+        "wins": 2318,
+        "hit_rate": 0.4877946127946128,
+        "net_payout_080": -579.5999999999999
+      },
+      "test": {
+        "signals": 1748,
+        "wins": 856,
+        "hit_rate": 0.4897025171624714,
+        "net_payout_080": -207.19999999999993
+      }
+    },
+    {
+      "combo": [
+        "body30",
+        "range_atr15"
+      ],
+      "train": {
+        "signals": 9500,
+        "wins": 4630,
+        "hit_rate": 0.48736842105263156,
+        "net_payout_080": -1166.0
+      },
+      "test": {
+        "signals": 3345,
+        "wins": 1629,
+        "hit_rate": 0.48699551569506727,
+        "net_payout_080": -412.79999999999995
+      }
+    },
+    {
+      "combo": [
+        "wick40",
+        "body30"
+      ],
+      "train": {
+        "signals": 9911,
+        "wins": 4815,
+        "hit_rate": 0.4858238321057411,
+        "net_payout_080": -1244.0
+      },
+      "test": {
+        "signals": 3524,
+        "wins": 1715,
+        "hit_rate": 0.4866628830874007,
+        "net_payout_080": -437.0
+      }
+    },
+    {
+      "combo": [
+        "touches3",
+        "body30"
+      ],
+      "train": {
+        "signals": 10006,
+        "wins": 4861,
+        "hit_rate": 0.48580851489106536,
+        "net_payout_080": -1256.1999999999998
+      },
+      "test": {
+        "signals": 3464,
+        "wins": 1682,
+        "hit_rate": 0.4855658198614319,
+        "net_payout_080": -436.39999999999986
+      }
+    },
+    {
+      "combo": [
+        "prev_aligned",
+        "london_ny"
+      ],
+      "train": {
+        "signals": 14463,
+        "wins": 7000,
+        "hit_rate": 0.4839936389407454,
+        "net_payout_080": -1863.0
+      },
+      "test": {
+        "signals": 3803,
+        "wins": 1837,
+        "hit_rate": 0.48303970549566133,
+        "net_payout_080": -496.39999999999986
+      }
+    },
+    {
+      "combo": [
+        "range_atr15",
+        "prev_aligned"
+      ],
+      "train": {
+        "signals": 36677,
+        "wins": 17620,
+        "hit_rate": 0.4804100662540557,
+        "net_payout_080": -4961.0
+      },
+      "test": {
+        "signals": 9342,
+        "wins": 4494,
+        "hit_rate": 0.481053307642903,
+        "net_payout_080": -1252.7999999999997
+      }
+    },
+    {
+      "combo": [
+        "wick40",
+        "prev_aligned"
+      ],
+      "train": {
+        "signals": 29195,
+        "wins": 14142,
+        "hit_rate": 0.4843980133584518,
+        "net_payout_080": -3739.3999999999996
+      },
+      "test": {
+        "signals": 7612,
+        "wins": 3658,
+        "hit_rate": 0.48055701523909616,
+        "net_payout_080": -1027.6
+      }
+    },
+    {
+      "combo": [
+        "touches3",
+        "prev_aligned"
+      ],
+      "train": {
+        "signals": 38112,
+        "wins": 18317,
+        "hit_rate": 0.48060978169605373,
+        "net_payout_080": -5141.4
+      },
+      "test": {
+        "signals": 9697,
+        "wins": 4658,
+        "hit_rate": 0.4803547488914097,
+        "net_payout_080": -1312.6
+      }
+    },
+    {
+      "combo": [
+        "body30",
+        "london_ny"
+      ],
+      "train": {
+        "signals": 4312,
+        "wins": 2118,
+        "hit_rate": 0.4911873840445269,
+        "net_payout_080": -499.5999999999999
+      },
+      "test": {
+        "signals": 1502,
+        "wins": 721,
+        "hit_rate": 0.4800266311584554,
+        "net_payout_080": -204.19999999999993
+      }
+    },
+    {
+      "combo": [
+        "range_atr15",
+        "london_ny"
+      ],
+      "train": {
+        "signals": 30898,
+        "wins": 15168,
+        "hit_rate": 0.49090556023043563,
+        "net_payout_080": -3595.5999999999985
+      },
+      "test": {
+        "signals": 7951,
+        "wins": 3816,
+        "hit_rate": 0.47993963023519054,
+        "net_payout_080": -1082.1999999999998
+      }
+    },
+    {
+      "combo": [
+        "touches3",
+        "london_ny"
+      ],
+      "train": {
+        "signals": 31640,
+        "wins": 15548,
+        "hit_rate": 0.4914032869785082,
+        "net_payout_080": -3653.5999999999985
+      },
+      "test": {
+        "signals": 8105,
+        "wins": 3885,
+        "hit_rate": 0.4793337446020975,
+        "net_payout_080": -1112.0
+      }
+    },
+    {
+      "combo": [
+        "wick40",
+        "london_ny"
+      ],
+      "train": {
+        "signals": 24362,
+        "wins": 11965,
+        "hit_rate": 0.49113373286265494,
+        "net_payout_080": -2825.0
+      },
+      "test": {
+        "signals": 6300,
+        "wins": 3015,
+        "hit_rate": 0.4785714285714286,
+        "net_payout_080": -873.0
+      }
+    },
+    {
+      "combo": [
+        "touches3",
+        "range_atr15"
+      ],
+      "train": {
+        "signals": 79118,
+        "wins": 38167,
+        "hit_rate": 0.48240602644151775,
+        "net_payout_080": -10417.399999999998
+      },
+      "test": {
+        "signals": 19328,
+        "wins": 9177,
+        "hit_rate": 0.4748033940397351,
+        "net_payout_080": -2809.3999999999996
+      }
+    },
+    {
+      "combo": [
+        "wick40",
+        "range_atr15"
+      ],
+      "train": {
+        "signals": 60579,
+        "wins": 29388,
+        "hit_rate": 0.4851186054573367,
+        "net_payout_080": -7680.5999999999985
+      },
+      "test": {
+        "signals": 14982,
+        "wins": 7082,
+        "hit_rate": 0.4727005740221599,
+        "net_payout_080": -2234.3999999999996
+      }
+    },
+    {
+      "combo": [
+        "touches3",
+        "wick40"
+      ],
+      "train": {
+        "signals": 62715,
+        "wins": 30361,
+        "hit_rate": 0.4841106593318983,
+        "net_payout_080": -8065.199999999997
+      },
+      "test": {
+        "signals": 15428,
+        "wins": 7275,
+        "hit_rate": 0.4715452424163858,
+        "net_payout_080": -2333.0
+      }
+    }
+  ]
+}

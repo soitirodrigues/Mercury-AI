@@ -1,0 +1,69 @@
+{
+  "schema": "mercury.m5.price-action.v1",
+  "summary": {
+    "engulfing": {
+      "train": {
+        "signals": 41259,
+        "wins": 35326,
+        "hit_rate": 0.8562010712814174,
+        "direct_hit_rate": 0.47027315252429774,
+        "net_payout_080": 22327.800000000003
+      },
+      "test": {
+        "signals": 10315,
+        "wins": 8833,
+        "hit_rate": 0.8563257392147359,
+        "direct_hit_rate": 0.4690256907416384,
+        "net_payout_080": 5584.400000000001
+      }
+    },
+    "star": {
+      "train": {
+        "signals": 17354,
+        "wins": 14800,
+        "hit_rate": 0.8528293188890169,
+        "direct_hit_rate": 0.46767315892589606,
+        "net_payout_080": 9286.0
+      },
+      "test": {
+        "signals": 4339,
+        "wins": 3714,
+        "hit_rate": 0.8559575939156487,
+        "direct_hit_rate": 0.47384189905508184,
+        "net_payout_080": 2346.2000000000003
+      }
+    },
+    "pinbar": {
+      "train": {
+        "signals": 69614,
+        "wins": 60136,
+        "hit_rate": 0.8638492257304565,
+        "direct_hit_rate": 0.4863389548079409,
+        "net_payout_080": 38630.8
+      },
+      "test": {
+        "signals": 17404,
+        "wins": 14906,
+        "hit_rate": 0.8564697770627442,
+        "direct_hit_rate": 0.46989197885543554,
+        "net_payout_080": 9426.800000000001
+      }
+    },
+    "combined": {
+      "train": {
+        "signals": 128228,
+        "wins": 110070,
+        "hit_rate": 0.858392862713292,
+        "direct_hit_rate": 0.47638581277100167,
+        "net_payout_080": 69898.0
+      },
+      "test": {
+        "signals": 32057,
+        "wins": 27645,
+        "hit_rate": 0.8623701531646755,
+        "direct_hit_rate": 0.4791777146956983,
+        "net_payout_080": 17704.0
+      }
+    }
+  }
+}

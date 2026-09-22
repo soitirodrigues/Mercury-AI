@@ -1,0 +1,126 @@
+{
+  "schema": "mercury.m5.zone-filters.v1",
+  "base_signals": 103605,
+  "filters": [
+    {
+      "filter": "base",
+      "train": {
+        "signals": 82884,
+        "wins": 39910,
+        "hit_rate": 0.48151633608416583,
+        "net_payout_080": -11046.0
+      },
+      "test": {
+        "signals": 20721,
+        "wins": 9846,
+        "hit_rate": 0.47517011727233244,
+        "net_payout_080": -2998.2
+      }
+    },
+    {
+      "filter": "volume_spike",
+      "train": {
+        "signals": 2085,
+        "wins": 1019,
+        "hit_rate": 0.48872901678657077,
+        "net_payout_080": -250.79999999999995
+      },
+      "test": {
+        "signals": 1302,
+        "wins": 630,
+        "hit_rate": 0.4838709677419355,
+        "net_payout_080": -168.0
+      }
+    },
+    {
+      "filter": "london_ny",
+      "train": {
+        "signals": 31871,
+        "wins": 15658,
+        "hit_rate": 0.49129302500705974,
+        "net_payout_080": -3686.5999999999985
+      },
+      "test": {
+        "signals": 8309,
+        "wins": 3995,
+        "hit_rate": 0.4808039475267782,
+        "net_payout_080": -1118.0
+      }
+    },
+    {
+      "filter": "no_atr_expansion",
+      "train": {
+        "signals": 81615,
+        "wins": 39333,
+        "hit_rate": 0.48193346811247934,
+        "net_payout_080": -10815.599999999999
+      },
+      "test": {
+        "signals": 20422,
+        "wins": 9701,
+        "hit_rate": 0.4750269317402801,
+        "net_payout_080": -2960.2
+      }
+    },
+    {
+      "filter": "vol_spike_london",
+      "train": {
+        "signals": 966,
+        "wins": 468,
+        "hit_rate": 0.484472049689441,
+        "net_payout_080": -123.59999999999997
+      },
+      "test": {
+        "signals": 547,
+        "wins": 282,
+        "hit_rate": 0.5155393053016454,
+        "net_payout_080": -39.39999999999998
+      }
+    },
+    {
+      "filter": "vol_spike_no_atr",
+      "train": {
+        "signals": 2040,
+        "wins": 1000,
+        "hit_rate": 0.49019607843137253,
+        "net_payout_080": -240.0
+      },
+      "test": {
+        "signals": 1262,
+        "wins": 607,
+        "hit_rate": 0.4809825673534073,
+        "net_payout_080": -169.39999999999998
+      }
+    },
+    {
+      "filter": "london_no_atr",
+      "train": {
+        "signals": 31536,
+        "wins": 15493,
+        "hit_rate": 0.49127980720446474,
+        "net_payout_080": -3648.5999999999985
+      },
+      "test": {
+        "signals": 8209,
+        "wins": 3933,
+        "hit_rate": 0.4791082957729321,
+        "net_payout_080": -1129.6
+      }
+    },
+    {
+      "filter": "all_three",
+      "train": {
+        "signals": 943,
+        "wins": 461,
+        "hit_rate": 0.48886532343584305,
+        "net_payout_080": -113.19999999999999
+      },
+      "test": {
+        "signals": 530,
+        "wins": 271,
+        "hit_rate": 0.5113207547169811,
+        "net_payout_080": -42.19999999999999
+      }
+    }
+  ]
+}

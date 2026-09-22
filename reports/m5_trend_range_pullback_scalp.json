@@ -1,0 +1,85 @@
+{
+  "schema": "mercury.m5.trend-range-pullback-scalp.v1",
+  "summary": {
+    "trend": {
+      "train": {
+        "signals": 241636,
+        "wins": 206192,
+        "hit_rate": 0.8533165587909086,
+        "direct_hit_rate": 0.4652576602824082,
+        "net_payout_080": 129509.6
+      },
+      "test": {
+        "signals": 60409,
+        "wins": 51399,
+        "hit_rate": 0.8508500389014881,
+        "direct_hit_rate": 0.4611233425482958,
+        "net_payout_080": 32109.200000000004
+      }
+    },
+    "range": {
+      "train": {
+        "signals": 0,
+        "wins": 0,
+        "hit_rate": null,
+        "direct_hit_rate": null,
+        "net_payout_080": 0.0
+      },
+      "test": {
+        "signals": 0,
+        "wins": 0,
+        "hit_rate": null,
+        "direct_hit_rate": null,
+        "net_payout_080": 0.0
+      }
+    },
+    "pullback": {
+      "train": {
+        "signals": 106372,
+        "wins": 91125,
+        "hit_rate": 0.8566634076636709,
+        "direct_hit_rate": 0.46880758094235325,
+        "net_payout_080": 57653.0
+      },
+      "test": {
+        "signals": 26593,
+        "wins": 22797,
+        "hit_rate": 0.8572556687850186,
+        "direct_hit_rate": 0.47068777497837777,
+        "net_payout_080": 14441.600000000002
+      }
+    },
+    "scalp": {
+      "train": {
+        "signals": 21132,
+        "wins": 17369,
+        "hit_rate": 0.821928828317244,
+        "direct_hit_rate": 0.43900246072307403,
+        "net_payout_080": 10132.2
+      },
+      "test": {
+        "signals": 5284,
+        "wins": 4379,
+        "hit_rate": 0.8287282361847086,
+        "direct_hit_rate": 0.43849356548069646,
+        "net_payout_080": 2598.2000000000003
+      }
+    },
+    "combined": {
+      "train": {
+        "signals": 369140,
+        "wins": 314984,
+        "hit_rate": 0.8532914341442271,
+        "direct_hit_rate": 0.46522186704231455,
+        "net_payout_080": 197831.2
+      },
+      "test": {
+        "signals": 92286,
+        "wins": 78277,
+        "hit_rate": 0.8482001603710205,
+        "direct_hit_rate": 0.4608066228897124,
+        "net_payout_080": 48612.600000000006
+      }
+    }
+  }
+}

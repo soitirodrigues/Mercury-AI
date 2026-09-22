@@ -245,6 +245,39 @@ class Signal:
     # observáveis já calculados pelo pipeline; não representam assertividade.
     analyst_context: Dict[str, Any] = field(default_factory=dict)
 
+    # --- Zone Touch Reversal (2026-09-20; UNICA estrategia de continuacao) ---
+    # Zonas horizontais de toque de corpo (2+ toques, cluster 0.05%, 60 velas)
+    # + terceiro toque + rejeicao (pavio >= 1.2x corpo). Entrada na vela
+    # seguinte. zone_override=True quando GEROU o sinal a partir de WAIT.
+    # Politica de gale (2026-09-21): 0 gale por padrao; reentrada somente com
+    # NOVA confirmacao de terceiro toque na mesma zona; maximo G2 (teto duro).
+    zone_reversal: bool = False
+    zone_direction: str = "NONE"
+    zone_level: float | None = None
+    zone_touches: int = 0
+    zone_wick_ratio: float = 0.0
+    zone_detail: str = ""
+    zone_override: bool = False
+
+    # --- CCL Continuation (2026-09-21: OBSERVAVEL-ONLY) ---
+    # Continuacao -> Consolidacao -> Liquidez. Gale Forensics provou que o
+    # 87% era probabilidade composta de gale, nao edge (G0 47,3%). NAO gera
+    # override de WAIT; ccl_override permanece sempre False (campos auditaveis).
+    ccl_detected: bool = False
+    ccl_direction: str = "NONE"
+    ccl_detail: str = ""
+    ccl_override: bool = False
+
+    # --- Price Action Patterns (2026-09-21: OBSERVAVEL-ONLY) ---
+    # Engolfo, Morning/Evening Star, Pin Bar. Mesma conclusao do Gale
+    # Forensics (86,2% = 1-(1-0.475)^3). NAO gera override de WAIT;
+    # pa_override permanece sempre False (campos auditaveis).
+    pa_detected: bool = False
+    pa_direction: str = "NONE"
+    pa_pattern: str = "NONE"
+    pa_detail: str = ""
+    pa_override: bool = False
+
     @property
     def symbol(self) -> str:
         """Alias operacional: symbol == asset (contrato S33-E.6)."""

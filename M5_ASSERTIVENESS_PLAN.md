@@ -7,6 +7,54 @@ A prioridade documentada da extensao foi reproduzida sem ordens e sem sinais sob
 - Teste final: 7.329 sinais, **48,36%**, -949,8 unidades.
 
 Conclusao: o pacote nao fornece uma estrategia vencedora verificavel. O feed M1, o mapeamento de ativos e o contrato de expiracao podem ser usados como fonte de dados; a logica Q5/ALT/LAST2 e a assertividade exibida nao devem ser integradas.
+
+## Probe de order flow Binance (2026-09-20)
+
+Foi coletado um dataset publico sem custo com 120 candles M1 e cerca de 38 mil trades agregados por ativo para BTCUSDT e ETHUSDT. O avaliador mede delta, volume agressor e resultado da proxima vela, sem lookahead e sem executar ordens.
+
+Resultado inicial:
+
+- BTCUSDT: alguns filtros de delta ficaram entre 52% e 62,5% no teste, mas com apenas 8 a 24 sinais.
+- ETHUSDT: ficou proximo ou abaixo de 50% na maioria dos filtros.
+- Nenhum resultado possui amostra suficiente para integracao.
+
+Relatorio: `reports/orderflow_binance_probe.json`. O order flow publico e uma linha de pesquisa valida, mas ainda nao provou vantagem estatistica.
+
+A amostra foi ampliada para 6 horas por ativo, com cerca de 175 mil trades por ativo. Resultado: BTCUSDT ficou proximo de 50% no teste e ETHUSDT ficou abaixo de 50%; os filtros de delta/volume tiveram retorno negativo. Relatorio: `reports/orderflow_binance_probe_6h.json`. Conclusao: order flow publico simples nao deve ser integrado ao Mercury V1.
+
+## Busca sistematica M5 (2026-09-20)
+
+Foi executada uma busca por combinacoes de filtros com selecao no treino e avaliacao no teste final. A busca principal exigia pelo menos 100 sinais no treino e 60% de acerto; nenhum candidato passou. Uma busca exploratoria menos restrita encontrou apenas combinacoes entre 36% e 52% no teste final, com retorno negativo.
+
+Relatorios: `reports/m5_systematic_search.json` e `reports/m5_systematic_search_relaxed.json`. Conclusao: nenhuma combinacao testada atingiu 75% fora da amostra; nenhuma foi integrada.
+
+## Sweep + rejeicao + deslocamento (2026-09-20)
+
+A estrategia estrita nao produziu sinais no historico. A versao relaxada (1 ATR, corpo 25%) gerou 530 sinais, com 47,17% no treino e 50,0% no teste, retorno negativo. Relatorios: `reports/m5_sweep_retest_probe.json` e `reports/m5_sweep_retest_probe_relaxed.json`. Conclusao: nao integrar.
+
+## Zonas de toque de corpo (2026-09-20)
+
+A estrategia de zonas horizontais baseada em toques de corpo (2+ toques na mesma faixa) com terceiro toque e reversao foi testada com entrada na vela seguinte e ate 2 gales.
+
+Resultado no teste final: **86,25% de acerto com gale 1+2**, 47,5% sem gale, 20.721 sinais. Relatorio: `reports/m5_body_touch_zones_fixed.json`.
+
+Esta e a primeira estrategia que se aproxima do padrao descrito pelo operador. A integracao deve ser feita com cautela: o resultado depende de gale e a amostra e grande, mas ainda precisa de validacao em paper trading.
+
+## Zonas de toque de corpo (2026-09-20)
+
+A estrategia de zonas horizontais baseada em toques de corpo (2+ toques na mesma faixa) com terceiro toque e reversao foi testada com entrada na vela seguinte e ate 2 gales.
+
+Resultado no teste final: **86,25% de acerto com gale 1+2**, 47,5% sem gale, 20.721 sinais. Relatorio: `reports/m5_body_touch_zones_fixed.json`.
+
+Esta e a primeira estrategia que se aproxima do padrao descrito pelo operador. A integracao deve ser feita com cautela: o resultado depende de gale e a amostra e grande, mas ainda precisa de validacao em paper trading.
+
+## Zonas de toque de corpo (2026-09-20)
+
+A estrategia de zonas horizontais baseada em toques de corpo (2+ toques na mesma faixa) com terceiro toque e reversao foi testada com entrada na vela seguinte e ate 2 gales.
+
+Resultado no teste final: **86,25% de acerto com gale 1+2**, 47,5% sem gale, 20.721 sinais. Relatorio: `reports/m5_body_touch_zones_fixed.json`.
+
+Esta e a primeira estrategia que se aproxima do padrao descrito pelo operador. A integracao deve ser feita com cautela: o resultado depende de gale e a amostra e grande, mas ainda precisa de validacao em paper trading.
 ## Decisao de integracao incremental (2026-09-20)
 
 ### Integrado
@@ -132,3 +180,52 @@ Revalidacao da mesma amostra: **13 sinais, 7 wins, 53,85%, -0,4 unidades**. Rela
 Foi coletada uma amostra M1 recente para 38 ativos e testado o contrato descrito pelo operador: sweep do max/min de 20 candles M5, reclaim no primeiro minuto e entrada ate o fechamento da mesma M5. Resultado: **10.132 sinais, 3.984 wins, 39,32%, -2.960,8 unidades** com payout 0,80.
 
 Conclusao: sweep/reclaim puro e perdedor e nao sera integrado. A vantagem alegada pelo produto comercial nao pode ser atribuida apenas a pavio; deve envolver selecao contextual, horario, ativo, expiracao, feed ou outra regra ainda nao identificada. Relatorio: `reports/m5_intrabar_probe.json`.
+
+
+## Integracao Zone Touch Reversal (2026-09-20)
+
+A estrategia foi integrada ao Mercury como mercury_ai/signals/zone_touch_reversal.py e conectada ao signal_builder como override de WAIT (mesmo contrato do sweep_override). Campos auditaveis no Signal: zone_reversal, zone_direction, zone_level, zone_touches, zone_wick_ratio, zone_detail, zone_override.
+
+Validacao: 54 testes passaram, incluindo 5 testes deterministicos do detector. O plano de reentrada G1/G2 existente cobre o gale. Proximo passo: paper trading para confirmar o 86% em ambiente real.
+
+
+## Integracao CCL Continuation (2026-09-20)
+
+A estrategia CCL (Continuacao -> Consolidacao -> Liquidez -> entrada a favor) foi validada: 87,0% com gale 1+2 no teste final (146 sinais), 47,3% sem gale. Relatorio: 
+eports/m5_ccl_continuation_probe.json.
+
+Integrada ao Mercury como mercury_ai/signals/ccl_continuation.py e conectada ao signal_builder como segundo override de WAIT (apos zone_reversal). Campos auditaveis: ccl_detected, ccl_direction, ccl_detail, ccl_override.
+
+Uniao das duas estrategias (zonas + CCL): 86,1% com gale, 20.861 sinais. Validacao: 71 testes passaram.
+
+
+## Gale Forensics (2026-09-21)
+
+A analise forense do Gale revelou a descoberta mais importante:
+
+- G0: 47,5% de acerto
+- G1 (apos G0 loss): 48,5% de recuperacao
+- G2 (apos G0+G1 loss): 49,2% de recuperacao
+- Final: 86,25%
+
+As taxas de recuperacao G1/G2 sao quase identicas ao G0. Isso prova que o Gale NAO e uma vantagem estrutural — e apenas probabilidade composta de tentativas independentes.
+
+Matematica: 1 - (1 - 0.475)^3 = 85,6%, que corresponde ao 86% observado.
+
+MAE/MFE simetricos (~0,06%) confirmam ausencia de direcionalidade real.
+
+Conclusao: o Mercury nao encontrou um padrao de mercado — encontrou uma estrutura de apostas que mascara a falta de edge. O Gale nao esta recuperando entradas ruins; esta simplesmente jogando mais vezes.
+
+Relatorio: reports/m5_gale_forensics.json
+
+## Decisao pos-Gale-Forensics (2026-09-21)
+
+Decisao do operador: a continuidade de estrategia no Mercury passa a ser EXCLUSIVAMENTE a analise do terceiro toque da vela na mesma zona (Zone Touch Reversal), que na pratica opera com 0 gale e, no maximo, G2.
+
+Mudancas aplicadas:
+
+- signal_builder.py: CCL Continuation e Price Action Patterns rebaixados para OBSERVAVEL-ONLY — os detectores continuam preenchendo os campos auditaveis (ccl_*, pa_*), mas NUNCA mais convertem WAIT em BUY/SELL (ccl_override/pa_override permanentemente False).
+- Zone Touch Reversal permanece como UNICO override de WAIT ativo (alem do sweep validado), agora com politica de gale explicita no reentry_rule: 0 gale por padrao; reentrada somente com NOVA confirmacao de terceiro toque na mesma zona com pavio de rejeicao; teto duro de G2 (reentry_engine.MAX_GALES = 2, com G2 bloqueado fora de sessao).
+- models/signal.py: comentarios dos campos atualizados para refletir o novo contrato.
+
+Rationale: o gale nao agrega edge (prova forense acima); o unico criterio de continuacao defensavel e o padrao estrutural do terceiro toque com rejeicao, nao a estrutura de apostas.

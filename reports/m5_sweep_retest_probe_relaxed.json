@@ -1,0 +1,3315 @@
+{
+  "schema": "mercury.m5.sweep-retest.v1",
+  "aggregate": {
+    "train": {
+      "signals": 424,
+      "wins": 200,
+      "hit_rate": 0.4716981132075472,
+      "net_payout_080": -64.0
+    },
+    "test": {
+      "signals": 106,
+      "wins": 53,
+      "hit_rate": 0.5,
+      "net_payout_080": -10.599999999999994
+    }
+  },
+  "results": [
+    {
+      "symbol": "AUDCHF_X_5m",
+      "train": {
+        "signals": 1,
+        "wins": 1,
+        "hit_rate": 1.0,
+        "net_payout_080": 0.8
+      },
+      "test": {
+        "signals": 1,
+        "wins": 1,
+        "hit_rate": 1.0,
+        "net_payout_080": 0.8
+      },
+      "observations": [
+        {
+          "index": 6504,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 8982,
+          "direction": "BUY",
+          "hit": true
+        }
+      ]
+    },
+    {
+      "symbol": "AUDJPY_X_5m",
+      "train": {
+        "signals": 12,
+        "wins": 6,
+        "hit_rate": 0.5,
+        "net_payout_080": -1.1999999999999993
+      },
+      "test": {
+        "signals": 3,
+        "wins": 0,
+        "hit_rate": 0.0,
+        "net_payout_080": -3.0
+      },
+      "observations": [
+        {
+          "index": 192,
+          "direction": "SELL",
+          "hit": true
+        },
+        {
+          "index": 3313,
+          "direction": "SELL",
+          "hit": true
+        },
+        {
+          "index": 4154,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 4864,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 5206,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 7061,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 8520,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 8855,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 8982,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 9783,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 10508,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 10627,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 11411,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 13691,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 14337,
+          "direction": "SELL",
+          "hit": false
+        }
+      ]
+    },
+    {
+      "symbol": "AUDNZD_X_5m",
+      "train": {
+        "signals": 13,
+        "wins": 3,
+        "hit_rate": 0.23076923076923078,
+        "net_payout_080": -7.6
+      },
+      "test": {
+        "signals": 4,
+        "wins": 2,
+        "hit_rate": 0.5,
+        "net_payout_080": -0.3999999999999999
+      },
+      "observations": [
+        {
+          "index": 2157,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 3724,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 6077,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 6243,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 6733,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 6983,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 7448,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 9086,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 9374,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 9410,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 9533,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 9686,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 12272,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 12347,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 12461,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 15096,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 15246,
+          "direction": "BUY",
+          "hit": true
+        }
+      ]
+    },
+    {
+      "symbol": "AUDUSD_X_5m",
+      "train": {
+        "signals": 3,
+        "wins": 1,
+        "hit_rate": 0.3333333333333333,
+        "net_payout_080": -1.2
+      },
+      "test": {
+        "signals": 1,
+        "wins": 0,
+        "hit_rate": 0.0,
+        "net_payout_080": -1.0
+      },
+      "observations": [
+        {
+          "index": 7248,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 13453,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 14526,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 15712,
+          "direction": "BUY",
+          "hit": false
+        }
+      ]
+    },
+    {
+      "symbol": "AVAX_USD_5m",
+      "train": {
+        "signals": 10,
+        "wins": 2,
+        "hit_rate": 0.2,
+        "net_payout_080": -6.4
+      },
+      "test": {
+        "signals": 3,
+        "wins": 2,
+        "hit_rate": 0.6666666666666666,
+        "net_payout_080": 0.6000000000000001
+      },
+      "observations": [
+        {
+          "index": 3964,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 5320,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 5425,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 5706,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 10135,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 10402,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 10626,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 12591,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 12762,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 12803,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 13390,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 14755,
+          "direction": "SELL",
+          "hit": true
+        },
+        {
+          "index": 15059,
+          "direction": "BUY",
+          "hit": true
+        }
+      ]
+    },
+    {
+      "symbol": "BNB_USD_5m",
+      "train": {
+        "signals": 21,
+        "wins": 9,
+        "hit_rate": 0.42857142857142855,
+        "net_payout_080": -4.8
+      },
+      "test": {
+        "signals": 6,
+        "wins": 3,
+        "hit_rate": 0.5,
+        "net_payout_080": -0.5999999999999996
+      },
+      "observations": [
+        {
+          "index": 678,
+          "direction": "SELL",
+          "hit": true
+        },
+        {
+          "index": 1201,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 1777,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 2076,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 2122,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 2279,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 3064,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 5336,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 6092,
+          "direction": "SELL",
+          "hit": true
+        },
+        {
+          "index": 8736,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 8784,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 9240,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 9264,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 9381,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 9598,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 9613,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 10704,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 10780,
+          "direction": "SELL",
+          "hit": true
+        },
+        {
+          "index": 11329,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 11384,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 12824,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 13553,
+          "direction": "SELL",
+          "hit": true
+        },
+        {
+          "index": 14553,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 15147,
+          "direction": "SELL",
+          "hit": true
+        },
+        {
+          "index": 15416,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 15682,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 17027,
+          "direction": "BUY",
+          "hit": true
+        }
+      ]
+    },
+    {
+      "symbol": "BTC_USD_5m",
+      "train": {
+        "signals": 20,
+        "wins": 9,
+        "hit_rate": 0.45,
+        "net_payout_080": -3.8
+      },
+      "test": {
+        "signals": 5,
+        "wins": 4,
+        "hit_rate": 0.8,
+        "net_payout_080": 2.2
+      },
+      "observations": [
+        {
+          "index": 1167,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 1597,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 3139,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 3146,
+          "direction": "SELL",
+          "hit": true
+        },
+        {
+          "index": 4060,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 4266,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 5206,
+          "direction": "SELL",
+          "hit": true
+        },
+        {
+          "index": 5838,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 6012,
+          "direction": "SELL",
+          "hit": true
+        },
+        {
+          "index": 6494,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 6527,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 8900,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 10222,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 10520,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 11719,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 11938,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 12547,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 12729,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 12814,
+          "direction": "SELL",
+          "hit": true
+        },
+        {
+          "index": 13298,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 13340,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 13512,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 14664,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 14911,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 16421,
+          "direction": "BUY",
+          "hit": true
+        }
+      ]
+    },
+    {
+      "symbol": "CADCHF_X_5m",
+      "train": {
+        "signals": 3,
+        "wins": 2,
+        "hit_rate": 0.6666666666666666,
+        "net_payout_080": 0.6000000000000001
+      },
+      "test": {
+        "signals": 1,
+        "wins": 1,
+        "hit_rate": 1.0,
+        "net_payout_080": 0.8
+      },
+      "observations": [
+        {
+          "index": 264,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 6672,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 6810,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 12218,
+          "direction": "BUY",
+          "hit": true
+        }
+      ]
+    },
+    {
+      "symbol": "CADJPY_X_5m",
+      "train": {
+        "signals": 9,
+        "wins": 6,
+        "hit_rate": 0.6666666666666666,
+        "net_payout_080": 1.8000000000000007
+      },
+      "test": {
+        "signals": 3,
+        "wins": 0,
+        "hit_rate": 0.0,
+        "net_payout_080": -3.0
+      },
+      "observations": [
+        {
+          "index": 1022,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 1522,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 2368,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 3086,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 7267,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 8834,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 9129,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 9449,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 11175,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 12342,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 14346,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 15347,
+          "direction": "BUY",
+          "hit": false
+        }
+      ]
+    },
+    {
+      "symbol": "CHFJPY_X_5m",
+      "train": {
+        "signals": 8,
+        "wins": 5,
+        "hit_rate": 0.625,
+        "net_payout_080": 1.0
+      },
+      "test": {
+        "signals": 2,
+        "wins": 2,
+        "hit_rate": 1.0,
+        "net_payout_080": 1.6
+      },
+      "observations": [
+        {
+          "index": 3797,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 4817,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 7196,
+          "direction": "SELL",
+          "hit": true
+        },
+        {
+          "index": 9482,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 10218,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 10703,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 11352,
+          "direction": "SELL",
+          "hit": true
+        },
+        {
+          "index": 11903,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 12603,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 16113,
+          "direction": "BUY",
+          "hit": true
+        }
+      ]
+    },
+    {
+      "symbol": "DOGE_USD_5m",
+      "train": {
+        "signals": 18,
+        "wins": 11,
+        "hit_rate": 0.6111111111111112,
+        "net_payout_080": 1.8000000000000007
+      },
+      "test": {
+        "signals": 5,
+        "wins": 3,
+        "hit_rate": 0.6,
+        "net_payout_080": 0.40000000000000036
+      },
+      "observations": [
+        {
+          "index": 1524,
+          "direction": "SELL",
+          "hit": true
+        },
+        {
+          "index": 1806,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 2152,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 3174,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 3676,
+          "direction": "SELL",
+          "hit": true
+        },
+        {
+          "index": 4887,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 5257,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 5770,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 6840,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 6852,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 7013,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 7857,
+          "direction": "SELL",
+          "hit": true
+        },
+        {
+          "index": 7930,
+          "direction": "SELL",
+          "hit": true
+        },
+        {
+          "index": 8090,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 8139,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 8319,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 11546,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 12016,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 12049,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 12343,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 14544,
+          "direction": "SELL",
+          "hit": true
+        },
+        {
+          "index": 16542,
+          "direction": "SELL",
+          "hit": true
+        },
+        {
+          "index": 16926,
+          "direction": "BUY",
+          "hit": true
+        }
+      ]
+    },
+    {
+      "symbol": "ETH_USD_5m",
+      "train": {
+        "signals": 17,
+        "wins": 5,
+        "hit_rate": 0.29411764705882354,
+        "net_payout_080": -8.0
+      },
+      "test": {
+        "signals": 5,
+        "wins": 4,
+        "hit_rate": 0.8,
+        "net_payout_080": 2.2
+      },
+      "observations": [
+        {
+          "index": 646,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 1171,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 1675,
+          "direction": "SELL",
+          "hit": true
+        },
+        {
+          "index": 2035,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 2747,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 2895,
+          "direction": "SELL",
+          "hit": true
+        },
+        {
+          "index": 3872,
+          "direction": "SELL",
+          "hit": true
+        },
+        {
+          "index": 5380,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 6212,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 6692,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 8006,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 10535,
+          "direction": "SELL",
+          "hit": true
+        },
+        {
+          "index": 11133,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 11297,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 11365,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 11719,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 12387,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 14114,
+          "direction": "SELL",
+          "hit": true
+        },
+        {
+          "index": 15362,
+          "direction": "SELL",
+          "hit": true
+        },
+        {
+          "index": 15639,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 16866,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 16960,
+          "direction": "BUY",
+          "hit": true
+        }
+      ]
+    },
+    {
+      "symbol": "EURAUD_X_5m",
+      "train": {
+        "signals": 5,
+        "wins": 3,
+        "hit_rate": 0.6,
+        "net_payout_080": 0.40000000000000036
+      },
+      "test": {
+        "signals": 2,
+        "wins": 0,
+        "hit_rate": 0.0,
+        "net_payout_080": -2.0
+      },
+      "observations": [
+        {
+          "index": 2070,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 3475,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 3906,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 5952,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 8259,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 14847,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 15171,
+          "direction": "BUY",
+          "hit": false
+        }
+      ]
+    },
+    {
+      "symbol": "EURCAD_X_5m",
+      "train": {
+        "signals": 10,
+        "wins": 4,
+        "hit_rate": 0.4,
+        "net_payout_080": -2.8
+      },
+      "test": {
+        "signals": 3,
+        "wins": 2,
+        "hit_rate": 0.6666666666666666,
+        "net_payout_080": 0.6000000000000001
+      },
+      "observations": [
+        {
+          "index": 1270,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 1605,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 2159,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 4817,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 5955,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 10991,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 11845,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 12286,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 12607,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 12772,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 13108,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 15655,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 15776,
+          "direction": "BUY",
+          "hit": true
+        }
+      ]
+    },
+    {
+      "symbol": "EURCHF_X_5m",
+      "train": {
+        "signals": 4,
+        "wins": 2,
+        "hit_rate": 0.5,
+        "net_payout_080": -0.3999999999999999
+      },
+      "test": {
+        "signals": 2,
+        "wins": 1,
+        "hit_rate": 0.5,
+        "net_payout_080": -0.19999999999999996
+      },
+      "observations": [
+        {
+          "index": 459,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 4822,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 8981,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 9292,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 9529,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 15047,
+          "direction": "BUY",
+          "hit": true
+        }
+      ]
+    },
+    {
+      "symbol": "EURGBP_X_5m",
+      "train": {
+        "signals": 10,
+        "wins": 5,
+        "hit_rate": 0.5,
+        "net_payout_080": -1.0
+      },
+      "test": {
+        "signals": 3,
+        "wins": 0,
+        "hit_rate": 0.0,
+        "net_payout_080": -3.0
+      },
+      "observations": [
+        {
+          "index": 589,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 841,
+          "direction": "SELL",
+          "hit": true
+        },
+        {
+          "index": 4798,
+          "direction": "SELL",
+          "hit": true
+        },
+        {
+          "index": 5856,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 6843,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 6886,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 7775,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 7842,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 9839,
+          "direction": "SELL",
+          "hit": true
+        },
+        {
+          "index": 14345,
+          "direction": "SELL",
+          "hit": true
+        },
+        {
+          "index": 14860,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 16045,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 16118,
+          "direction": "SELL",
+          "hit": false
+        }
+      ]
+    },
+    {
+      "symbol": "EURJPY_X_5m",
+      "train": {
+        "signals": 12,
+        "wins": 9,
+        "hit_rate": 0.75,
+        "net_payout_080": 4.2
+      },
+      "test": {
+        "signals": 4,
+        "wins": 2,
+        "hit_rate": 0.5,
+        "net_payout_080": -0.3999999999999999
+      },
+      "observations": [
+        {
+          "index": 2736,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 2914,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 3577,
+          "direction": "SELL",
+          "hit": true
+        },
+        {
+          "index": 3797,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 4717,
+          "direction": "SELL",
+          "hit": true
+        },
+        {
+          "index": 4853,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 5264,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 5492,
+          "direction": "SELL",
+          "hit": true
+        },
+        {
+          "index": 9071,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 9482,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 11889,
+          "direction": "SELL",
+          "hit": true
+        },
+        {
+          "index": 13385,
+          "direction": "SELL",
+          "hit": true
+        },
+        {
+          "index": 13638,
+          "direction": "SELL",
+          "hit": true
+        },
+        {
+          "index": 13719,
+          "direction": "SELL",
+          "hit": true
+        },
+        {
+          "index": 14337,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 15347,
+          "direction": "BUY",
+          "hit": false
+        }
+      ]
+    },
+    {
+      "symbol": "EURNZD_X_5m",
+      "train": {
+        "signals": 10,
+        "wins": 7,
+        "hit_rate": 0.7,
+        "net_payout_080": 2.6000000000000005
+      },
+      "test": {
+        "signals": 3,
+        "wins": 1,
+        "hit_rate": 0.3333333333333333,
+        "net_payout_080": -1.2
+      },
+      "observations": [
+        {
+          "index": 447,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 2070,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 2923,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 3582,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 3653,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 4153,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 4244,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 4932,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 6607,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 10363,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 15699,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 15766,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 16656,
+          "direction": "BUY",
+          "hit": true
+        }
+      ]
+    },
+    {
+      "symbol": "EURUSD_X_5m",
+      "train": {
+        "signals": 2,
+        "wins": 1,
+        "hit_rate": 0.5,
+        "net_payout_080": -0.19999999999999996
+      },
+      "test": {
+        "signals": 1,
+        "wins": 0,
+        "hit_rate": 0.0,
+        "net_payout_080": -1.0
+      },
+      "observations": [
+        {
+          "index": 1267,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 2952,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 10935,
+          "direction": "SELL",
+          "hit": false
+        }
+      ]
+    },
+    {
+      "symbol": "GBPAUD_X_5m",
+      "train": {
+        "signals": 8,
+        "wins": 4,
+        "hit_rate": 0.5,
+        "net_payout_080": -0.7999999999999998
+      },
+      "test": {
+        "signals": 3,
+        "wins": 2,
+        "hit_rate": 0.6666666666666666,
+        "net_payout_080": 0.6000000000000001
+      },
+      "observations": [
+        {
+          "index": 3209,
+          "direction": "SELL",
+          "hit": true
+        },
+        {
+          "index": 3323,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 5325,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 5596,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 5878,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 9850,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 12225,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 12281,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 12420,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 14364,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 15602,
+          "direction": "SELL",
+          "hit": true
+        }
+      ]
+    },
+    {
+      "symbol": "GBPCAD_X_5m",
+      "train": {
+        "signals": 10,
+        "wins": 8,
+        "hit_rate": 0.8,
+        "net_payout_080": 4.4
+      },
+      "test": {
+        "signals": 3,
+        "wins": 2,
+        "hit_rate": 0.6666666666666666,
+        "net_payout_080": 0.6000000000000001
+      },
+      "observations": [
+        {
+          "index": 84,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 887,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 1113,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 2050,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 9444,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 9658,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 10995,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 11639,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 12303,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 12495,
+          "direction": "SELL",
+          "hit": true
+        },
+        {
+          "index": 12606,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 15144,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 16362,
+          "direction": "SELL",
+          "hit": true
+        }
+      ]
+    },
+    {
+      "symbol": "GBPCHF_X_5m",
+      "train": {
+        "signals": 7,
+        "wins": 2,
+        "hit_rate": 0.2857142857142857,
+        "net_payout_080": -3.4
+      },
+      "test": {
+        "signals": 2,
+        "wins": 2,
+        "hit_rate": 1.0,
+        "net_payout_080": 1.6
+      },
+      "observations": [
+        {
+          "index": 1157,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 2473,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 4636,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 4638,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 5527,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 9327,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 9683,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 10425,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 11577,
+          "direction": "BUY",
+          "hit": true
+        }
+      ]
+    },
+    {
+      "symbol": "GBPNZD_X_5m",
+      "train": {
+        "signals": 12,
+        "wins": 6,
+        "hit_rate": 0.5,
+        "net_payout_080": -1.1999999999999993
+      },
+      "test": {
+        "signals": 4,
+        "wins": 1,
+        "hit_rate": 0.25,
+        "net_payout_080": -2.2
+      },
+      "observations": [
+        {
+          "index": 2346,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 3582,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 3684,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 4398,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 5834,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 5878,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 6125,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 7577,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 8567,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 11556,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 12880,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 15672,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 15733,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 15756,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 15910,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 16256,
+          "direction": "BUY",
+          "hit": false
+        }
+      ]
+    },
+    {
+      "symbol": "GBPUSD_X_5m",
+      "train": {
+        "signals": 11,
+        "wins": 1,
+        "hit_rate": 0.09090909090909091,
+        "net_payout_080": -9.2
+      },
+      "test": {
+        "signals": 3,
+        "wins": 0,
+        "hit_rate": 0.0,
+        "net_payout_080": -3.0
+      },
+      "observations": [
+        {
+          "index": 1114,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 1956,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 3043,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 4357,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 5148,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 7405,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 9494,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 10202,
+          "direction": "SELL",
+          "hit": true
+        },
+        {
+          "index": 12256,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 13827,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 14199,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 15618,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 15980,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 16516,
+          "direction": "BUY",
+          "hit": false
+        }
+      ]
+    },
+    {
+      "symbol": "LINK_USD_5m",
+      "train": {
+        "signals": 18,
+        "wins": 10,
+        "hit_rate": 0.5555555555555556,
+        "net_payout_080": 0.0
+      },
+      "test": {
+        "signals": 5,
+        "wins": 2,
+        "hit_rate": 0.4,
+        "net_payout_080": -1.4
+      },
+      "observations": [
+        {
+          "index": 646,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 1123,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 1204,
+          "direction": "SELL",
+          "hit": true
+        },
+        {
+          "index": 1777,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 1878,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 3624,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 3964,
+          "direction": "SELL",
+          "hit": true
+        },
+        {
+          "index": 4430,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 4524,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 6066,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 6078,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 7059,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 7671,
+          "direction": "SELL",
+          "hit": true
+        },
+        {
+          "index": 7764,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 8655,
+          "direction": "SELL",
+          "hit": true
+        },
+        {
+          "index": 10474,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 10520,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 11090,
+          "direction": "SELL",
+          "hit": true
+        },
+        {
+          "index": 12049,
+          "direction": "SELL",
+          "hit": true
+        },
+        {
+          "index": 12494,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 12686,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 13920,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 14991,
+          "direction": "BUY",
+          "hit": true
+        }
+      ]
+    },
+    {
+      "symbol": "LTC_USD_5m",
+      "train": {
+        "signals": 20,
+        "wins": 11,
+        "hit_rate": 0.55,
+        "net_payout_080": -0.1999999999999993
+      },
+      "test": {
+        "signals": 5,
+        "wins": 2,
+        "hit_rate": 0.4,
+        "net_payout_080": -1.4
+      },
+      "observations": [
+        {
+          "index": 1566,
+          "direction": "SELL",
+          "hit": true
+        },
+        {
+          "index": 2107,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 2805,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 3487,
+          "direction": "SELL",
+          "hit": true
+        },
+        {
+          "index": 4275,
+          "direction": "SELL",
+          "hit": true
+        },
+        {
+          "index": 4783,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 5736,
+          "direction": "SELL",
+          "hit": true
+        },
+        {
+          "index": 5786,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 5873,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 5880,
+          "direction": "SELL",
+          "hit": true
+        },
+        {
+          "index": 6086,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 6212,
+          "direction": "SELL",
+          "hit": true
+        },
+        {
+          "index": 7059,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 8102,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 8784,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 8838,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 8991,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 9221,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 9710,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 11969,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 13464,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 14114,
+          "direction": "SELL",
+          "hit": true
+        },
+        {
+          "index": 14944,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 16705,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 16963,
+          "direction": "BUY",
+          "hit": false
+        }
+      ]
+    },
+    {
+      "symbol": "NZDCAD_X_5m",
+      "train": {
+        "signals": 12,
+        "wins": 7,
+        "hit_rate": 0.5833333333333334,
+        "net_payout_080": 0.6000000000000005
+      },
+      "test": {
+        "signals": 3,
+        "wins": 2,
+        "hit_rate": 0.6666666666666666,
+        "net_payout_080": 0.6000000000000001
+      },
+      "observations": [
+        {
+          "index": 528,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 1310,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 1470,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 2141,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 4863,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 5779,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 9153,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 10259,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 11677,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 12037,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 12774,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 13062,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 14959,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 14960,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 15357,
+          "direction": "SELL",
+          "hit": false
+        }
+      ]
+    },
+    {
+      "symbol": "NZDCHF_X_5m",
+      "train": {
+        "signals": 12,
+        "wins": 4,
+        "hit_rate": 0.3333333333333333,
+        "net_payout_080": -4.8
+      },
+      "test": {
+        "signals": 4,
+        "wins": 3,
+        "hit_rate": 0.75,
+        "net_payout_080": 1.4000000000000004
+      },
+      "observations": [
+        {
+          "index": 564,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 1549,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 2618,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 5437,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 6890,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 7049,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 7994,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 8234,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 9550,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 10022,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 10259,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 11479,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 12312,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 13062,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 14124,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 15027,
+          "direction": "BUY",
+          "hit": true
+        }
+      ]
+    },
+    {
+      "symbol": "NZDJPY_X_5m",
+      "train": {
+        "signals": 8,
+        "wins": 2,
+        "hit_rate": 0.25,
+        "net_payout_080": -4.4
+      },
+      "test": {
+        "signals": 2,
+        "wins": 1,
+        "hit_rate": 0.5,
+        "net_payout_080": -0.19999999999999996
+      },
+      "observations": [
+        {
+          "index": 1219,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 2442,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 2975,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 3574,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 4872,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 5393,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 5663,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 5708,
+          "direction": "SELL",
+          "hit": true
+        },
+        {
+          "index": 10202,
+          "direction": "SELL",
+          "hit": true
+        },
+        {
+          "index": 11388,
+          "direction": "SELL",
+          "hit": false
+        }
+      ]
+    },
+    {
+      "symbol": "NZDUSD_X_5m",
+      "train": {
+        "signals": 4,
+        "wins": 0,
+        "hit_rate": 0.0,
+        "net_payout_080": -4.0
+      },
+      "test": {
+        "signals": 1,
+        "wins": 0,
+        "hit_rate": 0.0,
+        "net_payout_080": -1.0
+      },
+      "observations": [
+        {
+          "index": 1722,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 2160,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 9899,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 10177,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 10761,
+          "direction": "BUY",
+          "hit": false
+        }
+      ]
+    },
+    {
+      "symbol": "SOL_USD_5m",
+      "train": {
+        "signals": 15,
+        "wins": 4,
+        "hit_rate": 0.26666666666666666,
+        "net_payout_080": -7.8
+      },
+      "test": {
+        "signals": 4,
+        "wins": 3,
+        "hit_rate": 0.75,
+        "net_payout_080": 1.4000000000000004
+      },
+      "observations": [
+        {
+          "index": 1171,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 2382,
+          "direction": "SELL",
+          "hit": true
+        },
+        {
+          "index": 2385,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 2940,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 3139,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 3956,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 4194,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 4783,
+          "direction": "SELL",
+          "hit": true
+        },
+        {
+          "index": 5345,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 5380,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 6248,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 7710,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 7738,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 8422,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 9381,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 9653,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 10060,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 10777,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 16146,
+          "direction": "SELL",
+          "hit": true
+        }
+      ]
+    },
+    {
+      "symbol": "USDAUD_X_5m",
+      "train": {
+        "signals": 1,
+        "wins": 1,
+        "hit_rate": 1.0,
+        "net_payout_080": 0.8
+      },
+      "test": {
+        "signals": 1,
+        "wins": 0,
+        "hit_rate": 0.0,
+        "net_payout_080": -1.0
+      },
+      "observations": [
+        {
+          "index": 13453,
+          "direction": "SELL",
+          "hit": true
+        },
+        {
+          "index": 15712,
+          "direction": "SELL",
+          "hit": false
+        }
+      ]
+    },
+    {
+      "symbol": "USDCAD_X_5m",
+      "train": {
+        "signals": 17,
+        "wins": 5,
+        "hit_rate": 0.29411764705882354,
+        "net_payout_080": -8.0
+      },
+      "test": {
+        "signals": 5,
+        "wins": 2,
+        "hit_rate": 0.4,
+        "net_payout_080": -1.4
+      },
+      "observations": [
+        {
+          "index": 465,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 806,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 1623,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 1756,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 3390,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 3834,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 6133,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 6784,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 6824,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 7143,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 7484,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 8631,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 9522,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 10425,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 10427,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 10929,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 11891,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 12026,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 13690,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 13875,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 14435,
+          "direction": "SELL",
+          "hit": true
+        },
+        {
+          "index": 14515,
+          "direction": "BUY",
+          "hit": true
+        }
+      ]
+    },
+    {
+      "symbol": "USDCHF_X_5m",
+      "train": {
+        "signals": 8,
+        "wins": 6,
+        "hit_rate": 0.75,
+        "net_payout_080": 2.8000000000000007
+      },
+      "test": {
+        "signals": 3,
+        "wins": 1,
+        "hit_rate": 0.3333333333333333,
+        "net_payout_080": -1.2
+      },
+      "observations": [
+        {
+          "index": 670,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 1621,
+          "direction": "SELL",
+          "hit": true
+        },
+        {
+          "index": 2199,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 6650,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 9519,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 11585,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 11776,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 13922,
+          "direction": "SELL",
+          "hit": true
+        },
+        {
+          "index": 15551,
+          "direction": "SELL",
+          "hit": true
+        },
+        {
+          "index": 16094,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 16103,
+          "direction": "SELL",
+          "hit": false
+        }
+      ]
+    },
+    {
+      "symbol": "USDJPY_X_5m",
+      "train": {
+        "signals": 11,
+        "wins": 8,
+        "hit_rate": 0.7272727272727273,
+        "net_payout_080": 3.4000000000000004
+      },
+      "test": {
+        "signals": 3,
+        "wins": 3,
+        "hit_rate": 1.0,
+        "net_payout_080": 2.4000000000000004
+      },
+      "observations": [
+        {
+          "index": 1104,
+          "direction": "SELL",
+          "hit": true
+        },
+        {
+          "index": 1516,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 2291,
+          "direction": "SELL",
+          "hit": true
+        },
+        {
+          "index": 2594,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 3562,
+          "direction": "SELL",
+          "hit": true
+        },
+        {
+          "index": 4199,
+          "direction": "SELL",
+          "hit": true
+        },
+        {
+          "index": 4324,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 10204,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 10683,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 12724,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 12823,
+          "direction": "SELL",
+          "hit": true
+        },
+        {
+          "index": 13624,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 15035,
+          "direction": "SELL",
+          "hit": true
+        },
+        {
+          "index": 16179,
+          "direction": "SELL",
+          "hit": true
+        }
+      ]
+    },
+    {
+      "symbol": "XLM_USD_5m",
+      "train": {
+        "signals": 16,
+        "wins": 9,
+        "hit_rate": 0.5625,
+        "net_payout_080": 0.20000000000000018
+      },
+      "test": {
+        "signals": 5,
+        "wins": 3,
+        "hit_rate": 0.6,
+        "net_payout_080": 0.40000000000000036
+      },
+      "observations": [
+        {
+          "index": 673,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 2928,
+          "direction": "SELL",
+          "hit": true
+        },
+        {
+          "index": 3582,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 4187,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 4215,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 4323,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 4722,
+          "direction": "SELL",
+          "hit": true
+        },
+        {
+          "index": 4743,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 8661,
+          "direction": "SELL",
+          "hit": true
+        },
+        {
+          "index": 8744,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 9853,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 10398,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 10402,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 10732,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 12937,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 13431,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 14179,
+          "direction": "SELL",
+          "hit": true
+        },
+        {
+          "index": 14289,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 14849,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 15010,
+          "direction": "SELL",
+          "hit": true
+        },
+        {
+          "index": 16910,
+          "direction": "SELL",
+          "hit": true
+        }
+      ]
+    },
+    {
+      "symbol": "XPL_USD_5m",
+      "train": {
+        "signals": 17,
+        "wins": 5,
+        "hit_rate": 0.29411764705882354,
+        "net_payout_080": -8.0
+      },
+      "test": {
+        "signals": 5,
+        "wins": 3,
+        "hit_rate": 0.6,
+        "net_payout_080": 0.40000000000000036
+      },
+      "observations": [
+        {
+          "index": 288,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 367,
+          "direction": "SELL",
+          "hit": true
+        },
+        {
+          "index": 903,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 2642,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 2891,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 2898,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 3458,
+          "direction": "SELL",
+          "hit": true
+        },
+        {
+          "index": 4174,
+          "direction": "SELL",
+          "hit": true
+        },
+        {
+          "index": 4896,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 5079,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 5201,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 6823,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 7095,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 7213,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 8356,
+          "direction": "SELL",
+          "hit": true
+        },
+        {
+          "index": 9588,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 10937,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 12925,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 13340,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 14787,
+          "direction": "SELL",
+          "hit": true
+        },
+        {
+          "index": 15635,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 16416,
+          "direction": "SELL",
+          "hit": false
+        }
+      ]
+    },
+    {
+      "symbol": "XRP_USD_5m",
+      "train": {
+        "signals": 13,
+        "wins": 7,
+        "hit_rate": 0.5384615384615384,
+        "net_payout_080": -0.39999999999999947
+      },
+      "test": {
+        "signals": 4,
+        "wins": 2,
+        "hit_rate": 0.5,
+        "net_payout_080": -0.3999999999999999
+      },
+      "observations": [
+        {
+          "index": 120,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 1251,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 1605,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 2391,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 4655,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 5150,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 5257,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 5936,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 10300,
+          "direction": "BUY",
+          "hit": false
+        },
+        {
+          "index": 10364,
+          "direction": "SELL",
+          "hit": true
+        },
+        {
+          "index": 10565,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 10780,
+          "direction": "SELL",
+          "hit": true
+        },
+        {
+          "index": 12463,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 13340,
+          "direction": "BUY",
+          "hit": true
+        },
+        {
+          "index": 13873,
+          "direction": "SELL",
+          "hit": false
+        },
+        {
+          "index": 16440,
+          "direction": "SELL",
+          "hit": true
+        },
+        {
+          "index": 16769,
+          "direction": "SELL",
+          "hit": false
+        }
+      ]
+    }
+  ]
+}

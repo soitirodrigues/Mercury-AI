@@ -1,0 +1,197 @@
+{
+  "schema": "mercury.orderflow.probe.v1",
+  "results": [
+    {
+      "symbol": "BTCUSDT",
+      "candles": 119,
+      "candidates": [
+        {
+          "candidate": "delta_any",
+          "train": {
+            "signals": 95,
+            "wins": 54,
+            "hit_rate": 0.5684210526315789,
+            "net_payout_080": 2.200000000000003
+          },
+          "test": {
+            "signals": 24,
+            "wins": 13,
+            "hit_rate": 0.5416666666666666,
+            "net_payout_080": -0.5999999999999996
+          }
+        },
+        {
+          "candidate": "delta_10pct",
+          "train": {
+            "signals": 88,
+            "wins": 49,
+            "hit_rate": 0.5568181818181818,
+            "net_payout_080": 0.20000000000000284
+          },
+          "test": {
+            "signals": 23,
+            "wins": 13,
+            "hit_rate": 0.5652173913043478,
+            "net_payout_080": 0.40000000000000036
+          }
+        },
+        {
+          "candidate": "delta_20pct",
+          "train": {
+            "signals": 80,
+            "wins": 44,
+            "hit_rate": 0.55,
+            "net_payout_080": -0.7999999999999972
+          },
+          "test": {
+            "signals": 18,
+            "wins": 10,
+            "hit_rate": 0.5555555555555556,
+            "net_payout_080": 0.0
+          }
+        },
+        {
+          "candidate": "delta_30pct",
+          "train": {
+            "signals": 73,
+            "wins": 40,
+            "hit_rate": 0.547945205479452,
+            "net_payout_080": -1.0
+          },
+          "test": {
+            "signals": 17,
+            "wins": 9,
+            "hit_rate": 0.5294117647058824,
+            "net_payout_080": -0.7999999999999998
+          }
+        },
+        {
+          "candidate": "delta_20_volume_median",
+          "train": {
+            "signals": 41,
+            "wins": 23,
+            "hit_rate": 0.5609756097560976,
+            "net_payout_080": 0.40000000000000213
+          },
+          "test": {
+            "signals": 8,
+            "wins": 5,
+            "hit_rate": 0.625,
+            "net_payout_080": 1.0
+          }
+        },
+        {
+          "candidate": "delta_30_volume_median",
+          "train": {
+            "signals": 35,
+            "wins": 19,
+            "hit_rate": 0.5428571428571428,
+            "net_payout_080": -0.7999999999999989
+          },
+          "test": {
+            "signals": 8,
+            "wins": 5,
+            "hit_rate": 0.625,
+            "net_payout_080": 1.0
+          }
+        }
+      ]
+    },
+    {
+      "symbol": "ETHUSDT",
+      "candles": 119,
+      "candidates": [
+        {
+          "candidate": "delta_any",
+          "train": {
+            "signals": 95,
+            "wins": 45,
+            "hit_rate": 0.47368421052631576,
+            "net_payout_080": -14.0
+          },
+          "test": {
+            "signals": 24,
+            "wins": 11,
+            "hit_rate": 0.4583333333333333,
+            "net_payout_080": -4.199999999999999
+          }
+        },
+        {
+          "candidate": "delta_10pct",
+          "train": {
+            "signals": 83,
+            "wins": 41,
+            "hit_rate": 0.4939759036144578,
+            "net_payout_080": -9.199999999999996
+          },
+          "test": {
+            "signals": 19,
+            "wins": 9,
+            "hit_rate": 0.47368421052631576,
+            "net_payout_080": -2.8
+          }
+        },
+        {
+          "candidate": "delta_20pct",
+          "train": {
+            "signals": 75,
+            "wins": 38,
+            "hit_rate": 0.5066666666666667,
+            "net_payout_080": -6.599999999999998
+          },
+          "test": {
+            "signals": 14,
+            "wins": 7,
+            "hit_rate": 0.5,
+            "net_payout_080": -1.3999999999999995
+          }
+        },
+        {
+          "candidate": "delta_30pct",
+          "train": {
+            "signals": 63,
+            "wins": 35,
+            "hit_rate": 0.5555555555555556,
+            "net_payout_080": 0.0
+          },
+          "test": {
+            "signals": 13,
+            "wins": 6,
+            "hit_rate": 0.46153846153846156,
+            "net_payout_080": -2.1999999999999993
+          }
+        },
+        {
+          "candidate": "delta_20_volume_median",
+          "train": {
+            "signals": 39,
+            "wins": 18,
+            "hit_rate": 0.46153846153846156,
+            "net_payout_080": -6.6
+          },
+          "test": {
+            "signals": 8,
+            "wins": 4,
+            "hit_rate": 0.5,
+            "net_payout_080": -0.7999999999999998
+          }
+        },
+        {
+          "candidate": "delta_30_volume_median",
+          "train": {
+            "signals": 33,
+            "wins": 17,
+            "hit_rate": 0.5151515151515151,
+            "net_payout_080": -2.3999999999999986
+          },
+          "test": {
+            "signals": 8,
+            "wins": 4,
+            "hit_rate": 0.5,
+            "net_payout_080": -0.7999999999999998
+          }
+        }
+      ]
+    }
+  ]
+}

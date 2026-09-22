@@ -436,6 +436,58 @@ def build_signal_from_analysis(
         except Exception:
             pass
 
+    # Zone Touch Reversal — UNICA estrategia de continuacao ativa (2026-09-21).
+    # A continuidade e a analise do TERCEIRO TOQUE da vela na mesma zona de
+    # corpo (2+ toques anteriores clusterizados + vela gatilho com rejeicao).
+    # Gale Forensics (2026-09-21, reports/m5_gale_forensics.json) provou que o
+    # gale nao agrega edge (G1/G2 ~= G0 ~= 47-49%); por isso a politica aqui e:
+    # 0 gale por padrao; reentrada somente com NOVA confirmacao de terceiro
+    # toque/rejeicao, no MAXIMO G2 (teto duro do reentry_engine).
+    # Como override, so preenche WAIT/UNKNOWN — nunca sobrescreve BUY/SELL.
+    try:
+        from mercury_ai.signals.zone_touch_reversal import (
+            detect_zone_reversal as _zone_rev)
+        _zr = _zone_rev(_closed)
+    except Exception:
+        _zr = {"detected": False, "direction": "NONE", "zone": None,
+               "touches": 0, "wick_ratio": 0.0, "reason": "zone engine indisponivel"}
+    _zr_override = False
+    if (action not in ("BUY", "SELL")
+            and (_zr or {}).get("detected")
+            and (_zr or {}).get("direction") in ("BUY", "SELL")):
+        action = str(_zr["direction"])
+        _zr_override = True
+        reason = (f"ZONE-REVERSAL 3o toque ativo: {_zr.get('reason', '')} | "
+                  f"pipeline original: WAIT")
+        _re_allowed = True
+        _re_rule = (
+            "Politica de gale (Zone 3o toque): 0 gale por padrao. Reentrar na "
+            "mesma direcao SOMENTE se houver NOVA confirmacao de terceiro toque "
+            "na mesma zona com pavio de rejeicao; maximo G2 (teto duro). "
+            "Sem nova confirmacao ou apos G2: STOP (LOSS_FINAL)."
+        )
+
+    # CCL Continuation (2026-09-21: OBSERVAVEL-ONLY).
+    # Gale Forensics mostrou que o 87% era probabilidade composta de gale, nao
+    # edge (G0 47,3%). Nao gera override de WAIT; campos seguem auditaveis.
+    try:
+        from mercury_ai.signals.ccl_continuation import detect_ccl as _ccl
+        _cc = _ccl(_closed)
+    except Exception:
+        _cc = {"detected": False, "direction": "NONE", "reason": "ccl engine indisponivel"}
+    _ccl_override = False
+
+    # Price Action Patterns (2026-09-21: OBSERVAVEL-ONLY).
+    # Mesma conclusao do Gale Forensics (86,2% = 1-(1-0.475)^3). Nao gera
+    # override de WAIT; campos seguem auditaveis.
+    try:
+        from mercury_ai.signals.price_action_patterns import detect_price_action as _pa
+        _pa_result = _pa(_closed)
+    except Exception:
+        _pa_result = {"detected": False, "direction": "NONE", "pattern": "NONE",
+                      "reason": "price action engine indisponivel"}
+    _pa_override = False
+
     # Edge Tracker (observável; NUNCA altera decisão/score/ranking):
     # desempenho medido do ativo no histórico real de sinais.
     try:
@@ -556,4 +608,21 @@ def build_signal_from_analysis(
         edge_winrate=_edge.get("edge_winrate"),
         edge_status=str(_edge.get("edge_status", "INSUFICIENTE")),
         analyst_context=_analyst_context,
+        zone_reversal=bool((_zr or {}).get("detected", False)),
+        zone_direction=str((_zr or {}).get("direction", "NONE")),
+        zone_level=(float((_zr or {}).get("zone"))
+                    if (_zr or {}).get("zone") is not None else None),
+        zone_touches=int((_zr or {}).get("touches", 0) or 0),
+        zone_wick_ratio=float((_zr or {}).get("wick_ratio", 0.0) or 0.0),
+        zone_detail=str((_zr or {}).get("reason", "") or ""),
+        zone_override=_zr_override,
+        ccl_detected=bool((_cc or {}).get("detected", False)),
+        ccl_direction=str((_cc or {}).get("direction", "NONE")),
+        ccl_detail=str((_cc or {}).get("reason", "") or ""),
+        ccl_override=_ccl_override,
+        pa_detected=bool((_pa_result or {}).get("detected", False)),
+        pa_direction=str((_pa_result or {}).get("direction", "NONE")),
+        pa_pattern=str((_pa_result or {}).get("pattern", "NONE")),
+        pa_detail=str((_pa_result or {}).get("reason", "") or ""),
+        pa_override=_pa_override,
     )
